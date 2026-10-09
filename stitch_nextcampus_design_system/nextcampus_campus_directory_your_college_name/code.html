@@ -1,0 +1,812 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "tertiary-fixed": "#ffdadb",
+        "outline": "#a68a8d",
+        "background": "#161213",
+        "surface-dim": "#161213",
+        "primary": "#ffb2bf",
+        "surface": "#161213",
+        "surface-bright": "#3d3839",
+        "secondary-fixed-dim": "#ffb1c2",
+        "surface-container-lowest": "#110d0e",
+        "on-error": "#690005",
+        "secondary-container": "#8c1844",
+        "on-secondary": "#66002c",
+        "tertiary-fixed-dim": "#e2bebf",
+        "on-secondary-fixed": "#3f0019",
+        "tertiary": "#e2bebf",
+        "on-surface-variant": "#dfbfc3",
+        "surface-container-high": "#2d292a",
+        "on-error-container": "#ffdad6",
+        "error-container": "#93000a",
+        "error": "#ffb4ab",
+        "primary-fixed": "#ffd9de",
+        "inverse-primary": "#af2951",
+        "primary-container": "#ac274f",
+        "inverse-surface": "#eae0e1",
+        "on-secondary-container": "#ff9bb3",
+        "secondary-fixed": "#ffd9e0",
+        "on-secondary-fixed-variant": "#891541",
+        "surface-container-highest": "#383335",
+        "surface-tint": "#ffb2bf",
+        "on-primary-fixed": "#3f0015",
+        "on-primary-fixed-variant": "#8e0a3a",
+        "on-tertiary": "#422a2b",
+        "surface-variant": "#383335",
+        "on-primary-container": "#ffc7d0",
+        "tertiary-container": "#715556",
+        "secondary": "#ffb1c2",
+        "on-tertiary-fixed": "#2a1617",
+        "surface-container": "#231e1f",
+        "on-tertiary-container": "#f1cccd",
+        "on-surface": "#eae0e1",
+        "surface-container-low": "#1f1a1b",
+        "on-tertiary-fixed-variant": "#5a4041",
+        "primary-fixed-dim": "#ffb2bf",
+        "on-background": "#eae0e1",
+        "outline-variant": "#584144",
+        "inverse-on-surface": "#342f30",
+        "on-primary": "#660027"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "space-xs": "0.25rem",
+        "space-md": "1rem",
+        "gutter": "1.5rem",
+        "space-2xl": "3rem",
+        "gutter-mobile": "1rem",
+        "space-sm": "0.5rem",
+        "space-lg": "1.5rem",
+        "margin-mobile": "1rem",
+        "space-xl": "2rem",
+        "margin": "2rem"
+      },
+      "fontFamily": {
+        "headline-lg-mobile": ["Plus Jakarta Sans"],
+        "body-lg": ["Inter"],
+        "label-sm": ["Inter"],
+        "headline-sm": ["Plus Jakarta Sans"],
+        "body-sm": ["Inter"],
+        "display-hero-mobile": ["Plus Jakarta Sans"],
+        "title-md": ["Plus Jakarta Sans"],
+        "headline-lg": ["Plus Jakarta Sans"],
+        "label-md": ["Inter"],
+        "display-hero": ["Plus Jakarta Sans"],
+        "caption": ["Inter"],
+        "headline-md": ["Plus Jakarta Sans"],
+        "body-md": ["Inter"]
+      },
+      "fontSize": {
+        "headline-lg-mobile": ["26px", {"lineHeight": "32px", "fontWeight": "700"}],
+        "body-lg": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+        "body-sm": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+        "display-hero-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+        "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+        "display-hero": ["40px", {"lineHeight": "48px", "fontWeight": "800"}],
+        "caption": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+        "body-md": ["14px", {"lineHeight": "22.4px", "fontWeight": "400"}]
+      }
+    }
+  }
+}</script></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen"><aside class="fixed left-0 top-0 h-screen w-72 bg-surface-container-low shadow-[0_2px_8px_rgba(0,0,0,0.35)] z-50 flex flex-col justify-between"><div class="flex flex-col flex-1 min-h-0"><div class="h-16 px-space-lg flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="Modern geometric logo mark for NextCampus combining the letter N with connected campus pathways and navigation geometry in Amaranth Purple and Blush on dark background. Brand logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XWCm2qWsHHFTa25g4HozXFtz-ZeJo76yKh2kdT1IHBGWMz1cZ_LoIKIBSBdlQsIB4mOarTQa6V3rkwZDZNkBouv7YGCLnr9X5DB-xphEyvjgpG57lNWbFZ7B-Upqdc94WWXRQuHhAcdDwWH7xyoo4Q5wc2qTVr9hLiSCcy3qSWwHIa0CjfoNkARFcyTlHZ0z0mWwWlCw3lUfNLGQGuwo_ydplkYRB49zHo-W-TadZ66_Yd5g9QmSSxq1Yv"><div class="flex flex-col"><span class="font-title-md text-title-md font-bold tracking-tight text-on-surface leading-tight">NextCampus</span><span class="font-caption text-caption text-on-surface-variant leading-none">Unified Operations</span></div></div><span class="px-space-xs py-0.5 rounded-full bg-surface-container-high text-primary font-caption text-caption uppercase tracking-wider font-semibold">HQ</span></div><div class="px-space-lg py-space-xs"><div class="flex items-center gap-space-sm px-space-sm py-1.5 rounded-lg bg-surface-container"><span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span><span class="font-label-sm text-label-sm text-on-surface-variant truncate">Node: Campus Main Core</span></div></div><nav class="flex-1 px-space-sm py-space-sm overflow-y-auto space-y-1" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_0_16px_rgba(172,39,79,0.25)]"><a class="flex items-center px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150 font-label-md text-label-md" data-path="dashboard" href="#">Dashboard</a><a class="flex items-center px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150 font-label-md text-label-md" data-path="campus-map" href="#">Campus Map</a><a class="flex items-center px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150 font-label-md text-label-md" data-path="smartrooms" href="#">SmartRooms</a><a class="flex items-center px-space-md py-2.5 rounded-lg bg-primary-container text-on-primary-container font-semibold shadow-[0_0_16px_rgba(172,39,79,0.25)] font-label-md text-label-md" data-path="campus-directory" href="#">Campus Directory</a><a class="flex items-center px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150 font-label-md text-label-md" data-path="nextcampus-care" href="#">NextCampus Care</a><a class="flex items-center px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150 font-label-md text-label-md" data-path="ecocampus" href="#">EcoCampus</a><a class="flex items-center px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150 font-label-md text-label-md" data-path="skillcampus" href="#">SkillCampus</a><a class="flex items-center px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150 font-label-md text-label-md" data-path="settings" href="#">Settings</a></nav></div><div class="p-space-md bg-surface-container-lowest/60"><div class="flex items-center justify-between text-on-surface-variant text-caption"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[16px] text-tertiary">wifi_tethering</span><span class="font-caption text-caption">Mesh: 99.98%</span></div><span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface font-caption text-caption font-mono">v4.18</span></div></div></aside><div class="pl-72 flex flex-col min-h-screen"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md flex-1 max-w-xl"><div class="relative w-full flex items-center"><span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[20px] pointer-events-none">search</span><input class="w-full h-10 pl-10 pr-space-md rounded-xl bg-surface-container-low text-on-surface placeholder:text-on-surface-variant font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-container transition-all" placeholder="Search campus buildings, smart rooms, labs, or services..." type="search"></div></div><div class="flex items-center gap-space-md"><button class="flex items-center gap-space-xs px-3 py-1.5 rounded-lg bg-error-container text-on-error-container hover:bg-on-error hover:text-on-error-container font-label-md text-label-md transition-colors" type="button"><span class="material-symbols-outlined text-[18px]">e911_emergency</span><span class="font-semibold">SOS Beacon</span></button><div class="h-5 w-px bg-surface-container-highest"></div><button class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-surface"></span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="flex flex-col text-right hidden sm:flex"><span class="font-label-md text-label-md text-on-surface font-medium leading-none">Student Portal</span><span class="font-caption text-caption text-on-surface-variant leading-none mt-1">Authorized Access</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(172,39,79,0.3)]"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-background flex-1 px-space-lg py-space-lg"><div class="flex flex-col w-full space-y-space-xl">
+<!-- Top Banner & Metrics Bar -->
+<section class="flex flex-col space-y-space-lg">
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md">
+<div class="flex flex-col space-y-space-xs">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container/40 text-on-secondary-container w-fit">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="font-caption text-caption tracking-wider uppercase font-semibold">OXFORD BROOKES UNIVERSITY • INSTITUTIONAL DIRECTORY • FALL 2026</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Campus Directory</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">
+          Discover academic departments, faculty offices, campus facilities, and administrative services indexed across the Oxford Brookes Headington and Wheatley grounds.
+        </p>
+</div>
+<!-- Quick GIS Sync Tag -->
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container text-on-surface-variant font-label-md text-label-md self-start lg:self-end">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">my_location</span>
+<span>Geo-spatial Indoor Engine Live</span>
+</div>
+</div>
+<!-- Summary Counters Bar -->
+<div class="grid grid-cols-2 md:grid-cols-5 gap-space-sm">
+<div class="flex flex-col p-4 rounded-xl bg-surface-container-high shadow-sm">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">14</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Academic Blocks</span>
+</div>
+<div class="flex flex-col p-4 rounded-xl bg-surface-container-high shadow-sm">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">28</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Departments</span>
+</div>
+<div class="flex flex-col p-4 rounded-xl bg-surface-container-high shadow-sm">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">180+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Verified Faculty</span>
+</div>
+<div class="flex flex-col p-4 rounded-xl bg-surface-container-high shadow-sm">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">48</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Campus Facilities</span>
+</div>
+<div class="col-span-2 md:col-span-1 flex flex-col p-4 rounded-xl bg-surface-container-high shadow-sm justify-center">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">hub</span>
+<span class="font-title-md text-title-md font-bold text-on-surface">100%</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">All Nodes GIS-Indexed</span>
+</div>
+</div>
+</section>
+<!-- Global Directory Search & Category Segmented Tabs -->
+<section class="flex flex-col space-y-space-md">
+<!-- Search Bar & Scope Select -->
+<div class="p-2 rounded-2xl bg-surface-container-high shadow-md flex flex-col md:flex-row items-center gap-2">
+<div class="relative flex-1 w-full flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[22px] pointer-events-none">search</span>
+<input class="w-full h-12 pl-12 pr-10 rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/70 font-body-md text-body-md focus:outline-none focus:bg-surface-container transition-all" id="dirSearchInput" placeholder="Search by faculty name, department, research lab, office number, or facility (e.g. 'Dr. Vikram Seth', 'Robotics Lab', 'Turing B-204')..." type="search">
+<button class="absolute right-3 p-1 rounded-lg text-on-surface-variant hover:text-on-surface hidden transition-colors" id="dirSearchClear" title="Clear search" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="flex items-center gap-2 w-full md:w-auto">
+<div class="relative w-full md:w-48">
+<select class="w-full h-12 px-3 pr-8 rounded-xl bg-surface-container-lowest text-on-surface font-label-md text-label-md appearance-none focus:outline-none cursor-pointer">
+<option>All Disciplines</option>
+<option>School of Computing</option>
+<option>Engineering &amp; Robotics</option>
+<option>Mathematical Sciences</option>
+<option>Biomedical &amp; Healthcare</option>
+<option>Arts, Humanities &amp; Law</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-3.5 text-on-surface-variant text-[18px] pointer-events-none">expand_more</span>
+</div>
+<button class="h-12 px-5 rounded-xl bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold hover:bg-secondary-container transition-all flex items-center justify-center gap-2 shadow-sm shrink-0" type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span>Apply</span>
+</button>
+</div>
+</div>
+<!-- Category Segments Bar -->
+<div class="flex items-center justify-between gap-space-sm overflow-x-auto pb-1">
+<div class="flex items-center gap-1.5 p-1 rounded-xl bg-surface-container-low shrink-0" id="categoryNav">
+<button class="px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold transition-all">All Entries (270)</button>
+<button class="px-4 py-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-all">Buildings (14)</button>
+<button class="px-4 py-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-all">Departments (28)</button>
+<button class="px-4 py-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-all">Faculty (142)</button>
+<button class="px-4 py-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-all">Staff &amp; Services (38)</button>
+<button class="px-4 py-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-all">Facilities &amp; Labs (48)</button>
+</div>
+<!-- View & Sort Controls -->
+<div class="flex items-center gap-2 shrink-0">
+<div class="flex items-center p-1 rounded-xl bg-surface-container-low">
+<button class="p-1.5 rounded-lg bg-surface-container-highest text-primary" title="Grid View">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface" title="List View">
+<span class="material-symbols-outlined text-[18px]">view_agenda</span>
+</button>
+</div>
+<div class="relative">
+<select class="h-9 pl-3 pr-8 rounded-xl bg-surface-container-low text-on-surface-variant font-caption text-caption appearance-none focus:outline-none cursor-pointer">
+<option>Sort: Alphabetical A-Z</option>
+<option>Sort: Building Proximity</option>
+<option>Sort: Office Hours Availability</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-2 text-on-surface-variant text-[16px] pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Secondary Filter Ribbon -->
+<div class="flex flex-wrap items-center gap-2">
+<span class="font-caption text-caption text-on-surface-variant uppercase tracking-wider mr-1">Quick Filters:</span>
+<button class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-container-highest transition-colors flex items-center gap-1.5">
+<span>School of Computing</span>
+<span class="material-symbols-outlined text-[14px]">check</span>
+</button>
+<button class="px-3 py-1 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container transition-colors">
+        Engineering Sciences
+      </button>
+<button class="px-3 py-1 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container transition-colors">
+        Sciences &amp; Maths
+      </button>
+<button class="px-3 py-1 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container transition-colors">
+        Student Amenities
+      </button>
+<button class="px-3 py-1 rounded-full bg-secondary-container/30 text-secondary-fixed font-label-sm text-label-sm hover:bg-secondary-container/50 transition-colors flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+        Open Now / Available Hours
+      </button>
+<button class="px-3 py-1 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">accessible</span>
+        ADA Accessible Only
+      </button>
+</div>
+</section>
+<!-- Main Content Layout: Two-column / Asymmetric Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- Left / Main Column: Featured Cards (8 cols on desktop) -->
+<div class="xl:col-span-8 flex flex-col space-y-space-xl">
+<!-- Section 1: Featured Buildings & Key Landmarks -->
+<section class="flex flex-col space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">apartment</span>
+<h2 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Featured Buildings &amp; Key Landmarks</h2>
+</div>
+<a class="font-label-md text-label-md text-primary hover:text-on-primary-container transition-colors flex items-center gap-1" href="#">
+<span>Explore All 14 Blocks</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Building Card 1: Alan Turing Hall -->
+<article class="md:col-span-2 rounded-2xl bg-surface-container-high p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col lg:flex-row gap-5 group">
+<div class="relative w-full lg:w-64 h-48 lg:h-auto rounded-xl overflow-hidden shrink-0 bg-surface-container-lowest">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Dusk photograph of modern architectural campus hall made of glass and polished timber cladding with illuminated study atriums and exterior pedestrian pathways bathed in warm golden glow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOzYh3wsFNkpG0Wr5PmEiEPyjUf81LeiY5vJ9B9Sxyo3dx3yKkLKEvuobY_stKWREYAm-xtryUr5CzNxRyp6kWcBW6mT1RYIQTKJZ1RFKhr1tCBUBahI5VA3CoCK_p5Np_LAfs1PaC3M7y7-ya4VPmmZ6A0gZuvA1inx88ISY2DXthL3xPA_0Ju_y1UkJVdkVWxf1DF6cfxFkdwDK99UIQJqyKNJQuQEQa8WnHcYuWoBBwNhieVUe0Tg">
+<div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-surface-container-lowest/80 backdrop-blur-md text-on-surface font-caption text-caption font-semibold">
+                Block A-01 • 4 Floors
+              </div>
+<div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-caption text-caption font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+                Active Node
+              </div>
+</div>
+<div class="flex flex-col justify-between flex-1 min-w-0 space-y-3">
+<div>
+<div class="flex items-start justify-between gap-2">
+<h3 class="font-title-md text-title-md font-bold text-on-surface group-hover:text-primary transition-colors">
+                    Alan Turing Hall (Computing &amp; Cybernetics)
+                  </h3>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-caption text-caption shrink-0">B-01</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5">
+                  Home to Dept. of Computer Science, AI Labs, and Multi-media Lecture Theatres B-201 to B-208. Features collaborative high-spec computing suites and makerspace.
+                </p>
+</div>
+<!-- Metadata Chips -->
+<div class="flex flex-wrap items-center gap-2 py-1 text-on-surface-variant font-caption text-caption">
+<span class="flex items-center gap-1 bg-surface-container-lowest px-2.5 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[14px] text-tertiary">schedule</span>
+                  07:00 AM – 10:00 PM
+                </span>
+<span class="flex items-center gap-1 bg-surface-container-lowest px-2.5 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[14px] text-primary">pie_chart</span>
+                  Occupancy: 68%
+                </span>
+<span class="flex items-center gap-1 bg-surface-container-lowest px-2.5 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[14px] text-secondary">alt_route</span>
+                  Skybridge to Central Library
+                </span>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-3 pt-2">
+<button class="px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold hover:bg-secondary-container transition-all flex items-center gap-1.5 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">navigation</span>
+<span>View on Map</span>
+</button>
+<button class="px-4 py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-highest transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">groups</span>
+<span>Browse 12 Rooms &amp; Faculty</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Building Card 2: Central Campus Library -->
+<article class="rounded-2xl bg-surface-container-high p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4 group">
+<div class="flex flex-col space-y-2">
+<div class="flex items-start justify-between">
+<div class="w-10 h-10 rounded-xl bg-primary-container/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">local_library</span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-secondary-container/40 text-on-secondary-container font-caption text-caption font-semibold">Block B-02</span>
+</div>
+<h3 class="font-title-md text-title-md font-bold text-on-surface group-hover:text-primary transition-colors">
+                Central Campus Library &amp; Knowledge Commons
+              </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Quiet study zones, high-speed digital research terminals, reserve desks, assistive technology lab, and faculty thesis archives.
+              </p>
+</div>
+<div class="flex flex-col space-y-3 pt-2">
+<div class="flex flex-wrap gap-2 text-on-surface-variant font-caption text-caption">
+<span class="flex items-center gap-1 bg-surface-container-lowest px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[13px] text-tertiary">lock_open</span> Open 24/7 with ID
+                </span>
+<span class="flex items-center gap-1 bg-surface-container-lowest px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[13px] text-primary">event_seat</span> 142 Seats Available
+                </span>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex-1 py-2 px-3 rounded-lg bg-surface-container hover:bg-primary-container hover:text-on-primary-container text-on-surface font-label-sm text-label-sm font-semibold transition-all text-center" type="button">
+                  View on Map
+                </button>
+<button class="py-2 px-3 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-colors text-center" type="button">
+                  Check Desk Availability
+                </button>
+</div>
+</div>
+</article>
+<!-- Building Card 3: Ramanujan Science Complex -->
+<article class="rounded-2xl bg-surface-container-high p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4 group">
+<div class="flex flex-col space-y-2">
+<div class="flex items-start justify-between">
+<div class="w-10 h-10 rounded-xl bg-tertiary-container/30 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">biotech</span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-caption text-caption font-semibold">Block C-03</span>
+</div>
+<h3 class="font-title-md text-title-md font-bold text-on-surface group-hover:text-primary transition-colors">
+                Ramanujan Science Complex
+              </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Applied Physics, Computational Mathematics, and Hardware Prototyping Cleanrooms with specialized precision instrumentation.
+              </p>
+</div>
+<div class="flex flex-col space-y-3 pt-2">
+<div class="flex flex-wrap gap-2 text-on-surface-variant font-caption text-caption">
+<span class="flex items-center gap-1 bg-surface-container-lowest px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[13px] text-tertiary">layers</span> 3 Floors
+                </span>
+<span class="flex items-center gap-1 bg-surface-container-lowest px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[13px] text-secondary">badge</span> Keycard Authorization
+                </span>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex-1 py-2 px-3 rounded-lg bg-surface-container hover:bg-primary-container hover:text-on-primary-container text-on-surface font-label-sm text-label-sm font-semibold transition-all text-center" type="button">
+                  View on Map
+                </button>
+<button class="py-2 px-3 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-colors text-center" type="button">
+                  Directory List
+                </button>
+</div>
+</div>
+</article>
+</div>
+</section>
+<!-- Section 2: Faculty & Academic Advisors -->
+<section class="flex flex-col space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">school</span>
+<h2 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Faculty &amp; Academic Advisors</h2>
+</div>
+<span class="font-caption text-caption text-on-surface-variant">Showing 3 of 142 Active Advisors</span>
+</div>
+<div class="grid grid-cols-1 gap-space-md">
+<!-- Faculty 1: Prof. Ananya Roy -->
+<article class="p-5 rounded-2xl bg-surface-container-high shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row gap-5 items-start md:items-center justify-between">
+<div class="flex items-start gap-4 min-w-0">
+<div class="relative shrink-0">
+<div class="w-14 h-14 rounded-2xl bg-secondary-container flex items-center justify-center text-on-secondary font-headline-sm text-headline-sm font-bold shadow-sm">
+                  AR
+                </div>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-secondary ring-2 ring-surface-container-high" title="Available now"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="font-title-md text-title-md font-bold text-on-surface">Prof. Ananya Roy, Ph.D.</h3>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/40 text-on-secondary-container font-caption text-caption font-semibold">Chair</span>
+</div>
+<span class="font-label-md text-label-md text-primary mt-0.5">Professor &amp; Chair of Distributed Systems</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">School of Computing &amp; Cybernetics</span>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 font-caption text-caption text-on-surface-variant">
+<span class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-tertiary">room</span>
+                    Alan Turing Hall, Room B-204 (Level 2)
+                  </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">mail</span>
+                    ananya.roy@brookes.ac.uk
+                  </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">call</span>
+                    Ext: 4821
+                  </span>
+</div>
+<!-- Office Hours Live Badge -->
+<div class="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/30 text-on-secondary-container font-caption text-caption w-fit font-medium">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>Office Hours Today: 2:00 PM – 4:30 PM (Walk-in)</span>
+</div>
+</div>
+</div>
+<!-- Actions Stack -->
+<div class="flex md:flex-col items-center gap-2 w-full md:w-auto shrink-0 pt-2 md:pt-0">
+<button class="flex-1 md:w-44 py-2 px-3 rounded-lg bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold hover:bg-secondary-container transition-all flex items-center justify-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">navigation</span>
+<span>View on Map</span>
+</button>
+<button class="flex-1 md:w-44 py-2 px-3 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-highest font-label-md text-label-md transition-colors flex items-center justify-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">event_available</span>
+<span>Book Office Hours</span>
+</button>
+</div>
+</article>
+<!-- Faculty 2: Dr. Vikram Seth -->
+<article class="p-5 rounded-2xl bg-surface-container-high shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row gap-5 items-start md:items-center justify-between">
+<div class="flex items-start gap-4 min-w-0">
+<div class="relative shrink-0">
+<div class="w-14 h-14 rounded-2xl bg-surface-container-highest flex items-center justify-center text-on-surface font-headline-sm text-headline-sm font-bold shadow-sm">
+                  VS
+                </div>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-outline ring-2 ring-surface-container-high" title="In Lecture"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="font-title-md text-title-md font-bold text-on-surface">Dr. Vikram Seth</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-caption text-caption">Assoc. Prof</span>
+</div>
+<span class="font-label-md text-label-md text-primary mt-0.5">Associate Professor of Machine Learning &amp; Neural Networks</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Department of Mathematics &amp; Computing</span>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 font-caption text-caption text-on-surface-variant">
+<span class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-tertiary">room</span>
+                    Ramanujan Science Block, Room S-108
+                  </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">mail</span>
+                    vikram.seth@brookes.ac.uk
+                  </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">call</span>
+                    Ext: 4310
+                  </span>
+</div>
+<div class="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-caption text-caption w-fit font-medium">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span>In Lecture until 2:30 PM • Office Hours Tomorrow: 10:00 AM</span>
+</div>
+</div>
+</div>
+<!-- Actions Stack -->
+<div class="flex md:flex-col items-center gap-2 w-full md:w-auto shrink-0 pt-2 md:pt-0">
+<button class="flex-1 md:w-44 py-2 px-3 rounded-lg bg-surface-container text-on-surface hover:bg-primary-container hover:text-on-primary-container font-label-md text-label-md font-semibold transition-all flex items-center justify-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">navigation</span>
+<span>View on Map</span>
+</button>
+<button class="flex-1 md:w-44 py-2 px-3 rounded-lg bg-surface-container-lowest text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors flex items-center justify-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">chat</span>
+<span>Message via Copilot</span>
+</button>
+</div>
+</article>
+<!-- Faculty 3: Dr. Emily Nakamura -->
+<article class="p-5 rounded-2xl bg-surface-container-high shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row gap-5 items-start md:items-center justify-between">
+<div class="flex items-start gap-4 min-w-0">
+<div class="relative shrink-0">
+<div class="w-14 h-14 rounded-2xl bg-tertiary-container flex items-center justify-center text-on-tertiary font-headline-sm text-headline-sm font-bold shadow-sm">
+                  EN
+                </div>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-secondary ring-2 ring-surface-container-high" title="In Laboratory"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="font-title-md text-title-md font-bold text-on-surface">Dr. Emily Nakamura</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-caption text-caption">Lab Director</span>
+</div>
+<span class="font-label-md text-label-md text-primary mt-0.5">Head of Robotics &amp; Autonomous Systems</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Mechatronics &amp; Embedded IoT</span>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 font-caption text-caption text-on-surface-variant">
+<span class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-tertiary">room</span>
+                    Innovation Hub, Hardware Lab 4
+                  </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">mail</span>
+                    e.nakamura@brookes.ac.uk
+                  </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">call</span>
+                    Ext: 5102
+                  </span>
+</div>
+<div class="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/30 text-on-secondary-container font-caption text-caption w-fit font-medium">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>Research Lab Open • Drop-in Desk #14</span>
+</div>
+</div>
+</div>
+<!-- Actions Stack -->
+<div class="flex md:flex-col items-center gap-2 w-full md:w-auto shrink-0 pt-2 md:pt-0">
+<button class="flex-1 md:w-44 py-2 px-3 rounded-lg bg-surface-container text-on-surface hover:bg-primary-container hover:text-on-primary-container font-label-md text-label-md font-semibold transition-all flex items-center justify-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">navigation</span>
+<span>View on Map</span>
+</button>
+<button class="flex-1 md:w-44 py-2 px-3 rounded-lg bg-surface-container-lowest text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors flex items-center justify-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">tour</span>
+<span>Lab Tour Request</span>
+</button>
+</div>
+</article>
+</div>
+</section>
+<!-- Section 3: Administrative & Student Service Offices -->
+<section class="flex flex-col space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">support_agent</span>
+<h2 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Administrative &amp; Student Service Offices</h2>
+</div>
+<a class="font-label-md text-label-md text-primary hover:text-on-primary-container transition-colors" href="#">
+            All 38 Service Points
+          </a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Service Card 1 -->
+<article class="p-5 rounded-2xl bg-surface-container-high shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+<div class="flex flex-col space-y-2">
+<div class="flex items-start justify-between">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-caption text-caption">Admin Main</span>
+</div>
+<h3 class="font-title-md text-title-md font-bold text-on-surface">Office of the University Registrar &amp; Student Records</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Enrolment validation, official transcripts, degree verification, credit transfer assessments, and student status letters.
+              </p>
+<div class="flex flex-col space-y-1 font-caption text-caption text-on-surface-variant pt-1">
+<span class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-tertiary">location_on</span>
+                  Administration Building, Ground Floor East
+                </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                  Mon-Fri 09:00 AM – 05:00 PM
+                </span>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<button class="flex-1 py-2 px-3 rounded-lg bg-surface-container hover:bg-primary-container hover:text-on-primary-container text-on-surface font-label-sm text-label-sm font-semibold transition-all text-center" type="button">
+                View on Map
+              </button>
+<button class="py-2 px-3 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label-sm text-label-sm transition-colors text-center flex items-center justify-center gap-1" type="button">
+<span class="material-symbols-outlined text-[14px]">confirmation_number</span>
+                Queue Ticket
+              </button>
+</div>
+</article>
+<!-- Service Card 2 -->
+<article class="p-5 rounded-2xl bg-surface-container-high shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+<div class="flex flex-col space-y-2">
+<div class="flex items-start justify-between">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">health_and_safety</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-secondary-container/40 text-on-secondary-container font-caption text-caption font-semibold">Priority Care</span>
+</div>
+<h3 class="font-title-md text-title-md font-bold text-on-surface">Campus Health &amp; Psychological Counseling Center</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Confidential mental health triage, certified counselors, primary medical advice, immunization, and accessibility accommodations.
+              </p>
+<div class="flex flex-col space-y-1 font-caption text-caption text-on-surface-variant pt-1">
+<span class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-tertiary">location_on</span>
+                  Student Activity Center, Suite 102
+                </span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">emergency</span>
+                  24/7 Urgent Helpline • Walk-in 08:30 – 18:00
+                </span>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<button class="flex-1 py-2 px-3 rounded-lg bg-surface-container hover:bg-primary-container hover:text-on-primary-container text-on-surface font-label-sm text-label-sm font-semibold transition-all text-center" type="button">
+                View on Map
+              </button>
+<button class="py-2 px-3 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label-sm text-label-sm transition-colors text-center flex items-center justify-center gap-1" type="button">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+                Confidential Contact
+              </button>
+</div>
+</article>
+</div>
+</section>
+</div>
+<!-- Right Rail / Contextual Building & Wayfinding Inspector (4 cols on desktop) -->
+<aside class="xl:col-span-4 flex flex-col space-y-space-md">
+<!-- Selected Building Quick Preview Widget -->
+<div class="rounded-2xl bg-surface-container-high shadow-md overflow-hidden flex flex-col">
+<!-- Visual Hero Header -->
+<div class="relative w-full h-44 bg-surface-container-lowest">
+<img class="w-full h-full object-cover" data-alt="Modern architectural glass facade of university computer science research building in Headington Oxford at twilight with ambient purple backlighting and interior study lounges visible" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnsBFmdYqr6jHc-tYoJj9aCEEbfKyFo5L3SLupQ0ikKDdXvkE8ZnSUMjdGmIop8z5KCO7QmVOsIqHy9HYbjtta90SqR4wGPlU-2wqtRGDiq5rUGxAyV903zRKjRYWmoztCiNad357-F5wzNP-stQIagLuV-V9RJTr5eWXoeezLsB_Qjl-q6e13GHym0Nopm46ykpFUvv08rbvxuEQW96J72Y2DHoTV7V4NV_eChXmGJjkKxk7Yk9JxWA">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-high via-surface-container-high/40 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-lowest/90 backdrop-blur text-on-surface font-caption text-caption font-bold tracking-wider">
+              BLOCK A-01
+            </span>
+<span class="px-2 py-0.5 rounded-md bg-primary-container text-on-primary-container font-caption text-caption font-semibold">
+              Selected Landmark
+            </span>
+</div>
+<div class="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+<div>
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Alan Turing Hall</h4>
+<p class="font-caption text-caption text-on-surface-variant">Oxford Brookes Computing Hub</p>
+</div>
+<span class="w-3 h-3 rounded-full bg-secondary ring-4 ring-surface-container-high"></span>
+</div>
+</div>
+<div class="p-5 flex flex-col space-y-4">
+<!-- Direct Navigation Link Banner -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col space-y-2">
+<div class="flex items-center justify-between text-on-surface-variant font-caption text-caption">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-tertiary">near_me</span>
+                From Current Location (Central Library)
+              </span>
+<span class="text-primary font-semibold">320m</span>
+</div>
+<p class="font-body-sm text-body-sm font-medium text-on-surface">
+              4 min walk via 2nd Floor Covered Skybridge
+            </p>
+<a class="w-full py-2.5 px-3 rounded-lg bg-primary-container hover:bg-secondary-container text-on-primary-container font-label-md text-label-md font-semibold text-center transition-all flex items-center justify-center gap-1 shadow-sm" href="#">
+<span>Open Turn-by-Turn Wayfinding in Campus Map</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<!-- Floor-by-Floor Breakdown -->
+<div class="flex flex-col space-y-2">
+<span class="font-caption text-caption uppercase tracking-wider text-on-surface-variant font-semibold">
+              Floor Directory Structure
+            </span>
+<div class="space-y-1.5">
+<div class="p-2.5 rounded-lg bg-surface-container flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-surface-container-highest text-primary font-bold flex items-center justify-center text-xs">L4</span>
+<span class="text-on-surface font-medium">Faculty Offices &amp; Deans</span>
+</div>
+<span class="text-on-surface-variant text-caption">Rooms 401-440</span>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-surface-container-highest text-primary font-bold flex items-center justify-center text-xs">L3</span>
+<span class="text-on-surface font-medium">AI &amp; Distributed Systems Labs</span>
+</div>
+<span class="text-on-surface-variant text-caption">Card Access</span>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container-highest text-on-surface flex items-center justify-between text-body-sm ring-1 ring-primary/40">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-primary text-on-primary font-bold flex items-center justify-center text-xs">L2</span>
+<span class="text-on-surface font-semibold">Lecture Theatres B-201 to B-204</span>
+</div>
+<span class="text-secondary font-caption text-caption font-semibold">You are here</span>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-surface-container-highest text-primary font-bold flex items-center justify-center text-xs">G</span>
+<span class="text-on-surface font-medium">Atrium, Reception &amp; MakerSpace</span>
+</div>
+<span class="text-on-surface-variant text-caption">Public Zone</span>
+</div>
+</div>
+</div>
+<!-- Key Faculty In This Building -->
+<div class="flex flex-col space-y-2 pt-1">
+<span class="font-caption text-caption uppercase tracking-wider text-on-surface-variant font-semibold">
+              Faculty Resident in Block A-01
+            </span>
+<div class="flex flex-col space-y-1.5">
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-secondary-container flex items-center justify-center text-xs text-on-secondary font-bold">AR</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-medium leading-none">Prof. Ananya Roy</span>
+<span class="font-caption text-caption text-on-surface-variant">Room B-204</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/40 text-secondary-fixed text-caption">Available</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-surface-container-highest flex items-center justify-center text-xs text-on-surface font-bold">MC</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-medium leading-none">Dr. Marcus Chen</span>
+<span class="font-caption text-caption text-on-surface-variant">Room B-312</span>
+</div>
+</div>
+<span class="text-caption text-on-surface-variant">In Lab</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-surface-container-highest flex items-center justify-center text-xs text-on-surface font-bold">SW</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-medium leading-none">Dr. Sarah Williams</span>
+<span class="font-caption text-caption text-on-surface-variant">Room B-105</span>
+</div>
+</div>
+<span class="text-caption text-on-surface-variant">Away</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Prototype Visual State Concept: Empty / Zero Search Results Drawer -->
+<div class="p-5 rounded-2xl bg-surface-container-high shadow-sm flex flex-col space-y-3">
+<div class="flex items-center justify-between">
+<span class="font-caption text-caption uppercase tracking-wider text-primary font-bold">Search Preview Concept</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant font-caption text-caption">State Demo</span>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col items-center text-center space-y-2">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">search_off</span>
+</div>
+<span class="font-title-md text-title-md font-semibold text-on-surface">No matching record found</span>
+<p class="font-caption text-caption text-on-surface-variant">
+            No exact matches for <span class="text-primary italic">"Quantum Biology Lab"</span> in Oxford Brookes registry.
+          </p>
+<div class="pt-2 flex flex-col w-full space-y-1.5 text-left">
+<span class="font-caption text-caption text-on-surface-variant font-semibold">Recommended Steps:</span>
+<button class="w-full text-left px-2.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm flex items-center justify-between transition-colors" type="button">
+<span>Check Bio-Medical Engineering listings</span>
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant">chevron_right</span>
+</button>
+<button class="w-full text-left px-2.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm flex items-center justify-between transition-colors" type="button">
+<span>Query NextCampus AI Copilot</span>
+<span class="material-symbols-outlined text-[14px] text-primary">auto_awesome</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Future GIS & Map Integration Notice -->
+<div class="p-4 rounded-2xl bg-surface-container-low shadow-sm flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">satellite_alt</span>
+</div>
+<div class="flex flex-col space-y-1">
+<span class="font-label-md text-label-md font-semibold text-on-surface">NextCampus Spatial GIS Engine</span>
+<p class="font-caption text-caption text-on-surface-variant">
+            Every waypoint link within this directory is calibrated to provide multi-floor indoor routing with elevator, stairwell, and ADA accessible routes across all 14 campus blocks.
+          </p>
+</div>
+</div>
+</aside>
+</div>
+</div>
+<script>
+  // Quick Search Micro-interaction
+  const searchInput = document.getElementById('dirSearchInput');
+  const searchClear = document.getElementById('dirSearchClear');
+
+  if (searchInput && searchClear) {
+    searchInput.addEventListener('input', () => {
+      if (searchInput.value.trim().length > 0) {
+        searchClear.classList.remove('hidden');
+      } else {
+        searchClear.classList.add('hidden');
+      }
+    });
+
+    searchClear.addEventListener('click', () => {
+      searchInput.value = '';
+      searchClear.classList.add('hidden');
+      searchInput.focus();
+    });
+  }
+
+  // Segment Tab Highlighting
+  const categoryContainer = document.getElementById('categoryNav');
+  if (categoryContainer) {
+    const tabs = categoryContainer.querySelectorAll('button');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.className = 'px-4 py-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-all';
+        });
+        tab.className = 'px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold transition-all';
+      });
+    });
+  }
+</script></main><footer class="w-full bg-surface-container-low/70 py-space-md px-space-lg"><div class="flex flex-col md:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-caption text-caption"><span>NextCampus OS • Campus Student Portal • All systems operational</span><div class="flex items-center gap-space-xs text-on-surface"><span class="material-symbols-outlined text-[14px] text-primary">sync</span><span>Node synchronized with institutional network backbone</span></div></div></footer></div></body></html>

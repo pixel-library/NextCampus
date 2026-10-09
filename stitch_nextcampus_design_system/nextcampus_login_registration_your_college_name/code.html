@@ -1,0 +1,362 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><title>NextCampus Secure Access</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "error-container": "#93000a", "on-tertiary-fixed-variant": "#5a4041", "surface-tint": "#ffb2bf", "inverse-primary": "#af2951", "outline": "#a68a8d", "tertiary-fixed": "#ffdadb", "on-surface": "#eae0e1", "surface": "#161213", "surface-container": "#231e1f", "surface-bright": "#3d3839", "on-error-container": "#ffdad6", "surface-variant": "#383335", "on-primary-fixed": "#3f0015", "surface-container-highest": "#383335", "tertiary-fixed-dim": "#e2bebf", "on-tertiary": "#422a2b", "surface-dim": "#161213", "surface-container-low": "#1f1a1b", "primary-fixed-dim": "#ffb2bf", "primary": "#ffb2bf", "primary-container": "#ac274f", "inverse-surface": "#eae0e1", "on-primary": "#660027", "secondary": "#ffb1c2", "on-error": "#690005", "on-secondary": "#66002c", "on-tertiary-container": "#f1cccd", "error": "#ffb4ab", "background": "#161213", "surface-container-lowest": "#110d0e", "tertiary-container": "#715556", "inverse-on-surface": "#342f30", "primary-fixed": "#ffd9de", "secondary-fixed": "#ffd9e0", "outline-variant": "#584144", "secondary-container": "#8c1844", "surface-container-high": "#2d292a", "on-primary-fixed-variant": "#8e0a3a", "on-secondary-container": "#ff9bb3", "secondary-fixed-dim": "#ffb1c2", "on-primary-container": "#ffc7d0", "on-secondary-fixed-variant": "#891541", "on-background": "#eae0e1", "on-tertiary-fixed": "#2a1617", "on-secondary-fixed": "#3f0019", "on-surface-variant": "dfbfc3", "tertiary": "#e2bebf" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter": "1.5rem", "margin": "2rem", "gutter-mobile": "1rem", "space-2xl": "3rem", "margin-mobile": "1rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "space-xl": "2rem", "space-lg": "1.5rem", "space-md": "1rem" }, "fontFamily": { "display-hero-mobile": [ "Plus Jakarta Sans" ], "headline-md": [ "Plus Jakarta Sans" ], "body-md": [ "Inter" ], "label-sm": [ "Inter" ], "headline-sm": [ "Plus Jakarta Sans" ], "title-md": [ "Plus Jakarta Sans" ], "label-md": [ "Inter" ], "caption": [ "Inter" ], "body-sm": [ "Inter" ], "body-lg": [ "Inter" ], "headline-lg-mobile": [ "Plus Jakarta Sans" ], "display-hero": [ "Plus Jakarta Sans" ], "headline-lg": [ "Plus Jakarta Sans" ] }, "fontSize": { "display-hero-mobile": [ "32px", { "lineHeight": "40px", "fontWeight": "800" } ], "headline-md": [ "24px", { "lineHeight": "32px", "fontWeight": "600" } ], "body-md": [ "14px", { "lineHeight": "22.4px", "fontWeight": "400" } ], "label-sm": [ "12px", { "lineHeight": "16px", "fontWeight": "500" } ], "headline-sm": [ "20px", { "lineHeight": "28px", "fontWeight": "600" } ], "title-md": [ "16px", { "lineHeight": "24px", "fontWeight": "600" } ], "label-md": [ "13px", { "lineHeight": "18px", "fontWeight": "500" } ], "caption": [ "11px", { "lineHeight": "14px", "fontWeight": "500" } ], "body-sm": [ "13px", { "lineHeight": "20px", "fontWeight": "400" } ], "body-lg": [ "15px", { "lineHeight": "24px", "fontWeight": "400" } ], "headline-lg-mobile": [ "26px", { "lineHeight": "32px", "fontWeight": "700" } ], "display-hero": [ "40px", { "lineHeight": "48px", "fontWeight": "800" } ], "headline-lg": [ "32px", { "lineHeight": "40px", "fontWeight": "700" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.45)]"><div class="h-16 w-full px-gutter flex items-center justify-between"><div class="flex items-center gap-space-md"><img alt="Modern geometric logo mark for NextCampus combining the letter N with connected campus pathways and navigation geometry in Amaranth Purple and Blush on dark background. Brand logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XWCm2qWsHHFTa25g4HozXFtz-ZeJo76yKh2kdT1IHBGWMz1cZ_LoIKIBSBdlQsIB4mOarTQa6V3rkwZDZNkBouv7YGCLnr9X5DB-xphEyvjgpG57lNWbFZ7B-Upqdc94WWXRQuHhAcdDwWH7xyoo4Q5wc2qTVr9hLiSCcy3qSWwHIa0CjfoNkARFcyTlHZ0z0mWwWlCw3lUfNLGQGuwo_ydplkYRB49zHo-W-TadZ66_Yd5g9QmSSxq1Yv"><div class="flex items-center gap-space-sm"><span class="font-title-md text-title-md text-on-surface tracking-tight">NextCampus</span><span class="hidden sm:inline-block text-outline-variant font-label-sm text-label-sm">/</span><span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm tracking-wide">State University</span></div></div><div class="flex items-center gap-space-lg"><div class="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-tertiary font-caption text-caption"><span class="material-symbols-outlined text-[14px]">lock</span><span class="tracking-wider uppercase font-semibold">256-Bit SSO TLS</span></div><nav class="flex items-center gap-space-md" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-lg"><a aria-current="page" class="transition-colors bg-primary-container text-on-primary-container font-semibold rounded-lg" data-path="campus-sign-in" href="#">Sign In</a><a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors" data-path="multi-factor-auth" href="#">Verification</a><a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors" data-path="account-recovery" href="#">Help &amp; Recovery</a></nav><div class="flex items-center gap-space-sm pl-2"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-16 flex-1 bg-surface-dim flex flex-col justify-center"><div class="flex flex-col w-full">
+<!-- Dynamic Campus Split View Container -->
+<div class="w-full flex-1 flex flex-col lg:flex-row items-stretch min-h-[calc(100vh-4rem)]">
+<!-- LEFT PANEL: Brand & Institutional Showcase (~42%) -->
+<div class="relative w-full lg:w-[42%] flex flex-col justify-between p-8 lg:p-12 overflow-hidden bg-surface-container-lowest">
+<!-- Architectural Dusk Campus Scrim Background -->
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-1000 scale-105" data-alt="Modern architectural university glass atrium and central student quad illuminated at twilight dusk with warm interior study light, stone pathways, and lush campus landscaping matching an authoritative wine and licorice color palette." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCVLAga3FEcE4kzeDoyHVmwUjHiX_lz5t8xqgB8BWxNotaWChIMo040VNlih6uz5hH2ohWhdBOLAe3okZOIxXIYPLyHNC9aZ-UrYdPOucq-Fbq_mboZeacDS4vN0t1DUfs1bULxF2C5Jou4HeJ7M1gbIqzl2hkdyXK-4ts7h3PWbYF4ZfsucvLyORvg-3vgHz4b-FLofw5n2Mja51IOqCkvgWBDom9Ae-feOZhjQyFwAbGfN37c1Wk5sg')">
+</div>
+<!-- Deep Raisin & Licorice Architectural Tint Gradients -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface/90 to-surface/80 backdrop-blur-[2px]"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-surface-container-lowest/95 via-surface-container-lowest/80 to-transparent"></div>
+<!-- Top Branding Section -->
+<div class="relative z-10 flex flex-col space-y-6">
+<div class="flex items-center gap-3">
+<img alt="NextCampus Logo Mark" class="h-9 w-auto object-contain shadow-sm" src="https://lh3.googleusercontent.com/aida/AEtjO1XWCm2qWsHHFTa25g4HozXFtz-ZeJo76yKh2kdT1IHBGWMz1cZ_LoIKIBSBdlQsIB4mOarTQa6V3rkwZDZNkBouv7YGCLnr9X5DB-xphEyvjgpG57lNWbFZ7B-Upqdc94WWXRQuHhAcdDwWH7xyoo4Q5wc2qTVr9hLiSCcy3qSWwHIa0CjfoNkARFcyTlHZ0z0mWwWlCw3lUfNLGQGuwo_ydplkYRB49zHo-W-TadZ66_Yd5g9QmSSxq1Yv">
+<div class="h-6 w-px bg-surface-variant"></div>
+<span class="font-caption text-caption tracking-widest uppercase text-tertiary-fixed font-semibold">
+            Institutional Node
+          </span>
+</div>
+<div class="space-y-2">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high/80 text-primary font-caption text-caption uppercase tracking-wider backdrop-blur-md">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            Smart Campus Platform • State University
+          </div>
+<h1 class="font-display-hero text-display-hero text-on-surface tracking-tight leading-tight">
+            One Campus.<br>
+<span class="text-primary-fixed">One Account.</span><br>
+            Smarter Future.
+          </h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md pt-1">
+            Seamless federated access to automated research facilities, instant ticket triage, dynamic spatial telemetry, and community learning networks.
+          </p>
+</div>
+</div>
+<!-- Center Pillar Badges & Feature Cards -->
+<div class="relative z-10 my-8 flex flex-col gap-3">
+<div class="p-3.5 rounded-xl bg-surface-container-low/75 backdrop-blur-md flex items-center gap-3.5 transform transition-all duration-300 hover:translate-x-1 hover:bg-surface-container">
+<div class="w-10 h-10 rounded-lg bg-primary-container/40 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">meeting_room</span>
+</div>
+<div class="min-w-0 flex-1">
+<div class="font-title-md text-title-md text-on-surface truncate">SmartRoom &amp; Facility Booking</div>
+<div class="font-caption text-caption text-on-surface-variant">Intelligent occupancy sync across 64 academic halls</div>
+</div>
+<span class="font-caption text-caption px-2 py-0.5 rounded-full bg-primary/10 text-primary shrink-0">Real-time</span>
+</div>
+<div class="p-3.5 rounded-xl bg-surface-container-low/75 backdrop-blur-md flex items-center gap-3.5 transform transition-all duration-300 hover:translate-x-1 hover:bg-surface-container">
+<div class="w-10 h-10 rounded-lg bg-secondary-container/30 flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[20px]">bolt</span>
+</div>
+<div class="min-w-0 flex-1">
+<div class="font-title-md text-title-md text-on-surface truncate">NextCampus Care Rapid Triage</div>
+<div class="font-caption text-caption text-on-surface-variant">Automated campus operations &amp; IT resolver routing</div>
+</div>
+<span class="font-caption text-caption px-2 py-0.5 rounded-full bg-secondary/10 text-secondary shrink-0">Instant</span>
+</div>
+<div class="p-3.5 rounded-xl bg-surface-container-low/75 backdrop-blur-md flex items-center gap-3.5 transform transition-all duration-300 hover:translate-x-1 hover:bg-surface-container">
+<div class="w-10 h-10 rounded-lg bg-tertiary-container/40 flex items-center justify-center text-tertiary shrink-0">
+<span class="material-symbols-outlined text-[20px]">eco</span>
+</div>
+<div class="min-w-0 flex-1">
+<div class="font-title-md text-title-md text-on-surface truncate">EcoCampus Sustainability Pulse</div>
+<div class="font-caption text-caption text-on-surface-variant">Live energy microgrid &amp; carbon offset analytics</div>
+</div>
+<span class="font-caption text-caption px-2 py-0.5 rounded-full bg-tertiary/10 text-tertiary shrink-0">Telemetry</span>
+</div>
+</div>
+<!-- Institutional Trust Footnote -->
+<div class="relative z-10 flex items-center justify-between pt-4 bg-surface-container-lowest/60 rounded-xl px-4 py-3 backdrop-blur-md">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-[18px]">verified_user</span>
+<span class="font-caption text-caption">Enterprise SAML 2.0 / Shibboleth Ready</span>
+</div>
+<div class="flex items-center gap-1.5 font-caption text-caption text-tertiary">
+<span class="inline-block w-2 h-2 rounded-full bg-primary"></span>
+<span>99.98% Systems Up</span>
+</div>
+</div>
+</div>
+<!-- RIGHT PANEL: Authentication Container & Interactive Form (~58%) -->
+<div class="w-full lg:w-[58%] flex items-center justify-center p-4 sm:p-8 lg:p-14 bg-surface-dim">
+<div class="w-full max-w-xl flex flex-col bg-surface-container rounded-2xl p-6 sm:p-10 shadow-xl transition-all">
+<!-- Segmented Tab Bar (Sign In vs Register) -->
+<div class="w-full bg-surface-container-lowest p-1.5 rounded-xl flex items-center mb-8 relative">
+<button class="flex-1 py-2.5 px-4 rounded-lg font-title-md text-title-md text-center transition-all duration-200 bg-primary-container text-on-primary-container font-semibold shadow-sm flex items-center justify-center gap-2" id="tab-btn-signin" onclick="switchAuthTab('signin')">
+<span class="material-symbols-outlined text-[18px]">login</span>
+<span>Sign In</span>
+</button>
+<button class="flex-1 py-2.5 px-4 rounded-lg font-title-md text-title-md text-center text-on-surface-variant hover:text-on-surface transition-all duration-200 flex items-center justify-center gap-2" id="tab-btn-register" onclick="switchAuthTab('register')">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+<span>New Student Registration</span>
+</button>
+</div>
+<!-- ============================== -->
+<!-- VIEW 1: SIGN IN FORM          -->
+<!-- ============================== -->
+<div class="flex flex-col space-y-6" id="view-signin">
+<div class="space-y-1">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Welcome Back</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Enter your verified college email or student roll credentials.
+            </p>
+</div>
+<!-- Informational Inline Banner -->
+<div class="px-4 py-3 rounded-xl bg-surface-container-high flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">domain</span>
+<div class="text-on-surface font-body-sm text-body-sm">
+<span class="font-semibold text-primary">Routing Notice:</span> Active directory authentication routes automatically through State University's Central Keycloak Gateway.
+            </div>
+</div>
+<!-- Form Fields -->
+<form class="space-y-4" onsubmit="event.preventDefault();">
+<!-- Email / ID Input -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-on-surface" for="signin-identifier">
+                Institutional Email or Student Roll ID
+              </label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">badge</span>
+<input class="w-full bg-surface-container-lowest text-on-surface font-body-md text-body-md pl-11 pr-4 py-3 rounded-xl placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="signin-identifier" name="identifier" placeholder="e.g. j.doe@campus.edu or 2026-CS-892" required="" type="text">
+</div>
+</div>
+<!-- Password Input -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="block font-label-md text-label-md text-on-surface" for="signin-password">
+                  Password
+                </label>
+<a class="font-label-sm text-label-sm text-secondary hover:underline transition-all" href="#">
+                  Forgot Password?
+                </a>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">lock</span>
+<input class="w-full bg-surface-container-lowest text-on-surface font-body-md text-body-md pl-11 pr-11 py-3 rounded-xl placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="signin-password" name="password" placeholder="••••••••••••" required="" type="password">
+<button aria-label="Toggle password visibility" class="absolute right-3.5 text-on-surface-variant hover:text-on-surface transition-colors p-0.5 rounded" onclick="togglePasswordVisibility('signin-password', 'signin-pw-icon')" type="button">
+<span class="material-symbols-outlined text-[20px]" id="signin-pw-icon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Session & Remember -->
+<div class="flex items-center justify-between pt-1">
+<label class="flex items-center gap-2.5 cursor-pointer select-none">
+<input checked="" class="w-4 h-4 rounded bg-surface-container-lowest text-primary-container focus:ring-primary" type="checkbox">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Remember device for 30 days</span>
+</label>
+<div class="flex items-center gap-1 font-caption text-caption text-tertiary">
+<span class="material-symbols-outlined text-[14px]">shield_locked</span>
+<span>FIPS 140-3</span>
+</div>
+</div>
+<!-- Primary Action -->
+<button class="w-full py-3.5 px-6 rounded-xl bg-primary-container hover:bg-inverse-primary text-on-primary-container font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:shadow-primary-container/25 active:scale-[0.99] mt-2" type="submit">
+<span>Sign In to NextCampus</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</form>
+<!-- Federation Divider -->
+<div class="relative my-4 flex items-center justify-center">
+<div class="w-full h-px bg-surface-variant"></div>
+<span class="absolute px-3 bg-surface-container font-caption text-caption text-on-surface-variant uppercase tracking-wider">
+              Or Connect via Authorized Campus IDP
+            </span>
+</div>
+<!-- SSO Alternative Buttons -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<button class="py-3 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors text-on-surface font-label-md text-label-md flex items-center justify-center gap-2.5" type="button">
+<span class="material-symbols-outlined text-primary text-[20px]">school</span>
+<span>Campus Portal SSO</span>
+</button>
+<button class="py-3 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors text-on-surface font-label-md text-label-md flex items-center justify-center gap-2.5" type="button">
+<span class="material-symbols-outlined text-secondary text-[20px]">cloud_sync</span>
+<span>Google Workspace Edu</span>
+</button>
+</div>
+</div>
+<!-- ============================== -->
+<!-- VIEW 2: REGISTRATION FORM     -->
+<!-- ============================== -->
+<div class="hidden flex flex-col space-y-6" id="view-register">
+<div class="space-y-1">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Join NextCampus</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Set up your profile to sync campus telemetry, dining, labs, and records.
+            </p>
+</div>
+<form class="space-y-4" onsubmit="event.preventDefault();">
+<!-- Full Name & Student ID in 2 Columns -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-on-surface" for="reg-name">Full Legal Name</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">person</span>
+<input class="w-full bg-surface-container-lowest text-on-surface font-body-md text-body-md pl-11 pr-4 py-2.5 rounded-xl placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="reg-name" placeholder="e.g. Sophia Sharma" required="" type="text">
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-on-surface" for="reg-id">Roll / Admission Number</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">pin</span>
+<input class="w-full bg-surface-container-lowest text-on-surface font-body-md text-body-md pl-11 pr-4 py-2.5 rounded-xl placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="reg-id" placeholder="e.g. 2026-CS-4190" required="" type="text">
+</div>
+</div>
+</div>
+<!-- College Email with Inline domain hint -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-on-surface" for="reg-email">Institutional Email Address</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">mail</span>
+<input class="w-full bg-surface-container-lowest text-on-surface font-body-md text-body-md pl-11 pr-4 py-2.5 rounded-xl placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="reg-email" placeholder="name@campus.edu" required="" type="email">
+</div>
+<div class="flex items-center gap-1.5 font-caption text-caption text-secondary pt-0.5">
+<span class="material-symbols-outlined text-[14px]">info</span>
+<span>Must end with @campus.edu for automatic department assignment.</span>
+</div>
+</div>
+<!-- Academic Dept & Degree -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-on-surface" for="reg-dept">Academic Department</label>
+<select class="w-full bg-surface-container-lowest text-on-surface font-body-md text-body-md px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="reg-dept">
+<option value="cs">Computer Science &amp; Eng.</option>
+<option value="ai">Artificial Intelligence &amp; Data</option>
+<option value="arch">School of Architecture</option>
+<option value="bio">Biomedical Engineering</option>
+<option value="biz">Business Analytics &amp; Mgmt</option>
+</select>
+</div>
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-on-surface" for="reg-batch">Graduating Cohort</label>
+<select class="w-full bg-surface-container-lowest text-on-surface font-body-md text-body-md px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="reg-batch">
+<option value="2028">Class of 2028 (Undergrad)</option>
+<option value="2027">Class of 2027 (Undergrad)</option>
+<option value="2026">Class of 2026 (Undergrad)</option>
+<option value="2025">Postgraduate Masters 2025</option>
+</select>
+</div>
+</div>
+<!-- Password & Confirmation -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-on-surface" for="reg-password">Create Master Password</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">lock_open</span>
+<input class="w-full bg-surface-container-lowest text-on-surface font-body-md text-body-md pl-11 pr-4 py-2.5 rounded-xl placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="reg-password" oninput="updatePasswordStrength(this.value)" placeholder="Minimum 8 characters" required="" type="password">
+</div>
+<!-- Interactive Password Strength Indicator -->
+<div class="pt-1 space-y-1.5">
+<div class="flex items-center justify-between font-caption text-caption">
+<span class="text-on-surface-variant">Complexity Assessment:</span>
+<span class="text-primary font-semibold" id="strength-label">Moderate</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-lowest rounded-full overflow-hidden flex gap-1">
+<div class="h-full w-1/3 bg-primary rounded-full transition-all" id="str-bar-1"></div>
+<div class="h-full w-1/3 bg-secondary rounded-full transition-all" id="str-bar-2"></div>
+<div class="h-full w-1/3 bg-surface-container-high rounded-full transition-all" id="str-bar-3"></div>
+</div>
+</div>
+</div>
+<!-- Terms Confirmation -->
+<div class="pt-1">
+<label class="flex items-start gap-2.5 cursor-pointer select-none">
+<input class="w-4 h-4 mt-0.5 rounded bg-surface-container-lowest text-primary-container focus:ring-primary" required="" type="checkbox">
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+                  I agree to the <a class="text-secondary hover:underline" href="#">Acceptable Use Policy</a>, FERPA student confidentiality protocols, and automated campus access terms.
+                </span>
+</label>
+</div>
+<!-- Registration CTA -->
+<button class="w-full py-3.5 px-6 rounded-xl bg-primary-container hover:bg-inverse-primary text-on-primary-container font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 hover:shadow-primary-container/25 active:scale-[0.99] mt-2" type="submit">
+<span class="material-symbols-outlined text-[20px]">how_to_reg</span>
+<span>Create Student Account</span>
+</button>
+</form>
+</div>
+<!-- Help & Verification Contact Footnote -->
+<div class="mt-8 pt-4 border-t border-surface-variant/40 flex flex-col sm:flex-row items-center justify-between text-on-surface-variant font-caption text-caption gap-2">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px]">headset_mic</span>
+<span>Need assistance? Contact Academic Registrar</span>
+</div>
+<a class="text-secondary hover:text-on-surface transition-colors font-medium" href="#">
+            IT Helpdesk Desk 24/7
+          </a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive Tab & Field Logic -->
+<script>
+  function switchAuthTab(tab) {
+    const signInView = document.getElementById('view-signin');
+    const registerView = document.getElementById('view-register');
+    const btnSignIn = document.getElementById('tab-btn-signin');
+    const btnRegister = document.getElementById('tab-btn-register');
+
+    if (tab === 'signin') {
+      signInView.classList.remove('hidden');
+      registerView.classList.add('hidden');
+
+      btnSignIn.className = "flex-1 py-2.5 px-4 rounded-lg font-title-md text-title-md text-center transition-all duration-200 bg-primary-container text-on-primary-container font-semibold shadow-sm flex items-center justify-center gap-2";
+      btnRegister.className = "flex-1 py-2.5 px-4 rounded-lg font-title-md text-title-md text-center text-on-surface-variant hover:text-on-surface transition-all duration-200 flex items-center justify-center gap-2";
+    } else {
+      registerView.classList.remove('hidden');
+      signInView.classList.add('hidden');
+
+      btnRegister.className = "flex-1 py-2.5 px-4 rounded-lg font-title-md text-title-md text-center transition-all duration-200 bg-primary-container text-on-primary-container font-semibold shadow-sm flex items-center justify-center gap-2";
+      btnSignIn.className = "flex-1 py-2.5 px-4 rounded-lg font-title-md text-title-md text-center text-on-surface-variant hover:text-on-surface transition-all duration-200 flex items-center justify-center gap-2";
+    }
+  }
+
+  function togglePasswordVisibility(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    if (!input || !icon) return;
+
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.textContent = 'visibility_off';
+    } else {
+      input.type = 'password';
+      icon.textContent = 'visibility';
+    }
+  }
+
+  function updatePasswordStrength(val) {
+    const label = document.getElementById('strength-label');
+    const bar1 = document.getElementById('str-bar-1');
+    const bar2 = document.getElementById('str-bar-2');
+    const bar3 = document.getElementById('str-bar-3');
+
+    if (!val || val.length === 0) {
+      label.textContent = "Required";
+      bar1.className = "h-full w-1/3 bg-surface-container-high rounded-full transition-all";
+      bar2.className = "h-full w-1/3 bg-surface-container-high rounded-full transition-all";
+      bar3.className = "h-full w-1/3 bg-surface-container-high rounded-full transition-all";
+      return;
+    }
+
+    if (val.length < 6) {
+      label.textContent = "Weak";
+      label.className = "text-error font-semibold";
+      bar1.className = "h-full w-1/3 bg-error rounded-full transition-all";
+      bar2.className = "h-full w-1/3 bg-surface-container-high rounded-full transition-all";
+      bar3.className = "h-full w-1/3 bg-surface-container-high rounded-full transition-all";
+    } else if (val.length < 10) {
+      label.textContent = "Moderate";
+      label.className = "text-secondary font-semibold";
+      bar1.className = "h-full w-1/3 bg-primary rounded-full transition-all";
+      bar2.className = "h-full w-1/3 bg-secondary rounded-full transition-all";
+      bar3.className = "h-full w-1/3 bg-surface-container-high rounded-full transition-all";
+    } else {
+      label.textContent = "Institutional Strength";
+      label.className = "text-primary font-semibold";
+      bar1.className = "h-full w-1/3 bg-primary rounded-full transition-all";
+      bar2.className = "h-full w-1/3 bg-primary rounded-full transition-all";
+      bar3.className = "h-full w-1/3 bg-primary rounded-full transition-all";
+    }
+  }
+</script></main><footer class="w-full bg-surface-container-lowest/90 backdrop-blur-md shadow-[0_-1px_8px_rgba(0,0,0,0.25)]"><div class="w-full px-gutter py-space-md flex flex-col md:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-caption text-caption"><div class="flex items-center gap-space-md flex-wrap justify-center"><span class="text-on-surface-variant">© 2025 NextCampus Systems. All rights reserved.</span><span class="text-outline-variant hidden sm:inline">•</span><span class="text-on-surface-variant">State University Identity &amp; Access Management</span></div><div class="flex items-center gap-space-lg flex-wrap justify-center"><div class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-[13px]">support_agent</span><span>IT Helpdesk: 1-800-555-CAMPUS (x4357)</span></div><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="campus-security-policy" href="#">Institutional Privacy &amp; Terms</a></div></div></footer></body></html>

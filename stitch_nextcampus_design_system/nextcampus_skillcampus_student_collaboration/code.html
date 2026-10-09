@@ -1,0 +1,972 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "on-secondary-fixed": "#3f0019",
+        "surface-container-lowest": "#110d0e",
+        "primary-fixed": "#ffd9de",
+        "tertiary-fixed-dim": "#e2bebf",
+        "on-background": "#eae0e1",
+        "secondary-container": "#8c1844",
+        "on-surface-variant": "#dfbfc3",
+        "tertiary": "#e2bebf",
+        "on-primary": "#660027",
+        "surface-dim": "#161213",
+        "outline": "#a68a8d",
+        "background": "#161213",
+        "on-error": "#690005",
+        "on-error-container": "#ffdad6",
+        "surface-bright": "#3d3839",
+        "on-surface": "#eae0e1",
+        "surface-variant": "#383335",
+        "surface-container-low": "#1f1a1b",
+        "on-tertiary-fixed": "#2a1617",
+        "primary": "#ffb2bf",
+        "on-secondary-fixed-variant": "#891541",
+        "primary-fixed-dim": "#ffb2bf",
+        "primary-container": "#ac274f",
+        "outline-variant": "#584144",
+        "inverse-primary": "#af2951",
+        "inverse-surface": "#eae0e1",
+        "on-primary-fixed-variant": "#8e0a3a",
+        "on-tertiary-container": "#f1cccd",
+        "secondary": "#ffb1c2",
+        "inverse-on-surface": "#342f30",
+        "on-tertiary": "#422a2b",
+        "surface-container-highest": "#383335",
+        "on-primary-fixed": "#3f0015",
+        "tertiary-container": "#715556",
+        "surface": "#161213",
+        "surface-tint": "#ffb2bf",
+        "secondary-fixed": "#ffd9e0",
+        "on-primary-container": "#ffc7d0",
+        "secondary-fixed-dim": "#ffb1c2",
+        "on-tertiary-fixed-variant": "#5a4041",
+        "error-container": "#93000a",
+        "surface-container-high": "#2d292a",
+        "on-secondary": "#66002c",
+        "error": "#ffb4ab",
+        "on-secondary-container": "#ff9bb3",
+        "surface-container": "#231e1f",
+        "tertiary-fixed": "#ffdadb"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "space-xs": "0.25rem",
+        "space-xl": "2rem",
+        "margin": "2rem",
+        "space-sm": "0.5rem",
+        "gutter-mobile": "1rem",
+        "margin-mobile": "1rem",
+        "space-lg": "1.5rem",
+        "space-md": "1rem",
+        "gutter": "1.5rem",
+        "space-2xl": "3rem"
+      },
+      "fontFamily": {
+        "headline-lg": ["Plus Jakarta Sans"],
+        "label-sm": ["Inter"],
+        "body-md": ["Inter"],
+        "display-hero-mobile": ["Plus Jakarta Sans"],
+        "headline-md": ["Plus Jakarta Sans"],
+        "display-hero": ["Plus Jakarta Sans"],
+        "caption": ["Inter"],
+        "body-sm": ["Inter"],
+        "label-md": ["Inter"],
+        "headline-lg-mobile": ["Plus Jakarta Sans"],
+        "title-md": ["Plus Jakarta Sans"],
+        "headline-sm": ["Plus Jakarta Sans"],
+        "body-lg": ["Inter"]
+      },
+      "fontSize": {
+        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+        "body-md": ["14px", {"lineHeight": "22.4px", "fontWeight": "400"}],
+        "display-hero-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+        "display-hero": ["40px", {"lineHeight": "48px", "fontWeight": "800"}],
+        "caption": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+        "body-sm": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+        "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+        "headline-lg-mobile": ["26px", {"lineHeight": "32px", "fontWeight": "700"}],
+        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+        "body-lg": ["15px", {"lineHeight": "24px", "fontWeight": "400"}]
+      }
+    }
+  }
+}</script></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen"><aside class="fixed left-0 top-0 h-screen w-72 bg-surface-container-low shadow-[0_2px_8px_rgba(0,0,0,0.35)] z-50 flex flex-col justify-between"><div class="flex flex-col flex-1 min-h-0"><div class="h-16 px-space-lg flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="Modern geometric logo mark for NextCampus combining the letter N with connected campus pathways and navigation geometry in Amaranth Purple and Blush on dark background. Brand logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XWCm2qWsHHFTa25g4HozXFtz-ZeJo76yKh2kdT1IHBGWMz1cZ_LoIKIBSBdlQsIB4mOarTQa6V3rkwZDZNkBouv7YGCLnr9X5DB-xphEyvjgpG57lNWbFZ7B-Upqdc94WWXRQuHhAcdDwWH7xyoo4Q5wc2qTVr9hLiSCcy3qSWwHIa0CjfoNkARFcyTlHZ0z0mWwWlCw3lUfNLGQGuwo_ydplkYRB49zHo-W-TadZ66_Yd5g9QmSSxq1Yv"><div class="flex flex-col"><span class="font-title-md text-title-md font-bold tracking-tight text-on-surface leading-tight">NextCampus</span><span class="font-caption text-caption text-on-surface-variant leading-none">Unified Operations</span></div></div><span class="px-space-xs py-0.5 rounded-full bg-surface-container-high text-primary font-caption text-caption uppercase tracking-wider font-semibold">HQ</span></div><div class="px-space-lg py-space-xs"><div class="flex items-center gap-space-sm px-space-sm py-1.5 rounded-lg bg-surface-container"><span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span><span class="font-label-sm text-label-sm text-on-surface-variant truncate">Node: Campus Main Core</span></div></div><nav class="flex-1 px-space-sm py-space-sm overflow-y-auto space-y-1" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_0_16px_rgba(172,39,79,0.25)]"><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-label-md text-label-md">Dashboard</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="nextcampus-ai" href="#"><span class="material-symbols-outlined text-[20px]">auto_awesome</span><span class="font-label-md text-label-md">NextCampus AI</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="campus-map" href="#"><span class="material-symbols-outlined text-[20px]">map</span><span class="font-label-md text-label-md">Campus Map</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="smartrooms" href="#"><span class="material-symbols-outlined text-[20px]">meeting_room</span><span class="font-label-md text-label-md">SmartRooms</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="campus-directory" href="#"><span class="material-symbols-outlined text-[20px]">contacts</span><span class="font-label-md text-label-md">Campus Directory</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="nextcampus-care" href="#"><span class="material-symbols-outlined text-[20px]">health_and_safety</span><span class="font-label-md text-label-md">NextCampus Care</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="ecocampus" href="#"><span class="material-symbols-outlined text-[20px]">eco</span><span class="font-label-md text-label-md">EcoCampus</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="skillcampus" href="#"><span class="material-symbols-outlined text-[20px]">psychology</span><span class="font-label-md text-label-md">SkillCampus</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-label-md text-label-md">Settings</span></a></nav></div><div class="p-space-md bg-surface-container-lowest/60"><div class="flex items-center justify-between text-on-surface-variant text-caption"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[16px] text-tertiary">wifi_tethering</span><span class="font-caption text-caption">Mesh: 99.98%</span></div><span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface font-caption text-caption font-mono">v4.18</span></div></div></aside><div class="pl-72 flex flex-col min-h-screen"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md flex-1 max-w-xl"><div class="relative w-full flex items-center"><span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[20px] pointer-events-none">search</span><input class="w-full h-10 pl-10 pr-space-md rounded-xl bg-surface-container-low text-on-surface placeholder:text-on-surface-variant font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-container transition-all" placeholder="Search campus buildings, smart rooms, labs, or services..." type="search"></div></div><div class="flex items-center gap-space-md"><button class="flex items-center gap-space-xs px-3 py-1.5 rounded-lg bg-error-container text-on-error-container hover:bg-on-error hover:text-on-error-container font-label-md text-label-md transition-colors" type="button"><span class="material-symbols-outlined text-[18px]">e911_emergency</span><span class="font-semibold">SOS Beacon</span></button><div class="h-5 w-px bg-surface-container-highest"></div><button class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-surface"></span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="flex flex-col text-right hidden sm:flex"><span class="font-label-md text-label-md text-on-surface font-medium leading-none">Student Portal</span><span class="font-caption text-caption text-on-surface-variant leading-none mt-1">Authorized Access</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(172,39,79,0.3)]"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-background flex-1 px-space-lg py-space-lg"><div class="flex flex-col w-full">
+<!-- Interactive State Engine Script for Filtering & Modals -->
+<script>
+    function toggleProjectFilter(el) {
+      document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.classList.remove('bg-primary-container', 'text-on-primary-container', 'shadow-md');
+        btn.classList.add('bg-surface-container', 'text-on-surface-variant');
+      });
+      el.classList.add('bg-primary-container', 'text-on-primary-container', 'shadow-md');
+      el.classList.remove('bg-surface-container', 'text-on-surface-variant');
+    }
+
+    function openApplyModal(projectName, leadName, openRole) {
+      const modal = document.getElementById('apply-modal');
+      const titleElem = document.getElementById('modal-project-title');
+      const leadElem = document.getElementById('modal-lead-target');
+      const roleElem = document.getElementById('modal-role-pill');
+      
+      titleElem.textContent = projectName;
+      leadElem.textContent = 'Recipient: Lead ' + leadName;
+      roleElem.textContent = openRole || 'Core Contributor';
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeApplyModal() {
+      const modal = document.getElementById('apply-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function triggerCreateProjectNotice() {
+      const toast = document.getElementById('notice-toast');
+      toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 4200);
+    }
+  </script>
+<!-- Highlight Active SkillCampus Tab in Host Sidebar (Continuity Enforcement) -->
+<script>
+    try {
+      const navLinks = document.querySelectorAll('aside nav a');
+      navLinks.forEach(link => {
+        if (link.getAttribute('data-path') === 'skillcampus') {
+          link.classList.add('bg-primary-container', 'text-on-primary-container', 'font-semibold', 'shadow-[0_0_16px_rgba(172,39,79,0.25)]');
+          link.classList.remove('text-on-surface-variant');
+        } else {
+          link.classList.remove('bg-primary-container', 'text-on-primary-container', 'font-semibold', 'shadow-[0_0_16px_rgba(172,39,79,0.25)]');
+        }
+      });
+    } catch(e) {}
+  </script>
+<!-- Top Page Header & Kicker Architecture -->
+<div class="flex flex-col gap-space-lg mb-space-xl">
+<!-- Breadcrumb / System Kicker -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm text-caption">
+<div class="flex items-center gap-space-xs font-mono tracking-wider uppercase text-on-surface-variant/90">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span class="font-bold text-primary">Academic Incubation</span>
+<span class="text-outline-variant">/</span>
+<span>Oxford Brookes Core • Campus Main</span>
+<span class="text-outline-variant">/</span>
+<span>Fall 2026 Term</span>
+<span class="text-outline-variant">/</span>
+<span class="text-secondary bg-surface-container-high px-2 py-0.5 rounded">NODE #SKILL-802</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-mono">
+<span class="material-symbols-outlined text-[15px] text-tertiary">hub</span>
+<span>Mesh Peering: 1,420 Active Student Nodes</span>
+</div>
+</div>
+<!-- Main Title Block & Top Actions -->
+<div class="flex flex-col xl:flex-row xl:items-end justify-between gap-space-lg">
+<div class="max-w-4xl space-y-2">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-md">
+<span class="material-symbols-outlined text-[24px]">psychology</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">
+            SkillCampus — Student Projects &amp; Peer Collaboration
+          </h1>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          Discover interdisciplinary research initiatives, connect with verified peer builders, assemble agile sprint crews, and deliver portfolio-grade hardware and software solutions across faculty labs and regional hackathons.
+        </p>
+</div>
+<!-- Action Button Group -->
+<div class="flex flex-wrap items-center gap-space-sm shrink-0">
+<button class="flex items-center gap-2 px-space-md py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all duration-150 shadow-sm hover:scale-[1.01]" onclick="triggerCreateProjectNotice()" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary">mark_chat_unread</span>
+<span>Collab Requests</span>
+<span class="px-1.5 py-0.5 rounded-full bg-primary-container text-on-primary-container text-caption font-bold">2</span>
+</button>
+<button class="flex items-center gap-2 px-space-lg py-2.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary-container/90 active:scale-95 font-label-md text-label-md font-semibold transition-all shadow-md" onclick="triggerCreateProjectNotice()" type="button">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span>+ Create Project</span>
+</button>
+</div>
+</div>
+<!-- Visual Interactive Banner: Campus Collaboration Spotlight -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-container-low shadow-xl p-space-lg">
+<div class="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-primary-container/20 blur-3xl pointer-events-none"></div>
+<div class="absolute right-40 -top-10 w-60 h-60 rounded-full bg-secondary-container/20 blur-3xl pointer-events-none"></div>
+<div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-center">
+<div class="lg:col-span-8 space-y-3">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high text-tertiary text-caption font-mono uppercase tracking-wider">
+<span class="material-symbols-outlined text-[15px] text-primary">rocket_launch</span>
+            Hackathon Sprint Season Active
+          </div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">
+            Turn Raw Technical Skills into High-Impact Campus Blueprints
+          </h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+            Whether you are training diffusion models in Turing Lab 4, soldering LoRaWAN nodes for EcoCampus, or crafting accessible web interfaces, get paired with complementary talent across Oxford Brookes schools.
+          </p>
+<div class="flex flex-wrap items-center gap-space-md pt-2">
+<button class="px-space-md py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold hover:bg-primary/90 transition-all flex items-center gap-1.5 shadow-sm" onclick="triggerCreateProjectNotice()" type="button">
+<span>Propose Team Blueprint</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+<div class="flex items-center gap-2 text-on-surface-variant text-caption">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<span>Faculty Mentors Assigned Automatically</span>
+</div>
+</div>
+</div>
+<!-- Banner Right Graphic / Live Pod Preview -->
+<div class="lg:col-span-4 flex justify-end">
+<div class="w-full max-w-xs rounded-xl bg-surface-container p-space-md shadow-lg space-y-3">
+<div class="flex items-center justify-between text-caption font-mono text-on-surface-variant">
+<span>INCUBATOR STATUS</span>
+<span class="text-primary font-bold">ACTIVE PODS</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center shrink-0">
+<svg class="w-9 h-9" viewBox="0 0 36 36">
+<path class="text-surface-variant" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="82, 100" stroke-linecap="round" stroke-width="3"></path>
+<text class="font-title-md font-bold fill-current text-on-surface text-center" font-size="9" text-anchor="middle" x="18" y="21">82%</text>
+</svg>
+</div>
+<div>
+<p class="font-title-md text-title-md text-on-surface font-semibold leading-tight">Cross-Discipline</p>
+<p class="font-caption text-caption text-on-surface-variant">Engineering + Design sync</p>
+</div>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-secondary w-[82%] rounded-full"></div>
+</div>
+<div class="flex justify-between items-center text-caption text-on-surface-variant">
+<span>Sprint Velocity</span>
+<span class="font-mono text-primary font-semibold">14.8 Pts / Day</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Telemetry & Ecosystem KPI Row (4 Stats Cards) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md mb-space-xl">
+<!-- Stat 1 -->
+<div class="rounded-xl bg-surface-container p-space-md shadow-md flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Active Incubator Projects</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">folder_open</span>
+</span>
+</div>
+<div class="mt-space-md">
+<h3 class="font-display-hero text-display-hero text-on-surface font-extrabold tracking-tight">38</h3>
+<div class="flex items-center gap-1.5 mt-1">
+<span class="px-1.5 py-0.5 rounded-full bg-primary-container/40 text-on-primary-container text-caption font-bold font-mono">+6 this week</span>
+<span class="font-caption text-caption text-on-surface-variant">open for applications</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary h-full w-3/4"></div>
+</div>
+</div>
+<!-- Stat 2 -->
+<div class="rounded-xl bg-surface-container p-space-md shadow-md flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Available Roles</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">badge</span>
+</span>
+</div>
+<div class="mt-space-md">
+<h3 class="font-display-hero text-display-hero text-on-surface font-extrabold tracking-tight">64</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-1 truncate">
+          AI/ML (22) • Frontend (18) • Robotics (14) • UX (10)
+        </p>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-3 overflow-hidden">
+<div class="bg-secondary h-full w-4/5"></div>
+</div>
+</div>
+<!-- Stat 3 -->
+<div class="rounded-xl bg-surface-container p-space-md shadow-md flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Multi-Department Sync</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[18px]">diversity_3</span>
+</span>
+</div>
+<div class="mt-space-md">
+<h3 class="font-display-hero text-display-hero text-on-surface font-extrabold tracking-tight">82%</h3>
+<div class="flex items-center gap-1.5 mt-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-tertiary text-caption font-mono">High Synergy</span>
+<span class="font-caption text-caption text-on-surface-variant">Computing + Design + Med</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-3 overflow-hidden">
+<div class="bg-tertiary-container h-full w-[82%]"></div>
+</div>
+</div>
+<!-- Stat 4 -->
+<div class="rounded-xl bg-surface-container p-space-md shadow-md flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Project Showcase Rate</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</span>
+</div>
+<div class="mt-space-md">
+<h3 class="font-display-hero text-display-hero text-on-surface font-extrabold tracking-tight">94%</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-1">
+          Presented at Oxford Demo Day &amp; Research Expo
+        </p>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary-container h-full w-[94%]"></div>
+</div>
+</div>
+</section>
+<!-- Discovery & Filtering Toolbar -->
+<section class="rounded-xl bg-surface-container p-space-md shadow-md mb-space-lg space-y-space-md">
+<!-- Top Search and View Switcher -->
+<div class="flex flex-col md:flex-row items-center gap-space-md">
+<div class="relative w-full flex-1">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] pointer-events-none">search</span>
+<input class="w-full h-11 pl-11 pr-4 rounded-xl bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/70 font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" id="project-search-input" placeholder="Search projects by title, keywords, research topic, or tech stack (e.g., PyTorch, ROS2, Next.js, Figma)..." type="text">
+</div>
+<div class="flex items-center gap-2 shrink-0 self-end md:self-auto">
+<div class="flex items-center rounded-lg bg-surface-container-low p-1">
+<button class="p-1.5 rounded-md bg-surface-container-high text-primary shadow-sm" title="Grid View" type="button">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+</button>
+<button class="p-1.5 rounded-md text-on-surface-variant hover:text-on-surface transition-colors" title="List View" type="button">
+<span class="material-symbols-outlined text-[18px]">table_rows</span>
+</button>
+</div>
+<select class="h-10 px-3 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer">
+<option>Sort: Latest First</option>
+<option>Sort: High Priority Roles</option>
+<option>Sort: Highest Progress</option>
+<option>Sort: Sprint Deadline Soonest</option>
+</select>
+</div>
+</div>
+<!-- Category Quick Filters (Pills) -->
+<div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+<button class="filter-pill shrink-0 px-3.5 py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm font-semibold transition-all shadow-sm" onclick="toggleProjectFilter(this)">
+        All Projects (38)
+      </button>
+<button class="filter-pill shrink-0 px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm transition-all" onclick="toggleProjectFilter(this)">
+        AI &amp; Machine Learning (14)
+      </button>
+<button class="filter-pill shrink-0 px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm transition-all" onclick="toggleProjectFilter(this)">
+        Robotics &amp; IoT (8)
+      </button>
+<button class="filter-pill shrink-0 px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm transition-all" onclick="toggleProjectFilter(this)">
+        Full-Stack &amp; Web (9)
+      </button>
+<button class="filter-pill shrink-0 px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm transition-all" onclick="toggleProjectFilter(this)">
+        Mobile Apps (5)
+      </button>
+<button class="filter-pill shrink-0 px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm transition-all" onclick="toggleProjectFilter(this)">
+        Sustainability &amp; CleanTech (4)
+      </button>
+</div>
+<!-- Secondary Parameter Dropdowns -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-sm pt-space-xs">
+<select class="h-9 px-3 rounded-lg bg-surface-container-low text-on-surface-variant font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer">
+<option>All Tech Stacks (PyTorch, React, ROS2...)</option>
+<option>PyTorch / TensorFlow</option>
+<option>Next.js / TypeScript</option>
+<option>C++ / Embedded FreeRTOS</option>
+<option>Flutter / Dart</option>
+</select>
+<select class="h-9 px-3 rounded-lg bg-surface-container-low text-on-surface-variant font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer">
+<option>All Roles (Frontend, ML, UI/UX...)</option>
+<option>Computer Vision Engineer</option>
+<option>Embedded Firmware Developer</option>
+<option>Product &amp; UI/UX Designer</option>
+<option>Full-Stack Engineer</option>
+</select>
+<select class="h-9 px-3 rounded-lg bg-surface-container-low text-on-surface-variant font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer">
+<option>All Commitments (Sprint, Term, Casual)</option>
+<option>Hackathon Sprint (1-2 Weeks)</option>
+<option>Term-Long Research (12 Weeks)</option>
+<option>Casual Portfolio Build (Part-Time)</option>
+</select>
+<select class="h-9 px-3 rounded-lg bg-surface-container-low text-on-surface-variant font-caption text-caption focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer">
+<option>All Stages (Ideation, Building, Demo)</option>
+<option>Ideation &amp; Architecture</option>
+<option>Active Sprint (Building)</option>
+<option>Pre-Launch Testing &amp; Polish</option>
+</select>
+</div>
+</section>
+<!-- Main Content Grid: Left Project Catalog (Col 8) + Right Peer Telemetry Panel (Col 4) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg mb-space-2xl">
+<!-- LEFT: Featured & Active Projects (8 Columns) -->
+<div class="lg:col-span-8 flex flex-col gap-space-lg">
+<!-- Card 1: Featured Project (AI/ML & Smart Mobility) -->
+<article class="relative rounded-2xl bg-surface-container p-space-lg shadow-xl hover:shadow-2xl transition-all duration-200 group flex flex-col justify-between">
+<div class="space-y-space-md">
+<!-- Header Metadata Row -->
+<div class="flex flex-wrap items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-md bg-primary-container text-on-primary-container text-caption font-bold tracking-wide uppercase font-mono">
+                AI &amp; SMART MOBILITY
+              </span>
+<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container-high text-tertiary text-caption font-mono">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                In Progress (Sprint 3)
+              </span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-secondary-container/50 text-secondary-fixed text-caption font-semibold">
+              Seeking 2 Roles
+            </span>
+</div>
+<!-- Project Title & Description -->
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors">
+              CampusNav AI: LiDAR &amp; Computer Vision Indoor Wayfinding
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1.5 leading-relaxed">
+              Developing an edge-computing visual localization engine for indoor navigation in multi-floor campus complexes like Alan Turing Hall, utilizing low-power sensor rigs and vector embeddings.
+            </p>
+</div>
+<!-- Department & Affiliation -->
+<div class="flex items-center gap-2 text-caption text-on-surface-variant/80 font-mono">
+<span class="material-symbols-outlined text-[16px] text-primary">apartment</span>
+<span>School of Computing &amp; Cybernetics • Autonomous Systems Lab</span>
+</div>
+<!-- Tech Stack Badges -->
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">PyTorch</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">Python</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">ROS2</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">OpenCV</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">WebSockets</span>
+</div>
+<!-- Team Avatars & Progress Bar Metrics -->
+<div class="pt-2 space-y-2">
+<div class="flex items-center justify-between text-caption font-mono">
+<span class="text-on-surface-variant">Sprint Completion Progress</span>
+<span class="text-primary font-bold">65% Completed</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[65%] rounded-full"></div>
+</div>
+<div class="flex flex-wrap items-center justify-between pt-2 gap-3">
+<div class="flex items-center gap-3">
+<span class="text-caption font-mono text-on-surface-variant">Team: 3 / 5</span>
+<div class="flex -space-x-2">
+<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-on-primary text-[10px] font-bold shadow-md" title="Aarav Sharma (Project Lead)">AS</div>
+<div class="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-on-secondary text-[10px] font-bold shadow-md" title="Priya K. (Computer Vision)">PK</div>
+<div class="w-7 h-7 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary text-[10px] font-bold shadow-md" title="Leo M. (Hardware Integration)">LM</div>
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant text-[11px] font-semibold">+2</div>
+</div>
+</div>
+<!-- Open Roles Badges -->
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary text-caption font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Need: Frontend/Three.js Dev
+                </span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-secondary text-caption font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Need: UI/UX Designer
+                </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card Action Footer -->
+<div class="flex items-center justify-between pt-space-lg mt-space-md border-t-0 bg-surface-container-low/40 -mx-space-lg -mb-space-lg p-space-md rounded-b-2xl">
+<div class="flex items-center gap-2 text-caption text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-tertiary">calendar_clock</span>
+<span>Sprint Demo: Dec 4, 2026</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">code</span>
+<span>Blueprint &amp; Repo</span>
+</button>
+<button class="px-4 py-1.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary-container/90 active:scale-95 font-label-md text-label-md font-semibold transition-all shadow-sm" onclick="openApplyModal('CampusNav AI: LiDAR Indoor Wayfinding', 'Aarav Sharma', 'Frontend / Three.js Engineer')" type="button">
+              Apply to Role
+            </button>
+</div>
+</div>
+</article>
+<!-- Card 2: Robotics & Hardware Prototype -->
+<article class="relative rounded-2xl bg-surface-container p-space-lg shadow-xl hover:shadow-2xl transition-all duration-200 group flex flex-col justify-between">
+<div class="space-y-space-md">
+<div class="flex flex-wrap items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-md bg-tertiary-container text-on-tertiary text-caption font-bold tracking-wide uppercase font-mono">
+                ROBOTICS &amp; HARDWARE
+              </span>
+<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container-high text-on-surface-variant text-caption font-mono">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Building Prototype
+              </span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-secondary-container/50 text-secondary-fixed text-caption font-semibold">
+              Seeking 1 Role
+            </span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors">
+              Autonomous Quad Mail &amp; Sample Courier Drone
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1.5 leading-relaxed">
+              Building a GPS-denied autonomous aerial courier system for transporting biological research samples and inter-departmental mail between Ramanujan Science Complex and Medical Block.
+            </p>
+</div>
+<div class="flex items-center gap-2 text-caption text-on-surface-variant/80 font-mono">
+<span class="material-symbols-outlined text-[16px] text-tertiary">precision_manufacturing</span>
+<span>Mechatronics &amp; Robotics Society • Innovation Hub Lab 4</span>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">PX4 Autopilot</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">C++</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">FreeRTOS</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">SolidWorks</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">Telemetry Mesh</span>
+</div>
+<div class="pt-2 space-y-2">
+<div class="flex items-center justify-between text-caption font-mono">
+<span class="text-on-surface-variant">Airframe &amp; Avionics Validation</span>
+<span class="text-tertiary font-bold">40% Completed</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[40%] rounded-full"></div>
+</div>
+<div class="flex flex-wrap items-center justify-between pt-2 gap-3">
+<div class="flex items-center gap-3">
+<span class="text-caption font-mono text-on-surface-variant">Team: 4 / 5</span>
+<div class="flex -space-x-2">
+<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-on-primary text-[10px] font-bold shadow-md" title="Elena Rostova (Lead)">ER</div>
+<div class="w-7 h-7 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary text-[10px] font-bold shadow-md" title="Devan Patel (Avionics)">DP</div>
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface text-[10px] font-bold shadow-md" title="Farhan K. (Firmware)">FK</div>
+<div class="w-7 h-7 rounded-full bg-tertiary flex items-center justify-center text-on-tertiary text-[10px] font-bold shadow-md" title="Mei Lin (Aero)">ML</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary text-caption font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Need: Embedded Firmware Engineer
+                </span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-lg mt-space-md bg-surface-container-low/40 -mx-space-lg -mb-space-lg p-space-md rounded-b-2xl">
+<div class="flex items-center gap-2 text-caption text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-tertiary">flight_takeoff</span>
+<span>Flight Test Window: Nov 28</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>View Blueprint</span>
+</button>
+<button class="px-4 py-1.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary-container/90 active:scale-95 font-label-md text-label-md font-semibold transition-all shadow-sm" onclick="openApplyModal('Autonomous Drone Courier', 'Elena Rostova', 'Embedded Firmware Engineer')" type="button">
+              Apply to Role
+            </button>
+</div>
+</div>
+</article>
+<!-- Card 3: Web & Student Services (PeerTutor) -->
+<article class="relative rounded-2xl bg-surface-container p-space-lg shadow-xl hover:shadow-2xl transition-all duration-200 group flex flex-col justify-between">
+<div class="space-y-space-md">
+<div class="flex flex-wrap items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-secondary text-caption font-bold tracking-wide uppercase font-mono">
+                WEB &amp; PRODUCTIVITY
+              </span>
+<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container-high text-on-surface-variant text-caption font-mono">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                Ideation &amp; Specs
+              </span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-primary-container/40 text-on-primary-container text-caption font-semibold">
+              Seeking 3 Roles
+            </span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors">
+              PeerTutor: Algorithmic Study Group &amp; Skill Exchange
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1.5 leading-relaxed">
+              A peer-to-peer knowledge matching platform pairing junior engineering students with verified senior mentors based on course syllabi, homework milestones, and free time slots.
+            </p>
+</div>
+<div class="flex items-center gap-2 text-caption text-on-surface-variant/80 font-mono">
+<span class="material-symbols-outlined text-[16px] text-secondary">school</span>
+<span>Student Union Academic Council • Turing Hall Level 2</span>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">Next.js</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">TypeScript</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">Tailwind CSS</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">Supabase</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">PostgreSQL</span>
+</div>
+<div class="pt-2 space-y-2">
+<div class="flex items-center justify-between text-caption font-mono">
+<span class="text-on-surface-variant">Specification &amp; UI Mockups</span>
+<span class="text-secondary font-bold">25% Completed</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[25%] rounded-full"></div>
+</div>
+<div class="flex flex-wrap items-center justify-between pt-2 gap-3">
+<div class="flex items-center gap-3">
+<span class="text-caption font-mono text-on-surface-variant">Team: 2 / 5</span>
+<div class="flex -space-x-2">
+<div class="w-7 h-7 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary text-[10px] font-bold shadow-md" title="Sarah Chen (Lead)">SC</div>
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface text-[10px] font-bold shadow-md" title="Tariq Z. (Backend)">TZ</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-caption font-medium">Need: Full-Stack Dev</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-caption font-medium">Need: Product Designer</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-caption font-medium">Need: QA Tester</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-lg mt-space-md bg-surface-container-low/40 -mx-space-lg -mb-space-lg p-space-md rounded-b-2xl">
+<div class="flex items-center gap-2 text-caption text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-tertiary">groups</span>
+<span>Target: Spring 2027 Beta</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">info</span>
+<span>View Details</span>
+</button>
+<button class="px-4 py-1.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary-container/90 active:scale-95 font-label-md text-label-md font-semibold transition-all shadow-sm" onclick="openApplyModal('PeerTutor: Study Group Platform', 'Sarah Chen', 'Full-Stack Developer')" type="button">
+              Apply to Role
+            </button>
+</div>
+</div>
+</article>
+<!-- Card 4: CleanTech & EcoCampus Crossover -->
+<article class="relative rounded-2xl bg-surface-container p-space-lg shadow-xl hover:shadow-2xl transition-all duration-200 group flex flex-col justify-between">
+<div class="space-y-space-md">
+<div class="flex flex-wrap items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-md bg-tertiary-container text-on-tertiary text-caption font-bold tracking-wide uppercase font-mono">
+                CLEANTECH &amp; IOT
+              </span>
+<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container-high text-tertiary text-caption font-mono">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                Validation Phase
+              </span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-secondary-container/50 text-secondary-fixed text-caption font-semibold">
+              Seeking 1 Role
+            </span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors">
+              EcoSense: Micro-Hydro &amp; Solar Harvester Telemetry
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1.5 leading-relaxed">
+              Deploying ESP32 IoT sensor nodes across campus rainwater bioswales to measure micro-hydro potential and stormwater runoff flow velocity for the Oxford Brookes Net-Zero Charter.
+            </p>
+</div>
+<div class="flex items-center gap-2 text-caption text-on-surface-variant/80 font-mono">
+<span class="material-symbols-outlined text-[16px] text-primary">eco</span>
+<span>Dept. of Sustainable Technologies &amp; Environmental Engineering</span>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">ESP32 / C++</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">MQTT</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">Grafana</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">TimescaleDB</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low text-on-surface text-caption font-mono font-medium">LoRaWAN</span>
+</div>
+<div class="pt-2 space-y-2">
+<div class="flex items-center justify-between text-caption font-mono">
+<span class="text-on-surface-variant">Sensor Array Deployed</span>
+<span class="text-primary font-bold">80% Completed</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[80%] rounded-full"></div>
+</div>
+<div class="flex flex-wrap items-center justify-between pt-2 gap-3">
+<div class="flex items-center gap-3">
+<span class="text-caption font-mono text-on-surface-variant">Team: 3 / 4</span>
+<div class="flex -space-x-2">
+<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-on-primary text-[10px] font-bold shadow-md" title="Kavita Rao (Lead)">KR</div>
+<div class="w-7 h-7 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary text-[10px] font-bold shadow-md" title="Nils Bergman (Sensors)">NB</div>
+<div class="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-on-secondary text-[10px] font-bold shadow-md" title="Chloe Martin (Hydrology)">CM</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary text-caption font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Need: Data Visualization / Grafana Dev
+                </span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-lg mt-space-md bg-surface-container-low/40 -mx-space-lg -mb-space-lg p-space-md rounded-b-2xl">
+<div class="flex items-center gap-2 text-caption text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-tertiary">energy_savings_leaf</span>
+<span>EcoCampus Gateway Integrated</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">analytics</span>
+<span>View Telemetry</span>
+</button>
+<button class="px-4 py-1.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary-container/90 active:scale-95 font-label-md text-label-md font-semibold transition-all shadow-sm" onclick="openApplyModal('EcoSense Telemetry', 'Kavita Rao', 'Data Visualization / Grafana Dev')" type="button">
+              Apply to Role
+            </button>
+</div>
+</div>
+</article>
+</div>
+<!-- RIGHT: Side Panel & Peer Telemetry (4 Columns) -->
+<aside class="lg:col-span-4 flex flex-col gap-space-lg">
+<!-- Panel 1: Student Collaboration Profile (Aarav Sharma) -->
+<div class="rounded-2xl bg-surface-container p-space-lg shadow-xl space-y-space-md">
+<div class="flex items-center justify-between">
+<span class="font-mono text-caption uppercase text-on-surface-variant font-bold">Student Profile</span>
+<span class="px-2 py-0.5 rounded bg-primary-container text-on-primary-container text-caption font-mono font-semibold">Active Search</span>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center text-on-primary text-title-md font-bold shadow-md">
+            AS
+          </div>
+<div>
+<h4 class="font-title-md text-title-md font-bold text-on-surface">Aarav Sharma</h4>
+<p class="font-caption text-caption text-on-surface-variant">Computer Science '25 • Level 4 Student</p>
+<div class="flex items-center gap-1 text-primary text-caption mt-0.5">
+<span class="material-symbols-outlined text-[14px]">school</span>
+<span>Dept. of Computing &amp; Cybernetics</span>
+</div>
+</div>
+</div>
+<div class="space-y-2 pt-2">
+<span class="font-caption text-caption text-on-surface-variant font-mono uppercase tracking-wider block">Verified Technical Competencies</span>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-on-surface text-caption font-mono">Python (Advanced)</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-on-surface text-caption font-mono">React / Next.js</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-on-surface text-caption font-mono">Spatial GIS</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-on-surface text-caption font-mono">System Architecture</span>
+</div>
+</div>
+<div class="rounded-xl bg-surface-container-low p-3 space-y-2 text-caption">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span>Weekly Bandwidth:</span>
+<span class="font-semibold text-on-surface">10–15 hrs / week</span>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant">
+<span>Current Goal:</span>
+<span class="text-secondary font-medium">Hackathon 2026 Team</span>
+</div>
+</div>
+<!-- Active Application Status -->
+<div class="rounded-xl bg-surface-container-high/60 p-3 space-y-1.5">
+<div class="flex items-center justify-between">
+<span class="font-caption text-caption text-on-surface-variant uppercase font-mono">Active Application</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/40 text-secondary-fixed text-[10px] font-bold">Under Review</span>
+</div>
+<p class="font-body-sm text-body-sm font-semibold text-on-surface">EcoSense: Micro-Hydro Sensor</p>
+<p class="font-caption text-caption text-on-surface-variant">Applied as Data Visualization Dev • Lead Review: Kavita Rao</p>
+</div>
+<button class="w-full py-2.5 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-md text-label-md transition-colors flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+<span>Edit Skills &amp; Availability</span>
+</button>
+</div>
+<!-- Panel 2: Live Campus Skill Demand Index -->
+<div class="rounded-2xl bg-surface-container p-space-lg shadow-xl space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">trending_up</span>
+<h4 class="font-title-md text-title-md font-bold text-on-surface">Skill Demand Index</h4>
+</div>
+<span class="font-caption text-caption text-on-surface-variant font-mono">LIVE CAMPUS MESH</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant">
+          Real-time scarcity index calculated from open project roles and active research lab requests across colleges.
+        </p>
+<div class="space-y-3 pt-1">
+<!-- Skill 1 -->
+<div class="space-y-1">
+<div class="flex justify-between items-center text-caption font-mono">
+<span class="text-on-surface font-medium">Computer Vision / PyTorch</span>
+<span class="text-primary font-bold">18 open slots • Very High</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[92%] rounded-full"></div>
+</div>
+</div>
+<!-- Skill 2 -->
+<div class="space-y-1">
+<div class="flex justify-between items-center text-caption font-mono">
+<span class="text-on-surface font-medium">Full-Stack Next.js / TypeScript</span>
+<span class="text-secondary font-bold">15 open slots • High</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[78%] rounded-full"></div>
+</div>
+</div>
+<!-- Skill 3 -->
+<div class="space-y-1">
+<div class="flex justify-between items-center text-caption font-mono">
+<span class="text-on-surface font-medium">UI/UX &amp; Figma Prototyping</span>
+<span class="text-secondary font-bold">12 open slots • High</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[65%] rounded-full"></div>
+</div>
+</div>
+<!-- Skill 4 -->
+<div class="space-y-1">
+<div class="flex justify-between items-center text-caption font-mono">
+<span class="text-on-surface font-medium">Embedded C++ &amp; IoT / RTOS</span>
+<span class="text-tertiary font-bold">11 open slots • Moderate</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[55%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Panel 3: Upcoming Milestones & Sprints -->
+<div class="rounded-2xl bg-surface-container p-space-lg shadow-xl space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">event_upcoming</span>
+<h4 class="font-title-md text-title-md font-bold text-on-surface">Upcoming Milestones</h4>
+</div>
+<span class="font-caption text-caption text-on-surface-variant font-mono">TERM CALENDAR</span>
+</div>
+<div class="space-y-3">
+<!-- Milestone 1 -->
+<div class="flex items-start gap-3 p-2.5 rounded-xl bg-surface-container-low">
+<div class="px-2 py-1.5 rounded-lg bg-surface-container text-center shrink-0">
+<span class="block font-caption text-caption text-primary font-bold uppercase">NOV</span>
+<span class="block font-title-md text-title-md text-on-surface font-extrabold leading-none">12</span>
+</div>
+<div class="min-w-0">
+<p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">MU Hackathon 2026 Registration</p>
+<p class="font-caption text-caption text-on-surface-variant">Final roster freeze for multi-discipline squads</p>
+</div>
+</div>
+<!-- Milestone 2 -->
+<div class="flex items-start gap-3 p-2.5 rounded-xl bg-surface-container-low">
+<div class="px-2 py-1.5 rounded-lg bg-surface-container text-center shrink-0">
+<span class="block font-caption text-caption text-secondary font-bold uppercase">DEC</span>
+<span class="block font-title-md text-title-md text-on-surface font-extrabold leading-none">04</span>
+</div>
+<div class="min-w-0">
+<p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Fall Research Demo Day</p>
+<p class="font-caption text-caption text-on-surface-variant">Live hardware showcases at Turing Atrium</p>
+</div>
+</div>
+<!-- Milestone 3 -->
+<div class="flex items-start gap-3 p-2.5 rounded-xl bg-surface-container-low">
+<div class="px-2 py-1.5 rounded-lg bg-surface-container text-center shrink-0">
+<span class="block font-caption text-caption text-tertiary font-bold uppercase">THU</span>
+<span class="block font-title-md text-title-md text-on-surface font-extrabold leading-none">6P</span>
+</div>
+<div class="min-w-0">
+<p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Cross-Department Pitch Night</p>
+<p class="font-caption text-caption text-on-surface-variant">Weekly informal lightning pitches &amp; speed matching</p>
+</div>
+</div>
+</div>
+<button class="w-full py-2 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-caption text-caption transition-colors flex items-center justify-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">calendar_add_on</span>
+<span>Sync Academic Sprint Calendar (.ics)</span>
+</button>
+</div>
+</aside>
+</div>
+<!-- Institutional Prototype Transparency Notice -->
+<div class="rounded-xl bg-surface-container-low p-space-md shadow-md text-caption text-on-surface-variant flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0">info</span>
+<p class="font-caption text-caption leading-relaxed">
+<strong class="text-on-surface font-semibold">SkillCampus Prototype Notice:</strong> Student profiles, project listings, and peer dispatch records are simulated prototype entities for institutional hackathon demonstration. Application workflows seamlessly integrate with the Oxford Brookes student directory and campus lab allocation API.
+      </p>
+</div>
+<div class="flex items-center gap-2 shrink-0 font-mono text-tertiary">
+<span>Mesh Protocol: BrookesPeer-v4</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</div>
+</div>
+<!-- Interactive Apply to Role Modal (Hidden by Default) -->
+<div class="fixed inset-0 z-50 bg-surface-dim/80 backdrop-blur-md hidden items-center justify-center p-4" id="apply-modal">
+<div class="w-full max-w-lg rounded-2xl bg-surface-container p-space-lg shadow-2xl space-y-space-md transform transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[18px]">send</span>
+</div>
+<h3 class="font-title-md text-title-md font-bold text-on-surface">Submit Collaboration Application</h3>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface p-1 rounded-lg hover:bg-surface-container-high" onclick="closeApplyModal()" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="space-y-1">
+<p class="font-headline-sm text-headline-sm font-bold text-primary" id="modal-project-title">CampusNav AI</p>
+<div class="flex items-center gap-2 text-caption">
+<span class="text-on-surface-variant font-mono" id="modal-lead-target">Recipient: Lead Aarav S.</span>
+<span>•</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-secondary font-semibold" id="modal-role-pill">Frontend Dev</span>
+</div>
+</div>
+<div class="space-y-3 pt-2">
+<label class="block font-label-sm text-label-sm text-on-surface font-medium">Brief Introduction &amp; Relevant Experience</label>
+<textarea class="w-full p-3 rounded-xl bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/70 font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="Briefly state your weekly availability, what you plan to build for this sprint, and link any GitHub repos or Figma portfolios..." rows="4"></textarea>
+</div>
+<div class="rounded-xl bg-surface-container-low p-3 text-caption text-on-surface-variant flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">verified_user</span>
+<span>Attach Verified Brookes Transcripts &amp; Skills</span>
+</div>
+<input checked="" class="rounded accent-primary w-4 h-4" type="checkbox">
+</div>
+<div class="flex items-center justify-end gap-space-sm pt-2">
+<button class="px-4 py-2 rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high font-label-md text-label-md transition-colors" onclick="closeApplyModal()" type="button">
+          Cancel
+        </button>
+<button class="px-5 py-2 rounded-lg bg-primary-container text-on-primary hover:bg-primary-container/90 font-label-md text-label-md font-semibold transition-all shadow-md" onclick="closeApplyModal(); triggerCreateProjectNotice();" type="button">
+          Dispatch Application
+        </button>
+</div>
+</div>
+</div>
+<!-- Notification Toast for Propose / Action Confirmation -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-4 opacity-0 pointer-events-none transition-all duration-300 max-w-sm rounded-xl bg-surface-container-high text-on-surface p-space-md shadow-2xl flex items-center gap-3" id="notice-toast">
+<div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+<div class="flex-1">
+<p class="font-title-md text-title-md font-semibold leading-tight">Request Dispatched</p>
+<p class="font-caption text-caption text-on-surface-variant">Your application has been queued to the project lead's dashboard.</p>
+</div>
+</div>
+</div></main><footer class="w-full bg-surface-container-low/70 py-space-md px-space-lg"><div class="flex flex-col md:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-caption text-caption"><span>NextCampus OS • Campus Student Portal • All systems operational</span><div class="flex items-center gap-space-xs text-on-surface"><span class="material-symbols-outlined text-[14px] text-primary">sync</span><span>Node synchronized with institutional network backbone</span></div></div></footer></div></body></html>

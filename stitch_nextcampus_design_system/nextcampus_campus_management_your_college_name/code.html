@@ -1,0 +1,926 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-dim": "#161213", "secondary-fixed-dim": "#ffb1c2", "on-surface-variant": "#dfbfc3", "tertiary-fixed-dim": "#e2bebf", "surface-container-highest": "#383335", "inverse-surface": "#eae0e1", "tertiary-fixed": "#ffdadb", "on-tertiary-fixed": "#2a1617", "on-primary-container": "#ffc7d0", "error": "#ffb4ab", "on-error": "#690005", "on-secondary": "#66002c", "on-tertiary-container": "#f1cccd", "outline": "#a68a8d", "surface-variant": "#383335", "on-secondary-fixed-variant": "#891541", "on-background": "#eae0e1", "inverse-primary": "#af2951", "on-tertiary-fixed-variant": "#5a4041", "primary-container": "#ac274f", "error-container": "#93000a", "inverse-on-surface": "#342f30", "secondary-container": "#8c1844", "on-tertiary": "#422a2b", "primary-fixed-dim": "#ffb2bf", "secondary": "#ffb1c2", "primary": "#ffb2bf", "on-secondary-fixed": "#3f0019", "surface-tint": "#ffb2bf", "surface-container-lowest": "#110d0e", "background": "#161213", "secondary-fixed": "#ffd9e0", "tertiary-container": "#715556", "on-primary-fixed-variant": "#8e0a3a", "tertiary": "#e2bebf", "on-primary-fixed": "#3f0015", "outline-variant": "#584144", "surface": "#161213", "surface-container": "#231e1f", "surface-container-high": "#2d292a", "primary-fixed": "#ffd9de", "surface-bright": "#3d3839", "on-secondary-container": "#ff9bb3", "on-error-container": "#ffdad6", "on-primary": "#660027", "surface-container-low": "#1f1a1b", "on-surface": "#eae0e1" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "2rem", "space-md": "1rem", "margin": "2rem", "gutter-mobile": "1rem", "space-lg": "1.5rem", "space-xs": "0.25rem", "gutter": "1.5rem", "space-2xl": "3rem", "space-sm": "0.5rem", "margin-mobile": "1rem" }, "fontFamily": { "headline-sm": ["Plus Jakarta Sans"], "body-sm": ["Inter"], "display-hero-mobile": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "label-md": ["Inter"], "label-sm": ["Inter"], "caption": ["Inter"], "body-md": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "display-hero": ["Plus Jakarta Sans"] }, "fontSize": { "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "body-sm": ["13px", { "lineHeight": "20px", "fontWeight": "400" }], "display-hero-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "800" }], "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }], "label-md": ["13px", { "lineHeight": "18px", "fontWeight": "500" }], "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "caption": ["11px", { "lineHeight": "14px", "fontWeight": "500" }], "body-md": ["14px", { "lineHeight": "22.4px", "fontWeight": "400" }], "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }], "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "32px", "fontWeight": "700" }], "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }], "display-hero": ["40px", { "lineHeight": "48px", "fontWeight": "800" }] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 h-16 bg-surface-container/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.35)]"><div class="h-16 w-full px-gutter flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><img alt="Modern geometric logo mark for NextCampus combining the letter N with connected campus pathways and navigation geometry in Amaranth Purple and Blush on dark background. Brand logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XWCm2qWsHHFTa25g4HozXFtz-ZeJo76yKh2kdT1IHBGWMz1cZ_LoIKIBSBdlQsIB4mOarTQa6V3rkwZDZNkBouv7YGCLnr9X5DB-xphEyvjgpG57lNWbFZ7B-Upqdc94WWXRQuHhAcdDwWH7xyoo4Q5wc2qTVr9hLiSCcy3qSWwHIa0CjfoNkARFcyTlHZ0z0mWwWlCw3lUfNLGQGuwo_ydplkYRB49zHo-W-TadZ66_Yd5g9QmSSxq1Yv"><div class="flex items-center gap-space-sm"><span class="font-title-md text-title-md text-on-surface tracking-tight">NextCampus</span><span class="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary-container/40 text-secondary font-label-sm text-label-sm"><span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>Ops HQ</span></div><div class="hidden xl:flex items-center pl-space-sm"><span class="font-caption text-caption text-on-surface-variant bg-surface-container-high px-2 py-1 rounded">Node: Operations Core / Admin Console v4.2</span></div></div><div class="flex-1 max-w-xl mx-space-md hidden md:block"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-3 text-on-surface-variant pointer-events-none text-[18px]">search</span><input class="w-full bg-surface-container-low pl-10 pr-4 py-2 rounded-lg font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Search facilities, staff records, audit logs, or tickets..." type="text"></div></div><div class="flex items-center gap-space-md"><button class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-secondary-container transition-colors shadow-[0_0_12px_rgba(172,39,79,0.3)]" type="button"><span class="material-symbols-outlined text-[18px]">campaign</span><span class="hidden sm:inline">Broadcast Alert</span></button><button class="relative p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1 right-1 w-4 h-4 rounded-full bg-primary-container text-on-primary font-caption text-caption flex items-center justify-center font-bold">5</span></button><div class="flex items-center gap-space-sm pl-space-sm"><div class="hidden md:flex flex-col text-right"><span class="font-label-md text-label-md text-on-surface leading-tight">Dr. Eleanor Vance</span><span class="font-caption text-caption text-on-surface-variant flex items-center justify-end gap-1.5">Registrar &amp; Operations<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-secondary font-semibold">SuperAdmin</span></span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><aside class="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-low z-40 flex flex-col justify-between shadow-[2px_0_12px_rgba(0,0,0,0.3)]"><div class="p-space-md flex flex-col gap-space-xs overflow-y-auto"><div class="px-3 py-2 text-on-surface-variant font-caption text-caption uppercase tracking-wider font-semibold">Campus Operations</div><nav class="flex flex-col gap-1" data-active-classes="bg-primary-container text-white font-semibold rounded-lg shadow-[0_0_16px_rgba(172,39,79,0.4)]"><a class="flex items-center px-3 py-2.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="overview-dashboard" href="#">Overview / Dashboard</a><a aria-current="page" class="flex items-center gap-2 px-3 py-2.5 transition-colors bg-primary-container text-white font-semibold rounded-lg shadow-[0_0_16px_rgba(172,39,79,0.4)]" data-path="campus-management" href="#"><span class="w-1.5 h-1.5 rounded-full bg-secondary shrink-0"></span>Campus Management</a><a class="flex items-center px-3 py-2.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="complaint-admin" href="#">Complaint Admin</a><a class="flex items-center px-3 py-2.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="smartrooms-and-space" href="#">SmartRooms &amp; Space</a><a class="flex items-center px-3 py-2.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="sustainability-ops" href="#">Sustainability Ops</a><div class="my-2 px-3 py-1 text-on-surface-variant font-caption text-caption uppercase tracking-wider font-semibold">Governance &amp; Admin</div><a class="flex items-center px-3 py-2.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="user-and-role-access" href="#">User &amp; Role Access</a><a class="flex items-center px-3 py-2.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="audit-and-security-logs" href="#">Audit &amp; Security Logs</a><a class="flex items-center px-3 py-2.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="system-settings" href="#">System Settings</a></nav></div><div class="p-space-md bg-surface-container/60 m-3 rounded-lg flex flex-col gap-1"><div class="flex items-center gap-2 font-caption text-caption text-secondary font-semibold"><span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span><span>Operational Node</span></div><p class="font-caption text-caption text-on-surface-variant leading-tight">System Health: 99.98% Nominal • Core Mesh v4.18</p></div></aside><div class="pl-64 flex flex-col min-h-screen"><main class="w-full flex-1 pt-16 px-gutter pb-space-xl bg-background"><div class="flex flex-col w-full">
+<!-- Operational Kicker & Breadcrumb Bar -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm mb-space-sm">
+<div class="flex items-center gap-2">
+<span class="inline-block w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span class="font-caption text-caption text-secondary uppercase tracking-widest font-semibold">
+        Facility Asset Inventory &amp; Spatial Master Data • Apex Polytechnic Institute • Node: CAMPUS-CORE-V4.2
+      </span>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-caption text-caption">
+<span class="inline-flex items-center gap-1 bg-surface-container-high px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-secondary text-[14px]">cell_tower</span>
+        LoRaWAN Mesh: 99.4% Latency 14ms
+      </span>
+<span class="hidden sm:inline-flex items-center gap-1 bg-surface-container-high px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-primary text-[14px]">verified</span>
+        BIM / GIS Synchronized
+      </span>
+</div>
+</div>
+<!-- Page Title & Top Action Bar -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md mb-space-lg">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+        Campus Infrastructure &amp; Space Management
+      </h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl mt-0.5">
+        Authoritative spatial directory of campus facilities, academic departments, floor topologies, and sensor-monitored smart room allocation across Apex Quad precincts.
+      </p>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm shrink-0">
+<button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md hover:bg-surface-variant transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary">sync_alt</span>
+<span>Sync BIM &amp; IoT CAD</span>
+</button>
+<button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md hover:bg-surface-variant transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px] text-tertiary">download</span>
+<span>Export Spatial Blueprint</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-secondary-container transition-all shadow-[0_0_16px_rgba(172,39,79,0.4)]" id="open-add-building-modal" type="button">
+<span class="material-symbols-outlined text-[18px]">add_business</span>
+<span>+ Add New Building</span>
+</button>
+</div>
+</div>
+<!-- Quick KPI Tiles Row -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-md mb-space-lg">
+<div class="bg-surface-variant rounded-xl p-space-md shadow-md relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant">Total Facilities</span>
+<span class="material-symbols-outlined text-primary text-[20px]">apartment</span>
+</div>
+<div class="mt-2">
+<div class="font-display-hero text-display-hero text-on-surface leading-none tracking-tight">14</div>
+<div class="font-caption text-caption text-secondary mt-1 flex items-center gap-1">
+<span>10 Academic</span> • <span>2 Res</span> • <span>2 Rec</span>
+</div>
+</div>
+<div class="absolute -right-4 -bottom-4 w-16 h-16 bg-primary/10 rounded-full blur-xl pointer-events-none"></div>
+</div>
+<div class="bg-surface-variant rounded-xl p-space-md shadow-md relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant">Monitored Floor Plates</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">layers</span>
+</div>
+<div class="mt-2">
+<div class="font-display-hero text-display-hero text-on-surface leading-none tracking-tight">48</div>
+<div class="font-caption text-caption text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="text-primary font-semibold">100%</span> 3D Digital Twin Coverage
+        </div>
+</div>
+<div class="absolute -right-4 -bottom-4 w-16 h-16 bg-secondary-container/20 rounded-full blur-xl pointer-events-none"></div>
+</div>
+<div class="bg-surface-variant rounded-xl p-space-md shadow-md relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant">SmartRoom Inventory</span>
+<span class="material-symbols-outlined text-tertiary text-[20px]">meeting_room</span>
+</div>
+<div class="mt-2">
+<div class="flex items-baseline gap-2">
+<span class="font-display-hero text-display-hero text-on-surface leading-none tracking-tight">184</span>
+<span class="font-caption text-caption text-secondary font-semibold">142 In-Use</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>42 Available for instant reserve</span>
+</div>
+</div>
+<div class="absolute -right-4 -bottom-4 w-16 h-16 bg-primary-container/20 rounded-full blur-xl pointer-events-none"></div>
+</div>
+<div class="bg-surface-variant rounded-xl p-space-md shadow-md relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant">Gross Floor Area</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">square_foot</span>
+</div>
+<div class="mt-2">
+<div class="font-display-hero text-display-hero text-on-surface leading-none tracking-tight">215,400</div>
+<div class="font-caption text-caption text-on-surface-variant mt-1">
+<span>Square Meters (GFA) • 92.4% Util.</span>
+</div>
+</div>
+<div class="absolute -right-4 -bottom-4 w-16 h-16 bg-secondary/10 rounded-full blur-xl pointer-events-none"></div>
+</div>
+</div>
+<!-- Segmented View Tabs & Operational Filter Bar -->
+<div class="bg-surface-container rounded-xl p-space-md shadow-md mb-space-lg flex flex-col gap-space-md">
+<!-- View Switcher -->
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+<button class="px-3.5 py-1.5 rounded-lg bg-primary-container text-white font-label-md text-label-md shadow-[0_0_12px_rgba(172,39,79,0.35)] shrink-0" type="button">
+        Buildings (14)
+      </button>
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface hover:bg-surface-variant transition-colors font-label-md text-label-md shrink-0" type="button">
+        Departments &amp; Faculties (8)
+      </button>
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface hover:bg-surface-variant transition-colors font-label-md text-label-md shrink-0" type="button">
+        Floor Topologies (48)
+      </button>
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface hover:bg-surface-variant transition-colors font-label-md text-label-md shrink-0" type="button">
+        SmartRoom Inventory (184)
+      </button>
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface hover:bg-surface-variant transition-colors font-label-md text-label-md shrink-0" type="button">
+        Facility &amp; Asset Registry
+      </button>
+</div>
+<!-- Filters Row -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-sm items-center">
+<div class="md:col-span-5 relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[18px]">search</span>
+<input class="w-full bg-surface-container-low pl-10 pr-3 py-2 rounded-lg font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="Search facilities by name, code (e.g. Block A-01), lab, or precinct..." type="text">
+</div>
+<div class="md:col-span-2">
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low py-2 pl-3 pr-8 rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>Type: All Categories</option>
+<option>Academic &amp; Research</option>
+<option>STEM &amp; Cleanroom Labs</option>
+<option>Library &amp; Commons</option>
+<option>Student Union &amp; Dining</option>
+<option>Clinical Simulations</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-on-surface-variant text-[16px] pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="md:col-span-2">
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low py-2 pl-3 pr-8 rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>Status: All (Active • Maint)</option>
+<option>Active • Nominal</option>
+<option>High Occupancy (&gt;85%)</option>
+<option>Scheduled Maintenance</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-on-surface-variant text-[16px] pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="md:col-span-2">
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low py-2 pl-3 pr-8 rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>Sort: Floor Count ↓</option>
+<option>Sort: Footfall Load ↓</option>
+<option>Sort: Code (Ascending)</option>
+<option>Sort: Name (A-Z)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-on-surface-variant text-[16px] pointer-events-none">swap_vert</span>
+</div>
+</div>
+<div class="md:col-span-1 flex justify-end">
+<button class="w-full md:w-auto p-2 bg-surface-container-high hover:bg-surface-variant text-on-surface-variant hover:text-on-surface rounded-lg transition-colors flex items-center justify-center" title="Reset Filters" type="button">
+<span class="material-symbols-outlined text-[20px]">filter_alt_off</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Core Two-Column Split Workspace (62% Left Table, 38% Right Spatial Inspector) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start mb-space-xl">
+<!-- Left Column: Master Facilities Table (7 cols on lg = ~58-60%) -->
+<div class="lg:col-span-7 flex flex-col gap-space-md">
+<div class="bg-surface-variant rounded-xl shadow-md overflow-hidden">
+<div class="p-space-md bg-surface-container flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">domain</span>
+<span class="font-title-md text-title-md text-on-surface">Campus Facilities Registry</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/40 text-secondary font-caption text-caption font-semibold">14 Registered</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-on-surface-variant hover:text-on-surface font-caption text-caption p-1 rounded hover:bg-surface-container-high transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">select_all</span>
+<span class="hidden sm:inline">Select All</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface font-caption text-caption p-1 rounded hover:bg-surface-container-high transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">label</span>
+<span class="hidden sm:inline">Batch Tags</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-3 px-4 w-10">
+<input class="rounded bg-surface-container text-primary-container focus:ring-0 w-3.5 h-3.5" type="checkbox">
+</th>
+<th class="py-3 px-3">Building &amp; Precinct</th>
+<th class="py-3 px-3">Floors</th>
+<th class="py-3 px-3">Faculty / Depts</th>
+<th class="py-3 px-3">Load / Status</th>
+<th class="py-3 px-4 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container/30 font-body-sm text-body-sm">
+<!-- Row 1 (Selected) -->
+<tr class="bg-surface-container-high/60 hover:bg-surface-container-high transition-colors cursor-pointer group" onclick="selectFacility('A-01')">
+<td class="py-3.5 px-4" onclick="event.stopPropagation()">
+<input checked="" class="rounded bg-surface-container text-primary-container focus:ring-0 w-3.5 h-3.5" type="checkbox">
+</td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary-container/30 flex items-center justify-center text-primary shrink-0 font-bold font-title-md">
+                      A
+                    </div>
+<div>
+<div class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors flex items-center gap-1.5">
+                        Alan Turing Hall
+                        <span class="bg-primary-container text-on-primary font-caption text-caption px-1.5 py-0.2 rounded font-mono">A-01</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant">Computing &amp; Autonomous Systems • 14,200 m²</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<div class="font-semibold text-on-surface">4 Levels</div>
+<div class="font-caption text-caption text-on-surface-variant">G + 3 Floors</div>
+</td>
+<td class="py-3.5 px-3 max-w-[140px] truncate">
+<span class="text-on-surface font-medium">Cybernetics</span>
+<div class="font-caption text-caption text-on-surface-variant truncate">Robotics, AI Lab, Data Sci</div>
+</td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-secondary font-semibold font-caption text-caption">84% Load</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant">42 Rooms (32 Active)</div>
+</td>
+<td class="py-3.5 px-4 text-right" onclick="event.stopPropagation()">
+<div class="inline-flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors" title="Manage Rooms" type="button">
+<span class="material-symbols-outlined text-[18px]">door_front</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-secondary transition-colors" title="Spatial Floor Plan" type="button">
+<span class="material-symbols-outlined text-[18px]">map</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="More Options" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors cursor-pointer group" onclick="selectFacility('B-02')">
+<td class="py-3.5 px-4" onclick="event.stopPropagation()">
+<input class="rounded bg-surface-container text-primary-container focus:ring-0 w-3.5 h-3.5" type="checkbox">
+</td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant shrink-0 font-bold font-title-md">
+                      B
+                    </div>
+<div>
+<div class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors flex items-center gap-1.5">
+                        Central Library Commons
+                        <span class="bg-surface-container-high text-on-surface-variant font-caption text-caption px-1.5 py-0.2 rounded font-mono">B-02</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant">Silent Research &amp; Media Vault • 18,600 m²</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<div class="font-semibold text-on-surface">3 Levels</div>
+<div class="font-caption text-caption text-on-surface-variant">Atrium + Mezzanine</div>
+</td>
+<td class="py-3.5 px-3 max-w-[140px] truncate">
+<span class="text-on-surface font-medium">Library Services</span>
+<div class="font-caption text-caption text-on-surface-variant truncate">Digital Archives, Scholar Hub</div>
+</td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-primary font-semibold font-caption text-caption">91% Peak Load</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant">28 Rooms (19 Active)</div>
+</td>
+<td class="py-3.5 px-4 text-right" onclick="event.stopPropagation()">
+<div class="inline-flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors" title="Manage Rooms" type="button">
+<span class="material-symbols-outlined text-[18px]">door_front</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-secondary transition-colors" title="Spatial Floor Plan" type="button">
+<span class="material-symbols-outlined text-[18px]">map</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="More Options" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors cursor-pointer group" onclick="selectFacility('C-03')">
+<td class="py-3.5 px-4" onclick="event.stopPropagation()">
+<input class="rounded bg-surface-container text-primary-container focus:ring-0 w-3.5 h-3.5" type="checkbox">
+</td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant shrink-0 font-bold font-title-md">
+                      C
+                    </div>
+<div>
+<div class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors flex items-center gap-1.5">
+                        Ramanujan Science Complex
+                        <span class="bg-surface-container-high text-on-surface-variant font-caption text-caption px-1.5 py-0.2 rounded font-mono">C-03</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant">STEM Cleanrooms &amp; Optics Lab • 26,400 m²</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<div class="font-semibold text-on-surface">5 Levels</div>
+<div class="font-caption text-caption text-on-surface-variant">Basement + 4 Labs</div>
+</td>
+<td class="py-3.5 px-3 max-w-[140px] truncate">
+<span class="text-on-surface font-medium">Physics &amp; Materials</span>
+<div class="font-caption text-caption text-on-surface-variant truncate">Photonics, Nano-fab, Chemistry</div>
+</td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-secondary font-semibold font-caption text-caption">76% Nominal</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant">56 Rooms (44 Active)</div>
+</td>
+<td class="py-3.5 px-4 text-right" onclick="event.stopPropagation()">
+<div class="inline-flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors" title="Manage Rooms" type="button">
+<span class="material-symbols-outlined text-[18px]">door_front</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-secondary transition-colors" title="Spatial Floor Plan" type="button">
+<span class="material-symbols-outlined text-[18px]">map</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="More Options" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors cursor-pointer group" onclick="selectFacility('D-04')">
+<td class="py-3.5 px-4" onclick="event.stopPropagation()">
+<input class="rounded bg-surface-container text-primary-container focus:ring-0 w-3.5 h-3.5" type="checkbox">
+</td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant shrink-0 font-bold font-title-md">
+                      D
+                    </div>
+<div>
+<div class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors flex items-center gap-1.5">
+                        Student Union &amp; Dining Hub
+                        <span class="bg-surface-container-high text-on-surface-variant font-caption text-caption px-1.5 py-0.2 rounded font-mono">D-04</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant">Societies, Food Court &amp; Clinic • 9,800 m²</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<div class="font-semibold text-on-surface">2 Levels</div>
+<div class="font-caption text-caption text-on-surface-variant">Food Hall + Offices</div>
+</td>
+<td class="py-3.5 px-3 max-w-[140px] truncate">
+<span class="text-on-surface font-medium">Student Affairs</span>
+<div class="font-caption text-caption text-on-surface-variant truncate">Governance, Wellbeing, Union</div>
+</td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-secondary font-semibold font-caption text-caption">68% Load</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant">18 Rooms (15 Active)</div>
+</td>
+<td class="py-3.5 px-4 text-right" onclick="event.stopPropagation()">
+<div class="inline-flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors" title="Manage Rooms" type="button">
+<span class="material-symbols-outlined text-[18px]">door_front</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-secondary transition-colors" title="Spatial Floor Plan" type="button">
+<span class="material-symbols-outlined text-[18px]">map</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="More Options" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors cursor-pointer group" onclick="selectFacility('M-05')">
+<td class="py-3.5 px-4" onclick="event.stopPropagation()">
+<input class="rounded bg-surface-container text-primary-container focus:ring-0 w-3.5 h-3.5" type="checkbox">
+</td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant shrink-0 font-bold font-title-md">
+                      M
+                    </div>
+<div>
+<div class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors flex items-center gap-1.5">
+                        Medical &amp; Clinical Sciences Hub
+                        <span class="bg-surface-container-high text-on-surface-variant font-caption text-caption px-1.5 py-0.2 rounded font-mono">M-05</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant">Simulation Theatres &amp; Anatomy Lab • 21,100 m²</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<div class="font-semibold text-on-surface">4 Levels</div>
+<div class="font-caption text-caption text-on-surface-variant">Surgical Sim + Classrooms</div>
+</td>
+<td class="py-3.5 px-3 max-w-[140px] truncate">
+<span class="text-on-surface font-medium">Health Sciences</span>
+<div class="font-caption text-caption text-on-surface-variant truncate">Bio-Informatics, Nursing Sim</div>
+</td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-secondary font-semibold font-caption text-caption">80% Load</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant">40 Rooms (32 Active)</div>
+</td>
+<td class="py-3.5 px-4 text-right" onclick="event.stopPropagation()">
+<div class="inline-flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors" title="Manage Rooms" type="button">
+<span class="material-symbols-outlined text-[18px]">door_front</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-secondary transition-colors" title="Spatial Floor Plan" type="button">
+<span class="material-symbols-outlined text-[18px]">map</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="More Options" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination & Bulk Summary -->
+<div class="p-space-md bg-surface-container flex flex-col sm:flex-row items-center justify-between gap-space-sm font-caption text-caption text-on-surface-variant">
+<div>
+            Showing <span class="font-semibold text-on-surface">1 – 5</span> of <span class="font-semibold text-on-surface">14</span> campus facilities
+          </div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors disabled:opacity-40" disabled="" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<span class="px-2.5 py-1 rounded bg-primary-container text-on-primary font-semibold">1</span>
+<button class="px-2.5 py-1 rounded hover:bg-surface-container-high transition-colors text-on-surface-variant" type="button">2</button>
+<button class="px-2.5 py-1 rounded hover:bg-surface-container-high transition-colors text-on-surface-variant" type="button">3</button>
+<button class="p-1.5 rounded bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Campus Precinct Map Graphic / Context Overview -->
+<div class="bg-surface-variant rounded-xl p-space-md shadow-md">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">explore</span>
+<span class="font-title-md text-title-md text-on-surface">Quad Precinct Geo-Distribution</span>
+</div>
+<span class="font-caption text-caption text-on-surface-variant">Real-Time Sensor Density: High</span>
+</div>
+<div class="relative w-full h-44 rounded-lg overflow-hidden bg-surface-container-lowest flex items-center justify-center group">
+<img class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="Stylized architectural nighttime rendering of modern university campus quad with illuminated glass walkways, warm interior lighting through multi-level academic atriums, manicured stone courtyards, and amaranth purple accent lighting on building outlines under deep dusk sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0zG3h6aOxuxsZrqLGrRH_yPmqb4BHxJgTCgPskJuFeNdsnPvqyZmS5qGR75DRIhIchlWTrMpJtmEii2oGsNLdp9gijQoXpGZTRz4Q05iWPrgYz-0v0-t_F0swBtPdFywElaePUjPXQn8cd8gIh7O6ZDGKztCLOHhg3bQhmkks2aohSCW3N41osZpSm5WEhmGYUOHkIQ6YPdQr61yxMNzbHiRD7MaGsOyZfveQ_rYOhibMpL1v3lYMig">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/40 to-transparent"></div>
+<!-- Tactical Overlay Pins -->
+<div class="absolute top-8 left-12 flex items-center gap-2 bg-surface-container/90 backdrop-blur-md px-2.5 py-1 rounded-full shadow-lg">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span class="font-caption text-caption text-on-surface font-semibold">North Quad: A-01 Turing</span>
+</div>
+<div class="absolute top-16 right-16 flex items-center gap-2 bg-surface-container/90 backdrop-blur-md px-2.5 py-1 rounded-full shadow-lg">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-caption text-caption text-on-surface font-semibold">East Quad: B-02 Library</span>
+</div>
+<div class="absolute bottom-6 left-1/3 flex items-center gap-2 bg-surface-container/90 backdrop-blur-md px-2.5 py-1 rounded-full shadow-lg">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-caption text-caption text-on-surface font-semibold">South Quad: STEM Cleanroom</span>
+</div>
+<div class="absolute bottom-3 right-4">
+<button class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-highest/90 hover:bg-surface-bright text-secondary font-label-sm text-label-sm rounded backdrop-blur-sm transition-colors shadow" type="button">
+<span class="material-symbols-outlined text-[16px]">fullscreen</span>
+<span>Expand Master Site Plan</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Active Facility Inspector & Floor Plan Breakdown (5 cols on lg = ~40-42%) -->
+<div class="lg:col-span-5 flex flex-col gap-space-md">
+<!-- Inspector Header Card -->
+<div class="bg-surface-variant rounded-xl p-space-md shadow-md flex flex-col gap-space-sm relative overflow-hidden">
+<div class="relative h-32 -mx-space-md -mt-space-md rounded-t-xl overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="High angle architectural view of ultra-modern computing institute facility with timber composite facade, expansive triple-glazed glass curtains, glowing amaranth purple interior lighting, illuminated lecture theater and students on twilight campus path" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIQH1a_rIDo3bVMfUVChA8hIOc4U2AfzU417f31DBE4raYpbqT0sRTSChd1kGunnt1Xji5_sq1DrwSFbvN4Wcx-gSwgp-kqooUIb5CRHfR1c75iF9FfMzociluJlYcsnsrmeVN9vwDk2P_nMk3PMZgWioeinmt9h3NdO7G5sQ1mpr481A1rmqb7kLBY9I95w-9c0CHXdoVpQkYO_3Y49A-w63hJKapwAPGoi_Q9up6aUOak4vSCbatAg">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-variant via-surface-variant/60 to-transparent"></div>
+<div class="absolute top-3 right-3 flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-caption text-caption font-bold tracking-wider">
+              BLOCK A-01
+            </span>
+<button class="p-1 rounded-full bg-surface-container/80 text-on-surface hover:text-primary transition-colors backdrop-blur-sm" title="Edit Building Attributes" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+<div class="absolute bottom-2 left-4">
+<span class="font-caption text-caption text-secondary font-semibold uppercase tracking-wider">Active Inspector</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface leading-tight">Alan Turing Hall</h2>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2 py-1 text-center bg-surface-container rounded-lg p-2">
+<div>
+<div class="font-caption text-caption text-on-surface-variant">Commissioned</div>
+<div class="font-label-md text-label-md text-on-surface font-semibold">2021</div>
+</div>
+<div>
+<div class="font-caption text-caption text-on-surface-variant">Footprint</div>
+<div class="font-label-md text-label-md text-on-surface font-semibold">14,200 m²</div>
+</div>
+<div>
+<div class="font-caption text-caption text-on-surface-variant">Power Substation</div>
+<div class="font-label-md text-label-md text-secondary font-semibold">West 11kV</div>
+</div>
+</div>
+<!-- Level Navigator Accordions -->
+<div class="flex flex-col gap-2 mt-1">
+<div class="font-caption text-caption uppercase text-on-surface-variant font-semibold tracking-wider">
+            Floor Topologies &amp; Room Rosters
+          </div>
+<!-- Level 2 (Expanded / Active) -->
+<div class="bg-surface-container rounded-lg p-3 shadow-inner">
+<div class="flex items-center justify-between mb-2 cursor-pointer">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-label-md text-label-md text-primary font-bold">Level 2 • Cybernetics &amp; High-Perf Computing</span>
+</div>
+<span class="font-caption text-caption text-secondary bg-surface-container-high px-1.5 py-0.2 rounded font-semibold">Current View</span>
+</div>
+<!-- Mini 2.5D Schematic Floor Plan Preview Card -->
+<div class="bg-surface-container-lowest rounded-lg p-3 my-2 relative overflow-hidden group">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[16px]">floor</span>
+<span class="font-caption text-caption text-on-surface font-semibold">Schematic Floor Plate: Level 2</span>
+</div>
+<span class="font-caption text-caption text-on-surface-variant font-mono">CAD v2.4</span>
+</div>
+<!-- Interactive Visual Floor Plan Map Canvas/Graphic -->
+<div class="relative w-full h-32 bg-surface-container-high/40 rounded flex items-center justify-center p-2 overflow-hidden">
+<svg class="w-full h-full text-outline-variant" fill="none" stroke="currentColor" viewBox="0 0 400 160">
+<!-- Building Perimeter -->
+<rect class="stroke-outline" fill="#231e1f" height="120" rx="8" stroke-width="1.5" width="360" x="20" y="20"></rect>
+<!-- Corridor Wayfinding -->
+<path class="stroke-secondary/60" d="M 60 80 L 340 80" stroke-dasharray="4 4" stroke-width="2"></path>
+<path class="stroke-secondary/40" d="M 190 20 L 190 140" stroke-dasharray="4 4" stroke-width="2"></path>
+<!-- Room B-204 Highlight (Occupied) -->
+<rect class="fill-primary-container/40 stroke-primary" height="42" rx="4" stroke-width="1.5" width="70" x="30" y="30"></rect>
+<text fill="#ffb2bf" font-family="Inter" font-size="10" font-weight="600" text-anchor="middle" x="65" y="55">B-204</text>
+<circle class="fill-primary" cx="90" cy="40" r="3"></circle>
+<!-- Room B-208 Highlight (Robotics Lab) -->
+<rect class="fill-surface-variant stroke-secondary" height="42" rx="4" stroke-width="1" width="70" x="110" y="30"></rect>
+<text fill="#ffdadb" font-family="Inter" font-size="10" font-weight="600" text-anchor="middle" x="145" y="55">B-208</text>
+<!-- Room B-212 (Quiet Pod - Open) -->
+<rect class="fill-surface-variant stroke-secondary/80" height="42" rx="4" stroke-width="1.5" width="60" x="200" y="30"></rect>
+<text fill="#ffffff" font-family="Inter" font-size="10" font-weight="600" text-anchor="middle" x="230" y="55">B-212</text>
+<circle class="fill-secondary" cx="250" cy="40" r="3"></circle>
+<!-- Additional Units -->
+<rect class="fill-surface-container-high stroke-outline-variant" height="42" rx="4" stroke-width="0.8" width="100" x="270" y="30"></rect>
+<text fill="#a68a8d" font-family="Inter" font-size="9" text-anchor="middle" x="320" y="55">Server Annex</text>
+<rect class="fill-surface-container-high stroke-outline-variant" height="42" rx="4" stroke-width="0.8" width="100" x="30" y="90"></rect>
+<text fill="#a68a8d" font-family="Inter" font-size="9" text-anchor="middle" x="80" y="115">Staff Lounge</text>
+<rect class="fill-surface-container-high stroke-outline-variant" height="42" rx="4" stroke-width="0.8" width="80" x="200" y="90"></rect>
+<text fill="#a68a8d" font-family="Inter" font-size="9" text-anchor="middle" x="240" y="115">Seminar Pod</text>
+<rect class="fill-surface-container-high stroke-outline-variant" height="42" rx="4" stroke-width="0.8" width="80" x="290" y="90"></rect>
+<text fill="#a68a8d" font-family="Inter" font-size="9" text-anchor="middle" x="330" y="115">Restrooms • Lift</text>
+</svg>
+<div class="absolute bottom-2 right-2">
+<a class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-secondary-container/80 hover:bg-secondary-container text-white font-caption text-caption font-semibold transition-colors shadow" href="#">
+<span>Open Interactive 3D Spatial Map →</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Room List on this Level -->
+<div class="flex flex-col gap-2 mt-2">
+<!-- Room 1 -->
+<div class="bg-surface-variant/80 hover:bg-surface-variant p-2.5 rounded-lg flex items-center justify-between transition-colors cursor-pointer" onclick="openRoomEditor('B-204', 'Multi-Media Theatre', 60)">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">videocam</span>
+<div>
+<div class="font-title-md text-title-md text-on-surface leading-snug flex items-center gap-1.5">
+<span>Room B-204</span>
+<span class="font-caption text-caption text-on-surface-variant font-normal">• Multi-Media Theatre</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant">
+                      Cap: 60 • 4K Laser Projector, Mic Array, Lectern 4
+                    </div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1 shrink-0">
+<span class="px-2 py-0.5 rounded-full bg-primary-container/40 text-primary font-caption text-caption font-semibold">
+                    In-Use till 11:30
+                  </span>
+<span class="text-secondary text-caption hover:underline flex items-center gap-0.5">
+                    Configure <span class="material-symbols-outlined text-[14px]">tune</span>
+</span>
+</div>
+</div>
+<!-- Room 2 -->
+<div class="bg-surface-variant/80 hover:bg-surface-variant p-2.5 rounded-lg flex items-center justify-between transition-colors cursor-pointer" onclick="openRoomEditor('B-208', 'Autonomous Robotics Lab', 30)">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">smart_toy</span>
+<div>
+<div class="font-title-md text-title-md text-on-surface leading-snug flex items-center gap-1.5">
+<span>Room B-208</span>
+<span class="font-caption text-caption text-on-surface-variant font-normal">• Autonomous Robotics Lab</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant">
+                      Cap: 30 • ROS2 Rigs, Motion Capture, Workstations
+                    </div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1 shrink-0">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/40 text-secondary font-caption text-caption font-semibold">
+                    Occupied
+                  </span>
+<span class="text-secondary text-caption hover:underline flex items-center gap-0.5">
+                    Configure <span class="material-symbols-outlined text-[14px]">tune</span>
+</span>
+</div>
+</div>
+<!-- Room 3 -->
+<div class="bg-surface-variant/80 hover:bg-surface-variant p-2.5 rounded-lg flex items-center justify-between transition-colors cursor-pointer" onclick="openRoomEditor('B-212', 'Quiet Team Study Pod', 8)">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">group_work</span>
+<div>
+<div class="font-title-md text-title-md text-on-surface leading-snug flex items-center gap-1.5">
+<span>Room B-212</span>
+<span class="font-caption text-caption text-on-surface-variant font-normal">• Quiet Team Study Pod</span>
+</div>
+<div class="font-caption text-caption text-on-surface-variant">
+                      Cap: 8 • 65" Touch Display, Polycom Suite
+                    </div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1 shrink-0">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-secondary font-caption text-caption font-semibold">
+                    Available Now
+                  </span>
+<button class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-caption text-caption hover:bg-secondary-container transition-colors" type="button">
+                    Quick Reserve
+                  </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Level 1 (Collapsed) -->
+<div class="bg-surface-container/60 hover:bg-surface-container p-3 rounded-lg flex items-center justify-between cursor-pointer transition-colors">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-on-surface-variant"></span>
+<span class="font-label-md text-label-md text-on-surface">Level 1 • Undergraduate Laboratories &amp; Dean's Office</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-caption text-caption text-on-surface-variant">14 Rooms</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Level 3 (Collapsed) -->
+<div class="bg-surface-container/60 hover:bg-surface-container p-3 rounded-lg flex items-center justify-between cursor-pointer transition-colors">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-on-surface-variant"></span>
+<span class="font-label-md text-label-md text-on-surface">Level 3 • Faculty Research Suites &amp; AI Incubator</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-caption text-caption text-on-surface-variant">12 Rooms</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Ground Floor (Collapsed) -->
+<div class="bg-surface-container/60 hover:bg-surface-container p-3 rounded-lg flex items-center justify-between cursor-pointer transition-colors">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-on-surface-variant"></span>
+<span class="font-label-md text-label-md text-on-surface">Ground Floor • Foyer, Atrium &amp; Cafe Hub</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-caption text-caption text-on-surface-variant">8 Rooms</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Space Configuration Inline Drawer / Panel -->
+<div class="bg-surface-variant rounded-xl p-space-md shadow-md transition-all" id="room-editor-panel">
+<div class="flex items-center justify-between pb-2 mb-3 bg-surface-container -mx-space-md -mt-space-md px-space-md pt-3 rounded-t-xl">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">tune</span>
+<span class="font-title-md text-title-md text-on-surface">Quick Space Configuration</span>
+</div>
+<span class="font-caption text-caption text-secondary font-mono bg-surface-container-high px-2 py-0.5 rounded" id="editor-room-badge">B-204</span>
+</div>
+<form class="flex flex-col gap-3 font-body-sm text-body-sm" onsubmit="event.preventDefault(); triggerSaveAlert();">
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Room Identifier</label>
+<input class="w-full bg-surface-container-low px-3 py-1.5 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" id="input-room-id" type="text" value="B-204">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Max Seating Capacity</label>
+<input class="w-full bg-surface-container-low px-3 py-1.5 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" id="input-room-cap" type="number" value="60">
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Room Classification</label>
+<input class="w-full bg-surface-container-low px-3 py-1.5 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" id="input-room-type" type="text" value="Multi-Media Theatre">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1.5">Configured Hardware &amp; Sensor IoT Tags</label>
+<div class="flex flex-wrap gap-1.5" id="tag-container">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-caption text-caption">
+                Dual 4K Projector
+                <button class="hover:text-primary leading-none" onclick="this.parentElement.remove()" type="button">×</button>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-caption text-caption">
+                CO2 &amp; Air Quality
+                <button class="hover:text-primary leading-none" onclick="this.parentElement.remove()" type="button">×</button>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-caption text-caption">
+                NFC Smart Lock
+                <button class="hover:text-primary leading-none" onclick="this.parentElement.remove()" type="button">×</button>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-caption text-caption">
+                Spatial Mic Array
+                <button class="hover:text-primary leading-none" onclick="this.parentElement.remove()" type="button">×</button>
+</span>
+<button class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container-high text-secondary hover:text-white font-caption text-caption transition-colors" onclick="addCustomTag()" type="button">
+                + Add Equipment
+              </button>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Timetable Automation Rule</label>
+<div class="flex items-center gap-2 p-2 rounded bg-surface-container-low font-caption text-caption text-secondary">
+<span class="material-symbols-outlined text-primary text-[18px]">bolt</span>
+<span>Automated live lock sync via University Timetable Core API</span>
+</div>
+</div>
+<div class="flex items-center justify-end gap-2 pt-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-md text-label-md transition-colors" type="button">
+              Reset
+            </button>
+<button class="px-4 py-1.5 rounded-lg bg-primary-container hover:bg-secondary-container text-on-primary font-label-md text-label-md transition-colors shadow" type="submit">
+              Save Configuration
+            </button>
+</div>
+</form>
+</div>
+</div>
+</div>
+<!-- Add Building Modal Dialog (Hidden by Default) -->
+<div class="fixed inset-0 z-50 hidden items-center justify-center bg-surface-container-lowest/80 backdrop-blur-md p-space-md" id="add-building-modal">
+<div class="bg-surface-variant w-full max-w-xl rounded-xl shadow-[0_16px_40px_rgba(172,39,79,0.25)] p-space-lg flex flex-col gap-space-md">
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[24px]">add_business</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Register New Campus Facility</h3>
+</div>
+<button class="p-1 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" id="close-modal" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<form class="flex flex-col gap-space-sm font-body-sm text-body-sm" onsubmit="event.preventDefault(); submitNewBuilding();">
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Building Name</label>
+<input class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="e.g. Marie Curie Pavilion" required="" type="text">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Building Code</label>
+<input class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="e.g. BLOCK E-05" required="" type="text">
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Primary Quad Precinct</label>
+<select class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>North Quadrangle</option>
+<option>South Tech Precinct</option>
+<option>East Residential Commons</option>
+<option>West Innovation District</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Total Floor Plates</label>
+<input class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" max="25" min="1" type="number" value="4">
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Assigned Departments / Faculties</label>
+<input class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="e.g. School of Biological Sciences, Bio-Genetics" type="text">
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Gross Floor Area (m²)</label>
+<input class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" placeholder="18,500" type="number">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">BIM CAD Schema Linked</label>
+<select class="w-full bg-surface-container-low px-3 py-2 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-inner">
+<option>Auto-Import from Revit Cloud (IFC4)</option>
+<option>Manual DXF / DWG Upload</option>
+<option>Pending Architect Blueprint</option>
+</select>
+</div>
+</div>
+<div class="flex items-center justify-end gap-2 pt-3">
+<button class="px-4 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-md text-label-md transition-colors" id="cancel-modal" type="button">
+            Cancel
+          </button>
+<button class="px-5 py-2 rounded-lg bg-primary-container hover:bg-secondary-container text-on-primary font-label-md text-label-md transition-colors shadow" type="submit">
+            Create Facility Entry
+          </button>
+</div>
+</form>
+</div>
+</div>
+<!-- Institutional Prototype Engine Footer Notice -->
+<div class="bg-surface-container rounded-lg p-space-sm flex flex-col sm:flex-row items-center justify-between gap-2 text-on-surface-variant font-caption text-caption mb-space-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px]">verified_user</span>
+<span>
+        NextCampus Spatial Architecture Engine v4.18 • Data configured for <strong>Apex Polytechnic Institute</strong> facilities masterplan.
+      </span>
+</div>
+<div class="flex items-center gap-3">
+<span>Spatial GIS WebGL: Online</span>
+<span>•</span>
+<span>SmartRooms Protocol: Active</span>
+</div>
+</div>
+</div>
+<script>
+  function openRoomEditor(roomId, type, cap) {
+    const badge = document.getElementById('editor-room-badge');
+    const inputId = document.getElementById('input-room-id');
+    const inputType = document.getElementById('input-room-type');
+    const inputCap = document.getElementById('input-room-cap');
+    const panel = document.getElementById('room-editor-panel');
+
+    if (badge) badge.textContent = roomId;
+    if (inputId) inputId.value = roomId;
+    if (inputType) inputType.value = type;
+    if (inputCap) inputCap.value = cap;
+
+    if (panel) {
+      panel.classList.add('ring-2', 'ring-primary');
+      setTimeout(() => {
+        panel.classList.remove('ring-2', 'ring-primary');
+      }, 700);
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function addCustomTag() {
+    const tag = prompt("Enter new smart sensor or equipment name (e.g. 'Air Flow Sensor'):", "Occupancy Radar");
+    if (tag && tag.trim().length > 0) {
+      const container = document.getElementById('tag-container');
+      const span = document.createElement('span');
+      span.className = "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-caption text-caption";
+      span.innerHTML = `${tag.trim()} <button type="button" class="hover:text-primary leading-none" onclick="this.parentElement.remove()">&times;</button>`;
+      container.insertBefore(span, container.lastElementChild);
+    }
+  }
+
+  function triggerSaveAlert() {
+    const id = document.getElementById('input-room-id').value;
+    alert(`Configuration saved successfully for SmartRoom ${id}. Timetable sync queued.`);
+  }
+
+  function selectFacility(code) {
+    console.log("Selected facility:", code);
+  }
+
+  // Modal interactions
+  const openBtn = document.getElementById('open-add-building-modal');
+  const closeBtn = document.getElementById('close-modal');
+  const cancelBtn = document.getElementById('cancel-modal');
+  const modal = document.getElementById('add-building-modal');
+
+  if (openBtn && modal) {
+    openBtn.addEventListener('click', () => {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    });
+  }
+
+  const hideModal = () => {
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  };
+
+  if (closeBtn) closeBtn.addEventListener('click', hideModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', hideModal);
+
+  function submitNewBuilding() {
+    alert("New campus facility saved to spatial repository and BIM CAD queue initialized.");
+    hideModal();
+  }
+</script></main><footer class="w-full bg-surface-container-low py-4 px-gutter shadow-[0_-1px_6px_rgba(0,0,0,0.25)]"><div class="w-full flex flex-col sm:flex-row items-center justify-between gap-2 text-on-surface-variant font-caption text-caption"><span>NextCampus Admin Console • Campus Operations Backbone • Restricted Administrative Access</span><span>Session encrypted TLS 1.3 • Authorized Operator</span></div></footer></div></body></html>

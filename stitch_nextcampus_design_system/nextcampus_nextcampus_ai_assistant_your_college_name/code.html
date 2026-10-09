@@ -1,0 +1,773 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "on-secondary-fixed": "#3f0019",
+        "surface-container-lowest": "#110d0e",
+        "primary-fixed": "#ffd9de",
+        "tertiary-fixed-dim": "#e2bebf",
+        "on-background": "#eae0e1",
+        "secondary-container": "#8c1844",
+        "on-surface-variant": "#dfbfc3",
+        "tertiary": "#e2bebf",
+        "on-primary": "#660027",
+        "surface-dim": "#161213",
+        "outline": "#a68a8d",
+        "background": "#161213",
+        "on-error": "#690005",
+        "on-error-container": "#ffdad6",
+        "surface-bright": "#3d3839",
+        "on-surface": "#eae0e1",
+        "surface-variant": "#383335",
+        "surface-container-low": "#1f1a1b",
+        "on-tertiary-fixed": "#2a1617",
+        "primary": "#ffb2bf",
+        "on-secondary-fixed-variant": "#891541",
+        "primary-fixed-dim": "#ffb2bf",
+        "primary-container": "#ac274f",
+        "outline-variant": "#584144",
+        "inverse-primary": "#af2951",
+        "inverse-surface": "#eae0e1",
+        "on-primary-fixed-variant": "#8e0a3a",
+        "on-tertiary-container": "#f1cccd",
+        "secondary": "#ffb1c2",
+        "inverse-on-surface": "#342f30",
+        "on-tertiary": "#422a2b",
+        "surface-container-highest": "#383335",
+        "on-primary-fixed": "#3f0015",
+        "tertiary-container": "#715556",
+        "surface": "#161213",
+        "surface-tint": "#ffb2bf",
+        "secondary-fixed": "#ffd9e0",
+        "on-primary-container": "#ffc7d0",
+        "secondary-fixed-dim": "#ffb1c2",
+        "on-tertiary-fixed-variant": "#5a4041",
+        "error-container": "#93000a",
+        "surface-container-high": "#2d292a",
+        "on-secondary": "#66002c",
+        "error": "#ffb4ab",
+        "on-secondary-container": "#ff9bb3",
+        "surface-container": "#231e1f",
+        "tertiary-fixed": "#ffdadb"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "space-xs": "0.25rem",
+        "space-xl": "2rem",
+        "margin": "2rem",
+        "space-sm": "0.5rem",
+        "gutter-mobile": "1rem",
+        "margin-mobile": "1rem",
+        "space-lg": "1.5rem",
+        "space-md": "1rem",
+        "gutter": "1.5rem",
+        "space-2xl": "3rem"
+      },
+      "fontFamily": {
+        "headline-lg": ["Plus Jakarta Sans"],
+        "label-sm": ["Inter"],
+        "body-md": ["Inter"],
+        "display-hero-mobile": ["Plus Jakarta Sans"],
+        "headline-md": ["Plus Jakarta Sans"],
+        "display-hero": ["Plus Jakarta Sans"],
+        "caption": ["Inter"],
+        "body-sm": ["Inter"],
+        "label-md": ["Inter"],
+        "headline-lg-mobile": ["Plus Jakarta Sans"],
+        "title-md": ["Plus Jakarta Sans"],
+        "headline-sm": ["Plus Jakarta Sans"],
+        "body-lg": ["Inter"]
+      },
+      "fontSize": {
+        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+        "body-md": ["14px", {"lineHeight": "22.4px", "fontWeight": "400"}],
+        "display-hero-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+        "display-hero": ["40px", {"lineHeight": "48px", "fontWeight": "800"}],
+        "caption": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+        "body-sm": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+        "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+        "headline-lg-mobile": ["26px", {"lineHeight": "32px", "fontWeight": "700"}],
+        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+        "body-lg": ["15px", {"lineHeight": "24px", "fontWeight": "400"}]
+      }
+    }
+  }
+}</script></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen"><aside class="fixed left-0 top-0 h-screen w-72 bg-surface-container-low shadow-[0_2px_8px_rgba(0,0,0,0.35)] z-50 flex flex-col justify-between"><div class="flex flex-col flex-1 min-h-0"><div class="h-16 px-space-lg flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="Modern geometric logo mark for NextCampus combining the letter N with connected campus pathways and navigation geometry in Amaranth Purple and Blush on dark background. Brand logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XWCm2qWsHHFTa25g4HozXFtz-ZeJo76yKh2kdT1IHBGWMz1cZ_LoIKIBSBdlQsIB4mOarTQa6V3rkwZDZNkBouv7YGCLnr9X5DB-xphEyvjgpG57lNWbFZ7B-Upqdc94WWXRQuHhAcdDwWH7xyoo4Q5wc2qTVr9hLiSCcy3qSWwHIa0CjfoNkARFcyTlHZ0z0mWwWlCw3lUfNLGQGuwo_ydplkYRB49zHo-W-TadZ66_Yd5g9QmSSxq1Yv"><div class="flex flex-col"><span class="font-title-md text-title-md font-bold tracking-tight text-on-surface leading-tight">NextCampus</span><span class="font-caption text-caption text-on-surface-variant leading-none">Unified Operations</span></div></div><span class="px-space-xs py-0.5 rounded-full bg-surface-container-high text-primary font-caption text-caption uppercase tracking-wider font-semibold">HQ</span></div><div class="px-space-lg py-space-xs"><div class="flex items-center gap-space-sm px-space-sm py-1.5 rounded-lg bg-surface-container"><span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span><span class="font-label-sm text-label-sm text-on-surface-variant truncate">Node: Campus Main Core</span></div></div><nav class="flex-1 px-space-sm py-space-sm overflow-y-auto space-y-1" data-active-classes="bg-primary-container text-on-primary-container font-semibold shadow-[0_0_16px_rgba(172,39,79,0.25)]"><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-label-md text-label-md">Dashboard</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="nextcampus-ai" href="#"><span class="material-symbols-outlined text-[20px]">auto_awesome</span><span class="font-label-md text-label-md">NextCampus AI</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="campus-map" href="#"><span class="material-symbols-outlined text-[20px]">map</span><span class="font-label-md text-label-md">Campus Map</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="smartrooms" href="#"><span class="material-symbols-outlined text-[20px]">meeting_room</span><span class="font-label-md text-label-md">SmartRooms</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="campus-directory" href="#"><span class="material-symbols-outlined text-[20px]">contacts</span><span class="font-label-md text-label-md">Campus Directory</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="nextcampus-care" href="#"><span class="material-symbols-outlined text-[20px]">health_and_safety</span><span class="font-label-md text-label-md">NextCampus Care</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="ecocampus" href="#"><span class="material-symbols-outlined text-[20px]">eco</span><span class="font-label-md text-label-md">EcoCampus</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="skillcampus" href="#"><span class="material-symbols-outlined text-[20px]">psychology</span><span class="font-label-md text-label-md">SkillCampus</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-150" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-label-md text-label-md">Settings</span></a></nav></div><div class="p-space-md bg-surface-container-lowest/60"><div class="flex items-center justify-between text-on-surface-variant text-caption"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[16px] text-tertiary">wifi_tethering</span><span class="font-caption text-caption">Mesh: 99.98%</span></div><span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface font-caption text-caption font-mono">v4.18</span></div></div></aside><div class="pl-72 flex flex-col min-h-screen"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md flex-1 max-w-xl"><div class="relative w-full flex items-center"><span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[20px] pointer-events-none">search</span><input class="w-full h-10 pl-10 pr-space-md rounded-xl bg-surface-container-low text-on-surface placeholder:text-on-surface-variant font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-container transition-all" placeholder="Search campus buildings, smart rooms, labs, or services..." type="search"></div></div><div class="flex items-center gap-space-md"><button class="flex items-center gap-space-xs px-3 py-1.5 rounded-lg bg-error-container text-on-error-container hover:bg-on-error hover:text-on-error-container font-label-md text-label-md transition-colors" type="button"><span class="material-symbols-outlined text-[18px]">e911_emergency</span><span class="font-semibold">SOS Beacon</span></button><div class="h-5 w-px bg-surface-container-highest"></div><button class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-surface"></span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="flex flex-col text-right hidden sm:flex"><span class="font-label-md text-label-md text-on-surface font-medium leading-none">Student Portal</span><span class="font-caption text-caption text-on-surface-variant leading-none mt-1">Authorized Access</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(172,39,79,0.3)]"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-background flex-1 px-space-lg py-space-lg"><div class="flex flex-col w-full h-[calc(100vh-5rem)]">
+<!-- Top Assistant Metabar / System Sync Banner -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm px-space-md py-2.5 rounded-xl bg-surface-container-low shadow-sm mb-space-sm">
+<div class="flex items-center gap-space-md">
+<div class="relative flex items-center justify-center w-8 h-8 rounded-lg bg-primary-container text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[19px]">psychology</span>
+<span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary"></span>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="font-title-md text-title-md font-bold text-on-surface tracking-tight">NextCampus AI Assistant</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container/50 text-secondary-fixed text-caption font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-pulse"></span>
+          Node: Central Campus Knowledge Graph v4.2
+        </span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container text-on-surface-variant text-caption font-mono">
+<span class="material-symbols-outlined text-[13px] text-tertiary">memory</span>
+        RAG Grounded • Campus Mesh 24ms
+      </span>
+<span class="inline-flex items-center px-2.5 py-1 rounded-md bg-surface-container-high text-on-surface-variant text-caption font-medium">
+        Simulated Copilot Engine
+      </span>
+<button class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm transition-all" id="clearChatBtn" title="Reset workspace context">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+<span class="hidden sm:inline">Reset Context</span>
+</button>
+<button class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm transition-all" title="Export dialogue transcript">
+<span class="material-symbols-outlined text-[16px]">ios_share</span>
+<span class="hidden sm:inline">Export</span>
+</button>
+</div>
+</div>
+<!-- Main 3-Column Integrated Workspace -->
+<div class="flex flex-1 min-h-0 gap-space-sm overflow-hidden">
+<!-- LEFT CONVERSATION RAIL (280px) -->
+<aside class="hidden lg:flex flex-col w-72 rounded-xl bg-surface-container-low shadow-sm p-space-sm overflow-hidden">
+<!-- New Session CTA Button with Amaranth-to-Blush gradient -->
+<button class="w-full flex items-center justify-center gap-space-sm px-space-md py-2.5 rounded-lg bg-gradient-to-r from-primary-container to-secondary-container text-on-primary font-label-md text-label-md font-semibold hover:opacity-95 shadow-md transition-all active:scale-[0.99] mb-space-sm">
+<span class="material-symbols-outlined text-[20px]">add_comment</span>
+<span>Start New Dialogue</span>
+</button>
+<!-- Search Dialogues Input -->
+<div class="relative w-full mb-space-sm">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[16px] pointer-events-none">search</span>
+<input class="w-full h-8 pl-8 pr-2.5 rounded-lg bg-surface-container text-on-surface placeholder:text-on-surface-variant/70 text-body-sm font-body-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all" placeholder="Search saved campus queries..." type="text">
+</div>
+<!-- Grouped Conversation History -->
+<div class="flex-1 overflow-y-auto space-y-space-md pr-1">
+<!-- Group: Today -->
+<div>
+<div class="px-2 pb-1 text-caption font-caption text-on-surface-variant uppercase tracking-wider font-semibold">Today</div>
+<div class="space-y-1">
+<!-- Active Selected Session -->
+<button class="w-full text-left flex items-start gap-2.5 p-2 rounded-lg bg-surface-container-high text-on-surface shadow-sm transition-all">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">near_me</span>
+<div class="min-w-0 flex-1">
+<p class="text-label-md font-label-md font-semibold truncate text-on-surface">Directions to Turing Hall B-204</p>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="text-caption font-caption text-primary">Spatial Query • Live</span>
+</div>
+</div>
+</button>
+<!-- Quiet Study Pod Reservation -->
+<button class="w-full text-left flex items-start gap-2.5 p-2 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] shrink-0 mt-0.5">meeting_room</span>
+<div class="min-w-0 flex-1">
+<p class="text-body-sm font-body-sm truncate">Quiet Study Pod 4 (Library)</p>
+<p class="text-caption font-caption text-on-surface-variant/70 mt-0.5">10:14 AM • Confirmed</p>
+</div>
+</button>
+</div>
+</div>
+<!-- Group: Yesterday -->
+<div>
+<div class="px-2 pb-1 text-caption font-caption text-on-surface-variant uppercase tracking-wider font-semibold">Yesterday</div>
+<div class="space-y-1">
+<button class="w-full text-left flex items-start gap-2.5 p-2 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] shrink-0 mt-0.5">build_circle</span>
+<div class="min-w-0 flex-1">
+<p class="text-body-sm font-body-sm truncate">Reporting CS Lab Projector Glitch</p>
+<p class="text-caption font-caption text-on-surface-variant/70 mt-0.5">Care Dispatch #NC-8921</p>
+</div>
+</button>
+<button class="w-full text-left flex items-start gap-2.5 p-2 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] shrink-0 mt-0.5">person_search</span>
+<div class="min-w-0 flex-1">
+<p class="text-body-sm font-body-sm truncate">Prof. Roy's Office Hours &amp; Mail</p>
+<p class="text-caption font-caption text-on-surface-variant/70 mt-0.5">Faculty Directory Node</p>
+</div>
+</button>
+</div>
+</div>
+<!-- Group: Previous 7 Days -->
+<div>
+<div class="px-2 pb-1 text-caption font-caption text-on-surface-variant uppercase tracking-wider font-semibold">Previous 7 Days</div>
+<div class="space-y-1">
+<button class="w-full text-left flex items-start gap-2.5 p-2 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] shrink-0 mt-0.5">electric_car</span>
+<div class="min-w-0 flex-1">
+<p class="text-body-sm font-body-sm truncate">Campus EV Shuttle Timetable &amp; Stops</p>
+<p class="text-caption font-caption text-on-surface-variant/70 mt-0.5">Transport Sync</p>
+</div>
+</button>
+<button class="w-full text-left flex items-start gap-2.5 p-2 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] shrink-0 mt-0.5">badge</span>
+<div class="min-w-0 flex-1">
+<p class="text-body-sm font-body-sm truncate">Library 24/7 Smart Access Rules</p>
+<p class="text-caption font-caption text-on-surface-variant/70 mt-0.5">Security Policy</p>
+</div>
+</button>
+</div>
+</div>
+</div>
+<!-- Bottom Model Metainfo Footer -->
+<div class="pt-space-sm mt-auto bg-surface-container-lowest/80 p-2.5 rounded-lg">
+<div class="flex items-center justify-between mb-1">
+<span class="text-caption font-caption font-semibold text-primary">Model Node</span>
+<span class="text-caption font-caption text-on-surface-variant font-mono">v4.2-Hybrid</span>
+</div>
+<p class="text-caption font-caption text-on-surface-variant leading-tight">
+          Spatial GIS, SmartRoom Telemetry &amp; ERP Care Integration
+        </p>
+</div>
+</aside>
+<!-- CENTER CHAT STREAM & INPUT CONTAINER -->
+<main class="flex-1 flex flex-col min-w-0 rounded-xl bg-surface-container-low shadow-sm overflow-hidden">
+<!-- Conversational Message Scroll Stream -->
+<div class="flex-1 overflow-y-auto p-space-md space-y-space-lg" id="chatMessageStream">
+<!-- System Timestamp Divider -->
+<div class="flex items-center justify-center my-1">
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant text-caption font-caption">
+            Spatial Session Active • Synchronized with Central Campus Node 01
+          </span>
+</div>
+<!-- MESSAGE 1: USER -->
+<div class="flex justify-end items-start gap-space-sm max-w-3xl ml-auto">
+<div class="flex flex-col items-end">
+<div class="px-space-md py-3 rounded-2xl rounded-tr-sm bg-primary-container text-on-primary-container shadow-md">
+<p class="text-body-md font-body-md leading-relaxed text-on-primary">
+                How do I reach the computer laboratory in Alan Turing Hall from the Central Library, and is Room B-204 open right now?
+              </p>
+</div>
+<span class="text-caption font-caption text-on-surface-variant mt-1 mr-1">10:42 AM • Student Self-Service</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">account_circle</span>
+</div>
+</div>
+<!-- MESSAGE 1: AI ASSISTANT -->
+<div class="flex items-start gap-space-sm max-w-4xl">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0 shadow-md">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0 space-y-space-sm">
+<!-- Thought Process Collapsible Accordion -->
+<details class="group rounded-xl bg-surface-container shadow-sm overflow-hidden">
+<summary class="flex items-center justify-between px-space-md py-2 cursor-pointer text-caption font-caption text-primary select-none hover:bg-surface-variant/40 transition-colors">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] animate-spin text-tertiary">data_object</span>
+<span class="font-semibold uppercase tracking-wider">Spatial Reasoning &amp; Telemetry Inspection</span>
+</div>
+<span class="material-symbols-outlined text-[16px] transition-transform duration-200 group-open:rotate-180">expand_more</span>
+</summary>
+<div class="px-space-md pb-2.5 pt-1 text-caption font-caption text-on-surface-variant font-mono space-y-1 bg-surface-container-lowest/50">
+<p>⚡ Graph retrieved: Central Library East Gate ➔ 2nd Floor Covered Skybridge ➔ Turing Hall A-01 ➔ Lab Corridor Level 2.</p>
+<p>⚡ Telemetry queried: SmartRoom sensor B-204 confirms 18/60 occupants (30% density). Ambient temp: 21.8°C.</p>
+<p>⚡ Timetable check: Next scheduled lecture is CS-301 at 11:30 AM. Room open window: 48 minutes remaining.</p>
+</div>
+</details>
+<!-- Main Text Bubble -->
+<div class="p-space-md rounded-2xl rounded-tl-sm bg-surface-container shadow-sm text-on-surface space-y-space-sm">
+<p class="text-body-md font-body-md leading-relaxed text-on-surface">
+                To reach the <strong class="text-primary font-semibold">Distributed Systems &amp; Multimedia Computer Laboratory (Room B-204)</strong> in <strong class="text-on-surface font-semibold">Alan Turing Hall (Block A-01)</strong> from the Central Library:
+              </p>
+<p class="text-body-md font-body-md text-on-surface leading-relaxed">
+                The fastest and most comfortable route is via the <strong class="text-primary font-semibold">2nd Floor Covered Skybridge</strong>. It provides step-free ADA accessibility, sheltered transit against weather, and directly connects into Turing Hall Level 2. Total walking time is <span class="text-primary-fixed font-semibold">approx. 4 minutes (320 meters)</span>.
+              </p>
+<!-- EMBEDDED CONTEXTUAL RICH CARDS GRID -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm pt-space-xs">
+<!-- CARD A: Mini Wayfinding Card -->
+<div class="rounded-xl bg-surface-container-high p-space-sm shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">route</span>
+<span class="text-label-md font-label-md font-bold text-on-surface">Campus Transit Route</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container text-caption font-semibold">Step-Free / ADA</span>
+</div>
+<!-- Steps Timeline -->
+<div class="space-y-2 py-2 text-caption font-caption">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+<span class="text-on-surface-variant font-medium">Central Library — East Portal Gate</span>
+</div>
+<div class="ml-1 pl-3 flex items-center gap-2 text-on-surface-variant/80">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+<span>Level 2 Climate-Controlled Skybridge (190m)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-on-surface font-semibold">Alan Turing Hall — Wing B, Room B-204</span>
+</div>
+</div>
+</div>
+<div class="pt-2 flex items-center justify-between">
+<span class="text-caption font-caption text-on-surface-variant font-mono">320m • ~4 mins walk</span>
+<button class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary-container hover:bg-secondary-container text-on-primary text-label-sm font-label-sm font-semibold transition-all">
+<span>Open in Campus Map</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- CARD B: SmartRoom Telemetry Status Card -->
+<div class="rounded-xl bg-surface-container-high p-space-sm shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-tertiary text-[18px]">sensors</span>
+<span class="text-label-md font-label-md font-bold text-on-surface">Room B-204 Telemetry</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/60 text-secondary-fixed text-caption font-semibold">
+                        Open Now • 45m left
+                      </span>
+</div>
+<!-- Telemetry Stats -->
+<div class="grid grid-cols-3 gap-2 py-2 text-center">
+<div class="bg-surface-container rounded-lg p-2">
+<p class="text-caption font-caption text-on-surface-variant">Occupancy</p>
+<p class="text-title-md font-title-md font-bold text-on-surface">18<span class="text-body-sm font-normal text-on-surface-variant">/60</span></p>
+<span class="text-caption font-caption text-primary font-semibold">30% Capacity</span>
+</div>
+<div class="bg-surface-container rounded-lg p-2">
+<p class="text-caption font-caption text-on-surface-variant">Air &amp; Temp</p>
+<p class="text-title-md font-title-md font-bold text-on-surface">21.8°C</p>
+<span class="text-caption font-caption text-on-surface-variant">420 ppm CO₂</span>
+</div>
+<div class="bg-surface-container rounded-lg p-2">
+<p class="text-caption font-caption text-on-surface-variant">Next Class</p>
+<p class="text-title-md font-title-md font-bold text-primary truncate">CS-301</p>
+<span class="text-caption font-caption text-on-surface-variant">11:30 AM</span>
+</div>
+</div>
+</div>
+<div class="pt-2 flex items-center justify-between gap-2">
+<button class="flex-1 py-1.5 rounded-lg bg-surface-container hover:bg-surface-variant text-on-surface text-label-sm font-label-sm transition-all text-center">
+                      Blueprint
+                    </button>
+<button class="flex-1 py-1.5 rounded-lg bg-primary-container hover:bg-secondary-container text-on-primary text-label-sm font-label-sm font-semibold transition-all text-center">
+                      Reserve Desk
+                    </button>
+</div>
+</div>
+</div>
+<!-- CARD C: Resident Faculty Context Snippet -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm p-3 rounded-xl bg-surface-container-high/80">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-full bg-primary-container/70 flex items-center justify-center text-primary text-label-md font-bold">
+                    AR
+                  </div>
+<div>
+<p class="text-label-md font-label-md font-semibold text-on-surface">Prof. Ananya Roy • Chair, Distributed Systems</p>
+<p class="text-caption font-caption text-on-surface-variant">Office: Turing Hall B-218 • Walk-in Hours: Today 2:00 PM – 4:00 PM</p>
+</div>
+</div>
+<button class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-variant text-on-surface text-label-sm font-label-sm transition-all">
+<span>Directory Profile</span>
+<span class="material-symbols-outlined text-[16px]">open_in_new</span>
+</button>
+</div>
+</div>
+<span class="text-caption font-caption text-on-surface-variant ml-1">10:42 AM • NextCampus LLM v4.2 • Grounded verification</span>
+</div>
+</div>
+<!-- MESSAGE 2: USER -->
+<div class="flex justify-end items-start gap-space-sm max-w-3xl ml-auto">
+<div class="flex flex-col items-end">
+<div class="px-space-md py-3 rounded-2xl rounded-tr-sm bg-primary-container text-on-primary-container shadow-md">
+<p class="text-body-md font-body-md leading-relaxed text-on-primary">
+                Where can I report a maintenance problem if the projector HDMI in B-204 is glitching?
+              </p>
+</div>
+<span class="text-caption font-caption text-on-surface-variant mt-1 mr-1">10:44 AM • Student Self-Service</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">account_circle</span>
+</div>
+</div>
+<!-- MESSAGE 2: AI ASSISTANT -->
+<div class="flex items-start gap-space-sm max-w-4xl">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0 shadow-md">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0 space-y-space-sm">
+<div class="p-space-md rounded-2xl rounded-tl-sm bg-surface-container shadow-sm text-on-surface space-y-space-sm">
+<p class="text-body-md font-body-md leading-relaxed text-on-surface">
+                You can submit an instant dispatch ticket through <strong class="text-primary font-semibold">NextCampus Care</strong>. In active learning spaces like Turing Hall B-204, classroom AV incidents are automatically tagged under <span class="text-primary-fixed font-semibold">Tier 1 Rapid Response SLA (Resolution within 45 minutes)</span> before upcoming class sessions.
+              </p>
+<!-- EMBEDDED CARE ACTION TICKET CARD -->
+<div class="rounded-xl bg-surface-container-high p-space-sm shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">health_and_safety</span>
+<div>
+<h4 class="text-label-md font-label-md font-bold text-on-surface">NextCampus Care • One-Click Incident Dispatch</h4>
+<p class="text-caption font-caption text-on-surface-variant">Pre-populated using current spatial context</p>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-primary-container text-on-primary text-caption font-bold">
+                    Tier 1 SLA (&lt;45m)
+                  </span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-2 bg-surface-container p-2.5 rounded-lg text-caption font-caption">
+<div>
+<span class="text-on-surface-variant">Location</span>
+<p class="text-on-surface font-semibold truncate">Alan Turing Hall</p>
+</div>
+<div>
+<span class="text-on-surface-variant">Room</span>
+<p class="text-on-surface font-semibold">B-204 (Lab)</p>
+</div>
+<div>
+<span class="text-on-surface-variant">Category</span>
+<p class="text-on-surface font-semibold">Classroom AV / HDMI</p>
+</div>
+<div>
+<span class="text-on-surface-variant">Priority</span>
+<p class="text-primary font-semibold">Medium Urgent</p>
+</div>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-space-sm pt-1">
+<p class="text-caption font-caption text-on-surface-variant">
+                    Facilities Dispatch desk will ping the field technician stationed at Block A ground floor.
+                  </p>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-variant text-on-surface text-label-sm font-label-sm font-medium transition-all">
+                      Modify Draft
+                    </button>
+<button class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary-container hover:bg-secondary-container text-on-primary text-label-sm font-label-sm font-semibold shadow-sm transition-all active:scale-[0.98]" id="dispatchTicketBtn">
+<span class="material-symbols-outlined text-[16px]">send</span>
+<span>Dispatch Care Ticket</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Ticket Confirmation Alert (Initially Hidden) -->
+<div class="hidden flex items-center justify-between p-2.5 rounded-lg bg-secondary-container/40 text-secondary-fixed text-body-sm font-body-sm animate-fade-in" id="dispatchSuccessBanner">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">task_alt</span>
+<span>Ticket <strong>#NC-9402</strong> generated &amp; routed to AV Operations. SLA target: 11:25 AM.</span>
+</div>
+<a class="text-caption font-caption underline font-semibold hover:text-on-surface" href="#">View in Care Dashboard</a>
+</div>
+</div>
+<span class="text-caption font-caption text-on-surface-variant ml-1">10:44 AM • NextCampus LLM v4.2 • Care API Trigger Ready</span>
+</div>
+</div>
+</div>
+<!-- SUGGESTED PROMPT CHIPS DOCK (Above input) -->
+<div class="px-space-md py-2 bg-surface-container-low">
+<div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+<span class="text-caption font-caption text-on-surface-variant uppercase tracking-wider shrink-0 font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">tips_and_updates</span> Quick:
+          </span>
+<button class="prompt-chip shrink-0 px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface text-label-sm font-label-sm transition-all">
+            Where is the computer laboratory?
+          </button>
+<button class="prompt-chip shrink-0 px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface text-label-sm font-label-sm transition-all">
+            How do I reach the library?
+          </button>
+<button class="prompt-chip shrink-0 px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface text-label-sm font-label-sm transition-all">
+            Where can I report a maintenance problem?
+          </button>
+<button class="prompt-chip shrink-0 px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface text-label-sm font-label-sm transition-all">
+            What facilities are available in this building?
+          </button>
+<button class="prompt-chip shrink-0 px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface text-label-sm font-label-sm transition-all">
+            Book an acoustic study pod for 4 PM
+          </button>
+</div>
+</div>
+<!-- INTERACTIVE MESSAGE INPUT DOCK -->
+<div class="p-space-md bg-surface-container-low shadow-md">
+<form class="relative rounded-2xl bg-surface-container shadow-inner p-2 flex flex-col gap-2" id="chatForm">
+<textarea class="w-full bg-transparent text-on-surface placeholder:text-on-surface-variant/70 text-body-md font-body-md resize-none px-2 py-1 focus:outline-none" id="chatInput" placeholder="Ask NextCampus AI about rooms, wayfinding, faculty, timetable, or care tickets..." rows="2"></textarea>
+<div class="flex items-center justify-between pt-1">
+<!-- Left attachment controls -->
+<div class="flex items-center gap-1">
+<button class="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Attach blueprint or photo" type="button">
+<span class="material-symbols-outlined text-[20px]">attach_file</span>
+</button>
+<button class="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Spatial voice prompt" type="button">
+<span class="material-symbols-outlined text-[20px]">mic</span>
+</button>
+<button class="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Add location pin" type="button">
+<span class="material-symbols-outlined text-[20px]">add_location_alt</span>
+</button>
+</div>
+<!-- Right submit button -->
+<div class="flex items-center gap-2">
+<span class="text-caption font-caption text-on-surface-variant hidden sm:inline">Press Enter to send</span>
+<button class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-container hover:bg-secondary-container text-on-primary shadow-md transition-all active:scale-95" type="submit">
+<span class="material-symbols-outlined text-[20px]">arrow_upward</span>
+</button>
+</div>
+</div>
+</form>
+<p class="text-caption font-caption text-on-surface-variant/70 text-center mt-2">
+          NextCampus AI synthesizes spatial GIS, timetabling ERP &amp; facility telemetry. Simulated Prototype Mode.
+        </p>
+</div>
+</main>
+<!-- RIGHT UTILITY DRAWER / CONTEXTUAL INSPECTOR (320px) -->
+<aside class="hidden xl:flex flex-col w-80 rounded-xl bg-surface-container-low shadow-sm p-space-md overflow-y-auto space-y-space-md">
+<!-- Panel Header -->
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">hub</span>
+<h3 class="font-title-md text-title-md font-bold text-on-surface">Spatial Inspector</h3>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary font-mono text-caption">ACTIVE PIN</span>
+</div>
+<!-- Focused Campus Landmark Card with Image -->
+<div class="rounded-xl overflow-hidden bg-surface-container shadow-sm">
+<div class="relative h-36 w-full">
+<img class="w-full h-full object-cover" data-alt="Cinematic architectural twilight view of Alan Turing Hall modern university building with glass-fronted engineering laboratories, ambient glowing warm architectural lights, contemporary facade with blush and amaranth undertones, surrounded by landscaped paved collegiate walkways and students" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDprOS2GfYZiYb5NMRgbJPZupHtc6uc5_186xi1I6PuXdGZP8UCx-rLT6j1YDVcNG0_j-QSUa-hN2ra3TtaMmK-Q9WeAS2FMHIk3BcHvQMzKJb29w-Z-eJLeHftKPl72xK4Cl4UFK7jdJ5cibn6HOIrBU0S-hl-CV397bLN2WDymVh2BhlGyWVSlAIKZk-jlzN4n3rOarsMNNaqFTeVXsDB22UBEXDhJCC1ydi2fNSSuUWIjRfInBlmhA">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent"></div>
+<span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-surface-container-lowest/80 text-on-surface text-caption font-semibold backdrop-blur-md">
+            Block A-01
+          </span>
+<span class="absolute bottom-2.5 right-2.5 flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container/90 text-on-secondary-container text-caption font-semibold backdrop-blur-md">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+            99.8% Core Mesh
+          </span>
+</div>
+<div class="p-3 space-y-2">
+<div class="flex items-start justify-between">
+<div>
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface">Alan Turing Hall</h4>
+<p class="text-caption font-caption text-on-surface-variant">School of Computing &amp; Cybernetics</p>
+</div>
+<span class="material-symbols-outlined text-primary text-[20px]">corporate_fare</span>
+</div>
+<!-- Quick facts -->
+<div class="space-y-1.5 pt-1 text-caption font-caption">
+<div class="flex items-center justify-between py-1 bg-surface-container-high px-2 rounded-md">
+<span class="text-on-surface-variant">Levels &amp; Labs</span>
+<span class="text-on-surface font-semibold">4 Floors • 14 Smart Labs</span>
+</div>
+<div class="flex items-center justify-between py-1 bg-surface-container-high px-2 rounded-md">
+<span class="text-on-surface-variant">Target Room</span>
+<span class="text-primary font-semibold">B-204 (Level 2 West Wing)</span>
+</div>
+<div class="flex items-center justify-between py-1 bg-surface-container-high px-2 rounded-md">
+<span class="text-on-surface-variant">Access Method</span>
+<span class="text-on-surface font-semibold">Smart ID NFC + Skybridge</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Action Modules -->
+<div class="space-y-2">
+<span class="text-caption font-caption text-on-surface-variant uppercase tracking-wider font-semibold">Context Shortcuts</span>
+<div class="grid grid-cols-1 gap-2">
+<a class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-all" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-[18px]">map</span>
+<span class="text-body-sm font-body-sm font-medium">Interactive Floor Plan (L2)</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-all" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[18px]">badge</span>
+<span class="text-body-sm font-body-sm font-medium">Turing Hall Staff Directory</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-all" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-tertiary text-[18px]">support_agent</span>
+<span class="text-body-sm font-body-sm font-medium">NextCampus Care Portal</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">chevron_right</span>
+</a>
+</div>
+</div>
+<!-- UI STATE PREVIEW CONTROLS (Demonstrates State Fidelity) -->
+<div class="rounded-xl bg-surface-container p-3 space-y-2.5 shadow-sm">
+<div class="flex items-center justify-between">
+<span class="text-caption font-caption text-on-surface-variant font-semibold uppercase tracking-wider">UI State Preview</span>
+<span class="text-caption font-caption text-primary">Prototype Tool</span>
+</div>
+<div class="grid grid-cols-3 gap-1 bg-surface-container-lowest p-1 rounded-lg">
+<button class="py-1 px-2 rounded text-caption font-caption font-semibold bg-primary-container text-on-primary transition-all" id="stateNormalBtn">
+            Active
+          </button>
+<button class="py-1 px-2 rounded text-caption font-caption text-on-surface-variant hover:text-on-surface transition-all" id="stateLoadingBtn">
+            Thinking
+          </button>
+<button class="py-1 px-2 rounded text-caption font-caption text-on-surface-variant hover:text-on-surface transition-all" id="stateEmptyBtn">
+            Fallback
+          </button>
+</div>
+<p class="text-caption font-caption text-on-surface-variant leading-tight" id="stateDescription">
+          Showing active conversation stream with rich spatial wayfinding and live SmartRoom cards.
+        </p>
+</div>
+<!-- Live Mesh Telemetry Mini Sparkline -->
+<div class="rounded-xl bg-surface-container p-3 shadow-sm">
+<div class="flex items-center justify-between pb-1.5">
+<span class="text-caption font-caption text-on-surface-variant font-semibold">Campus Node Activity</span>
+<span class="text-caption font-caption text-primary font-mono font-semibold">1,482 Req/min</span>
+</div>
+<!-- Inline Mini SVG Activity Wave -->
+<svg class="w-full h-8 text-primary overflow-visible" fill="none" viewBox="0 0 100 24">
+<path d="M0,18 Q12,6 25,14 T50,8 T75,18 T100,6" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+<circle class="fill-secondary" cx="100" cy="6" r="3"></circle>
+</svg>
+</div>
+</aside>
+</div>
+</div>
+<!-- Inline Interactive Script for Micro-interactions -->
+<script>
+  (function() {
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const chatStream = document.getElementById('chatMessageStream');
+    const dispatchBtn = document.getElementById('dispatchTicketBtn');
+    const successBanner = document.getElementById('dispatchSuccessBanner');
+    const clearBtn = document.getElementById('clearChatBtn');
+    const promptChips = document.querySelectorAll('.prompt-chip');
+    
+    // UI State Switcher Elements
+    const stateNormalBtn = document.getElementById('stateNormalBtn');
+    const stateLoadingBtn = document.getElementById('stateLoadingBtn');
+    const stateEmptyBtn = document.getElementById('stateEmptyBtn');
+    const stateDesc = document.getElementById('stateDescription');
+
+    // Quick prompt chip click handler
+    promptChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chatInput.value = chip.textContent.trim();
+        chatInput.focus();
+      });
+    });
+
+    // Care Dispatch button handler
+    if (dispatchBtn && successBanner) {
+      dispatchBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        dispatchBtn.disabled = true;
+        dispatchBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">sync</span> <span>Dispatching...</span>';
+        
+        setTimeout(() => {
+          dispatchBtn.classList.add('hidden');
+          successBanner.classList.remove('hidden');
+        }, 700);
+      });
+    }
+
+    // Interactive message posting
+    if (chatForm) {
+      chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = chatInput.value.trim();
+        if (!text) return;
+
+        // Append User Message
+        const userDiv = document.createElement('div');
+        userDiv.className = 'flex justify-end items-start gap-space-sm max-w-3xl ml-auto animate-fade-in';
+        userDiv.innerHTML = `
+          <div class="flex flex-col items-end">
+            <div class="px-space-md py-3 rounded-2xl rounded-tr-sm bg-primary-container text-on-primary shadow-md">
+              <p class="text-body-md font-body-md leading-relaxed text-on-primary">${escapeHtml(text)}</p>
+            </div>
+            <span class="text-caption font-caption text-on-surface-variant mt-1 mr-1">Just now • Student Portal</span>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary shrink-0 shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">account_circle</span>
+          </div>
+        `;
+        chatStream.appendChild(userDiv);
+        chatInput.value = '';
+        chatStream.scrollTop = chatStream.scrollHeight;
+
+        // Simulated AI Response with Thinking Delay
+        setTimeout(() => {
+          const aiDiv = document.createElement('div');
+          aiDiv.className = 'flex items-start gap-space-sm max-w-4xl animate-fade-in';
+          aiDiv.innerHTML = `
+            <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0 shadow-md">
+              <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+            </div>
+            <div class="flex flex-col flex-1 min-w-0 space-y-space-sm">
+              <div class="p-space-md rounded-2xl rounded-tl-sm bg-surface-container shadow-sm text-on-surface space-y-space-sm">
+                <p class="text-body-md font-body-md leading-relaxed text-on-surface">
+                  I've processed your campus inquiry regarding <strong>"${escapeHtml(text)}"</strong> through the institutional knowledge mesh.
+                </p>
+                <div class="p-3 rounded-xl bg-surface-container-high flex items-center gap-3">
+                  <span class="material-symbols-outlined text-primary text-[22px]">verified</span>
+                  <div class="text-caption font-caption text-on-surface-variant">
+                    <p class="text-on-surface font-semibold">Campus Node Verified</p>
+                    <p>All building schedules, facility access, and technician availability match current operational guidelines.</p>
+                  </div>
+                </div>
+              </div>
+              <span class="text-caption font-caption text-on-surface-variant ml-1">Just now • NextCampus LLM v4.2</span>
+            </div>
+          `;
+          chatStream.appendChild(aiDiv);
+          chatStream.scrollTop = chatStream.scrollHeight;
+        }, 900);
+      });
+    }
+
+    // Reset Context trigger
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        chatInput.value = '';
+        chatInput.placeholder = 'Context reset. Ask any campus logistics question...';
+        chatInput.focus();
+      });
+    }
+
+    // UI State Preview Mock Handlers
+    function setStateButton(activeBtn) {
+      [stateNormalBtn, stateLoadingBtn, stateEmptyBtn].forEach(b => {
+        b.className = 'py-1 px-2 rounded text-caption font-caption text-on-surface-variant hover:text-on-surface transition-all';
+      });
+      activeBtn.className = 'py-1 px-2 rounded text-caption font-caption font-semibold bg-primary-container text-on-primary transition-all';
+    }
+
+    if (stateNormalBtn) {
+      stateNormalBtn.addEventListener('click', () => {
+        setStateButton(stateNormalBtn);
+        stateDesc.textContent = 'Showing active conversation stream with rich spatial wayfinding and live SmartRoom cards.';
+      });
+    }
+
+    if (stateLoadingBtn) {
+      stateLoadingBtn.addEventListener('click', () => {
+        setStateButton(stateLoadingBtn);
+        stateDesc.textContent = 'Demonstrating LLM reasoning state: expands Thought Process accordion with spatial node telemetry.';
+        const details = document.querySelector('details');
+        if (details) details.open = true;
+      });
+    }
+
+    if (stateEmptyBtn) {
+      stateEmptyBtn.addEventListener('click', () => {
+        setStateButton(stateEmptyBtn);
+        stateDesc.textContent = 'Fallback & Ambiguity state: System gracefully cross-references Campus Directory and NextCampus Care.';
+      });
+    }
+
+    function escapeHtml(string) {
+      const div = document.createElement('div');
+      div.innerText = string;
+      return div.innerHTML;
+    }
+  })();
+</script></main><footer class="w-full bg-surface-container-low/70 py-space-md px-space-lg"><div class="flex flex-col md:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-caption text-caption"><span>NextCampus OS • Campus Student Portal • All systems operational</span><div class="flex items-center gap-space-xs text-on-surface"><span class="material-symbols-outlined text-[14px] text-primary">sync</span><span>Node synchronized with institutional network backbone</span></div></div></footer></div></body></html>

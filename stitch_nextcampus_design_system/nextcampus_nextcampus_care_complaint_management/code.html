@@ -1,0 +1,750 @@
+<!DOCTYPE html><html lang="en" class="dark"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NextCampus — NextCampus Care (Complaint Management)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              licorice: "#191516",
+              raisin: "#382E31",
+              amaranth: "#AC274F",
+              blush: "#EB638B",
+              misty: "#FFD9DA"
+            },
+            surface: {
+              base: "#161213",
+              card: "#1F1A1B",
+              elevated: "#292325",
+              highlight: "#382E31",
+              border: "rgba(255, 217, 218, 0.10)",
+              borderActive: "rgba(235, 99, 139, 0.35)"
+            }
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            display: ["Plus Jakarta Sans", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { background-color: #161213; color: #FFFFFF; font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #191516; }
+    ::-webkit-scrollbar-thumb { background: #382E31; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #AC274F; }
+  </style>
+</head>
+<body class="bg-brand-licorice text-white antialiased flex min-h-screen selection:bg-brand-amaranth selection:text-white">
+
+  <!-- PERSISTENT LEFT SIDEBAR -->
+  <aside class="w-72 bg-[#1b1617] border-r border-surface-border flex flex-col justify-between shrink-0 fixed inset-y-0 left-0 z-40">
+    <div class="flex flex-col flex-1 min-h-0">
+      <!-- Logo Header -->
+      <div class="h-16 px-6 flex items-center justify-between border-b border-surface-border">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-blush to-brand-amaranth flex items-center justify-center font-display font-extrabold text-white text-base shadow-[0_0_14px_rgba(235,99,139,0.4)]">
+            N
+          </div>
+          <div class="flex flex-col">
+            <span class="font-display font-bold text-[17px] tracking-tight text-white leading-none">NextCampus</span>
+            <span class="font-mono text-[10px] text-brand-misty/70 tracking-wider uppercase mt-1">Unified Operations</span>
+          </div>
+        </div>
+        <span class="px-2 py-0.5 rounded bg-brand-raisin text-brand-blush font-mono text-[11px] font-semibold border border-brand-blush/20">HQ</span>
+      </div>
+
+      <!-- Node Indicator -->
+      <div class="px-5 py-3">
+        <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg bg-[#241d1f] border border-surface-border">
+          <span class="w-2 h-2 rounded-full bg-brand-blush animate-pulse"></span>
+          <span class="text-xs text-brand-misty/90 font-mono truncate">Node: Campus Main Core</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
+        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-brand-misty/80 hover:text-white hover:bg-surface-elevated transition-colors text-sm font-medium">
+          <span class="material-symbols-outlined text-[20px]">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-brand-misty/80 hover:text-white hover:bg-surface-elevated transition-colors text-sm font-medium">
+          <span class="material-symbols-outlined text-[20px]">map</span>
+          <span>Campus Map</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-brand-misty/80 hover:text-white hover:bg-surface-elevated transition-colors text-sm font-medium">
+          <span class="material-symbols-outlined text-[20px]">meeting_room</span>
+          <span>SmartRooms</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-brand-misty/80 hover:text-white hover:bg-surface-elevated transition-colors text-sm font-medium">
+          <span class="material-symbols-outlined text-[20px]">contact_page</span>
+          <span>Campus Directory</span>
+        </a>
+        <!-- ACTIVE: NextCampus Care -->
+        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-brand-amaranth text-white font-semibold text-sm shadow-[0_0_18px_rgba(172,39,79,0.45)] border border-brand-blush/30">
+          <span class="material-symbols-outlined text-[20px]">report_problem</span>
+          <span>NextCampus Care</span>
+          <span class="ml-auto w-2 h-2 rounded-full bg-white"></span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-brand-misty/80 hover:text-white hover:bg-surface-elevated transition-colors text-sm font-medium">
+          <span class="material-symbols-outlined text-[20px]">eco</span>
+          <span>EcoCampus</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-brand-misty/80 hover:text-white hover:bg-surface-elevated transition-colors text-sm font-medium">
+          <span class="material-symbols-outlined text-[20px]">hub</span>
+          <span>SkillCampus</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-brand-misty/80 hover:text-white hover:bg-surface-elevated transition-colors text-sm font-medium">
+          <span class="material-symbols-outlined text-[20px]">settings</span>
+          <span>Settings</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Sidebar Bottom Status -->
+    <div class="p-4 border-t border-surface-border bg-[#140f10]">
+      <div class="flex items-center justify-between text-brand-misty/70 text-xs">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[16px] text-brand-blush">wifi_tethering</span>
+          <span>Mesh: 99.98%</span>
+        </div>
+        <span class="px-2 py-0.5 rounded bg-brand-raisin font-mono text-[10px] text-white">v4.18</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER (offset by sidebar w-72) -->
+  <div class="pl-72 flex-1 flex flex-col min-w-0">
+
+    <!-- PERSISTENT TOP APP HEADER -->
+    <header class="h-16 bg-[#161213]/90 backdrop-blur-md border-b border-surface-border sticky top-0 z-30 flex items-center justify-between px-8">
+      <!-- Search Field -->
+      <div class="flex-1 max-w-xl">
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3.5 top-2.5 text-brand-misty/50 text-[20px]">search</span>
+          <input type="text" placeholder="Search campus buildings, smart rooms, labs, or services..." class="w-full h-10 pl-11 pr-4 rounded-xl bg-surface-card border border-surface-border text-sm text-white placeholder-brand-misty/40 focus:outline-none focus:border-brand-blush focus:ring-1 focus:ring-brand-blush transition-all">
+        </div>
+      </div>
+
+      <!-- Header Quick Tools -->
+      <div class="flex items-center gap-4">
+        <!-- SOS Beacon -->
+        <button class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-red-950/80 border border-red-500/40 text-red-200 text-xs font-semibold hover:bg-red-900 transition-all shadow-[0_0_12px_rgba(239,68,68,0.2)]">
+          <span class="material-symbols-outlined text-[18px] text-red-400">sos</span>
+          <span>SOS Beacon</span>
+        </button>
+
+        <div class="h-5 w-px bg-surface-border"></div>
+
+        <!-- Notifications -->
+        <button class="relative p-2 rounded-lg text-brand-misty/80 hover:text-white hover:bg-surface-elevated transition-colors">
+          <span class="material-symbols-outlined text-[22px]">notifications</span>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand-blush ring-2 ring-[#161213]"></span>
+        </button>
+
+        <!-- User Profile Pill -->
+        <div class="flex items-center gap-3 pl-2">
+          <div class="text-right hidden sm:block">
+            <div class="text-xs font-semibold text-white leading-tight">Aarav Sharma</div>
+            <div class="text-[11px] text-brand-misty/60 leading-tight">Computer Science '25</div>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-blush to-brand-amaranth flex items-center justify-center text-white text-xs font-bold border border-brand-blush/40 shadow-sm">
+            AS
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN DASHBOARD CONTENT AREA -->
+    <main class="p-8 space-y-6 flex-1">
+
+      <!-- Breadcrumb & Page Title Section -->
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-brand-misty/70">
+          <span class="w-2 h-2 rounded-full bg-brand-blush"></span>
+          <span>Campus Services &amp; Facility Dispatch</span>
+          <span>/</span>
+          <span class="text-white font-medium">Oxford Brookes University • [YOUR COLLEGE NAME]</span>
+          <span>/</span>
+          <span class="px-1.5 py-0.5 rounded bg-brand-raisin text-brand-blush text-[10px]">TICKET-STREAM v4.2</span>
+        </div>
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+          <div>
+            <h1 class="font-display font-extrabold text-3xl tracking-tight text-white flex items-center gap-3">
+              NextCampus Care <span class="text-brand-blush font-light">—</span> Incident &amp; Issue Resolution
+            </h1>
+            <p class="text-sm text-brand-misty/80 mt-1 max-w-3xl">
+              Report campus infrastructure defects, track live dispatch SLAs in real time, and audit resolution telemetries across Oxford Brookes facility nodes.
+            </p>
+          </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <button class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-card border border-surface-border hover:border-brand-blush/40 text-brand-misty text-xs font-semibold transition-all">
+              <span class="material-symbols-outlined text-[18px]">history</span>
+              <span>Archived Tickets</span>
+            </button>
+            <button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-amaranth to-brand-blush text-white text-xs font-bold shadow-[0_0_16px_rgba(172,39,79,0.4)] hover:brightness-110 transition-all">
+              <span class="material-symbols-outlined text-[18px]">add_circle</span>
+              <span>New Dispatch</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP METRIC STATUS TILES -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Tile 1 -->
+        <div class="bg-surface-card border border-surface-border rounded-2xl p-4 relative overflow-hidden flex flex-col justify-between">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-xs font-mono uppercase tracking-wider text-brand-misty/70">Active Tickets</span>
+              <div class="text-3xl font-display font-extrabold text-white mt-1">01</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-brand-raisin border border-brand-blush/30 flex items-center justify-center text-brand-blush">
+              <span class="material-symbols-outlined text-[22px]">pending_actions</span>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-surface-border flex items-center justify-between text-xs">
+            <span class="px-2 py-0.5 rounded-full bg-brand-amaranth/20 border border-brand-amaranth/40 text-brand-misty font-mono font-medium flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-blush animate-pulse"></span>
+              ETA 25 mins
+            </span>
+            <span class="text-brand-misty/60 font-mono">Ticket #CMP-1042</span>
+          </div>
+        </div>
+
+        <!-- Tile 2 -->
+        <div class="bg-surface-card border border-surface-border rounded-2xl p-4 relative overflow-hidden flex flex-col justify-between">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-xs font-mono uppercase tracking-wider text-brand-misty/70">Resolved This Term</span>
+              <div class="text-3xl font-display font-extrabold text-white mt-1">04</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-surface-elevated border border-surface-border flex items-center justify-center text-green-400">
+              <span class="material-symbols-outlined text-[22px]">task_alt</span>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-surface-border flex items-center justify-between text-xs">
+            <span class="text-brand-misty/80 font-mono">Avg. 4.2 hrs triage</span>
+            <span class="text-brand-misty/60">100% Student Verified</span>
+          </div>
+        </div>
+
+        <!-- Tile 3 -->
+        <div class="bg-surface-card border border-surface-border rounded-2xl p-4 relative overflow-hidden flex flex-col justify-between">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-xs font-mono uppercase tracking-wider text-brand-misty/70">Facility Health</span>
+              <div class="text-3xl font-display font-extrabold text-white mt-1">99.4%</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-surface-elevated border border-surface-border flex items-center justify-center text-brand-blush">
+              <span class="material-symbols-outlined text-[22px]">domain_verification</span>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-surface-border flex items-center justify-between text-xs">
+            <span class="text-brand-misty/80 flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+              Block A-01 Nominal
+            </span>
+            <span class="text-brand-misty/60">14 Bldgs Active</span>
+          </div>
+        </div>
+
+        <!-- Tile 4 -->
+        <div class="bg-surface-card border border-surface-border rounded-2xl p-4 relative overflow-hidden flex flex-col justify-between">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-xs font-mono uppercase tracking-wider text-brand-misty/70">Fast-Track Response</span>
+              <div class="text-3xl font-display font-extrabold text-brand-blush mt-1">24/7</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-red-950/60 border border-red-500/30 flex items-center justify-center text-red-400">
+              <span class="material-symbols-outlined text-[22px]">bolt</span>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-surface-border flex items-center justify-between text-xs">
+            <span class="px-2 py-0.5 rounded-full bg-red-950/80 border border-red-500/30 text-red-300 font-mono font-medium">
+              Tier 1 Rapid SLA
+            </span>
+            <span class="text-brand-misty/60">&lt;45 min Classroom</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN SPLIT WORKSPACE: 45% FORM vs 55% TRACKING -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- ==================== LEFT COLUMN: REPORT AN ISSUE FORM (5 COLS) ==================== -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-surface-card border border-surface-border rounded-2xl p-6 relative overflow-hidden shadow-xl">
+            <!-- Ambient Glow -->
+            <div class="absolute -top-16 -left-16 w-36 h-36 rounded-full bg-brand-amaranth/15 blur-3xl pointer-events-none"></div>
+
+            <!-- Form Title -->
+            <div class="flex items-start justify-between pb-4 border-b border-surface-border mb-5">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded bg-brand-amaranth text-white text-[10px] font-mono font-bold uppercase tracking-wider">
+                    New Intake
+                  </span>
+                  <span class="text-[11px] font-mono text-brand-misty/60">NODE-REF #619</span>
+                </div>
+                <h2 class="font-display font-bold text-lg text-white mt-1.5">Submit Campus Issue</h2>
+                <p class="text-xs text-brand-misty/70 mt-0.5">
+                  Submissions feed directly into the central CAFM facility queue. For direct safety hazards, use SOS Beacon.
+                </p>
+              </div>
+              <div class="w-9 h-9 rounded-xl bg-surface-elevated border border-surface-border flex items-center justify-center text-brand-blush">
+                <span class="material-symbols-outlined text-[20px]">assignment_add</span>
+              </div>
+            </div>
+
+            <!-- The Form -->
+            <form class="space-y-4" onsubmit="event.preventDefault();">
+              <!-- Issue Title -->
+              <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-brand-misty uppercase tracking-wider">
+                  Issue Summary / Headline <span class="text-brand-blush">*</span>
+                </label>
+                <input type="text" value="HDMI Projector Flickering &amp; Audio Distortion" class="w-full h-10 px-3.5 rounded-xl bg-surface-elevated border border-surface-border text-sm text-white focus:outline-none focus:border-brand-blush focus:ring-1 focus:ring-brand-blush transition-all">
+              </div>
+
+              <!-- Category Grid -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <label class="block text-xs font-semibold text-brand-misty uppercase tracking-wider">
+                    Infrastructure Domain <span class="text-brand-blush">*</span>
+                  </label>
+                  <span class="text-[11px] font-mono text-brand-blush">Selected: Classroom &amp; AV</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                  <button type="button" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-elevated border border-surface-border hover:border-brand-blush/40 hover:bg-brand-raisin transition-all text-center group">
+                    <span class="material-symbols-outlined text-[20px] text-brand-misty/70 group-hover:text-brand-blush mb-1">bolt</span>
+                    <span class="text-[11px] font-medium text-brand-misty leading-tight">Electricity</span>
+                  </button>
+                  <button type="button" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-elevated border border-surface-border hover:border-brand-blush/40 hover:bg-brand-raisin transition-all text-center group">
+                    <span class="material-symbols-outlined text-[20px] text-brand-misty/70 group-hover:text-brand-blush mb-1">water_drop</span>
+                    <span class="text-[11px] font-medium text-brand-misty leading-tight">Water &amp; Plumbing</span>
+                  </button>
+                  <button type="button" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-elevated border border-surface-border hover:border-brand-blush/40 hover:bg-brand-raisin transition-all text-center group">
+                    <span class="material-symbols-outlined text-[20px] text-brand-misty/70 group-hover:text-brand-blush mb-1">cleaning_services</span>
+                    <span class="text-[11px] font-medium text-brand-misty leading-tight">Sanitation</span>
+                  </button>
+                  <button type="button" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-elevated border border-surface-border hover:border-brand-blush/40 hover:bg-brand-raisin transition-all text-center group">
+                    <span class="material-symbols-outlined text-[20px] text-brand-misty/70 group-hover:text-brand-blush mb-1">wifi</span>
+                    <span class="text-[11px] font-medium text-brand-misty leading-tight">Wi-Fi &amp; Net</span>
+                  </button>
+                  <!-- ACTIVE -->
+                  <button type="button" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-brand-amaranth border border-brand-blush text-white shadow-[0_0_12px_rgba(172,39,79,0.35)] text-center transition-all">
+                    <span class="material-symbols-outlined text-[20px] text-white mb-1">videocam</span>
+                    <span class="text-[11px] font-bold text-white leading-tight">Classroom / AV</span>
+                  </button>
+                  <button type="button" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-elevated border border-surface-border hover:border-brand-blush/40 hover:bg-brand-raisin transition-all text-center group">
+                    <span class="material-symbols-outlined text-[20px] text-brand-misty/70 group-hover:text-brand-blush mb-1">handyman</span>
+                    <span class="text-[11px] font-medium text-brand-misty leading-tight">Maintenance</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Location Inputs -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-semibold text-brand-misty uppercase tracking-wider">
+                    Building Node <span class="text-brand-blush">*</span>
+                  </label>
+                  <div class="relative">
+                    <select class="w-full h-10 pl-3 pr-8 rounded-xl bg-surface-elevated border border-surface-border text-xs text-white focus:outline-none focus:border-brand-blush appearance-none cursor-pointer">
+                      <option selected="">Alan Turing Hall (Block A-01)</option>
+                      <option>Central Learning Resources Hub</option>
+                      <option>Ramanujan Science Complex</option>
+                      <option>Dorothy Hodgkin Pavilion</option>
+                    </select>
+                    <span class="material-symbols-outlined absolute right-2.5 top-2.5 pointer-events-none text-brand-misty/50 text-[18px]">expand_more</span>
+                  </div>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-semibold text-brand-misty uppercase tracking-wider">
+                    Specific Room / Zone <span class="text-brand-blush">*</span>
+                  </label>
+                  <input type="text" value="Room B-204 (Level 2 Multi-Media)" class="w-full h-10 px-3 rounded-xl bg-surface-elevated border border-surface-border text-xs text-white focus:outline-none focus:border-brand-blush transition-all">
+                </div>
+              </div>
+
+              <!-- Urgency / Priority -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <label class="block text-xs font-semibold text-brand-misty uppercase tracking-wider">
+                    Urgency &amp; Impact Tier <span class="text-brand-blush">*</span>
+                  </label>
+                  <span class="text-[11px] font-mono text-brand-misty/70">Classroom SLA: &lt;45 min</span>
+                </div>
+                <div class="grid grid-cols-4 gap-2">
+                  <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-surface-elevated border border-surface-border hover:border-brand-blush/30 cursor-pointer text-center transition-all">
+                    <input type="radio" name="priority" class="sr-only">
+                    <span class="text-xs font-semibold text-brand-misty">Low</span>
+                    <span class="text-[10px] text-brand-misty/50 mt-0.5">Routine</span>
+                  </label>
+                  <!-- ACTIVE -->
+                  <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-brand-raisin border-2 border-brand-blush cursor-pointer text-center shadow-[0_0_10px_rgba(235,99,139,0.25)]">
+                    <input type="radio" name="priority" checked="" class="sr-only">
+                    <span class="text-xs font-bold text-brand-blush">Medium</span>
+                    <span class="text-[10px] text-brand-misty/80 mt-0.5">Disruptive</span>
+                  </label>
+                  <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-surface-elevated border border-surface-border hover:border-brand-blush/30 cursor-pointer text-center transition-all">
+                    <input type="radio" name="priority" class="sr-only">
+                    <span class="text-xs font-semibold text-brand-misty">High</span>
+                    <span class="text-[10px] text-brand-misty/50 mt-0.5">Halts Class</span>
+                  </label>
+                  <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-surface-elevated border border-surface-border hover:border-red-400/40 cursor-pointer text-center transition-all">
+                    <input type="radio" name="priority" class="sr-only">
+                    <span class="text-xs font-semibold text-red-400">Urgent</span>
+                    <span class="text-[10px] text-red-400/70 mt-0.5">Hazard</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <label class="block text-xs font-semibold text-brand-misty uppercase tracking-wider">
+                    Defect Description &amp; Equipment Notes <span class="text-brand-blush">*</span>
+                  </label>
+                  <span class="text-[11px] font-mono text-brand-misty/60">142 / 500 chars</span>
+                </div>
+                <textarea rows="3" class="w-full p-3 rounded-xl bg-surface-elevated border border-surface-border text-xs text-white placeholder-brand-misty/40 focus:outline-none focus:border-brand-blush transition-all resize-none leading-relaxed">During CS-301 Lecture, the main ceiling projector exhibits severe green frame flickering and lost optical sync when switching inputs from the Lectern 4 Thunderbolt interface.</textarea>
+              </div>
+
+              <!-- Diagnostic Attachment -->
+              <div class="space-y-2">
+                <label class="block text-xs font-semibold text-brand-misty uppercase tracking-wider">
+                  Diagnostic Photo Attachment
+                </label>
+                <div class="p-3.5 rounded-xl bg-surface-elevated border border-dashed border-surface-border hover:border-brand-blush/50 transition-all flex flex-col items-center justify-center text-center cursor-pointer group">
+                  <span class="material-symbols-outlined text-[22px] text-brand-blush mb-1 group-hover:scale-110 transition-transform">add_a_photo</span>
+                  <span class="text-xs font-medium text-white">Click or drag photo here</span>
+                  <span class="text-[10px] text-brand-misty/60 mt-0.5">JPG, PNG, HEIC up to 15MB • Geotag helps routing</span>
+                </div>
+                <!-- Pre-attached file badge -->
+                <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-brand-raisin border border-surface-border">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="material-symbols-outlined text-brand-blush text-[18px]">image</span>
+                    <span class="text-xs font-mono text-white truncate">projector_hdmi_glitch_b204.jpg</span>
+                    <span class="text-[10px] font-mono text-brand-misty/60">(1.8 MB)</span>
+                  </div>
+                  <span class="px-2 py-0.5 rounded bg-brand-amaranth/30 text-brand-blush font-mono text-[10px] font-semibold border border-brand-amaranth/40">VERIFIED</span>
+                </div>
+              </div>
+
+              <!-- CTAs -->
+              <div class="pt-2 flex items-center gap-3">
+                <button type="button" class="flex-1 h-11 rounded-xl bg-gradient-to-r from-brand-amaranth to-brand-blush text-white text-xs font-bold shadow-[0_0_18px_rgba(172,39,79,0.4)] hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                  <span class="material-symbols-outlined text-[18px]">send</span>
+                  <span>Submit Complaint &amp; Dispatch</span>
+                </button>
+                <button type="button" class="h-11 px-4 rounded-xl bg-surface-elevated border border-surface-border text-brand-misty text-xs font-medium hover:bg-brand-raisin hover:text-white transition-all">
+                  Save Draft
+                </button>
+              </div>
+
+              <!-- Disclaimer -->
+              <p class="text-[11px] text-brand-misty/50 text-center leading-relaxed pt-1">
+                Institutional Notice: Tickets integrate into Oxford Brookes / [YOUR COLLEGE NAME] CAFM facilities protocol. False reports in exam rooms undergo disciplinary audit.
+              </p>
+            </form>
+          </div>
+
+          <!-- Quick Escalation Banner -->
+          <div class="bg-surface-card border border-surface-border rounded-2xl p-4 flex items-start gap-3.5">
+            <div class="w-8 h-8 rounded-lg bg-brand-raisin border border-brand-blush/30 flex items-center justify-center text-brand-blush shrink-0">
+              <span class="material-symbols-outlined text-[18px]">emergency_home</span>
+            </div>
+            <div class="space-y-0.5">
+              <div class="text-xs font-bold text-white">Emergency Facility Response</div>
+              <p class="text-[11px] text-brand-misty/70 leading-normal">
+                For major gas leaks, burst pipes, elevator malfunctions, or power emergencies, dial Campus Security instantly at <span class="font-mono text-brand-blush font-bold">x4444</span> or hit the <span class="text-red-400 font-semibold">SOS Beacon</span> above.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== RIGHT COLUMN: LIVE TRACKING & COMPLAINT HISTORY (7 COLS) ==================== -->
+        <div class="lg:col-span-7 space-y-4">
+
+          <!-- Filter & Search Toolbar -->
+          <div class="bg-surface-card border border-surface-border rounded-2xl p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-md">
+            <!-- Tabs -->
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+              <button class="px-3 py-1.5 rounded-lg bg-surface-elevated text-xs font-medium text-brand-misty hover:text-white transition-colors">
+                All (5)
+              </button>
+              <!-- ACTIVE -->
+              <button class="px-3 py-1.5 rounded-lg bg-brand-amaranth text-xs font-bold text-white shadow-sm flex items-center gap-1.5 border border-brand-blush/30">
+                <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                In Progress (1)
+              </button>
+              <button class="px-3 py-1.5 rounded-lg bg-surface-elevated text-xs font-medium text-brand-misty hover:text-white transition-colors">
+                Under Review (1)
+              </button>
+              <button class="px-3 py-1.5 rounded-lg bg-surface-elevated text-xs font-medium text-brand-misty hover:text-white transition-colors">
+                Resolved (3)
+              </button>
+            </div>
+
+            <!-- Mini search -->
+            <div class="relative min-w-[200px]">
+              <span class="material-symbols-outlined absolute left-2.5 top-2 text-brand-misty/40 text-[18px]">search</span>
+              <input type="text" placeholder="Search my tickets..." class="w-full h-8 pl-8 pr-3 rounded-lg bg-surface-elevated border border-surface-border text-xs text-white placeholder-brand-misty/40 focus:outline-none focus:border-brand-blush">
+            </div>
+          </div>
+
+          <!-- PRIMARY ACTIVE TICKET DETAIL CARD (Expanded Spotlight) -->
+          <div class="bg-surface-card border-2 border-brand-amaranth/80 rounded-2xl p-6 relative overflow-hidden shadow-[0_0_24px_rgba(172,39,79,0.25)] space-y-5">
+            <!-- Top Header Meta -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-surface-border">
+              <div class="flex items-center gap-2.5">
+                <span class="px-2.5 py-1 rounded-md bg-brand-raisin text-brand-blush font-mono text-xs font-bold border border-brand-blush/30">
+                  #CMP-1042
+                </span>
+                <span class="px-2.5 py-1 rounded-md bg-amber-950/60 text-amber-300 font-mono text-[11px] font-semibold border border-amber-500/30">
+                  MEDIUM PRIORITY
+                </span>
+                <span class="text-xs text-brand-misty/60 flex items-center gap-1 font-mono">
+                  <span class="material-symbols-outlined text-[14px]">schedule</span>
+                  Today, 10:14 AM (28 mins ago)
+                </span>
+              </div>
+              <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-amaranth/20 border border-brand-amaranth text-brand-misty text-xs font-semibold">
+                <span class="w-2 h-2 rounded-full bg-brand-blush animate-ping"></span>
+                <span>In Progress (Dispatch Active)</span>
+              </div>
+            </div>
+
+            <!-- Title & Location Bar -->
+            <div>
+              <div class="flex items-center gap-2 text-xs font-semibold text-brand-blush uppercase tracking-wider">
+                <span class="material-symbols-outlined text-[16px]">videocam</span>
+                <span>Classroom &amp; AV Equipment</span>
+              </div>
+              <h3 class="font-display font-bold text-xl text-white mt-1">
+                CS Lab B Projector HDMI Glitch &amp; Green Tint
+              </h3>
+              <div class="flex items-center gap-2 text-xs text-brand-misty/80 mt-1.5">
+                <span class="material-symbols-outlined text-[16px] text-brand-blush">pin_drop</span>
+                <span class="font-medium text-white">Alan Turing Hall (Block A-01)</span>
+                <span>•</span>
+                <span class="text-brand-misty">Level 2 Multi-Media Theatre (Room B-204)</span>
+              </div>
+            </div>
+
+            <!-- Description Body -->
+            <div class="p-3.5 rounded-xl bg-surface-elevated border border-surface-border text-xs text-brand-misty/90 leading-relaxed">
+              "During CS-301 Lecture, the ceiling dual 4K laser projector exhibits severe green frame flickering and lost optical sync when switching inputs from the Lectern 4 Thunderbolt interface."
+            </div>
+
+            <!-- Assigned Tech Pill -->
+            <div class="p-3.5 rounded-xl bg-brand-raisin/70 border border-brand-blush/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-brand-amaranth/40 border border-brand-blush/50 flex items-center justify-center text-brand-blush font-bold text-xs font-mono">
+                  MV
+                </div>
+                <div>
+                  <div class="text-xs font-semibold text-white">Assigned: Tech Team #2 (Lead: Marcus Vance)</div>
+                  <div class="text-[11px] text-brand-misty/70">Campus AV Systems Specialist • Unit ID #AV-98</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 font-mono text-xs text-brand-blush font-bold bg-[#191516] px-3 py-1.5 rounded-lg border border-brand-blush/20 shrink-0">
+                <span class="material-symbols-outlined text-[16px]">timer</span>
+                <span>ETA: 25 mins</span>
+              </div>
+            </div>
+
+            <!-- LIVE TIMELINE / AUDIT HISTORY STEPPER -->
+            <div class="space-y-3 pt-2">
+              <div class="text-xs font-bold uppercase tracking-wider text-brand-misty flex items-center justify-between">
+                <span>Dispatch Resolution Stepper</span>
+                <span class="text-brand-blush font-mono text-[11px]">SLA TARGET: &lt;45 MINS</span>
+              </div>
+
+              <div class="relative pl-6 space-y-4 border-l-2 border-brand-amaranth/40 ml-2">
+                <!-- Step 1: Complete -->
+                <div class="relative">
+                  <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-brand-amaranth border-2 border-white flex items-center justify-center">
+                    <span class="w-1.5 h-1.5 bg-white rounded-full"></span>
+                  </div>
+                  <div class="flex items-baseline justify-between text-xs">
+                    <span class="font-semibold text-white">Ticket Submitted &amp; Logged by Student</span>
+                    <span class="font-mono text-[11px] text-brand-misty/60">10:14 AM</span>
+                  </div>
+                  <p class="text-[11px] text-brand-misty/70 mt-0.5">Automated CAFM ingest created node record #CMP-1042.</p>
+                </div>
+
+                <!-- Step 2: Complete -->
+                <div class="relative">
+                  <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-brand-amaranth border-2 border-white flex items-center justify-center">
+                    <span class="w-1.5 h-1.5 bg-white rounded-full"></span>
+                  </div>
+                  <div class="flex items-baseline justify-between text-xs">
+                    <span class="font-semibold text-white">Automated Triage &amp; Room Sensor Verification</span>
+                    <span class="font-mono text-[11px] text-brand-misty/60">10:18 AM</span>
+                  </div>
+                  <p class="text-[11px] text-brand-misty/70 mt-0.5 font-mono">Telemetry check confirmed: Optical HDMI link flapping on Lectern 4 switch port.</p>
+                </div>
+
+                <!-- Step 3: ACTIVE IN PROGRESS -->
+                <div class="relative">
+                  <div class="absolute -left-[33px] top-0.5 w-5 h-5 rounded-full bg-brand-blush border-2 border-white animate-pulse flex items-center justify-center">
+                    <span class="w-2 h-2 bg-brand-amaranth rounded-full"></span>
+                  </div>
+                  <div class="flex items-baseline justify-between text-xs">
+                    <span class="font-bold text-brand-blush">Technician Dispatched (En Route)</span>
+                    <span class="font-mono text-[11px] text-brand-blush font-bold">10:32 AM (CURRENT)</span>
+                  </div>
+                  <p class="text-[11px] text-brand-misty/90 mt-0.5">Marcus Vance dispatched with replacement optical fiber HDMI cable assembly.</p>
+                </div>
+
+                <!-- Step 4: Pending -->
+                <div class="relative opacity-50">
+                  <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-surface-elevated border-2 border-surface-border"></div>
+                  <div class="flex items-baseline justify-between text-xs">
+                    <span class="font-semibold text-brand-misty">Resolution Verification &amp; Student Sign-off</span>
+                    <span class="font-mono text-[11px] text-brand-misty/50">Est. 11:15 AM</span>
+                  </div>
+                  <p class="text-[11px] text-brand-misty/60 mt-0.5">Student verification prompt sent once technician confirms 4K signal lock.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Triggers for Ticket -->
+            <div class="pt-2 border-t border-surface-border flex flex-wrap items-center gap-3">
+              <button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-elevated border border-surface-border text-brand-misty text-xs font-semibold hover:text-white transition-colors">
+                <span class="material-symbols-outlined text-[16px] text-brand-blush">image</span>
+                <span>View Evidence (1 file)</span>
+              </button>
+              <button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-elevated border border-surface-border text-brand-misty text-xs font-semibold hover:text-white transition-colors">
+                <span class="material-symbols-outlined text-[16px] text-brand-blush">chat</span>
+                <span>Message Dispatcher</span>
+              </button>
+              <button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-elevated border border-surface-border text-brand-misty text-xs font-semibold hover:text-white transition-colors ml-auto">
+                <span class="material-symbols-outlined text-[16px]">edit</span>
+                <span>Update Notes</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- HISTORICAL COMPLAINT TICKETS (Collapsed Rows) -->
+          <div class="space-y-3">
+            <div class="text-xs font-bold uppercase tracking-wider text-brand-misty/80 px-1">
+              Previous Logged Complaints
+            </div>
+
+            <!-- Row 1: Under Review -->
+            <div class="bg-surface-card border border-surface-border hover:border-brand-blush/30 rounded-2xl p-4 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-mono text-xs font-bold text-brand-misty">#CMP-0988</span>
+                  <span class="px-2 py-0.5 rounded bg-blue-950/70 text-blue-300 font-mono text-[10px] font-semibold border border-blue-500/30">UNDER REVIEW</span>
+                  <span class="text-[11px] text-brand-misty/50 font-mono">Oct 11, 3:45 PM</span>
+                </div>
+                <div class="text-sm font-semibold text-white">Wi-Fi AP Signal Drop &amp; Latency Spike</div>
+                <div class="text-xs text-brand-misty/70 flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[14px] text-brand-blush">pin_drop</span>
+                  <span>Central Learning Resources Hub — 3rd Floor Quiet Study Wing</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="px-2.5 py-1 rounded-lg bg-surface-elevated text-brand-misty text-xs font-mono font-medium">HIGH IMPACT</span>
+                <button class="p-1.5 rounded-lg bg-surface-elevated hover:bg-brand-raisin text-brand-misty hover:text-white transition-colors">
+                  <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Row 2: Resolved -->
+            <div class="bg-surface-card border border-surface-border hover:border-green-500/30 rounded-2xl p-4 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-mono text-xs font-bold text-brand-misty">#CMP-0912</span>
+                  <span class="px-2 py-0.5 rounded bg-green-950/70 text-green-300 font-mono text-[10px] font-semibold border border-green-500/30 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[12px]">check_circle</span>
+                    RESOLVED
+                  </span>
+                  <span class="text-[11px] text-brand-misty/50 font-mono">Oct 8, 2026</span>
+                </div>
+                <div class="text-sm font-semibold text-white">Water Pressure Loss &amp; Valve Leak</div>
+                <div class="text-xs text-brand-misty/70 flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[14px] text-brand-blush">pin_drop</span>
+                  <span>Fountain Quad Restrooms — Block B West</span>
+                </div>
+                <div class="text-[11px] text-green-300/80 font-mono mt-1">
+                  Resolution: "Valve G-12 gasket replaced and flow pressure recalibrated."
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button class="px-3 py-1.5 rounded-lg bg-surface-elevated hover:bg-brand-raisin text-xs font-medium text-brand-misty transition-colors">
+                  View Sign-off
+                </button>
+              </div>
+            </div>
+
+            <!-- Row 3: Resolved -->
+            <div class="bg-surface-card border border-surface-border hover:border-green-500/30 rounded-2xl p-4 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-mono text-xs font-bold text-brand-misty">#CMP-0845</span>
+                  <span class="px-2 py-0.5 rounded bg-green-950/70 text-green-300 font-mono text-[10px] font-semibold border border-green-500/30 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[12px]">check_circle</span>
+                    RESOLVED
+                  </span>
+                  <span class="text-[11px] text-brand-misty/50 font-mono">Oct 2, 2026</span>
+                </div>
+                <div class="text-sm font-semibold text-white">Broken Ergonomic Desk Armrest</div>
+                <div class="text-xs text-brand-misty/70 flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[14px] text-brand-blush">pin_drop</span>
+                  <span>Ramanujan Science Complex — Computer Lab S-104 (Desk 18)</span>
+                </div>
+                <div class="text-[11px] text-green-300/80 font-mono mt-1">
+                  Resolution: "Replaced with newly serviced ergonomic chair unit #42."
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button class="px-3 py-1.5 rounded-lg bg-surface-elevated hover:bg-brand-raisin text-xs font-medium text-brand-misty transition-colors">
+                  View Sign-off
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Institutional SLA Guarantee Banner -->
+          <div class="p-4 rounded-2xl bg-gradient-to-r from-brand-raisin to-[#241c1e] border border-brand-blush/20 flex items-center justify-between text-xs text-brand-misty/80">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-brand-blush text-[20px]">verified</span>
+              <span><strong>Oxford Brookes Care Guarantee:</strong> 45-minute on-site response for all critical academic spaces.</span>
+            </div>
+            <a href="#" class="text-brand-blush hover:underline font-semibold text-[11px] shrink-0">View Service Charter →</a>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="h-12 bg-[#140f10] border-t border-surface-border px-8 flex items-center justify-between text-xs text-brand-misty/60">
+      <div>NextCampus OS • Student Incident Portal • All systems operational</div>
+      <div class="flex items-center gap-2 text-white">
+        <span class="material-symbols-outlined text-[14px] text-brand-blush">sync</span>
+        <span>Node synchronized with institutional CAFM Archibus API</span>
+      </div>
+    </footer>
+
+  </div>
+
+</body></html>
