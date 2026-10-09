@@ -13,6 +13,7 @@ import careRoutes from './routes/care.routes.js';
 import skillRoutes from './routes/skill.routes.js';
 import sustainabilityRoutes from './routes/sustainability.routes.js';
 import aiRoutes from './routes/ai.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 
 // Load Environment Variables
 dotenv.config();
@@ -50,6 +51,7 @@ app.use('/api/v1/care', careRoutes);
 app.use('/api/v1/skillcampus', skillRoutes);
 app.use('/api/v1/sustainability', sustainabilityRoutes);
 app.use('/api/v1/ai', aiRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 // Global Error Handler
 app.use(errorHandler);

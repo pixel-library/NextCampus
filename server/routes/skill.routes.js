@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.get('/projects', skillController.handleGetProjects);
 router.post('/projects', authenticateUser, skillController.handleCreateProject);
+router.post('/projects/:id/join', authenticateUser, skillController.handleJoinProject);
 
 export default router;
