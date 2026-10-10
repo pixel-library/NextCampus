@@ -89,12 +89,12 @@ export const CampusDirectory = () => {
   const facultyList = [
     {
       id: 'f1',
-      bldgId: 'turing',
+      bldgId: 'eng',
       name: 'Prof. Ananya Roy, Ph.D.',
       title: 'Professor & Chair of Distributed Systems',
-      dept: 'School of Computing & Cybernetics',
-      room: 'Alan Turing Hall, Room B-204 (Level 2)',
-      email: 'ananya.roy@nextcampus.edu',
+      dept: 'School of Computing & Artificial Intelligence',
+      room: 'Faculty of Engineering & Tech, Room B-204 (Level 2)',
+      email: 'ananya.roy@mewaruniversity.ac.in',
       phone: 'Ext: 4821',
       officeHours: 'Office Hours Today: 2:00 PM – 4:30 PM (Walk-in)',
       status: 'Available Now',
@@ -102,12 +102,12 @@ export const CampusDirectory = () => {
     },
     {
       id: 'f2',
-      bldgId: 'ramanujan',
+      bldgId: 'eng',
       name: 'Dr. Vikram Seth',
       title: 'Associate Professor of Machine Learning & Neural Networks',
-      dept: 'Department of Mathematics & Computing',
-      room: 'Ramanujan Science Block, Room S-108',
-      email: 'vikram.seth@nextcampus.edu',
+      dept: 'Department of Computer Science & Engineering',
+      room: 'Faculty of Engineering & Tech, Room ENG-108',
+      email: 'vikram.seth@mewaruniversity.ac.in',
       phone: 'Ext: 4310',
       officeHours: 'Office Hours Tomorrow: 10:00 AM',
       status: 'In Lecture until 2:30 PM',
@@ -115,12 +115,12 @@ export const CampusDirectory = () => {
     },
     {
       id: 'f3',
-      bldgId: 'robotics',
+      bldgId: 'admin',
       name: 'Dr. Emily Nakamura',
       title: 'Head of Robotics & Autonomous Systems',
       dept: 'Mechatronics & Embedded IoT Labs',
-      room: 'Innovation Hub, Hardware Lab 4',
-      email: 'e.nakamura@nextcampus.edu',
+      room: 'Maharana Pratap Admin Block, AI Lab 2',
+      email: 'e.nakamura@mewaruniversity.ac.in',
       phone: 'Ext: 5102',
       officeHours: 'Drop-in Desk #14 Active',
       status: 'In Laboratory',
@@ -135,16 +135,16 @@ export const CampusDirectory = () => {
       name: 'Office of the University Registrar & Student Records',
       dept: 'Administration Main Desk',
       description: 'Enrolment validation, official transcripts, degree verification, and student status letters.',
-      location: 'Administration Building, Ground Floor East',
+      location: 'Maharana Pratap Admin Block, Ground Floor East',
       hours: 'Mon-Fri 09:00 AM – 05:00 PM',
     },
     {
       id: 's2',
-      bldgId: 'sac',
-      name: 'Campus Health & Psychological Counseling Center',
-      dept: 'Priority Student Care',
-      description: 'Confidential mental health triage, certified counselors, primary medical advice, and accessibility accommodations.',
-      location: 'Student Activity Center, Suite 102',
+      bldgId: 'med',
+      name: 'Mewar University Hospital & Health Center',
+      dept: 'Priority Student Care & Medical Dispatch',
+      description: 'Confidential student health triage, physician consultation, emergency ward, and primary medication.',
+      location: 'Mewar University Hospital, Block MED-09',
       hours: '24/7 Urgent Helpline • Walk-in 08:30 – 18:00',
     },
   ];
@@ -173,12 +173,12 @@ export const CampusDirectory = () => {
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '9999px', backgroundColor: 'var(--bg-surface-elevated)', marginBottom: '8px' }}>
               <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--brand-accent)' }} />
               <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', color: 'var(--brand-misty)', textTransform: 'uppercase' }}>
-                NEXTCAMPUS INSTITUTE • INSTITUTIONAL DIRECTORY 2026
+                MEWAR UNIVERSITY • INSTITUTIONAL DIRECTORY 2026
               </span>
             </div>
             <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>Campus Directory</h1>
             <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '4px', maxWidth: '720px' }}>
-              Discover academic departments, faculty offices, campus facilities, and administrative services indexed across NextCampus main grounds.
+              Discover academic departments, faculty offices, campus facilities, and administrative services indexed across Mewar University campus grounds.
             </p>
           </div>
 

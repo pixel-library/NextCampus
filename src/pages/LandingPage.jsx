@@ -35,7 +35,7 @@ export const LandingPage = () => {
 
   const nodeDetails = {
     'block-a': {
-      title: 'Academic Block A',
+      title: 'Faculty of Engineering & Technology',
       dept: 'Dept. of Computer Science & Engineering',
       status: 'Open (Occupied)',
       temp: '21.5°C Optimal',
@@ -43,7 +43,7 @@ export const LandingPage = () => {
       accessibility: 'Elevator & Ramps',
       lecture: 'CS402: Distributed Systems Architecture',
       instructor: 'Prof. Ananya Roy • 42 Students',
-      code: 'BLK-A-L3',
+      code: 'ENG-02',
     },
     library: {
       title: 'Central Campus Library',
@@ -178,7 +178,7 @@ export const LandingPage = () => {
           >
             <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--brand-primary)' }} />
             <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', color: 'var(--brand-primary)', textTransform: 'uppercase' }}>
-              SMART CAMPUS PLATFORM FOR NEXTCAMPUS INSTITUTE OF TECHNOLOGY • MU HACKATHON 2026
+              SMART CAMPUS PLATFORM • MEWAR UNIVERSITY, GANGRAR, CHITTORGARH
             </span>
           </div>
 

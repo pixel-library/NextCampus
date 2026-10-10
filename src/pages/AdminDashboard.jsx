@@ -39,7 +39,7 @@ export function AdminDashboard() {
         projects: { total: 38, openRoles: 64 },
         announcements: [
           { id: '1', title: 'Scheduled Network Maintenance', desc: 'Central Library AP-09 undergoing firmware update', category: 'Network', createdAt: 'Today 08:30 AM' },
-          { id: '2', title: 'MU Hackathon 2026 Venue Approval', desc: 'Turing Hall Amphitheatre reserved for Dec 4-6', category: 'Incubator', createdAt: 'Yesterday' }
+          { id: '2', title: 'MU Hackathon 2026 Venue Approval', desc: 'Mewar Central Auditorium reserved for Dec 4-6', category: 'Incubator', createdAt: 'Yesterday' }
         ]
       });
     } finally {
@@ -75,7 +75,7 @@ export function AdminDashboard() {
         <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-space-md">
           <div className="flex flex-col">
             <span className="font-caption text-caption uppercase tracking-wider text-secondary font-semibold font-mono">
-              ADMINISTRATIVE DISPATCH &amp; CENTRAL FACILITY OPERATIONS • OXFORD BROOKES OPERATIONS NODE • TERM FALL 2026
+              ADMINISTRATIVE DISPATCH &amp; CENTRAL FACILITY OPERATIONS • MEWAR UNIVERSITY OPERATIONS NODE • TERM FALL 2026
             </span>
             <div className="flex items-center gap-space-sm mt-1">
               <h1 className="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">
@@ -264,11 +264,11 @@ export function AdminDashboard() {
                 </thead>
                 <tbody className="text-on-surface divide-y divide-outline-variant/20">
                   {[
-                    { name: 'Alan Turing Hall', code: 'Block A-01 • Computing', floors: 4, rooms: '42 (32 In-Use / 10 Free)', load: 84, tickets: '2 Active', status: 'Nominal' },
-                    { name: 'Central Library & Resources', code: 'Block B-02 • Open Learning', floors: 3, rooms: '28 (19 In-Use / 9 Free)', load: 91, tickets: '1 Critical', status: 'Peak Footfall' },
-                    { name: 'Ramanujan Science Complex', code: 'Block C-03 • STEM Labs', floors: 5, rooms: '56 (44 In-Use / 12 Free)', load: 76, tickets: '0 Tickets', status: 'Nominal' },
-                    { name: 'Student Union & Dining', code: 'Block D-04 • Amenities', floors: 2, rooms: '18 (15 In-Use / 3 Free)', load: 68, tickets: '1 Ticket', status: 'Nominal' },
-                    { name: 'Medical & Health Sciences', code: 'Block M-05 • Clinical Hub', floors: 4, rooms: '40 (32 In-Use / 8 Free)', load: 80, tickets: '1 Ticket', status: 'Nominal' }
+                    { name: 'Faculty of Engineering & Tech', code: 'Block ENG-02 • Computing & AI', floors: 4, rooms: '42 (32 In-Use / 10 Free)', load: 84, tickets: '2 Active', status: 'Nominal' },
+                    { name: 'Swami Vivekananda Central Library', code: 'Block LIB-03 • Open Learning', floors: 3, rooms: '28 (19 In-Use / 9 Free)', load: 91, tickets: '1 Critical', status: 'Peak Footfall' },
+                    { name: 'Maharana Pratap Admin Block', code: 'Block ADM-01 • Registrar & Labs', floors: 5, rooms: '56 (44 In-Use / 12 Free)', load: 76, tickets: '0 Tickets', status: 'Nominal' },
+                    { name: 'Central Cafeteria & Food Court', code: 'Block CAF-05 • Dining Plaza', floors: 2, rooms: '18 (15 In-Use / 3 Free)', load: 68, tickets: '1 Ticket', status: 'Nominal' },
+                    { name: 'Mewar University Hospital', code: 'Block MED-09 • Clinical Health', floors: 4, rooms: '40 (32 In-Use / 8 Free)', load: 80, tickets: '1 Ticket', status: 'Nominal' }
                   ].map((b, idx) => (
                     <tr key={idx} className="hover:bg-surface-container-high/60 transition-colors">
                       <td className="px-4 py-3 font-medium">
@@ -331,10 +331,10 @@ export function AdminDashboard() {
 
             <div className="flex flex-col gap-2">
               {[
-                { id: '#CMP-1042', title: 'CS Lab B Projector HDMI Glitch', sub: 'Classroom AV • Alan Turing Hall B-204 • Tech: Marcus Vance', status: 'En Route (ETA 25m)', prio: 'Medium' },
-                { id: '#CMP-1044', title: 'Water Pressure Loss in 2nd Floor Washrooms', sub: 'Plumbing • Central Library & Resources • Unassigned Dispatch', status: 'Pending Assign', prio: 'High', isHigh: true },
-                { id: '#CMP-1040', title: 'Core Mesh AP Dropping Packets (Beacon Failure)', sub: 'Wi-Fi / Net • Ramanujan West Wing • Assigned: Network Ops Tier 2', status: 'Investigating', prio: 'High', isHigh: true },
-                { id: '#CMP-1038', title: 'LED Driver Flickering in Lecture Theatre 1', sub: 'Electrical • Turing Hall A-101 • Assigned: Facilities Team 1', status: 'Parts Ordered', prio: 'Low' }
+                { id: '#CMP-1042', title: 'CS Lab B Projector HDMI Glitch', sub: 'Classroom AV • Engineering Block B-204 • Tech: Marcus Vance', status: 'En Route (ETA 25m)', prio: 'Medium' },
+                { id: '#CMP-1044', title: 'Water Pressure Loss in 2nd Floor Washrooms', sub: 'Plumbing • Swami Vivekananda Library • Unassigned Dispatch', status: 'Pending Assign', prio: 'High', isHigh: true },
+                { id: '#CMP-1040', title: 'Core Mesh AP Dropping Packets (Beacon Failure)', sub: 'Wi-Fi / Net • Admin Block East Wing • Assigned: Network Ops Tier 2', status: 'Investigating', prio: 'High', isHigh: true },
+                { id: '#CMP-1038', title: 'LED Driver Flickering in Lecture Theatre 1', sub: 'Electrical • Engineering Block ENG-101 • Assigned: Facilities Team 1', status: 'Parts Ordered', prio: 'Low' }
               ].map((inc) => (
                 <div key={inc.id} className="p-3 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors flex flex-col md:flex-row md:items-center justify-between gap-3 border border-outline-variant/20">
                   <div className="flex items-start gap-3">
@@ -373,7 +373,7 @@ export function AdminDashboard() {
 
             <div className="flex flex-col gap-space-sm mt-space-sm">
               {[
-                { title: 'Approve Room Allocation for MU Hackathon 2026', tag: 'High Priority', detail: 'Turing Amphitheatre • Due 2:00 PM', isHigh: true },
+                { title: 'Approve Room Allocation for MU Hackathon 2026', tag: 'High Priority', detail: 'Mewar Central Auditorium • Due 2:00 PM', isHigh: true },
                 { title: 'Authorize Emergency HVAC Sub-Meter Replacement', tag: 'Medium', detail: 'Block B Basement • Due Tomorrow' },
                 { title: 'Sign off 4 Resolved Care Maintenance Tickets', tag: 'Medium', detail: 'Batch Verification • Due Today' },
                 { title: 'Review Faculty Keycard NFC Audit Discrepancies', tag: 'Low', detail: 'Security Dispatch • Due Oct 16' },
@@ -419,7 +419,7 @@ export function AdminDashboard() {
                   <span className="material-symbols-outlined text-primary text-[16px]">event_seat</span>
                   <span className="font-label-md text-label-md font-semibold text-on-surface">MU Hackathon 2026 Venue Approved</span>
                 </div>
-                <p className="font-body-sm text-body-sm text-on-surface-variant">Alan Turing Hall Amphitheatre &amp; Smart Labs reserved for Dec 4-6 sprint.</p>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">Mewar University Central Auditorium &amp; Smart Labs reserved for Dec 4-6 sprint.</p>
                 <span className="font-caption text-caption text-on-surface-variant/70 self-end font-mono">Yesterday</span>
               </div>
             </div>

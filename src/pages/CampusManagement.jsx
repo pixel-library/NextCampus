@@ -54,7 +54,7 @@ export function CampusManagement() {
     type: 'Multi-Media Theatre',
     capacity: 60,
     status: 'occupied',
-    building: 'Alan Turing Hall',
+    building: 'Faculty of Engineering & Technology',
     floor: 'Level 2',
     features: ['Dual 4K Laser Projector', 'CO2 & Air Quality', 'NFC Smart Lock', 'Spatial Mic Array'],
     timetableRule: 'Automated live lock sync via University Timetable Core API',
@@ -127,10 +127,10 @@ export function CampusManagement() {
   const activeFacility =
     buildings.find((b) => b.code === selectedFacilityCode || b._id === selectedFacilityCode) ||
     buildings[0] || {
-      name: 'Alan Turing Hall',
-      code: 'A-01',
+      name: 'Faculty of Engineering & Technology',
+      code: 'ENG-02',
       category: 'academic',
-      precinct: 'North Quadrangle',
+      precinct: 'North Academic Promenade',
       totalFloors: 4,
       departments: ['School of Computing', 'Autonomous Systems', 'Robotics', 'AI Lab'],
       grossFloorArea: 14200,
@@ -941,7 +941,7 @@ export function CampusManagement() {
               {/* Tactical Overlay Pins */}
               <div className="absolute top-8 left-12 flex items-center gap-2 bg-surface-container/90 backdrop-blur-md px-2.5 py-1 rounded-full shadow-lg border border-outline-variant/30">
                 <span className="w-2 h-2 rounded-full bg-primary animate-ping"></span>
-                <span className="font-caption text-caption text-on-surface font-semibold">North Quad: A-01 Turing</span>
+                <span className="font-caption text-caption text-on-surface font-semibold">North Promenade: ENG-02 Engineering</span>
               </div>
               <div className="absolute top-16 right-16 flex items-center gap-2 bg-surface-container/90 backdrop-blur-md px-2.5 py-1 rounded-full shadow-lg border border-outline-variant/30">
                 <span className="w-2 h-2 rounded-full bg-secondary"></span>
