@@ -1,90 +1,196 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  DoorOpen,
+  Users,
+  Wind,
+  Thermometer,
+  Wifi,
+  Volume2,
+  Clock,
+  Calendar,
+  CheckCircle2,
+  AlertCircle,
+  QrCode,
+  Search,
+  ArrowRight,
+  Navigation,
+  Layers,
+  ShieldCheck,
+  Sparkles,
+  Maximize2,
+  Minimize2,
+  ChevronRight,
+  ChevronLeft,
+  Info,
+  Building2,
+  Smartphone,
+  Copy,
+  Check,
+  X,
+  Activity,
+  Sliders,
+  Radio,
+  Eye,
+  Zap,
+  Lock,
+  Unlock,
+  CornerUpRight
+} from 'lucide-react';
 
-const SAMPLE_ROOMS = [
+// ============================================================================
+// DATA: Comprehensive Campus Rooms & Architectural CAD Metadata
+// ============================================================================
+const INITIAL_ROOMS = [
+  // --- Block ENG-02 (Faculty of Engineering & Technology) - Level 2 ---
   {
     id: 'B-204',
     roomNumber: 'B-204',
     name: 'Multi-Media Lecture Theatre',
     type: 'Lecture Theatres',
     building: 'Faculty of Engineering & Technology (Block ENG-02)',
+    buildingCode: 'ENG-02',
     floor: 'Level 2',
     capacity: 60,
     currentOccupancy: 18,
     status: 'available',
-    statusText: 'Open (Till 11:30 AM)',
-    nextClass: 'CS-301 at 11:30 AM',
-    co2: '410 ppm (Clean)',
-    temperature: '21.8°C',
+    statusText: 'Open (Free Till 1:00 PM)',
+    nextClass: 'CS-301 Operating Systems at 1:00 PM',
+    co2: 410,
+    co2Status: 'Pristine Clean Air',
+    temp: 21.8,
+    tempTarget: 22.0,
+    humidity: 44,
+    noiseDb: 34,
+    noiseStatus: 'Whisper Quiet',
     wifiSpeed: '820 Mbps',
-    features: ['Dual 4K Laser Projection + Spatial Rig', 'Motorized Lectern (USB-C TB4)', 'Wi-Fi 7 Campus Core AP', 'ADA Front Row & Hearing Loop', 'HVAC Air Flow Optimization'],
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBEmMuzHefL5tPKAYOycYTHzeTmeXLCvOUJycvf6lKLZhRaijmgIjYzF1hLw60D3hqHGhdPnZ1fff6qM77Yyp1EJAoNuXTB1PtBLrsfrDG4u1qFZma4pY4yiVVO9_v8V1AvnxLEQ9qtnM7wC6GTZm7x7ducKf2QjEL___ep8BrPaHh1kd4IaP13sHCmBascN8Wc8XVSMBK0X6uJNDAC0B7CuHMvHv_2YwTB0o0ecM5L3a_lCyYlxPokGQ',
+    wifiLatency: '3 ms',
+    wifiDevices: 18,
+    features: [
+      'Dual 4K Laser Projection + Spatial Rig',
+      'Motorized Lectern (USB-C Thunderbolt 4)',
+      'Wi-Fi 7 Enterprise Core AP',
+      'ADA Front Row & Hearing Loop',
+      'HVAC HEPA Air Purification'
+    ],
+    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80',
     has4kLaser: true,
     hasGpu: false,
     hasInteractive: true,
     isAda: true,
+    cadBox: { x: 260, y: 340, w: 180, h: 160, door: { x: 350, y: 340 } },
     routeSteps: [
-      { step: '1. Cross Level 2 Skybridge', desc: 'Enter Alan Turing Hall through automatic glass doors (0m)' },
-      { step: '2. Continue down North Main Corridor', desc: 'Walk straight past Restrooms and Lifts (25m)' },
-      { step: '3. Turn Left at Student Lounge', desc: 'Follow the Blush illuminated pathway sign (15m)' },
-      { step: '4. Arrive at Room B-204', desc: 'On your right side. Double acoustic doors with NFC lock (8m)' }
+      { step: '1. Cross Level 2 Skybridge', desc: 'Enter Alan Turing Hall through automatic glass sliding doors (0m)' },
+      { step: '2. Continue down North Main Corridor', desc: 'Walk straight past Restrooms and West Lifts (25m)' },
+      { step: '3. Turn Left at Student Lounge', desc: 'Follow the illuminated green guidance signs (15m)' },
+      { step: '4. Arrive at Room B-204', desc: 'On your right side. Double acoustic doors with NFC smart lock (8m)' }
     ],
-    routeDistance: '48 meters (1.2 min walk)'
+    routeDistance: '48 meters (1.2 min walk)',
+    slots: [
+      { id: 'b204-1', start: '08:00', end: '09:30', title: 'Data Structures (CS-201)', lecturer: 'Prof. Sharma', status: 'past', isBookable: false },
+      { id: 'b204-2', start: '09:30', end: '11:30', title: 'Algorithm Lab Section A', lecturer: 'Dr. Verma', status: 'occupied', isBookable: false },
+      { id: 'b204-3', start: '11:30', end: '13:00', title: 'Open Collaborative Lab Access', lecturer: 'Unassigned', status: 'available', isBookable: true },
+      { id: 'b204-4', start: '13:00', end: '14:30', title: 'CS-301 Operating Systems', lecturer: 'Dr. Verma', status: 'reserved', isBookable: false },
+      { id: 'b204-5', start: '14:30', end: '16:30', title: 'Open Team Project Study Slot', lecturer: 'Open Access', status: 'available', isBookable: true },
+      { id: 'b204-6', start: '16:30', end: '18:30', title: 'Evening Capstone Lab Access', lecturer: 'Open Access', status: 'available', isBookable: true },
+    ]
   },
   {
     id: 'B-203',
     roomNumber: 'B-203',
-    name: 'Distributed Systems Lab',
+    name: 'Distributed Systems & Cloud Lab',
     type: 'Computer Labs',
     building: 'Faculty of Engineering & Technology (Block ENG-02)',
+    buildingCode: 'ENG-02',
     floor: 'Level 2',
     capacity: 40,
     currentOccupancy: 10,
     status: 'available',
-    statusText: 'Open Now',
-    nextClass: 'Free access',
-    co2: '425 ppm',
-    temperature: '20.4°C',
+    statusText: 'Open Now (30 Desks Free)',
+    nextClass: 'Cloud Distributed Systems at 3:00 PM',
+    co2: 425,
+    co2Status: 'Optimal (Fresh Intake)',
+    temp: 20.4,
+    tempTarget: 20.5,
+    humidity: 42,
+    noiseDb: 38,
+    noiseStatus: 'Low Hum (Workstation Active)',
     wifiSpeed: '950 Mbps',
-    features: ['30x RTX 4090 AI Workstations', '10GbE Fiber Drop', 'Dual OLED Monitors', 'ADA Station #1', 'Smart Access Control'],
-    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80',
+    wifiLatency: '2 ms',
+    wifiDevices: 12,
+    features: [
+      '30x RTX 4090 AI Workstations',
+      '10GbE SFP+ Fiber Network Drop',
+      'Dual 4K OLED Color-Accurate Monitors',
+      'ADA Workstation #1 (Motorized Height)',
+      'Touchless NFC Access Controller'
+    ],
+    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80',
     has4kLaser: false,
     hasGpu: true,
     hasInteractive: true,
     isAda: true,
+    cadBox: { x: 70, y: 340, w: 160, h: 160, door: { x: 150, y: 340 } },
     routeSteps: [
-      { step: '1. Enter Level 2 Corridor', desc: 'From West Lift Bank (0m)' },
-      { step: '2. Head West down Hallway', desc: 'Pass Amphitheatre entrance on left (30m)' },
-      { step: '3. Arrive at Room B-203', desc: 'Door on the left (10m)' }
+      { step: '1. Enter Level 2 Corridor', desc: 'Exit West Lift Bank and head west (0m)' },
+      { step: '2. Head West down Main Hallway', desc: 'Pass Amphitheatre entrance on left (30m)' },
+      { step: '3. Arrive at Room B-203', desc: 'Door on the left side with dual NFC biometric terminal (10m)' }
     ],
-    routeDistance: '40 meters (1.0 min walk)'
+    routeDistance: '40 meters (1.0 min walk)',
+    slots: [
+      { id: 'b203-1', start: '08:30', end: '10:00', title: 'Network Protocols Lab', lecturer: 'Dr. Sengupta', status: 'past', isBookable: false },
+      { id: 'b203-2', start: '10:00', end: '13:30', title: 'Open GPU Cluster Work Time', lecturer: 'Open Lab', status: 'available', isBookable: true },
+      { id: 'b203-3', start: '13:30', end: '15:00', title: 'Autonomous Systems Sim', lecturer: 'Prof. Mehta', status: 'reserved', isBookable: false },
+      { id: 'b203-4', start: '15:00', end: '17:00', title: 'Distributed Systems Practical', lecturer: 'Dr. Sengupta', status: 'reserved', isBookable: false },
+      { id: 'b203-5', start: '17:00', end: '19:00', title: 'Evening Open AI Hackathon Desks', lecturer: 'Student Club', status: 'available', isBookable: true },
+    ]
   },
   {
     id: 'B-201',
     roomNumber: 'B-201',
-    name: 'Large Amphitheatre',
+    name: 'Main Academic Amphitheatre',
     type: 'Lecture Theatres',
     building: 'Faculty of Engineering & Technology (Block ENG-02)',
+    buildingCode: 'ENG-02',
     floor: 'Level 2',
     capacity: 120,
     currentOccupancy: 120,
     status: 'occupied',
-    statusText: 'Occupied (CS-204 Algorithms)',
-    nextClass: 'Free at 1:00 PM',
-    co2: '510 ppm',
-    temperature: '23.1°C',
+    statusText: 'In Session (CS-204 Algorithms)',
+    nextClass: 'Free at 1:00 PM for Guest Keynote',
+    co2: 520,
+    co2Status: 'Elevated (Air Handling at 100%)',
+    temp: 23.1,
+    tempTarget: 22.0,
+    humidity: 50,
+    noiseDb: 64,
+    noiseStatus: 'Lecture in Progress',
     wifiSpeed: '650 Mbps',
-    features: ['Tiered Acoustic Seating', 'Dual 4K Laser Projectors', 'Surround Broadcast Mics', 'ADA Hearing Loop'],
-    image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80',
+    wifiLatency: '6 ms',
+    wifiDevices: 124,
+    features: [
+      'Tiered Acoustic Auditoria Seating',
+      'Dual 4K Christie Laser Projectors',
+      'Array Ceiling Mics & Live Webcast Hub',
+      'ADA Hearing Assist Loop + Ramp Entry'
+    ],
+    image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80',
     has4kLaser: true,
     hasGpu: false,
     hasInteractive: false,
     isAda: true,
+    cadBox: { x: 70, y: 120, w: 160, h: 160, door: { x: 150, y: 280 } },
     routeSteps: [
-      { step: '1. Exit West Lifts', desc: 'Turn left into Main Concourse (5m)' },
-      { step: '2. Arrive at Amphitheatre B-201', desc: 'Main double doors on south wall (15m)' }
+      { step: '1. Exit West Lifts', desc: 'Turn left into Central Concourse (5m)' },
+      { step: '2. Arrive at Amphitheatre B-201', desc: 'Main acoustic double doors on south wall (15m)' }
     ],
-    routeDistance: '20 meters (0.5 min walk)'
+    routeDistance: '20 meters (0.5 min walk)',
+    slots: [
+      { id: 'b201-1', start: '09:00', end: '10:30', title: 'Discrete Mathematics', lecturer: 'Prof. Joshi', status: 'past', isBookable: false },
+      { id: 'b201-2', start: '10:30', end: '13:00', title: 'Algorithms (CS-204)', lecturer: 'Prof. R. Sen', status: 'occupied', isBookable: false },
+      { id: 'b201-3', start: '13:00', end: '15:00', title: 'Tech Speaker Series Keynote', lecturer: 'Guest Faculty', status: 'reserved', isBookable: false },
+      { id: 'b201-4', start: '15:00', end: '17:00', title: 'Open Revision & Problem Solving', lecturer: 'TA Session', status: 'available', isBookable: true },
+    ]
   },
   {
     id: 'B-202',
@@ -92,53 +198,90 @@ const SAMPLE_ROOMS = [
     name: 'Faculty Seminar Suite',
     type: 'Smart Classrooms',
     building: 'Faculty of Engineering & Technology (Block ENG-02)',
+    buildingCode: 'ENG-02',
     floor: 'Level 2',
     capacity: 35,
     currentOccupancy: 35,
     status: 'reserved',
     statusText: 'Reserved (Faculty Council 2PM)',
-    nextClass: 'Reserved for Council',
-    co2: '390 ppm',
-    temperature: '21.0°C',
+    nextClass: 'Faculty Council at 2:00 PM',
+    co2: 390,
+    co2Status: 'Pristine Clean Air',
+    temp: 21.0,
+    tempTarget: 21.0,
+    humidity: 43,
+    noiseDb: 32,
+    noiseStatus: 'Whisper Quiet',
     wifiSpeed: '780 Mbps',
-    features: ['Interactive Smart Touchboard', 'Conference Telemetry Camera', 'Modular Glass Tables'],
-    image: 'https://images.unsplash.com/photo-1577412647305-991150c7d163?auto=format&fit=crop&w=600&q=80',
+    wifiLatency: '4 ms',
+    wifiDevices: 6,
+    features: [
+      'Interactive Smart Touchboard 85"',
+      'Conference AI Auto-Framing Camera',
+      'Modular Acoustic Glass Collaboration Pods'
+    ],
+    image: 'https://images.unsplash.com/photo-1577412647305-991150c7d163?auto=format&fit=crop&w=800&q=80',
     has4kLaser: false,
     hasGpu: false,
     hasInteractive: true,
     isAda: false,
+    cadBox: { x: 730, y: 120, w: 160, h: 160, door: { x: 810, y: 280 } },
     routeSteps: [
       { step: '1. Exit East Lifts', desc: 'Turn right into East Corridor (5m)' },
       { step: '2. Arrive at B-202', desc: 'Glass entry door on right (12m)' }
     ],
-    routeDistance: '17 meters (0.4 min walk)'
+    routeDistance: '17 meters (0.4 min walk)',
+    slots: [
+      { id: 'b202-1', start: '09:00', end: '11:00', title: 'Department Curriculum Review', lecturer: 'HOD CSE', status: 'past', isBookable: false },
+      { id: 'b202-2', start: '11:00', end: '13:30', title: 'Open Faculty Desk Time', lecturer: 'Faculty Only', status: 'available', isBookable: true },
+      { id: 'b202-3', start: '14:00', end: '16:00', title: 'Faculty Council Session', lecturer: 'Dean Academic', status: 'reserved', isBookable: false },
+    ]
   },
   {
     id: 'B-205',
     roomNumber: 'B-205',
-    name: 'AI & Robotics Lab',
+    name: 'AI & Robotics Prototyping Lab',
     type: 'Computer Labs',
     building: 'Faculty of Engineering & Technology (Block ENG-02)',
+    buildingCode: 'ENG-02',
     floor: 'Level 2',
     capacity: 28,
     currentOccupancy: 28,
     status: 'occupied',
     statusText: 'In Session (Autonomous Drones)',
     nextClass: 'Free at 4:00 PM',
-    co2: '440 ppm',
-    temperature: '22.0°C',
+    co2: 440,
+    co2Status: 'Optimal Clean Air',
+    temp: 22.0,
+    tempTarget: 21.5,
+    humidity: 46,
+    noiseDb: 52,
+    noiseStatus: 'Robotics Motors Active',
     wifiSpeed: '900 Mbps',
-    features: ['AI Prototyping Clusters', 'Test Flight Cage', 'Soldering Stations', 'ADA Bench'],
-    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=600&q=80',
+    wifiLatency: '2 ms',
+    wifiDevices: 32,
+    features: [
+      'NVIDIA Jetson AI Prototyping Benches',
+      'Indoor Drone Flight Netting Enclosure',
+      'ESD Soldering & 3D Print Farm',
+      'ADA Ergonomic Height Workstation'
+    ],
+    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80',
     has4kLaser: false,
     hasGpu: true,
     hasInteractive: true,
     isAda: true,
+    cadBox: { x: 540, y: 340, w: 180, h: 160, door: { x: 630, y: 340 } },
     routeSteps: [
       { step: '1. Main Concourse', desc: 'Walk past Student Lounge east (20m)' },
-      { step: '2. Arrive at B-205', desc: 'Entry on south side (10m)' }
+      { step: '2. Arrive at B-205', desc: 'Entry on south side with RFID lock (10m)' }
     ],
-    routeDistance: '30 meters (0.8 min walk)'
+    routeDistance: '30 meters (0.8 min walk)',
+    slots: [
+      { id: 'b205-1', start: '09:00', end: '12:00', title: 'Robotics Sensors Lab', lecturer: 'Dr. Chauhan', status: 'past', isBookable: false },
+      { id: 'b205-2', start: '12:00', end: '16:00', title: 'Autonomous Drones Flight Test', lecturer: 'Robotics Guild', status: 'occupied', isBookable: false },
+      { id: 'b205-3', start: '16:00', end: '19:00', title: 'Open Maker Bench Access', lecturer: 'Open Lab', status: 'available', isBookable: true },
+    ]
   },
   {
     id: 'B-206',
@@ -146,33 +289,159 @@ const SAMPLE_ROOMS = [
     name: 'Silent Acoustic Study Pods',
     type: 'Study Pods',
     building: 'Faculty of Engineering & Technology (Block ENG-02)',
+    buildingCode: 'ENG-02',
     floor: 'Level 2',
     capacity: 16,
     currentOccupancy: 12,
     status: 'available',
-    statusText: '4 Pods Free',
-    nextClass: 'Instant Tap-In',
-    co2: '400 ppm',
-    temperature: '21.5°C',
+    statusText: '4 Pods Available Now',
+    nextClass: 'Instant Tap-In / 24/7 Access',
+    co2: 400,
+    co2Status: 'Pristine Clean Air',
+    temp: 21.5,
+    tempTarget: 21.5,
+    humidity: 43,
+    noiseDb: 28,
+    noiseStatus: 'Acoustic Soundproof (<30dB)',
     wifiSpeed: '850 Mbps',
-    features: ['16 Acoustic Pods', 'ANC Glass Enclosures', 'USB-C PD 100W Charging', 'Dimmable Warm LED'],
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80',
+    wifiLatency: '3 ms',
+    wifiDevices: 12,
+    features: [
+      '16x Frameless ANC Acoustic Glass Pods',
+      'Dual 100W USB-C PD Superchargers',
+      'Adjustable Circadian Lighting Strip',
+      'Touchless QR / NFC Pass Unlock'
+    ],
+    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
     has4kLaser: false,
     hasGpu: false,
     hasInteractive: false,
     isAda: true,
+    cadBox: { x: 740, y: 340, w: 150, h: 160, door: { x: 815, y: 340 } },
     routeSteps: [
       { step: '1. East Corridor', desc: 'Walk straight past East Lifts (25m)' },
       { step: '2. Arrive at B-206 Pods', desc: 'Acoustic glass bay on south end (15m)' }
     ],
-    routeDistance: '40 meters (1.0 min walk)'
+    routeDistance: '40 meters (1.0 min walk)',
+    slots: [
+      { id: 'b206-1', start: '08:00', end: '10:00', title: 'Early Bird Deep Study', lecturer: 'Open Access', status: 'past', isBookable: false },
+      { id: 'b206-2', start: '10:00', end: '12:00', title: 'Reserved Pods 1-8', lecturer: 'Peer Booking', status: 'occupied', isBookable: false },
+      { id: 'b206-3', start: '12:00', end: '14:00', title: 'Open Pod Slot A', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
+      { id: 'b206-4', start: '14:00', end: '16:00', title: 'Open Pod Slot B', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
+      { id: 'b206-5', start: '16:00', end: '18:00', title: 'Open Pod Slot C', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
+      { id: 'b206-6', start: '18:00', end: '20:00', title: 'Night Focus Slot', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
+    ]
+  },
+
+  // --- Block LIB-03 (Swami Vivekananda Central Library) - Level 2 ---
+  {
+    id: 'LIB-201',
+    roomNumber: 'LIB-201',
+    name: 'Swami Vivekananda Quiet Focus Bay',
+    type: 'Study Pods',
+    building: 'Swami Vivekananda Central Library (Block LIB-03)',
+    buildingCode: 'LIB-03',
+    floor: 'Level 2',
+    capacity: 40,
+    currentOccupancy: 14,
+    status: 'available',
+    statusText: '26 Desks Open Now',
+    nextClass: 'Open Study All Day',
+    co2: 385,
+    co2Status: 'Pristine Forest Air',
+    temp: 21.0,
+    tempTarget: 21.0,
+    humidity: 42,
+    noiseDb: 26,
+    noiseStatus: 'Strict Silent Zone',
+    wifiSpeed: '900 Mbps',
+    wifiLatency: '3 ms',
+    wifiDevices: 14,
+    features: [
+      'Single Carrels with Acoustic Felt Partitions',
+      'Individual Reading Task LED (4000K)',
+      '100W USB-C & Universal AC Sockets',
+      'ADA Compliant Wide Aisles'
+    ],
+    image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80',
+    has4kLaser: false,
+    hasGpu: false,
+    hasInteractive: false,
+    isAda: true,
+    cadBox: { x: 120, y: 150, w: 280, h: 260, door: { x: 260, y: 410 } },
+    routeSteps: [
+      { step: '1. Enter Library Central Atrium', desc: 'Pass RFID security turnstiles (10m)' },
+      { step: '2. Take Central Glass Elevator to Level 2', desc: 'Exit onto Quiet Floor landing (15m)' },
+      { step: '3. Turn North to Focus Bay', desc: 'Acoustic glass automatic doors on left (20m)' }
+    ],
+    routeDistance: '45 meters (1.1 min walk)',
+    slots: [
+      { id: 'lib201-1', start: '08:00', end: '12:00', title: 'Morning Focus Period', lecturer: 'Open Study', status: 'available', isBookable: true },
+      { id: 'lib201-2', start: '12:00', end: '16:00', title: 'Afternoon Silent Session', lecturer: 'Open Study', status: 'available', isBookable: true },
+      { id: 'lib201-3', start: '16:00', end: '20:00', title: 'Evening Research Hours', lecturer: 'Open Study', status: 'available', isBookable: true },
+    ]
+  },
+  {
+    id: 'LIB-202',
+    roomNumber: 'LIB-202',
+    name: 'Acoustic Soundproof Solo Pods (1-8)',
+    type: 'Study Pods',
+    building: 'Swami Vivekananda Central Library (Block LIB-03)',
+    buildingCode: 'LIB-03',
+    floor: 'Level 2',
+    capacity: 8,
+    currentOccupancy: 5,
+    status: 'available',
+    statusText: '3 Solo Pods Free',
+    nextClass: 'Instant QR Reservation',
+    co2: 390,
+    co2Status: 'Pristine Clean Air',
+    temp: 21.2,
+    tempTarget: 21.0,
+    humidity: 40,
+    noiseDb: 24,
+    noiseStatus: 'Soundproofed Isolation Pod',
+    wifiSpeed: '850 Mbps',
+    wifiLatency: '3 ms',
+    wifiDevices: 5,
+    features: [
+      'Double Glazed ANC Soundproof Pod Glass',
+      'Air Ventilation HEPA System (6 ACH)',
+      'Digital "In-Use" Status Beacon',
+      'Mobile App Bluetooth / NFC Pass Reader'
+    ],
+    image: 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80',
+    has4kLaser: false,
+    hasGpu: false,
+    hasInteractive: false,
+    isAda: true,
+    cadBox: { x: 520, y: 150, w: 260, h: 260, door: { x: 650, y: 410 } },
+    routeSteps: [
+      { step: '1. Level 2 Library Landing', desc: 'Proceed straight past Information Desk (10m)' },
+      { step: '2. Turn Right to West Wing Pod Row', desc: 'Glass pods numbered 1 through 8 (18m)' }
+    ],
+    routeDistance: '28 meters (0.7 min walk)',
+    slots: [
+      { id: 'lib202-1', start: '09:00', end: '11:00', title: 'Reserved Pod #2', lecturer: 'Student Booking', status: 'occupied', isBookable: false },
+      { id: 'lib202-2', start: '11:00', end: '13:00', title: 'Available Pod #4', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
+      { id: 'lib202-3', start: '13:00', end: '15:00', title: 'Available Pod #7', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
+      { id: 'lib202-4', start: '15:00', end: '17:00', title: 'Available Pod #1', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
+    ]
   }
+];
+
+// Buildings directory
+const BUILDINGS = [
+  { id: 'ENG-02', name: 'Faculty of Engineering & Technology (Block ENG-02)', floors: ['Ground', 'Level 1', 'Level 2', 'Level 3'] },
+  { id: 'LIB-03', name: 'Swami Vivekananda Central Library (Block LIB-03)', floors: ['Ground', 'Level 1', 'Level 2'] },
+  { id: 'ADM-01', name: 'Maharana Pratap Main Academic Block (Block ADM-01)', floors: ['Ground', 'Level 1', 'Level 2'] },
 ];
 
 export function SmartRooms() {
   const navigate = useNavigate();
 
-  const [rooms, setRooms] = useState(SAMPLE_ROOMS);
+  // Core State
+  const [rooms, setRooms] = useState(INITIAL_ROOMS);
   const [selectedBuilding, setSelectedBuilding] = useState('Faculty of Engineering & Technology (Block ENG-02)');
   const [selectedFloor, setSelectedFloor] = useState('Level 2');
   const [selectedType, setSelectedType] = useState('All');
@@ -185,166 +454,309 @@ export function SmartRooms() {
     interactiveBoard: false,
     ada: false
   });
-  const [startNode, setStartNode] = useState('Level 2 Skybridge Arrival (Connected to Library)');
+  const [startNode, setStartNode] = useState('Level 2 Skybridge Arrival (from Library)');
 
-  // Try to fetch backend live rooms if connected
-  useEffect(() => {
-    fetch('/api/v1/smartrooms/rooms')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data && data.success && Array.isArray(data.data) && data.data.length > 0) {
-          // Merge or supplement
-        }
-      })
-      .catch(() => {
-        // use sample fallback gracefully
-      });
-  }, []);
+  // CAD Viewer Interactive Pan & Zoom
+  const [cadZoom, setCadZoom] = useState(1);
+  const [isAdaRoute, setIsAdaRoute] = useState(false);
 
-  const selectedRoom = rooms.find((r) => r.id === selectedRoomId) || rooms[0];
+  // Time-Scrubber State (Hours from 08:00 to 20:00)
+  const [currentTimeHour, setCurrentTimeHour] = useState('11:30 AM');
+
+  // Instant Reservation & Pass Generator Modal
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [slotToBook, setSlotToBook] = useState(null);
+  const [bookingPurpose, setBookingPurpose] = useState('Capstone Project Team Collab');
+  const [studentRoll, setStudentRoll] = useState('MU/CSE/2024/0482');
+  const [studentName, setStudentName] = useState('Aarav Mehta');
+  const [bookingConflictMsg, setBookingConflictMsg] = useState('');
+  const [activePass, setActivePass] = useState(null);
+  const [hasCopiedPassId, setHasCopiedPassId] = useState(false);
+  const [simulatedUnlockSuccess, setSimulatedUnlockSuccess] = useState(false);
+
+  // My Passes Drawer
+  const [isMyPassesOpen, setIsMyPassesOpen] = useState(false);
+  const [savedPasses, setSavedPasses] = useState([
+    {
+      passId: 'NC-POD-7741',
+      roomNumber: 'B-206',
+      roomName: 'Silent Acoustic Study Pods',
+      slotTime: '11:30 AM - 01:00 PM',
+      date: 'Today',
+      studentRoll: 'MU/CSE/2024/0482',
+      purpose: 'Deep Focus Coding',
+      status: 'Active Pass'
+    }
+  ]);
+
+  // Selected Room Object
+  const selectedRoom = useMemo(() => {
+    return rooms.find((r) => r.id === selectedRoomId) || rooms[0];
+  }, [rooms, selectedRoomId]);
+
+  // Sync rooms with building selection
+  const buildingFilteredRooms = useMemo(() => {
+    return rooms.filter((r) => r.building === selectedBuilding);
+  }, [rooms, selectedBuilding]);
+
+  // Filtered rooms list
+  const filteredRooms = useMemo(() => {
+    return buildingFilteredRooms.filter((r) => {
+      if (selectedFloor !== 'All' && r.floor !== selectedFloor) return false;
+      if (selectedType !== 'All' && r.type !== selectedType) return false;
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const matchName = r.name.toLowerCase().includes(q);
+        const matchNum = r.roomNumber.toLowerCase().includes(q);
+        const matchFeat = r.features.some((f) => f.toLowerCase().includes(q));
+        if (!matchName && !matchNum && !matchFeat) return false;
+      }
+      if (activeFilters.availableNow && r.status === 'occupied') return false;
+      if (activeFilters.laser4k && !r.has4kLaser) return false;
+      if (activeFilters.gpuCluster && !r.hasGpu) return false;
+      if (activeFilters.interactiveBoard && !r.hasInteractive) return false;
+      if (activeFilters.ada && !r.isAda) return false;
+      return true;
+    });
+  }, [buildingFilteredRooms, selectedFloor, selectedType, searchQuery, activeFilters]);
+
+  // Handle building change
+  const handleBuildingChange = (bldgName) => {
+    setSelectedBuilding(bldgName);
+    const bldgRooms = rooms.filter((r) => r.building === bldgName);
+    if (bldgRooms.length > 0) {
+      setSelectedFloor(bldgRooms[0].floor);
+      setSelectedRoomId(bldgRooms[0].id);
+    }
+  };
 
   const handleToggleFilter = (key) => {
     setActiveFilters((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const filteredRooms = rooms.filter((r) => {
-    if (selectedType !== 'All' && r.type !== selectedType) return false;
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      const matchName = r.name.toLowerCase().includes(q);
-      const matchNum = r.roomNumber.toLowerCase().includes(q);
-      const matchFeat = r.features.some((f) => f.toLowerCase().includes(q));
-      if (!matchName && !matchNum && !matchFeat) return false;
+  // Open booking modal for a specific slot
+  const handleOpenBooking = (slot) => {
+    if (slot.status === 'occupied') {
+      setBookingConflictMsg(`Slot Conflict: "${slot.title}" is in session. Cannot reserve occupied academic hours.`);
+    } else if (slot.status === 'past') {
+      setBookingConflictMsg(`Time Expired: This slot was earlier today and is no longer bookable.`);
+    } else {
+      setBookingConflictMsg('');
     }
-    if (activeFilters.availableNow && r.status === 'occupied') return false;
-    if (activeFilters.laser4k && !r.has4kLaser) return false;
-    if (activeFilters.gpuCluster && !r.hasGpu) return false;
-    if (activeFilters.interactiveBoard && !r.hasInteractive) return false;
-    if (activeFilters.ada && !r.isAda) return false;
-    return true;
-  });
+    setSlotToBook(slot);
+    setSimulatedUnlockSuccess(false);
+    setIsBookingModalOpen(true);
+  };
+
+  // Confirm reservation and generate digital pass
+  const handleConfirmReservation = () => {
+    if (!slotToBook || !slotToBook.isBookable) return;
+
+    const newPassId = `NC-PASS-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newPass = {
+      passId: newPassId,
+      roomNumber: selectedRoom.roomNumber,
+      roomName: selectedRoom.name,
+      building: selectedRoom.building,
+      floor: selectedRoom.floor,
+      slotTime: `${slotToBook.start} - ${slotToBook.end}`,
+      date: 'Today',
+      studentRoll,
+      studentName,
+      purpose: bookingPurpose,
+      status: 'Active Pass'
+    };
+
+    // Update room slot status in state
+    setRooms((prev) =>
+      prev.map((r) => {
+        if (r.id !== selectedRoom.id) return r;
+        return {
+          ...r,
+          currentOccupancy: Math.min(r.capacity, r.currentOccupancy + 1),
+          slots: r.slots.map((s) =>
+            s.id === slotToBook.id
+              ? { ...s, status: 'reserved', title: `Reserved: ${bookingPurpose}`, isBookable: false }
+              : s
+          )
+        };
+      })
+    );
+
+    setActivePass(newPass);
+    setSavedPasses((prev) => [newPass, ...prev]);
+  };
+
+  // Simulate NFC door unlock
+  const handleSimulateUnlock = () => {
+    setSimulatedUnlockSuccess(true);
+    setTimeout(() => {
+      setSimulatedUnlockSuccess(false);
+    }, 4000);
+  };
+
+  const copyPassId = (id) => {
+    navigator.clipboard?.writeText?.(id);
+    setHasCopiedPassId(true);
+    setTimeout(() => setHasCopiedPassId(false), 2000);
+  };
 
   return (
-    <div className="flex flex-col w-full text-on-surface">
-      {/* Sub-Header / Campus Spatial Context Strip */}
-      <div className="flex flex-col gap-space-sm pb-space-lg border-b border-outline-variant/20 mb-space-lg">
-        <div className="flex flex-wrap items-center justify-between gap-space-sm">
-          <div className="flex items-center gap-space-xs text-caption font-caption tracking-wider uppercase text-on-surface-variant">
-            <span className="px-space-xs py-0.5 rounded bg-surface-container-high text-primary font-semibold">CAD / BIM Mesh</span>
-            <span>Mewar University • Gangrar, Chittorgarh • {selectedBuilding}</span>
-            <span className="text-outline">/</span>
-            <span className="text-primary font-medium">{selectedFloor} Blueprint</span>
+    <div className="flex flex-col w-full text-slate-100 min-h-screen pb-16">
+      {/* =========================================================================
+          TOP SPATIAL RIBBON & BREADCRUMB STRIP
+          ========================================================================= */}
+      <div className="flex flex-col gap-3 pb-6 border-b border-slate-800/80 mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-slate-400">
+            <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              IoT Mesh Live
+            </span>
+            <span className="hidden sm:inline">Mewar University • Gangrar, Chittorgarh</span>
+            <span className="text-slate-600">/</span>
+            <span className="text-slate-300 font-medium">{selectedRoom.buildingCode}</span>
+            <span className="text-slate-600">/</span>
+            <span className="text-emerald-400 font-semibold">{selectedFloor} Architectural CAD</span>
           </div>
-          <div className="flex items-center gap-space-sm">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-              Telemetry Engine: Active Live Stream (Illustrative CAD)
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsMyPassesOpen(true)}
+              className="relative px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700/80 hover:border-emerald-500/50 hover:bg-slate-800 text-xs font-medium text-slate-200 flex items-center gap-2 transition-all shadow-sm"
+            >
+              <QrCode className="w-3.5 h-3.5 text-emerald-400" />
+              <span>My Active Passes</span>
+              {savedPasses.length > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/40">
+                  {savedPasses.length}
+                </span>
+              )}
+            </button>
+
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-slate-400 text-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              Sensor Telemetry Stream: 100Hz
             </span>
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md mt-2">
+        {/* Headline & Quick Stats */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mt-1">
           <div>
-            <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight font-extrabold">
-              SmartRooms &amp; Indoor Wayfinding
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight flex items-center gap-3">
+              <span>SmartRooms &amp; Space Intelligence</span>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-mono font-normal">
+                CAD BIM v2.4
+              </span>
             </h1>
-            <p className="font-body-md text-body-md text-on-surface-variant max-w-3xl mt-1">
-              Real-time room availability, equipment telemetry, environmental sensors, and turn-by-turn vector navigation across Mewar University academic blocks.
+            <p className="text-sm text-slate-400 max-w-2xl mt-1.5">
+              Real-time room occupancy, environmental sensor dials, clash-free slot booking, and verified NFC/QR digital passes across Mewar academic wings.
             </p>
           </div>
 
-          {/* Quick Metrics Ribbon */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <div className="px-3.5 py-2 rounded-xl bg-surface-container-high flex flex-col min-w-[100px] border border-outline-variant/30">
-              <span className="font-caption text-caption text-on-surface-variant uppercase tracking-wider">Total Rooms</span>
-              <span className="font-headline-sm text-headline-sm text-on-surface font-bold">42</span>
+          {/* Quick Metrics Bar */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="px-3.5 py-2 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col min-w-[95px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Total Desks</span>
+              <span className="text-lg font-bold text-white">184</span>
             </div>
-            <div className="px-3.5 py-2 rounded-xl bg-surface-container-high flex flex-col min-w-[100px] border border-primary/30">
-              <span className="font-caption text-caption text-primary uppercase tracking-wider">Available</span>
-              <span className="font-headline-sm text-headline-sm text-primary font-bold">18</span>
+            <div className="px-3.5 py-2 rounded-xl bg-slate-900/90 border border-emerald-500/30 flex flex-col min-w-[95px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400">Available</span>
+              <span className="text-lg font-bold text-emerald-400">92 Desks</span>
             </div>
-            <div className="px-3.5 py-2 rounded-xl bg-surface-container-high flex flex-col min-w-[100px] border border-outline-variant/30">
-              <span className="font-caption text-caption text-on-surface-variant uppercase tracking-wider">Lectures</span>
-              <span className="font-headline-sm text-headline-sm text-on-surface font-bold">14</span>
+            <div className="px-3.5 py-2 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col min-w-[95px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Air CO₂ Avg</span>
+              <span className="text-lg font-bold text-slate-200">408 ppm</span>
             </div>
-            <div className="px-3.5 py-2 rounded-xl bg-surface-container-high flex flex-col min-w-[100px] border border-secondary/30">
-              <span className="font-caption text-caption text-secondary uppercase tracking-wider">Reserved</span>
-              <span className="font-headline-sm text-headline-sm text-secondary font-bold">10</span>
+            <div className="px-3.5 py-2 rounded-xl bg-slate-900/90 border border-amber-500/30 flex flex-col min-w-[95px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400">In Session</span>
+              <span className="text-lg font-bold text-amber-400">4 Rooms</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Search & Architectural Floor / Filter Controls Bar */}
-      <div className="p-space-md rounded-2xl bg-surface-container-low mb-space-lg flex flex-col gap-space-md shadow-[0_2px_8px_rgba(0,0,0,0.35)] border border-outline-variant/20">
-        {/* Top Row: Global Keyword Search & Building Picker */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-space-md">
+      {/* =========================================================================
+          FACILITY SEARCH & CONTROL BAR
+          ========================================================================= */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/70 border border-slate-800/90 mb-6 flex flex-col gap-4 shadow-xl backdrop-blur-md">
+        {/* Row 1: Search & Building Picker */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
           <div className="md:col-span-7 lg:col-span-8 relative flex items-center">
-            <span className="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">search</span>
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
             <input
               id="roomSearchInput"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search room code (e.g. B-204), equipment (4K Laser, RTX 4090), or seats..."
-              className="w-full h-11 pl-11 pr-space-md rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-container transition-all border border-outline-variant/30"
+              placeholder="Search room code (e.g. B-204, B-206), hardware (RTX 4090, 4K Laser), or features..."
+              className="w-full h-11 pl-10 pr-4 rounded-xl bg-slate-950/80 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500/80 border border-slate-800 transition-all"
             />
-          </div>
-          <div className="md:col-span-5 lg:col-span-4 flex items-center gap-space-sm">
-            <div className="relative w-full">
-              <select
-                value={selectedBuilding}
-                onChange={(e) => setSelectedBuilding(e.target.value)}
-                className="w-full h-11 pl-3.5 pr-8 rounded-xl bg-surface-container-lowest text-on-surface font-label-md text-label-md appearance-none focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer border border-outline-variant/30"
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 text-slate-400 hover:text-white text-xs"
               >
-                <option>Faculty of Engineering &amp; Technology (Block ENG-02)</option>
-                <option>Maharana Pratap Main Academic Block (Block ADM-01)</option>
-                <option>Swami Vivekananda Central Library (Block LIB-03)</option>
-                <option>Mewar University Central Auditorium (Block AUD-04)</option>
-              </select>
-              <span className="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
-            </div>
+                Clear
+              </button>
+            )}
+          </div>
+
+          <div className="md:col-span-5 lg:col-span-4 relative">
+            <select
+              value={selectedBuilding}
+              onChange={(e) => handleBuildingChange(e.target.value)}
+              className="w-full h-11 pl-3.5 pr-8 rounded-xl bg-slate-950/80 text-white text-xs sm:text-sm appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500/80 border border-slate-800 cursor-pointer font-medium"
+            >
+              {BUILDINGS.map((b) => (
+                <option key={b.id} value={b.name}>
+                  {b.name}
+                </option>
+              ))}
+            </select>
+            <Building2 className="w-4 h-4 text-slate-400 absolute right-3 top-3.5 pointer-events-none" />
           </div>
         </div>
 
-        {/* Middle Row: Floor Tabs & Category Pills */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md pt-2 border-t border-outline-variant/20">
+        {/* Row 2: Floor Switcher & Category Pills */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2 border-t border-slate-800/60">
           {/* Floor Segmented Control */}
-          <div className="flex items-center gap-1 p-1 bg-surface-container-lowest rounded-xl overflow-x-auto border border-outline-variant/20">
-            {['Ground', 'Level 1', 'Level 2', 'Level 3', 'Level 4'].map((fl) => {
-              const isActive = selectedFloor.includes(fl);
+          <div className="flex items-center gap-1 p-1 bg-slate-950/80 rounded-xl border border-slate-800 overflow-x-auto">
+            {['Ground', 'Level 1', 'Level 2', 'Level 3'].map((fl) => {
+              const isActive = selectedFloor === fl;
               return (
                 <button
                   key={fl}
                   onClick={() => setSelectedFloor(fl)}
-                  className={`px-3 py-1.5 rounded-lg font-label-sm text-label-sm transition-all whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                     isActive
-                      ? 'bg-primary-container text-on-primary-container font-semibold shadow-sm'
-                      : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
                   }`}
                 >
-                  {fl} {isActive ? '(Active)' : ''}
+                  {fl}
                 </button>
               );
             })}
           </div>
 
-          {/* Quick Room Types Filter Bar */}
+          {/* Room Category Filter Chips */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0">
             {[
-              { label: 'All (42)', val: 'All' },
-              { label: 'Lecture Theatres (6)', val: 'Lecture Theatres' },
-              { label: 'Smart Classrooms (12)', val: 'Smart Classrooms' },
-              { label: 'Computer Labs (8)', val: 'Computer Labs' },
-              { label: 'Study Pods (10)', val: 'Study Pods' }
+              { label: 'All Spaces', val: 'All' },
+              { label: 'Lecture Theatres', val: 'Lecture Theatres' },
+              { label: 'Computer Labs', val: 'Computer Labs' },
+              { label: 'Study Pods', val: 'Study Pods' },
+              { label: 'Smart Classrooms', val: 'Smart Classrooms' }
             ].map((tp) => (
               <button
                 key={tp.val}
                 onClick={() => setSelectedType(tp.val)}
-                className={`px-3 py-1 rounded-full font-label-sm text-label-sm font-medium transition-colors whitespace-nowrap ${
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
                   selectedType === tp.val
-                    ? 'bg-primary text-on-primary font-bold'
-                    : 'bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest'
+                    ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
+                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700/80 hover:text-white border border-slate-700/60'
                 }`}
               >
                 {tp.label}
@@ -353,314 +765,351 @@ export function SmartRooms() {
           </div>
         </div>
 
-        {/* Feature / Hardware Chips Filter Multi-Select */}
+        {/* Row 3: Feature Filters Multi-Select */}
         <div className="flex flex-wrap items-center gap-2 pt-1">
-          <span className="font-caption text-caption text-on-surface-variant uppercase tracking-wider mr-1">Filter Tech:</span>
+          <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider mr-1">Filter Hardware:</span>
 
           <button
             onClick={() => handleToggleFilter('availableNow')}
-            className={`px-2.5 py-1 rounded-lg font-label-sm text-label-sm flex items-center gap-1 transition-colors ${
-              activeFilters.availableNow ? 'bg-primary/20 text-primary border border-primary/40 font-semibold' : 'bg-surface-container text-on-surface-variant hover:text-on-surface'
+            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+              activeFilters.availableNow
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold'
+                : 'bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-700/40'
             }`}
           >
-            <span className="material-symbols-outlined text-[14px]">{activeFilters.availableNow ? 'check_circle' : 'circle'}</span>
+            <CheckCircle2 className="w-3 h-3" />
             Available Now
           </button>
 
           <button
             onClick={() => handleToggleFilter('laser4k')}
-            className={`px-2.5 py-1 rounded-lg font-label-sm text-label-sm flex items-center gap-1 transition-colors ${
-              activeFilters.laser4k ? 'bg-primary/20 text-primary border border-primary/40 font-semibold' : 'bg-surface-container text-on-surface-variant hover:text-on-surface'
+            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+              activeFilters.laser4k
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold'
+                : 'bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-700/40'
             }`}
           >
-            <span className="material-symbols-outlined text-[14px]">videocam</span>
+            <Sparkles className="w-3 h-3" />
             4K Laser Projector
           </button>
 
           <button
             onClick={() => handleToggleFilter('gpuCluster')}
-            className={`px-2.5 py-1 rounded-lg font-label-sm text-label-sm flex items-center gap-1 transition-colors ${
-              activeFilters.gpuCluster ? 'bg-primary/20 text-primary border border-primary/40 font-semibold' : 'bg-surface-container text-on-surface-variant hover:text-on-surface'
+            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+              activeFilters.gpuCluster
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold'
+                : 'bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-700/40'
             }`}
           >
-            <span className="material-symbols-outlined text-[14px]">memory</span>
-            GPU AI Cluster
+            <Zap className="w-3 h-3" />
+            RTX 4090 GPU Rig
           </button>
 
           <button
             onClick={() => handleToggleFilter('interactiveBoard')}
-            className={`px-2.5 py-1 rounded-lg font-label-sm text-label-sm flex items-center gap-1 transition-colors ${
-              activeFilters.interactiveBoard ? 'bg-primary/20 text-primary border border-primary/40 font-semibold' : 'bg-surface-container text-on-surface-variant hover:text-on-surface'
+            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+              activeFilters.interactiveBoard
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold'
+                : 'bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-700/40'
             }`}
           >
-            <span className="material-symbols-outlined text-[14px]">draw</span>
-            Interactive Board
+            <Sliders className="w-3 h-3" />
+            Interactive Touchboard
           </button>
 
           <button
             onClick={() => handleToggleFilter('ada')}
-            className={`px-2.5 py-1 rounded-lg font-label-sm text-label-sm flex items-center gap-1 transition-colors ${
-              activeFilters.ada ? 'bg-primary/20 text-primary border border-primary/40 font-semibold' : 'bg-surface-container text-on-surface-variant hover:text-on-surface'
+            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+              activeFilters.ada
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold'
+                : 'bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-700/40'
             }`}
           >
-            <span className="material-symbols-outlined text-[14px]">accessible</span>
-            ADA / Hearing Loop
+            <DoorOpen className="w-3 h-3" />
+            ADA Step-Free / Loop
           </button>
         </div>
       </div>
 
-      {/* Primary Interactive Canvas: Split View Floor Plan & Inspector */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
-        {/* LEFT / CENTER: Interactive BIM Floor Plan CAD Viewer */}
-        <div className="xl:col-span-8 flex flex-col gap-space-md">
-          <div className="relative w-full rounded-2xl bg-surface-container-low overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.35)] border border-outline-variant/20">
-            {/* Canvas Top Bar Navigation Overlay */}
-            <div className="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
-              {/* Active Path Breadcrumb Pill */}
-              <div className="pointer-events-auto flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md shadow-sm text-slate-800 font-label-sm text-label-sm border border-slate-200">
-                <span className="w-2 h-2 rounded-full bg-[#E11D48] animate-ping"></span>
-                <span className="text-slate-500 font-medium">Active Route:</span>
-                <span className="font-semibold text-[#9E153E]">Library Skybridge Arrival</span>
-                <span className="material-symbols-outlined text-[14px] text-slate-400">arrow_forward</span>
-                <span className="font-bold text-slate-900">Room {selectedRoom.roomNumber}</span>
-                <span className="text-slate-500 ml-1 font-mono text-caption">({selectedRoom.routeDistance})</span>
+      {/* =========================================================================
+          PRIMARY WORKSPACE: SPLIT CAD FLOOR PLAN & LIVE ROOM INSPECTOR
+          ========================================================================= */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+        {/* LEFT / CENTER: ARCHITECTURAL CAD VECTOR VIEWER */}
+        <div className="xl:col-span-8 flex flex-col gap-6">
+          <div className="relative w-full rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden shadow-2xl">
+            {/* CAD Viewer Top Overlay Navigation */}
+            <div className="absolute top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+              {/* Active Route Wayfinding Badge */}
+              <div className="pointer-events-auto flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/95 border border-slate-700/80 backdrop-blur-md text-xs text-slate-200 shadow-lg">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span className="text-slate-400">Vector Path:</span>
+                <span className="font-semibold text-emerald-300">Skybridge Arrival</span>
+                <ArrowRight className="w-3 h-3 text-slate-500" />
+                <span className="font-bold text-white">Room {selectedRoom.roomNumber}</span>
+                <span className="text-slate-400 font-mono text-[11px]">({selectedRoom.routeDistance})</span>
               </div>
 
-              {/* Floor Viewport Manipulation Tools */}
-              <div className="pointer-events-auto flex items-center gap-1 p-1 rounded-xl bg-white/95 backdrop-blur-md shadow-sm border border-slate-200">
-                <button className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors" title="Zoom in">
-                  <span className="material-symbols-outlined text-[18px]">add</span>
+              {/* Viewport Scale & Route Manipulation Tools */}
+              <div className="pointer-events-auto flex items-center gap-1 p-1 rounded-xl bg-slate-900/95 border border-slate-700/80 backdrop-blur-md shadow-lg">
+                <button
+                  onClick={() => setCadZoom((z) => Math.min(1.4, z + 0.1))}
+                  className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+                  title="Zoom In CAD Plan"
+                >
+                  <span className="font-bold text-sm">+</span>
                 </button>
-                <button className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors" title="Zoom out">
-                  <span className="material-symbols-outlined text-[18px]">remove</span>
+                <button
+                  onClick={() => setCadZoom((z) => Math.max(0.7, z - 0.1))}
+                  className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+                  title="Zoom Out CAD Plan"
+                >
+                  <span className="font-bold text-sm">-</span>
                 </button>
-                <button className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors" title="Reset camera">
-                  <span className="material-symbols-outlined text-[18px]">center_focus_strong</span>
+                <button
+                  onClick={() => setCadZoom(1)}
+                  className="px-2 py-1 rounded-lg text-[11px] font-mono text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+                  title="Reset 100% Zoom"
+                >
+                  {Math.round(cadZoom * 100)}%
                 </button>
-                <div className="w-px h-4 bg-slate-200 mx-0.5"></div>
-                <button className="px-2 py-1 flex items-center gap-1 rounded-lg text-[#9E153E] hover:bg-[#FFE4E6] transition-colors text-caption font-semibold" title="Toggle ADA accessible paths">
-                  <span className="material-symbols-outlined text-[16px]">accessible</span>
-                  Step-Free
+                <div className="w-px h-4 bg-slate-700 mx-0.5"></div>
+                <button
+                  onClick={() => setIsAdaRoute(!isAdaRoute)}
+                  className={`px-2 py-1 flex items-center gap-1 rounded-lg text-[11px] font-semibold transition-colors ${
+                    isAdaRoute
+                      ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                  }`}
+                  title="Toggle Step-Free ADA Elevator Route"
+                >
+                  <DoorOpen className="w-3 h-3" />
+                  <span>{isAdaRoute ? 'Elevator Routing' : 'Step-Free'}</span>
                 </button>
               </div>
             </div>
 
-            {/* 2D Architectural CAD Plan Floor Rendering */}
-            <div className="w-full h-[580px] bg-[#F8FAFC] border border-slate-200 rounded-2xl relative overflow-hidden select-none flex items-center justify-center">
-              {/* Subtle Blueprint Coordinate Grid Pattern */}
-              <svg className="absolute inset-0 w-full h-full opacity-25 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+            {/* SVG Vector 2D CAD Canvas */}
+            <div className="w-full h-[580px] bg-[#0A0F1D] relative overflow-hidden select-none flex items-center justify-center">
+              {/* CAD Precision Blueprint Grid */}
+              <svg className="absolute inset-0 w-full h-full opacity-20 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                  <pattern id="cadGrid" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#CBD5E1" strokeWidth="0.5"></path>
-                    <circle cx="0" cy="0" r="1" fill="#CBD5E1"></circle>
+                  <pattern id="cadGridDark" width="36" height="36" patternUnits="userSpaceOnUse">
+                    <path d="M 36 0 L 0 0 0 36" fill="none" stroke="#38BDF8" strokeWidth="0.5" strokeDasharray="1 3" />
+                    <circle cx="0" cy="0" r="1" fill="#38BDF8" />
                   </pattern>
                 </defs>
-                <rect width="100%" height="100%" fill="url(#cadGrid)"></rect>
+                <rect width="100%" height="100%" fill="url(#cadGridDark)" />
               </svg>
 
-              {/* Architectural Plan Geometry */}
-              <svg className="w-full h-full p-4 relative z-10 transition-transform duration-300" viewBox="0 0 960 620">
-                {/* Outer Perimeter */}
-                <polygon points="40,90 280,90 320,40 680,40 720,90 920,90 920,530 40,530" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="3"></polygon>
+              {/* Vector Geometry with Pan & Zoom transform */}
+              <svg
+                className="w-full h-full p-4 relative z-10 transition-transform duration-300 ease-out"
+                viewBox="0 0 960 620"
+                style={{ transform: `scale(${cadZoom})` }}
+              >
+                <defs>
+                  {/* Glowing Filter for Selected Vector Route */}
+                  <filter id="emeraldRouteGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#10B981" floodOpacity="0.8" />
+                  </filter>
+                  <filter id="crimsonRouteGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#F43F5E" floodOpacity="0.8" />
+                  </filter>
+                </defs>
 
-                {/* Main Corridor Lines */}
-                <path d="M 120,310 L 840,310" fill="none" stroke="#F1F5F9" strokeWidth="64" strokeLinecap="round"></path>
-                <path d="M 480,90 L 480,510" fill="none" stroke="#F1F5F9" strokeWidth="56" strokeLinecap="round"></path>
+                {/* Outer Wall Architectural Double-Line Envelope */}
+                <polygon
+                  points="36,86 280,86 320,36 680,36 720,86 924,86 924,534 36,534"
+                  fill="#0B132B"
+                  stroke="#1E293B"
+                  strokeWidth="8"
+                />
+                <polygon
+                  points="40,90 280,90 320,40 680,40 720,90 920,90 920,530 40,530"
+                  fill="#0F172A"
+                  stroke="#334155"
+                  strokeWidth="2"
+                />
 
-                {/* Skybridge Arrival */}
-                <rect x="420" y="10" width="120" height="70" rx="8" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="2"></rect>
-                <text x="480" y="38" textAnchor="middle" fill="#9E153E" fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">NORTH SKYBRIDGE</text>
-                <text x="480" y="54" textAnchor="middle" fill="#64748B" fontFamily="Inter" fontSize="9">Conn: Central Library</text>
-                <circle cx="480" cy="68" r="7" fill="#E11D48"></circle>
-                <circle cx="480" cy="68" r="14" fill="#E11D48" fillOpacity="0.25" className="animate-ping"></circle>
+                {/* Main Architectural Corridors (Concourse & Crossways) */}
+                <path d="M 120,310 L 840,310" fill="none" stroke="#1E293B" strokeWidth="60" strokeLinecap="round" />
+                <path d="M 480,90 L 480,510" fill="none" stroke="#1E293B" strokeWidth="54" strokeLinecap="round" />
+                <path d="M 120,310 L 840,310" fill="none" stroke="#334155" strokeWidth="1" strokeDasharray="4 6" />
 
-                {/* Elevators */}
-                <rect x="250" y="120" width="70" height="70" rx="6" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="1.5"></rect>
-                <text x="285" y="152" textAnchor="middle" fill="#475569" fontFamily="Inter" fontSize="10" fontWeight="600">LIFTS W</text>
-                <rect x="640" y="120" width="70" height="70" rx="6" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="1.5"></rect>
-                <text x="675" y="152" textAnchor="middle" fill="#475569" fontFamily="Inter" fontSize="10" fontWeight="600">LIFTS E</text>
+                {/* Skybridge Arrival Point (From Central Library) */}
+                <rect x="420" y="10" width="120" height="70" rx="8" fill="#1E293B" stroke="#10B981" strokeWidth="1.5" />
+                <text x="480" y="36" textAnchor="middle" fill="#34D399" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="700" letterSpacing="1">
+                  NORTH SKYBRIDGE
+                </text>
+                <text x="480" y="52" textAnchor="middle" fill="#94A3B8" fontFamily="Inter, sans-serif" fontSize="8">
+                  Conn: Central Library LIB-03
+                </text>
+                <circle cx="480" cy="68" r="6" fill="#10B981" />
+                <circle cx="480" cy="68" r="12" fill="#10B981" fillOpacity="0.25" className="animate-ping" />
 
-                {/* Restrooms */}
-                <rect x="440" y="330" width="80" height="60" rx="6" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="1"></rect>
-                <text x="480" y="358" textAnchor="middle" fill="#64748B" fontFamily="Inter" fontSize="9" fontWeight="600">RESTROOMS</text>
+                {/* Vertical Transport: West Lifts & East Lifts */}
+                <g>
+                  <rect x="250" y="120" width="70" height="70" rx="6" fill="#1E293B" stroke="#475569" strokeWidth="1.5" />
+                  <text x="285" y="150" textAnchor="middle" fill="#38BDF8" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="700">
+                    LIFTS W
+                  </text>
+                  <text x="285" y="165" textAnchor="middle" fill="#64748B" fontFamily="Inter, sans-serif" fontSize="8">
+                    Floor 1 - 4
+                  </text>
 
-                {/* ROOM B-201 */}
-                <g className="cursor-pointer group" onClick={() => setSelectedRoomId('B-201')}>
-                  <rect
-                    x="70"
-                    y="120"
-                    width="160"
-                    height="150"
-                    rx="10"
-                    fill={selectedRoomId === 'B-201' ? '#FFF1F2' : '#FFFFFF'}
-                    stroke={selectedRoomId === 'B-201' ? '#9E153E' : '#CBD5E1'}
-                    strokeWidth={selectedRoomId === 'B-201' ? '2.5' : '1.5'}
-                  ></rect>
-                  <rect x="80" y="130" width="140" height="20" rx="4" fill={selectedRoomId === 'B-201' ? '#9E153E' : '#F1F5F9'}></rect>
-                  <text x="90" y="144" fill={selectedRoomId === 'B-201' ? '#FFFFFF' : '#0F172A'} fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-201 Amphitheatre</text>
-                  <circle cx="210" cy="140" r="4" fill="#EF4444"></circle>
-                  <text x="90" y="180" fill="#475569" fontFamily="Inter" fontSize="10">120 Seats • Occupied</text>
-                  <text x="90" y="200" fill="#64748B" fontFamily="Inter" fontSize="9">CS-204 Algorithms</text>
+                  <rect x="640" y="120" width="70" height="70" rx="6" fill="#1E293B" stroke="#475569" strokeWidth="1.5" />
+                  <text x="675" y="150" textAnchor="middle" fill="#38BDF8" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="700">
+                    LIFTS E
+                  </text>
+                  <text x="675" y="165" textAnchor="middle" fill="#64748B" fontFamily="Inter, sans-serif" fontSize="8">
+                    Floor 1 - 4
+                  </text>
                 </g>
 
-                {/* ROOM B-202 */}
-                <g className="cursor-pointer group" onClick={() => setSelectedRoomId('B-202')}>
-                  <rect
-                    x="730"
-                    y="120"
-                    width="160"
-                    height="150"
-                    rx="10"
-                    fill={selectedRoomId === 'B-202' ? '#FFF1F2' : '#FFFFFF'}
-                    stroke={selectedRoomId === 'B-202' ? '#9E153E' : '#CBD5E1'}
-                    strokeWidth={selectedRoomId === 'B-202' ? '2.5' : '1.5'}
-                  ></rect>
-                  <rect x="740" y="130" width="140" height="20" rx="4" fill={selectedRoomId === 'B-202' ? '#9E153E' : '#F1F5F9'}></rect>
-                  <text x="750" y="144" fill={selectedRoomId === 'B-202' ? '#FFFFFF' : '#0F172A'} fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-202 Seminar Suite</text>
-                  <circle cx="870" cy="140" r="4" fill="#F59E0B"></circle>
-                  <text x="750" y="180" fill="#475569" fontFamily="Inter" fontSize="10">35 Seats • Reserved</text>
-                </g>
+                {/* Restrooms & Service Hub */}
+                <rect x="440" y="330" width="80" height="60" rx="6" fill="#1E293B" stroke="#475569" strokeWidth="1" />
+                <text x="480" y="365" textAnchor="middle" fill="#94A3B8" fontFamily="Inter, sans-serif" fontSize="9" fontWeight="600">
+                  RESTROOMS
+                </text>
 
-                {/* ROOM B-203 */}
-                <g className="cursor-pointer group" onClick={() => setSelectedRoomId('B-203')}>
-                  <rect
-                    x="70"
-                    y="340"
-                    width="160"
-                    height="160"
-                    rx="10"
-                    fill={selectedRoomId === 'B-203' ? '#FFF1F2' : '#FFFFFF'}
-                    stroke={selectedRoomId === 'B-203' ? '#9E153E' : '#CBD5E1'}
-                    strokeWidth={selectedRoomId === 'B-203' ? '2.5' : '1.5'}
-                  ></rect>
-                  <rect x="80" y="350" width="140" height="20" rx="4" fill={selectedRoomId === 'B-203' ? '#9E153E' : '#F1F5F9'}></rect>
-                  <text x="90" y="364" fill={selectedRoomId === 'B-203' ? '#FFFFFF' : '#0F172A'} fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-203 Systems Lab</text>
-                  <circle cx="210" cy="360" r="4" fill="#22C55E"></circle>
-                  <text x="90" y="400" fill="#475569" fontFamily="Inter" fontSize="10">40 Seats • Available</text>
-                </g>
+                {/* Emergency Stairs Exits */}
+                <rect x="42" y="500" width="60" height="26" fill="#3B0764" stroke="#A855F7" strokeWidth="1" strokeDasharray="2 2" />
+                <text x="72" y="516" textAnchor="middle" fill="#E9D5FF" fontFamily="Inter, sans-serif" fontSize="8" fontWeight="700">
+                  FIRE EXIT A
+                </text>
+                <rect x="858" y="500" width="60" height="26" fill="#3B0764" stroke="#A855F7" strokeWidth="1" strokeDasharray="2 2" />
+                <text x="888" y="516" textAnchor="middle" fill="#E9D5FF" fontFamily="Inter, sans-serif" fontSize="8" fontWeight="700">
+                  FIRE EXIT B
+                </text>
 
-                {/* ROOM B-204 TARGET NODE */}
-                <g className="cursor-pointer" onClick={() => setSelectedRoomId('B-204')}>
-                  <rect
-                    x="250"
-                    y="340"
-                    width="170"
-                    height="160"
-                    rx="12"
-                    fill={selectedRoomId === 'B-204' ? '#FFF1F2' : '#FFFFFF'}
-                    stroke={selectedRoomId === 'B-204' ? '#9E153E' : '#CBD5E1'}
-                    strokeWidth={selectedRoomId === 'B-204' ? '2.5' : '1.5'}
-                  ></rect>
-                  <rect x="260" y="350" width="150" height="24" rx="6" fill={selectedRoomId === 'B-204' ? '#9E153E' : '#F1F5F9'}></rect>
-                  <text x="272" y="366" fill={selectedRoomId === 'B-204' ? '#FFFFFF' : '#0F172A'} fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="800">B-204 Smart Theatre</text>
-                  <circle cx="396" cy="362" r="5" fill="#22C55E" className="animate-pulse"></circle>
-                  <text x="272" y="402" fill="#9E153E" fontFamily="Inter" fontSize="11" fontWeight="600">60 Seats • Available Now</text>
-                  <text x="272" y="422" fill="#64748B" fontFamily="Inter" fontSize="9">Dual 4K Laser + Spatial Pod</text>
-                  {selectedRoomId === 'B-204' && (
-                    <g transform="translate(320, 455)">
-                      <rect x="-42" y="-14" width="84" height="20" rx="10" fill="#9E153E"></rect>
-                      <text x="0" y="0" textAnchor="middle" fill="#FFFFFF" fontFamily="Inter" fontSize="9" fontWeight="700">TARGET NODE</text>
+                {/* Dynamic Rendering of Floor Rooms */}
+                {buildingFilteredRooms
+                  .filter((r) => r.cadBox)
+                  .map((room) => {
+                    const isSelected = room.id === selectedRoomId;
+                    const { x, y, w, h } = room.cadBox;
+                    const statusColor =
+                      room.status === 'available'
+                        ? '#10B981'
+                        : room.status === 'reserved'
+                        ? '#F59E0B'
+                        : '#EF4444';
+
+                    return (
+                      <g
+                        key={room.id}
+                        className="cursor-pointer group"
+                        onClick={() => setSelectedRoomId(room.id)}
+                      >
+                        {/* Room Boundary Rect */}
+                        <rect
+                          x={x}
+                          y={y}
+                          width={w}
+                          height={h}
+                          rx="10"
+                          fill={isSelected ? '#132338' : '#0B132B'}
+                          stroke={isSelected ? '#10B981' : '#334155'}
+                          strokeWidth={isSelected ? '2.5' : '1.5'}
+                          className="transition-colors duration-200"
+                        />
+
+                        {/* Room Header Strip */}
+                        <rect
+                          x={x + 8}
+                          y={y + 8}
+                          width={w - 16}
+                          height="24"
+                          rx="4"
+                          fill={isSelected ? '#10B981' : '#1E293B'}
+                        />
+                        <text
+                          x={x + 16}
+                          y={y + 24}
+                          fill={isSelected ? '#022C22' : '#F8FAFC'}
+                          fontFamily="Inter, sans-serif"
+                          fontSize="11"
+                          fontWeight="700"
+                        >
+                          {room.roomNumber} • {room.name.split(' ')[0]}
+                        </text>
+                        {/* Status Beacon */}
+                        <circle cx={x + w - 20} cy={y + 20} r="4" fill={statusColor} />
+
+                        {/* Room Subtext Details */}
+                        <text
+                          x={x + 16}
+                          y={y + 54}
+                          fill={isSelected ? '#34D399' : '#94A3B8'}
+                          fontFamily="Inter, sans-serif"
+                          fontSize="10"
+                          fontWeight="600"
+                        >
+                          {room.capacity} Desks • {room.statusText}
+                        </text>
+
+                        {/* Environmental Sensor Tag in CAD */}
+                        <text
+                          x={x + 16}
+                          y={y + 74}
+                          fill="#64748B"
+                          fontFamily="Inter, sans-serif"
+                          fontSize="9"
+                        >
+                          CO₂: {room.co2} ppm • {room.temp}°C
+                        </text>
+
+                        {/* Target Node Badge when Selected */}
+                        {isSelected && (
+                          <g transform={`translate(${x + w / 2}, ${y + h - 22})`}>
+                            <rect x="-45" y="-12" width="90" height="20" rx="10" fill="#10B981" />
+                            <text
+                              x="0"
+                              y="2"
+                              textAnchor="middle"
+                              fill="#022C22"
+                              fontFamily="Inter, sans-serif"
+                              fontSize="9"
+                              fontWeight="800"
+                            >
+                              TARGET NODE
+                            </text>
+                          </g>
+                        )}
+                      </g>
+                    );
+                  })}
+
+                {/* DYNAMIC ANIMATED VECTOR PATH TO SELECTED ROOM */}
+                {selectedRoom.cadBox && (
+                  <>
+                    <path
+                      d={`M 480,72 L 480,310 L ${selectedRoom.cadBox.door.x},310 L ${selectedRoom.cadBox.door.x},${selectedRoom.cadBox.door.y}`}
+                      fill="none"
+                      stroke="#10B981"
+                      strokeWidth="5"
+                      strokeDasharray="8 8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      filter="url(#emeraldRouteGlow)"
+                      className="animate-[dash_1.2s_linear_infinite]"
+                    />
+                    {/* Destination Door Beacon */}
+                    <g transform={`translate(${selectedRoom.cadBox.door.x}, ${selectedRoom.cadBox.door.y})`}>
+                      <circle cx="0" cy="0" r="7" fill="#10B981" />
+                      <circle cx="0" cy="0" r="14" fill="#10B981" fillOpacity="0.3" className="animate-ping" />
                     </g>
-                  )}
-                </g>
-
-                {/* ROOM B-205 */}
-                <g className="cursor-pointer group" onClick={() => setSelectedRoomId('B-205')}>
-                  <rect
-                    x="540"
-                    y="340"
-                    width="180"
-                    height="160"
-                    rx="10"
-                    fill={selectedRoomId === 'B-205' ? '#FFF1F2' : '#FFFFFF'}
-                    stroke={selectedRoomId === 'B-205' ? '#9E153E' : '#CBD5E1'}
-                    strokeWidth={selectedRoomId === 'B-205' ? '2.5' : '1.5'}
-                  ></rect>
-                  <rect x="550" y="350" width="160" height="20" rx="4" fill={selectedRoomId === 'B-205' ? '#9E153E' : '#F1F5F9'}></rect>
-                  <text x="560" y="364" fill={selectedRoomId === 'B-205' ? '#FFFFFF' : '#0F172A'} fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-205 AI &amp; Robotics</text>
-                  <circle cx="695" cy="360" r="4" fill="#EF4444"></circle>
-                  <text x="560" y="400" fill="#475569" fontFamily="Inter" fontSize="10">28 Seats • In Session</text>
-                </g>
-
-                {/* ROOM B-206 */}
-                <g className="cursor-pointer group" onClick={() => setSelectedRoomId('B-206')}>
-                  <rect
-                    x="740"
-                    y="340"
-                    width="150"
-                    height="160"
-                    rx="10"
-                    fill={selectedRoomId === 'B-206' ? '#FFF1F2' : '#FFFFFF'}
-                    stroke={selectedRoomId === 'B-206' ? '#9E153E' : '#CBD5E1'}
-                    strokeWidth={selectedRoomId === 'B-206' ? '2.5' : '1.5'}
-                  ></rect>
-                  <rect x="750" y="350" width="130" height="20" rx="4" fill={selectedRoomId === 'B-206' ? '#9E153E' : '#F1F5F9'}></rect>
-                  <text x="760" y="364" fill={selectedRoomId === 'B-206' ? '#FFFFFF' : '#0F172A'} fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-206 Study Pods</text>
-                  <circle cx="865" cy="360" r="4" fill="#22C55E"></circle>
-                  <text x="760" y="400" fill="#475569" fontFamily="Inter" fontSize="10">16 Pods • 4 Open</text>
-                </g>
-
-                {/* Emergency Stairs */}
-                <rect x="42" y="500" width="60" height="26" fill="#FEF2F2" stroke="#EF4444" strokeWidth="1" strokeDasharray="2 2"></rect>
-                <text x="72" y="516" textAnchor="middle" fill="#DC2626" fontFamily="Inter" fontSize="8" fontWeight="700">EXIT A</text>
-                <rect x="858" y="500" width="60" height="26" fill="#FEF2F2" stroke="#EF4444" strokeWidth="1" strokeDasharray="2 2"></rect>
-                <text x="888" y="516" textAnchor="middle" fill="#DC2626" fontFamily="Inter" fontSize="8" fontWeight="700">EXIT B</text>
-
-                {/* Dynamic SVG Animated Route Path to Selected Room */}
-                {selectedRoomId === 'B-204' && (
-                  <path
-                    d="M 480,72 L 480,310 L 335,310 L 335,340"
-                    fill="none"
-                    stroke="#9E153E"
-                    strokeWidth="5"
-                    strokeDasharray="8 8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="animate-[dash_1.5s_linear_infinite]"
-                  ></path>
-                )}
-                {selectedRoomId === 'B-203' && (
-                  <path
-                    d="M 480,72 L 480,310 L 150,310 L 150,340"
-                    fill="none"
-                    stroke="#9E153E"
-                    strokeWidth="5"
-                    strokeDasharray="8 8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="animate-[dash_1.5s_linear_infinite]"
-                  ></path>
-                )}
-                {selectedRoomId === 'B-205' && (
-                  <path
-                    d="M 480,72 L 480,310 L 630,310 L 630,340"
-                    fill="none"
-                    stroke="#9E153E"
-                    strokeWidth="5"
-                    strokeDasharray="8 8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="animate-[dash_1.5s_linear_infinite]"
-                  ></path>
-                )}
-                {selectedRoomId === 'B-206' && (
-                  <path
-                    d="M 480,72 L 480,310 L 815,310 L 815,340"
-                    fill="none"
-                    stroke="#9E153E"
-                    strokeWidth="5"
-                    strokeDasharray="8 8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="animate-[dash_1.5s_linear_infinite]"
-                  ></path>
+                  </>
                 )}
 
-                {/* Start Pulse Beacon */}
+                {/* Departure Marker */}
                 <g transform="translate(480, 72)">
-                  <circle cx="0" cy="0" r="6" fill="#9E153E"></circle>
-                  <circle cx="0" cy="0" r="10" fill="none" stroke="#E11D48" strokeWidth="1.5"></circle>
-                  <text x="14" y="4" fill="#9E153E" fontFamily="Inter" fontSize="10" fontWeight="700">YOU (Skybridge)</text>
+                  <circle cx="0" cy="0" r="6" fill="#10B981" />
+                  <circle cx="0" cy="0" r="12" fill="none" stroke="#34D399" strokeWidth="1.5" />
+                  <text x="14" y="4" fill="#34D399" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="700">
+                    START (Skybridge Arrival)
+                  </text>
                 </g>
               </svg>
 
@@ -670,46 +1119,148 @@ export function SmartRooms() {
                 }
               `}</style>
 
-              {/* Floating Floor Plan Legend Card */}
-              <div className="absolute bottom-4 left-4 p-3 rounded-xl bg-white/95 backdrop-blur-md text-slate-800 shadow-sm z-20 flex flex-wrap items-center gap-3 font-caption text-caption border border-slate-200">
-                <span className="font-bold text-slate-500 uppercase tracking-wider">Legend:</span>
+              {/* Floating Blueprint Legend */}
+              <div className="absolute bottom-3 left-3 p-2.5 px-3 rounded-xl bg-slate-900/95 backdrop-blur-md text-slate-300 border border-slate-700/80 shadow-lg z-20 flex flex-wrap items-center gap-3 text-xs">
+                <span className="font-bold text-slate-500 uppercase tracking-wider text-[10px]">CAD Legend:</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A]"></span>
-                  <span className="font-medium text-slate-700">Available</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                  <span>Available</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#9E153E]"></span>
-                  <span className="font-medium text-slate-700">Occupied</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                  <span>In Session</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#D97706]"></span>
-                  <span className="font-medium text-slate-700">Reserved</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                  <span>Reserved</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[15px] text-[#2563EB]">accessible</span>
-                  <span className="font-medium text-slate-700">Accessible</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
+                  <span>Elevator Lift</span>
                 </div>
               </div>
 
-              {/* Route Status Pill */}
-              <div className="absolute bottom-4 right-4 p-2.5 px-3.5 rounded-xl bg-white/95 backdrop-blur-md shadow-sm z-20 flex items-center gap-2.5 border border-slate-200">
-                <span className="material-symbols-outlined text-[#9E153E] text-[20px]">directions_walk</span>
+              {/* Wayfinding Duration Chip */}
+              <div className="absolute bottom-3 right-3 p-2.5 px-3.5 rounded-xl bg-slate-900/95 backdrop-blur-md border border-slate-700/80 shadow-lg z-20 flex items-center gap-2">
+                <Navigation className="w-4 h-4 text-emerald-400" />
                 <div className="flex flex-col">
-                  <span className="font-label-sm text-label-sm font-bold text-slate-900">{selectedRoom.routeDistance}</span>
-                  <span className="font-caption text-caption text-slate-500">Elevator-free direct route</span>
+                  <span className="text-xs font-bold text-white">{selectedRoom.routeDistance}</span>
+                  <span className="text-[10px] text-slate-400">Door-to-door CAD routing</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Quick Room Carousel / Rapid Discovery Cards */}
-          <div className="flex flex-col gap-space-sm pt-2">
-            <div className="flex items-center justify-between">
-              <h3 className="font-title-md text-title-md text-slate-900 font-bold">Level 2 Key Spaces &amp; Availability</h3>
-              <span className="font-caption text-caption text-slate-500">Select any room to view live directions</span>
+          {/* =====================================================================
+              VISUAL TIME-SCRUBBER TIMELINE & INSTANT RESERVATION SCHEDULE
+              ===================================================================== */}
+          <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-xl flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-emerald-400" />
+                  <span>Room {selectedRoom.roomNumber} Today's Schedule &amp; Clash-Free Booking</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Select any available block below to reserve instantly and generate your verified NFC pass.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-1 rounded-md bg-slate-800 text-[11px] font-mono text-slate-300 border border-slate-700">
+                  Current Time: {currentTimeHour}
+                </span>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+            {/* Visual Schedule Slot Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {selectedRoom.slots.map((slot) => {
+                const isPast = slot.status === 'past';
+                const isOccupied = slot.status === 'occupied';
+                const isReserved = slot.status === 'reserved';
+                const isAvailable = slot.status === 'available';
+
+                return (
+                  <div
+                    key={slot.id}
+                    className={`p-3.5 rounded-xl border flex flex-col justify-between transition-all ${
+                      isAvailable
+                        ? 'bg-slate-950/80 border-emerald-500/40 hover:border-emerald-400 hover:bg-slate-900 shadow-sm'
+                        : isOccupied
+                        ? 'bg-rose-950/20 border-rose-900/60 opacity-90'
+                        : isReserved
+                        ? 'bg-amber-950/20 border-amber-900/60 opacity-90'
+                        : 'bg-slate-950/40 border-slate-800 opacity-60'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-1 mb-1.5">
+                        <span className="text-xs font-mono font-bold text-slate-300">
+                          {slot.start} - {slot.end}
+                        </span>
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            isAvailable
+                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                              : isOccupied
+                              ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                              : isReserved
+                              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                              : 'bg-slate-800 text-slate-400'
+                          }`}
+                        >
+                          {isAvailable
+                            ? 'Bookable'
+                            : isOccupied
+                            ? 'Class In-Session'
+                            : isReserved
+                            ? 'Reserved'
+                            : 'Completed'}
+                        </span>
+                      </div>
+
+                      <h4 className="text-xs font-semibold text-white leading-tight line-clamp-1">
+                        {slot.title}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 mt-0.5">
+                        {slot.lecturer}
+                      </p>
+                    </div>
+
+                    <div className="pt-3 mt-3 border-t border-slate-800/80 flex items-center justify-between">
+                      {isAvailable ? (
+                        <button
+                          onClick={() => handleOpenBooking(slot)}
+                          className="w-full py-1.5 px-3 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
+                        >
+                          <QrCode className="w-3.5 h-3.5" />
+                          <span>Reserve Slot</span>
+                        </button>
+                      ) : (
+                        <span className="text-[11px] text-slate-500 italic">
+                          {isOccupied ? 'Clash: Timetable Lock' : isReserved ? 'Reserved by Peer' : 'Slot Concluded'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* =====================================================================
+              RAPID ROOM SWITCHER CAROUSEL (Key Spaces in Block)
+              ===================================================================== */}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+                {selectedFloor} Spaces in {selectedRoom.buildingCode}
+              </h3>
+              <span className="text-xs text-slate-400">Click any card to inspect telemetry &amp; route</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {filteredRooms.slice(0, 3).map((r) => {
                 const isSelected = r.id === selectedRoomId;
                 return (
@@ -718,32 +1269,45 @@ export function SmartRooms() {
                     onClick={() => setSelectedRoomId(r.id)}
                     className={`cursor-pointer p-4 rounded-xl flex flex-col justify-between transition-all ${
                       isSelected
-                        ? 'bg-white ring-2 ring-[#9E153E] shadow-sm'
-                        : 'bg-white border border-slate-200 hover:border-slate-300 shadow-sm'
+                        ? 'bg-slate-900 border-2 border-emerald-500 shadow-lg'
+                        : 'bg-slate-900/60 border border-slate-800 hover:border-slate-700'
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className={`px-2.5 py-0.5 rounded-md font-caption text-caption font-bold ${isSelected ? 'bg-[#FFE4E6] text-[#9E153E]' : 'bg-slate-100 text-slate-700'}`}>
+                        <span
+                          className={`px-2 py-0.5 rounded text-xs font-mono font-bold ${
+                            isSelected ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-300'
+                          }`}
+                        >
                           {r.roomNumber}
                         </span>
-                        <span className={`inline-flex items-center gap-1 font-caption text-caption font-semibold ${r.status === 'available' ? 'text-[#16A34A]' : r.status === 'reserved' ? 'text-[#D97706]' : 'text-[#DC2626]'}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${r.status === 'available' ? 'bg-[#16A34A]' : r.status === 'reserved' ? 'bg-[#D97706]' : 'bg-[#DC2626]'}`}></span>
+                        <span
+                          className={`text-xs font-medium flex items-center gap-1 ${
+                            r.status === 'available' ? 'text-emerald-400' : 'text-rose-400'
+                          }`}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              r.status === 'available' ? 'bg-emerald-400' : 'bg-rose-400'
+                            }`}
+                          ></span>
                           {r.statusText}
                         </span>
                       </div>
-                      <h4 className="font-label-md text-label-md font-bold text-slate-900">{r.name}</h4>
-                      <p className="font-caption text-caption text-slate-500 mt-1">
+                      <h4 className="text-sm font-bold text-white line-clamp-1">{r.name}</h4>
+                      <p className="text-xs text-slate-400 mt-1 line-clamp-1">
                         {r.capacity} Seats • {r.features[0]}
                       </p>
                     </div>
 
-                    <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-caption text-slate-500">
-                      <span className="flex items-center gap-1 font-medium text-slate-600">
-                        <span className="material-symbols-outlined text-[14px]">group</span> {r.currentOccupancy} / {r.capacity} Seats
+                    <div className="pt-3 mt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                      <span className="flex items-center gap-1">
+                        <Users className="w-3.5 h-3.5 text-slate-500" />
+                        <span>{r.currentOccupancy}/{r.capacity} Occ</span>
                       </span>
-                      <span className={isSelected ? 'text-[#9E153E] font-semibold' : 'text-slate-500 hover:text-[#9E153E]'}>
-                        {isSelected ? 'Selected Room ✓' : 'View Room →'}
+                      <span className={isSelected ? 'text-emerald-400 font-semibold' : 'text-slate-400'}>
+                        {isSelected ? 'Inspecting ✓' : 'Select →'}
                       </span>
                     </div>
                   </div>
@@ -753,126 +1317,475 @@ export function SmartRooms() {
           </div>
         </div>
 
-        {/* RIGHT: Selected Room Deep-Dive & Wayfinding Inspector Drawer */}
-        <div className="xl:col-span-4 flex flex-col gap-space-md">
-          <div className="p-6 rounded-2xl bg-white shadow-sm flex flex-col gap-5 border border-slate-200">
-            {/* Room Heading and Identification */}
+        {/* =========================================================================
+            RIGHT COLUMN: IOT TELEMETRY DIALS & ROOM WAYFINDING INSPECTOR
+            ========================================================================= */}
+        <div className="xl:col-span-4 flex flex-col gap-5">
+          <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl flex flex-col gap-5 backdrop-blur-md">
+            {/* Header info */}
             <div className="flex items-start justify-between">
               <div>
-                <div className="flex items-center gap-1.5 text-caption font-caption text-[#9E153E] uppercase font-bold tracking-wider">
-                  <span>Block A-01</span>
+                <div className="flex items-center gap-1.5 text-[11px] font-mono text-emerald-400 uppercase font-bold tracking-wider">
+                  <span>{selectedRoom.buildingCode}</span>
                   <span>•</span>
                   <span>{selectedRoom.floor}</span>
                   <span>•</span>
-                  <span>West Wing</span>
+                  <span>Wing A</span>
                 </div>
-                <h2 className="font-headline-md text-headline-md text-slate-900 tracking-tight font-bold mt-0.5" id="inspectorTitle">
+                <h2 className="text-xl font-extrabold text-white tracking-tight mt-0.5">
                   Room {selectedRoom.roomNumber}: {selectedRoom.name}
                 </h2>
               </div>
-              <span className="px-2.5 py-1 rounded-full bg-[#FFE4E6] text-[#9E153E] text-caption font-bold shrink-0">Selected</span>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/40 shrink-0">
+                Active Node
+              </span>
             </div>
 
-            {/* Room Preview Image */}
-            <div className="relative w-full h-40 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+            {/* Room Photo Preview with Live Tag */}
+            <div className="relative w-full h-44 rounded-xl overflow-hidden bg-slate-950 border border-slate-800">
               <img
                 src={selectedRoom.image}
                 alt={selectedRoom.name}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-caption">
-                <span className="px-2.5 py-1 rounded-md bg-white/95 backdrop-blur-md text-slate-800 font-semibold shadow-sm">
-                  {selectedRoom.name}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
+              <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-xs">
+                <span className="px-2 py-1 rounded-md bg-slate-900/90 backdrop-blur-md text-white font-medium border border-slate-700/80">
+                  {selectedRoom.type}
                 </span>
-                <span className="px-2.5 py-1 rounded-md bg-white/95 backdrop-blur-md text-[#9E153E] font-semibold shadow-sm">
-                  Occupancy: {selectedRoom.currentOccupancy} / {selectedRoom.capacity}
+                <span className="px-2 py-1 rounded-md bg-slate-900/90 backdrop-blur-md text-emerald-400 font-semibold border border-slate-700/80">
+                  {selectedRoom.capacity - selectedRoom.currentOccupancy} Desks Open
                 </span>
               </div>
             </div>
 
-            {/* Dynamic Status & Capacity Metrics */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="p-3.5 rounded-xl bg-slate-50 flex flex-col border border-slate-200">
-                <span className="font-caption text-caption text-slate-500">Current Status</span>
-                <span className="font-label-md text-label-md font-bold text-[#9E153E] mt-0.5">{selectedRoom.statusText}</span>
-                <span className="font-caption text-caption text-slate-500">Next: {selectedRoom.nextClass}</span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-50 flex flex-col border border-slate-200">
-                <span className="font-caption text-caption text-slate-500">Seating Capacity</span>
-                <span className="font-label-md text-label-md font-bold text-slate-900 mt-0.5">
-                  {selectedRoom.capacity} Total Desks
+            {/* ===================================================================
+                IOT ENVIRONMENTAL TELEMETRY GAUGES & SENSOR DIALS
+                =================================================================== */}
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-emerald-400" />
+                  Live IoT Sensor Dials
                 </span>
-                <span className="font-caption text-caption text-emerald-600 font-semibold">{selectedRoom.capacity - selectedRoom.currentOccupancy} Available Now</span>
+                <span className="text-[10px] text-emerald-400 font-mono">Calibrated 1s ago</span>
               </div>
-            </div>
 
-            {/* Room Amenities & Facilities */}
-            <div className="flex flex-col gap-2">
-              <span className="font-caption text-caption text-slate-500 uppercase tracking-wider font-semibold">Room Amenities</span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {[
-                  { icon: 'wifi', label: 'Campus Wi-Fi' },
-                  { icon: 'videocam', label: 'AV Projector & Screen' },
-                  { icon: 'ac_unit', label: 'Air Conditioned' },
-                  { icon: 'power', label: 'Desk Power Outlets' },
-                  { icon: 'accessible', label: 'Step-Free / Accessible' },
-                  { icon: 'chair', label: 'Ergonomic Seating' }
-                ].map((item, idx) => (
-                  <div key={idx} className="p-2 px-2.5 rounded-lg bg-slate-50 flex items-center gap-2 border border-slate-200">
-                    <span className="material-symbols-outlined text-[16px] text-[#9E153E]">{item.icon}</span>
-                    <span className="font-body-sm text-body-sm text-slate-700 text-xs font-medium">{item.label}</span>
+              {/* Grid of Gauges */}
+              <div className="grid grid-cols-2 gap-2.5">
+                {/* 1. CO2 & Air Quality Dial */}
+                <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-slate-400 mb-1">
+                    <span className="text-[10px] font-mono uppercase">Air CO₂</span>
+                    <Wind className="w-3.5 h-3.5 text-emerald-400" />
                   </div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-xl font-black text-white">{selectedRoom.co2}</span>
+                    <span className="text-[11px] text-slate-400">ppm</span>
+                  </div>
+                  <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1.5">
+                    <div
+                      className="bg-emerald-400 h-full rounded-full transition-all"
+                      style={{ width: `${Math.min(100, (selectedRoom.co2 / 800) * 100)}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-[10px] text-emerald-400 mt-1">{selectedRoom.co2Status}</span>
+                </div>
+
+                {/* 2. Thermal Comfort Dial */}
+                <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-slate-400 mb-1">
+                    <span className="text-[10px] font-mono uppercase">HVAC Temp</span>
+                    <Thermometer className="w-3.5 h-3.5 text-sky-400" />
+                  </div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-xl font-black text-white">{selectedRoom.temp}°</span>
+                    <span className="text-[11px] text-slate-400">C</span>
+                  </div>
+                  <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1.5">
+                    <div
+                      className="bg-sky-400 h-full rounded-full transition-all"
+                      style={{ width: '68%' }}
+                    ></div>
+                  </div>
+                  <span className="text-[10px] text-slate-400 mt-1">Target: {selectedRoom.tempTarget}°C • {selectedRoom.humidity}% RH</span>
+                </div>
+
+                {/* 3. Acoustic Sound Level Dial */}
+                <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-slate-400 mb-1">
+                    <span className="text-[10px] font-mono uppercase">Acoustics</span>
+                    <Volume2 className="w-3.5 h-3.5 text-amber-400" />
+                  </div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-xl font-black text-white">{selectedRoom.noiseDb}</span>
+                    <span className="text-[11px] text-slate-400">dB</span>
+                  </div>
+                  <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1.5">
+                    <div
+                      className="bg-amber-400 h-full rounded-full transition-all"
+                      style={{ width: `${Math.min(100, (selectedRoom.noiseDb / 80) * 100)}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-[10px] text-amber-400 mt-1">{selectedRoom.noiseStatus}</span>
+                </div>
+
+                {/* 4. Wi-Fi 7 Enterprise Telemetry */}
+                <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-slate-400 mb-1">
+                    <span className="text-[10px] font-mono uppercase">Wi-Fi 7 Core</span>
+                    <Wifi className="w-3.5 h-3.5 text-purple-400" />
+                  </div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-xl font-black text-white">{selectedRoom.wifiSpeed.split(' ')[0]}</span>
+                    <span className="text-[11px] text-slate-400">Mbps</span>
+                  </div>
+                  <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1.5">
+                    <div
+                      className="bg-purple-400 h-full rounded-full transition-all"
+                      style={{ width: '85%' }}
+                    ></div>
+                  </div>
+                  <span className="text-[10px] text-purple-300 mt-1">{selectedRoom.wifiLatency} ping • {selectedRoom.wifiDevices} nodes</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Room Features List */}
+            <div className="flex flex-col gap-2">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+                Equipment &amp; Accessibility
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {selectedRoom.features.map((feat, idx) => (
+                  <span
+                    key={idx}
+                    className="px-2.5 py-1 rounded-lg bg-slate-950/80 border border-slate-800 text-[11px] text-slate-300 font-medium"
+                  >
+                    {feat}
+                  </span>
                 ))}
               </div>
             </div>
 
-            {/* Start Point Departure Selector */}
-            <div className="flex flex-col gap-1.5">
-              <label className="font-caption text-caption text-slate-500 uppercase tracking-wider font-semibold">Starting From (Departure)</label>
-              <div className="relative w-full">
-                <select
-                  value={startNode}
-                  onChange={(e) => setStartNode(e.target.value)}
-                  className="w-full h-10 pl-3.5 pr-8 rounded-xl bg-slate-50 text-slate-800 font-body-sm text-body-sm appearance-none focus:outline-none focus:ring-1 focus:ring-[#9E153E] cursor-pointer border border-slate-200"
-                >
-                  <option>Level 2 Skybridge Arrival (from Library)</option>
-                  <option>West Elevator Bank (Lifts 1-4)</option>
-                  <option>East Elevator Bank (Lifts 5-8)</option>
-                  <option>Ground Floor Main Atrium</option>
-                </select>
-                <span className="material-symbols-outlined absolute right-3 top-2.5 text-slate-400 pointer-events-none text-[18px]">expand_more</span>
+            {/* Walking Directions from Chosen Node */}
+            <div className="flex flex-col gap-2 pt-1 border-t border-slate-800">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+                  Walking Turn Directions
+                </span>
+                <span className="text-xs text-emerald-400 font-semibold">{selectedRoom.routeDistance}</span>
               </div>
-            </div>
 
-            {/* Walking Directions */}
-            <div className="flex flex-col gap-2 pt-1">
-              <span className="font-caption text-caption text-slate-500 uppercase tracking-wider font-semibold">Walking Route</span>
-              <div className="flex flex-col gap-2 relative pl-4 border-l-2 border-[#9E153E]/30 ml-1">
+              <div className="flex flex-col gap-2.5 relative pl-3 border-l-2 border-emerald-500/40 ml-1 mt-1">
                 {selectedRoom.routeSteps.map((st, i) => (
                   <div key={i} className="flex flex-col">
-                    <span className={`font-label-sm text-label-sm font-semibold ${i === selectedRoom.routeSteps.length - 1 ? 'text-[#9E153E] font-bold' : 'text-slate-800'}`}>
+                    <span className="text-xs font-semibold text-slate-200">
                       {st.step}
                     </span>
-                    <span className="font-caption text-caption text-slate-500">{st.desc}</span>
+                    <span className="text-[11px] text-slate-400">{st.desc}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Wayfinding Action CTA */}
-            <div className="flex flex-col gap-2 pt-2">
+            {/* Action Buttons */}
+            <div className="flex flex-col gap-2.5 pt-2">
               <button
-                onClick={() => navigate('/campus-map?bldg=eng')}
-                className="w-full py-3 px-4 rounded-xl bg-[#9E153E] hover:bg-[#831843] active:scale-[0.99] text-white font-label-md text-label-md font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+                onClick={() => {
+                  const firstBookable = selectedRoom.slots.find((s) => s.isBookable) || selectedRoom.slots[0];
+                  handleOpenBooking(firstBookable);
+                }}
+                className="w-full py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-[0.99] text-slate-950 font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all"
               >
-                <span className="material-symbols-outlined text-[18px]">navigation</span>
-                <span>Open in Campus Map</span>
+                <QrCode className="w-4 h-4" />
+                <span>Instant Reserve &amp; Generate NFC Pass</span>
+              </button>
+
+              <button
+                onClick={() => navigate(`/campus-map?bldg=eng&room=${selectedRoom.roomNumber}`)}
+                className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-2 border border-slate-700 transition-all"
+              >
+                <Navigation className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Open in Mewar Campus GIS Map</span>
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* =========================================================================
+          MODAL: INSTANT RESERVATION & VERIFIED QR/NFC PASS GENERATOR
+          ========================================================================= */}
+      {isBookingModalOpen && slotToBook && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="relative w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 flex flex-col gap-5 text-slate-100 animate-in fade-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between">
+              <div>
+                <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-wider">
+                  Clash-Free Room Reservation
+                </span>
+                <h3 className="text-xl font-bold text-white mt-0.5">
+                  Book Room {selectedRoom.roomNumber} ({slotToBook.start} - {slotToBook.end})
+                </h3>
+              </div>
+              <button
+                onClick={() => {
+                  setIsBookingModalOpen(false);
+                  setActivePass(null);
+                }}
+                className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Error Message if Slot Conflict */}
+            {bookingConflictMsg ? (
+              <div className="p-4 rounded-xl bg-rose-950/40 border border-rose-800/80 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-rose-300">Timetable Conflict Detected</span>
+                  <span className="text-xs text-rose-200/90 mt-0.5">{bookingConflictMsg}</span>
+                  <span className="text-[11px] text-slate-400 mt-2">
+                    Tip: Look for slots labeled <span className="text-emerald-400 font-semibold">"Bookable"</span> in the schedule timeline.
+                  </span>
+                </div>
+              </div>
+            ) : activePass ? (
+              /* ===================================================================
+                 VERIFIED NFC & DIGITAL QR ACCESS PASS BADGE
+                 =================================================================== */
+              <div className="flex flex-col gap-4">
+                <div className="p-5 rounded-2xl bg-gradient-to-b from-slate-950 to-slate-900 border-2 border-emerald-500 shadow-xl flex flex-col gap-4 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
+                        <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-white">Mewar University Digital Key</span>
+                        <span className="text-[10px] font-mono text-emerald-400">NFC Smart Lock Authorized</span>
+                      </div>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-slate-300">{activePass.passId}</span>
+                  </div>
+
+                  {/* QR Graphic and Details */}
+                  <div className="flex items-center gap-4">
+                    {/* High-fidelity SVG QR Code */}
+                    <div className="w-28 h-28 p-2 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-md">
+                      <svg viewBox="0 0 100 100" className="w-full h-full">
+                        <rect x="0" y="0" width="100" height="100" fill="#FFFFFF" />
+                        {/* Position Markers */}
+                        <rect x="10" y="10" width="25" height="25" fill="#000000" />
+                        <rect x="15" y="15" width="15" height="15" fill="#FFFFFF" />
+                        <rect x="18" y="18" width="9" height="9" fill="#000000" />
+
+                        <rect x="65" y="10" width="25" height="25" fill="#000000" />
+                        <rect x="70" y="15" width="15" height="15" fill="#FFFFFF" />
+                        <rect x="73" y="18" width="9" height="9" fill="#000000" />
+
+                        <rect x="10" y="65" width="25" height="25" fill="#000000" />
+                        <rect x="15" y="70" width="15" height="15" fill="#FFFFFF" />
+                        <rect x="18" y="73" width="9" height="9" fill="#000000" />
+
+                        {/* Data Pixels */}
+                        <rect x="40" y="12" width="6" height="6" fill="#000000" />
+                        <rect x="52" y="15" width="6" height="6" fill="#000000" />
+                        <rect x="42" y="30" width="6" height="6" fill="#000000" />
+                        <rect x="54" y="38" width="6" height="6" fill="#000000" />
+                        <rect x="68" y="44" width="6" height="6" fill="#000000" />
+                        <rect x="40" y="55" width="6" height="6" fill="#000000" />
+                        <rect x="50" y="65" width="6" height="6" fill="#000000" />
+                        <rect x="62" y="75" width="6" height="6" fill="#000000" />
+                        <rect x="75" y="62" width="6" height="6" fill="#000000" />
+                        <rect x="85" y="80" width="6" height="6" fill="#000000" />
+                        <circle cx="50" cy="50" r="5" fill="#10B981" />
+                      </svg>
+                    </div>
+
+                    <div className="flex flex-col gap-1 text-xs">
+                      <span className="font-bold text-white text-base">
+                        Room {activePass.roomNumber}
+                      </span>
+                      <span className="text-slate-400">{activePass.roomName}</span>
+                      <span className="text-emerald-300 font-mono font-semibold mt-1">
+                        Valid: {activePass.slotTime} ({activePass.date})
+                      </span>
+                      <span className="text-slate-400">
+                        Student: {activePass.studentName} ({activePass.studentRoll})
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* NFC Door Unlock Simulator */}
+                  <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
+                    <button
+                      onClick={handleSimulateUnlock}
+                      className={`py-2 px-3.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
+                        simulatedUnlockSuccess
+                          ? 'bg-emerald-500 text-slate-950'
+                          : 'bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30'
+                      }`}
+                    >
+                      {simulatedUnlockSuccess ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+                      <span>{simulatedUnlockSuccess ? 'Door Reader Unlocked! ✓' : 'Simulate NFC Tap to Unlock'}</span>
+                    </button>
+
+                    <button
+                      onClick={() => copyPassId(activePass.passId)}
+                      className="text-xs text-slate-400 hover:text-white flex items-center gap-1 font-mono"
+                    >
+                      {hasCopiedPassId ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{hasCopiedPassId ? 'Copied' : 'Copy ID'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsBookingModalOpen(false)}
+                  className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold"
+                >
+                  Close &amp; View Schedule
+                </button>
+              </div>
+            ) : (
+              /* Booking Configuration Form */
+              <div className="flex flex-col gap-4">
+                <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between">
+                  <div>
+                    <span className="text-[11px] text-slate-400 font-mono">Slot Timing</span>
+                    <h4 className="text-sm font-bold text-white">{slotToBook.start} - {slotToBook.end} Today</h4>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
+                    No Conflicts
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-slate-300">Student Roll Number</label>
+                  <input
+                    type="text"
+                    value={studentRoll}
+                    onChange={(e) => setStudentRoll(e.target.value)}
+                    className="w-full h-10 px-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-slate-300">Reservation Purpose</label>
+                  <div className="flex flex-wrap gap-2 mb-1.5">
+                    {[
+                      'Capstone Project Team Collab',
+                      'Solo Deep Work Pod',
+                      'AI Model Training & Lab',
+                      'Peer Group Study'
+                    ].map((purp) => (
+                      <button
+                        key={purp}
+                        type="button"
+                        onClick={() => setBookingPurpose(purp)}
+                        className={`px-2.5 py-1 rounded-lg text-xs transition-colors ${
+                          bookingPurpose === purp
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold'
+                            : 'bg-slate-800 text-slate-400 hover:text-white border border-slate-700/60'
+                        }`}
+                      >
+                        {purp}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2 flex items-center justify-end gap-3 border-t border-slate-800">
+                  <button
+                    onClick={() => setIsBookingModalOpen(false)}
+                    className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirmReservation}
+                    className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition-all"
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>Confirm &amp; Issue Digital Pass</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          SLIDE-OVER DRAWER: "MY ACTIVE PASSES"
+          ========================================================================= */}
+      {isMyPassesOpen && (
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-md h-full bg-slate-900 border-l border-slate-800 p-6 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-300">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+                <div className="flex items-center gap-2">
+                  <QrCode className="w-5 h-5 text-emerald-400" />
+                  <h3 className="text-base font-bold text-white">My Active Campus Passes</h3>
+                </div>
+                <button
+                  onClick={() => setIsMyPassesOpen(false)}
+                  className="w-7 h-7 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {savedPasses.length === 0 ? (
+                <div className="py-12 flex flex-col items-center justify-center text-center text-slate-500">
+                  <QrCode className="w-10 h-10 mb-2 opacity-40" />
+                  <p className="text-xs">No active passes issued yet.</p>
+                  <p className="text-[11px] text-slate-600 mt-1">Book any room slot to generate an NFC pass.</p>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3 overflow-y-auto max-h-[70vh] pr-1">
+                  {savedPasses.map((p, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-500/50 flex flex-col gap-2.5 transition-all"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono font-bold text-emerald-400">{p.passId}</span>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                          {p.status}
+                        </span>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-white">Room {p.roomNumber}</h4>
+                        <p className="text-xs text-slate-400">{p.roomName}</p>
+                      </div>
+                      <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px] text-slate-400">
+                        <span>Time: {p.slotTime}</span>
+                        <span>{p.purpose}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="pt-4 border-t border-slate-800">
+              <button
+                onClick={() => setIsMyPassesOpen(false)}
+                className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white"
+              >
+                Close Drawer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

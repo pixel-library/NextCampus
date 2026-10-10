@@ -228,3 +228,234 @@ a:hover {
 .font-label-md { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 18px; font-weight: 500; }
 .font-label-sm { font-family: 'Inter', sans-serif; font-size: 12px; line-height: 16px; font-weight: 500; }
 .font-caption { font-family: 'Inter', sans-serif; font-size: 11px; line-height: 14px; font-weight: 500; }
+
+/* ============================================================
+   NEXTCAMPUS SPATIAL CAMPUS DESIGN SYSTEM TOKENS
+   ============================================================ */
+
+/* Hero Interactive Campus Navigator Card */
+.hero-navigator-card {
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 18px;
+  box-shadow: 0 24px 50px -12px rgba(0, 0, 0, 0.5);
+  color: #FFFFFF;
+}
+
+.hero-search-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  color: #0F172A;
+  font-size: 13.5px;
+  font-family: var(--font-body);
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-search-input:focus {
+  border-color: var(--brand-accent);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.25);
+}
+
+.hero-quick-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #E2E8F0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.hero-quick-tag:hover {
+  background: rgba(255, 255, 255, 0.22);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Metric / Stat Display Cards */
+.metric-card-box {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 24px 22px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.metric-card-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  border-color: rgba(158, 21, 62, 0.25);
+}
+
+.metric-card-box:hover::before {
+  opacity: 1;
+}
+
+/* Quick Action Strip */
+.quick-action-strip {
+  background: linear-gradient(90deg, #9E153E 0%, #BE123C 50%, #E11D48 100%);
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.quick-action-btn {
+  background: #FFFFFF;
+  color: #9E153E;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quick-action-btn:hover {
+  background: #FFF1F2;
+  color: #BE123C;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+/* ============================================================
+   CAMPUS WAYFINDING & GIS MAP DASHBOARD STYLING
+   ============================================================ */
+
+/* Campus Wayfinding Facility Card in Left Drawer */
+.campus-wayfinding-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 13px 15px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.campus-wayfinding-card:hover {
+  border-color: #059669;
+  background: #F8FAFC;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+.campus-wayfinding-card.active {
+  border: 1.5px solid #059669;
+  background: #F0FDF4;
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.12);
+}
+
+/* Alias for compatibility */
+.ipc-map-card {
+  composes: campus-wayfinding-card;
+}
+
+/* Floating Destination Card on Map */
+.campus-map-floating-card {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(16px);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 18px 40px -8px rgba(15, 23, 42, 0.2), 0 0 0 1px rgba(15, 23, 42, 0.08);
+  min-width: 260px;
+  max-width: 330px;
+  font-family: var(--font-body);
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Alias for compatibility */
+.ipc-floating-tooltip {
+  composes: campus-map-floating-card;
+}
+
+/* Campus Route Connector Graphic */
+.route-stop-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 14px;
+}
+
+.route-stop-line .dot-start {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #2563EB;
+}
+
+.route-stop-line .dot-line {
+  width: 2px;
+  height: 22px;
+  background-color: #CBD5E1;
+  margin: 3px 0;
+}
+
+.route-stop-line .dot-end {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #059669;
+}
+
+/* Custom Tooltip in Leaflet */
+.leaflet-tooltip.mewar-tooltip {
+  background: #0F172A;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+.leaflet-tooltip.mewar-tooltip::before {
+  border-top-color: #0F172A;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

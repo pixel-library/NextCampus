@@ -15,6 +15,8 @@ import {
   Target,
   Locate,
   Info,
+  Shield,
+  Check,
 } from 'lucide-react';
 
 // Exact Centroid of Mewar University, Gangrar, Chittorgarh (Rajasthan, India)
@@ -411,6 +413,7 @@ export const CampusGisMap = ({
   simulationProgress,
   setSimulationProgress,
   onNavigationUpdate,
+  isDrawerOpen = false,
 }) => {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -447,12 +450,17 @@ export const CampusGisMap = ({
       const map = L.map(mapContainerRef.current, {
         center: DEFAULT_CAMPUS_CENTER,
         zoom: 17.5,
-        minZoom: 15.5,
-        maxZoom: 19,
+        minZoom: 16.2, // STRICT HARD LOCK: User cannot zoom out beyond university campus
+        maxZoom: 19.5, // High-resolution building footprint & pathway zoom
         maxBounds: MEWAR_CAMPUS_BOUNDS,
-        maxBoundsViscosity: 0.9,
+        maxBoundsViscosity: 1.0, // 100% HARD LOCK: Bounces back instantly; cannot drag outside
         zoomControl: false,
         attributionControl: false,
+      });
+
+      // Strict Drag Clamp: keeps map centered strictly within university boundary
+      map.on('drag', () => {
+        map.panInsideBounds(MEWAR_CAMPUS_BOUNDS, { animate: false });
       });
 
       // Esri World Imagery (Satellite) or Esri World Street Map (Clean GIS Streets)
@@ -462,21 +470,36 @@ export const CampusGisMap = ({
           : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
 
       tileLayerRef.current = L.tileLayer(tileUrl, {
-        maxZoom: 19,
+        maxZoom: 19.5,
       }).addTo(map);
 
       // Add Zoom Control bottom right
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      // Draw Campus Perimeter Boundary
+      // 1. INVERSE SHADED MASK: Dim everything outside the university perimeter
+      const outerWorldPolygon = [
+        [24.90, 74.50],
+        [24.90, 74.80],
+        [25.15, 74.80],
+        [25.15, 74.50],
+      ];
+      L.polygon([outerWorldPolygon, MEWAR_PERIMETER_POLYGON], {
+        color: '#0F172A',
+        weight: 0,
+        fillColor: '#0F172A',
+        fillOpacity: 0.38,
+        interactive: false,
+      }).addTo(map);
+
+      // 2. OFFICIAL CAMPUS PERIMETER FENCE (OSM Way 549126310)
       perimeterLayerRef.current = L.polygon(MEWAR_PERIMETER_POLYGON, {
-        color: '#F59E0B',
-        weight: 2,
-        fillColor: '#F59E0B',
-        fillOpacity: 0.04,
+        color: '#10B981',
+        weight: 2.5,
+        fillColor: '#10B981',
+        fillOpacity: 0.05,
         dashArray: '6, 6',
       })
-        .bindTooltip('🏫 Mewar University 30-Acre Campus Perimeter', { permanent: false, direction: 'center' })
+        .bindTooltip('🏫 Mewar University 30-Acre Campus Perimeter (Restricted)', { permanent: false, direction: 'center' })
         .addTo(map);
 
       // Draw Walkway & Internal Road Network
@@ -489,14 +512,14 @@ export const CampusGisMap = ({
         }).addTo(map)
       );
 
-      // Click on Map to Mark Destination Anywhere!
+      // Click on Map to Mark Destination Anywhere inside Campus!
       map.on('click', (e) => {
         const { lat, lng } = e.latlng;
         if (onSetCustomDestination) {
           onSetCustomDestination({
             lat,
             lng,
-            name: `Marked Point (${lat.toFixed(4)}, ${lng.toFixed(4)})`,
+            name: `Marked Campus Point (${lat.toFixed(4)}, ${lng.toFixed(4)})`,
             shortName: 'Marked Destination',
           });
         }
@@ -651,6 +674,16 @@ export const CampusGisMap = ({
     });
   }, [selectedBuildingKey, customDestination, onSelectBuilding, onClearCustomDestination]);
 
+  // Smoothly glide camera to selected building
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map || customDestination) return;
+    const bldg = CAMPUS_GIS_LOCATIONS[selectedBuildingKey];
+    if (bldg && bldg.lat && bldg.lng) {
+      map.flyTo([bldg.lat, bldg.lng], 18, { animate: true, duration: 0.8 });
+    }
+  }, [selectedBuildingKey, customDestination]);
+
   // Render Custom Marked Destination Pin (if user clicked on the map)
   useEffect(() => {
     const map = mapInstanceRef.current;
@@ -751,7 +784,7 @@ export const CampusGisMap = ({
       });
     }
 
-    // Draw Dynamic Walking Route Polyline
+    // Draw Dynamic Walking Route Polyline (Emerald Green matching Reference Image 3)
     const routePoints = interpolateRoute(
       { lat: userCoords.lat, lng: userCoords.lng },
       { lat: activeDestination.lat, lng: activeDestination.lng },
@@ -760,12 +793,14 @@ export const CampusGisMap = ({
 
     if (routePolylineRef.current) {
       routePolylineRef.current.setLatLngs(routePoints);
+      routePolylineRef.current.setStyle({
+        color: customDestination ? '#E11D48' : '#059669',
+      });
     } else {
       routePolylineRef.current = L.polyline(routePoints, {
-        color: customDestination ? '#E11D48' : '#9E153E',
+        color: customDestination ? '#E11D48' : '#059669', // Emerald green matching Reference Image 3
         weight: 5,
-        opacity: 0.94,
-        dashArray: '8, 8',
+        opacity: 0.95,
         lineCap: 'round',
       }).addTo(map);
     }
@@ -912,31 +947,154 @@ export const CampusGisMap = ({
         </button>
       </div>
 
-      {/* FLOATING INSTRUCTION HELPER BANNER */}
+      {/* FLOATING CAMPUS BOUNDARY LOCKED BADGE */}
       <div
         style={{
           position: 'absolute',
           top: '16px',
-          left: '400px',
+          left: '420px',
           zIndex: 25,
-          backgroundColor: 'rgba(255, 255, 255, 0.92)',
-          backdropFilter: 'blur(8px)',
+          backgroundColor: 'rgba(15, 23, 42, 0.94)',
+          backdropFilter: 'blur(10px)',
           borderRadius: '9999px',
-          padding: '6px 14px',
-          border: '1px solid var(--border-subtle)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+          padding: '6px 16px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
           fontSize: '11px',
-          fontWeight: 600,
-          color: 'var(--text-secondary)',
+          fontWeight: 700,
+          color: '#FFFFFF',
           pointerEvents: 'none',
         }}
       >
-        <Target size={14} style={{ color: '#E11D48' }} />
-        <span>Click anywhere on the map to mark a custom destination point</span>
+        <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#10B981', display: 'inline-block' }} />
+        <Shield size={13} style={{ color: '#10B981' }} />
+        <span>University Area Locked • Mewar Campus Only</span>
       </div>
+
+      {/* FLOATING CAMPUS DESTINATION CARD ON MAP */}
+      {activeDestination && (
+        <div
+          className="campus-map-floating-card"
+          style={{
+            position: 'absolute',
+            top: '70px',
+            right: isDrawerOpen ? '388px' : '16px',
+            transition: 'right 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            zIndex: 32,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  backgroundColor: activeDestination.color || '#059669',
+                  color: '#FFFFFF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 800,
+                  fontSize: '15px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                  position: 'relative',
+                }}
+              >
+                <span>{activeDestination.icon || (activeDestination.shortName ? activeDestination.shortName.charAt(0) : '🏛️')}</span>
+                <span
+                  style={{
+                    position: 'absolute',
+                    bottom: -2,
+                    right: -2,
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    backgroundColor: '#22C55E',
+                    border: '2px solid #FFFFFF',
+                  }}
+                />
+              </div>
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 800, color: '#0F172A', lineHeight: 1.25 }}>
+                  {activeDestination.shortName || activeDestination.name}
+                </div>
+                <div style={{ fontSize: '11px', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                  <span>● Open</span>
+                  <span style={{ color: '#94A3B8' }}>•</span>
+                  <span style={{ color: '#64748B' }}>{activeDestination.code || 'Campus Zone'}</span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleFitRoute}
+              title="Recenter Camera on Route"
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '8px',
+                backgroundColor: '#F1F5F9',
+                border: '1px solid #E2E8F0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#475569',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Crosshair size={14} />
+            </button>
+          </div>
+
+          {/* Department / Zone */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', fontSize: '11.5px', color: '#475569', lineHeight: 1.4 }}>
+            <MapPin size={13} style={{ color: '#059669', flexShrink: 0, marginTop: '2px' }} />
+            <span>{activeDestination.dept || 'Mewar University Academic Zone'}</span>
+          </div>
+
+          {/* Elevation / Floors Info */}
+          {activeDestination.elevation && (
+            <div style={{ fontSize: '11px', color: '#64748B', paddingLeft: '19px' }}>
+              Level: <strong style={{ color: '#0F172A' }}>{activeDestination.elevation}</strong>
+            </div>
+          )}
+
+          {/* Primary Action Button: Focus & Navigate */}
+          <button
+            type="button"
+            onClick={handleFitRoute}
+            style={{
+              width: '100%',
+              padding: '9px 14px',
+              backgroundColor: '#059669',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '12px',
+              fontWeight: 700,
+              color: '#FFFFFF',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              boxShadow: '0 2px 8px rgba(5, 150, 105, 0.25)',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <Navigation size={13} />
+            <span>Focus &amp; Navigate Route</span>
+          </button>
+        </div>
+      )}
 
       {/* FLOATING BOTTOM-RIGHT QUICK ACTIONS (LOCATE, FIT ROUTE & RECENTER) */}
       <div

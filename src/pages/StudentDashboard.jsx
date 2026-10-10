@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Calendar,
@@ -20,23 +20,56 @@ import {
   Zap,
   Activity,
   Award,
+  QrCode,
+  ShieldCheck,
+  Smartphone,
+  Check,
+  Copy,
+  Wind,
+  Layers,
+  Sparkles,
+  ArrowUpRight,
+  X,
+  Lock,
+  Unlock,
+  Radio,
+  BookOpen
 } from 'lucide-react';
-import Card from '../components/common/Card';
-import Button from '../components/common/Button';
-import Badge from '../components/common/Badge';
-import Input from '../components/common/Input';
 import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
 
-export const StudentDashboard = () => {
+export function StudentDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  // AI Copilot State
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiResponse, setAiResponse] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
 
-  const studentName = user ? user.name : 'Aarav';
+  // Digital Gate Pass Modal
+  const [isGatePassOpen, setIsGatePassOpen] = useState(false);
+  const [hasCopiedPassId, setHasCopiedPassId] = useState(false);
+  const [turnstileUnlocked, setTurnstileUnlocked] = useState(false);
+
+  // Live Class Countdown (Starts at 24m 18s and ticks every 1s)
+  const [classCountdownSecs, setClassCountdownSecs] = useState(24 * 60 + 18);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setClassCountdownSecs((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formattedCountdown = useMemo(() => {
+    const mins = Math.floor(classCountdownSecs / 60);
+    const secs = classCountdownSecs % 60;
+    return `${mins}m : ${secs < 10 ? '0' : ''}${secs}s`;
+  }, [classCountdownSecs]);
+
+  const studentName = user ? user.name : 'Aarav Mehta';
+  const studentRoll = user ? user.rollNumber || 'MU/CSE/2024/0482' : 'MU/CSE/2024/0482';
   const studentDept = user ? `${user.department || 'Computer Science & Engineering'} '27` : "Computer Science & Engineering '27 (Honors Track)";
 
   const handleAiSubmit = async (e) => {
@@ -49,10 +82,9 @@ export const StudentDashboard = () => {
       if (res.success && res.data) {
         setAiResponse(res.data);
       }
-    } catch (err) {
-      console.error('AI query error:', err);
+    } catch {
       setAiResponse({
-        reply: `SmartRooms currently report 84% occupancy in the Academic Block. Central Library quiet pods remain available until 6:00 PM.`,
+        reply: `Room B-204 in Faculty of Engineering is optimal for your 10:00 AM session (21.8°C, 410 ppm clean air). Central Library silent pods remain open on Level 2 until 8:00 PM.`,
         suggestedAction: '/smartroom'
       });
     } finally {
@@ -68,493 +100,616 @@ export const StudentDashboard = () => {
       if (res && res.success && res.data) {
         setAiResponse(res.data);
       }
-    } catch (err) {
+    } catch {
       if (text.includes('Prof. Roy')) {
-        setAiResponse({ reply: "Prof. Ananya Roy is in Faculty of Engineering Room B-204. Office hours: Mon & Wed 2:00 PM – 4:00 PM.", suggestedAction: "/directory" });
+        setAiResponse({
+          reply: "Prof. Ananya Roy is in Faculty of Engineering Room B-204. Office hours: Mon & Wed 2:00 PM – 4:00 PM.",
+          suggestedAction: "/directory"
+        });
       } else if (text.includes('study pod')) {
-        setAiResponse({ reply: "Swami Vivekananda Library Pod 4B is open for immediate reservations on Level 2.", suggestedAction: "/smartrooms" });
+        setAiResponse({
+          reply: "Swami Vivekananda Library Pod 4B is open for immediate reservations on Level 2 with NFC tap access.",
+          suggestedAction: "/smartroom"
+        });
       } else {
-        setAiResponse({ reply: "Faculty of Engineering Room B-204 AI & Systems Lab is open with 18/60 desk capacity.", suggestedAction: "/campus-map?bldg=eng" });
+        setAiResponse({
+          reply: "Faculty of Engineering Room B-204 Multi-Media Theatre has 48/60 desks filled. Projector & Wi-Fi 7 AP active.",
+          suggestedAction: "/campus-map?bldg=eng&room=B-204"
+        });
       }
     } finally {
       setAiLoading(false);
     }
   };
 
+  const handleSimulateTurnstile = () => {
+    setTurnstileUnlocked(true);
+    setTimeout(() => {
+      setTurnstileUnlocked(false);
+    }, 4000);
+  };
+
+  const handleCopyPass = () => {
+    navigator.clipboard?.writeText?.(studentRoll);
+    setHasCopiedPassId(true);
+    setTimeout(() => setHasCopiedPassId(false), 2000);
+  };
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', maxWidth: '1280px', margin: '0 auto' }}>
-      {/* 1. PERSONALIZED WELCOME & METRICS HEADER */}
-      <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '12px' }}>
+    <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto text-slate-100 min-h-screen pb-16">
+      {/* =========================================================================
+          1. PERSONALIZED WELCOME & CONTEXT STRIP
+          ========================================================================= */}
+      <section className="flex flex-col gap-4 pb-6 border-b border-slate-800/80">
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
-              <Badge status="active">Fall Semester 2026 • Week 7</Badge>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Fall Semester 2026 • Week 7
+              </span>
+              <span className="text-xs text-slate-400 font-mono">
                 Mewar University • Gangrar, Chittorgarh (Rajasthan)
               </span>
             </div>
-            <h1 style={{ fontSize: '1.85rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
               Good morning, {studentName}! ☀️
             </h1>
-            <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{studentDept}</span>
+            <p className="text-sm text-slate-400 mt-0.5">{studentDept}</p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--brand-accent)' }} />
-            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--brand-primary)' }}>
-              Central Campus • All Facility Systems Normal
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => setIsGatePassOpen(true)}
+              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-900/30 transition-all active:scale-[0.98]"
+            >
+              <QrCode className="w-4 h-4" />
+              <span>Smart Gate Pass</span>
+            </button>
+
+            <span className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span>All Campus Nodes Operational</span>
             </span>
           </div>
         </div>
 
-        {/* 4 Quick Metrics Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
-          {/* Card 1 */}
-          <Card interactive style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Daily Schedule</span>
-              <Calendar size={18} style={{ color: 'var(--brand-primary)' }} />
+        {/* 4 Quick Metric Intelligence Tiles */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
+          {/* Metric 1: Next Class Countdown */}
+          <div className="p-4 rounded-2xl bg-slate-900/80 border border-emerald-500/30 shadow-lg flex flex-col justify-between backdrop-blur-md">
+            <div className="flex items-center justify-between text-slate-400 text-xs">
+              <span className="font-mono uppercase tracking-wider">Next Session</span>
+              <Clock className="w-4 h-4 text-emerald-400" />
             </div>
-            <div style={{ marginTop: '12px' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>3 Classes</div>
-              <div style={{ fontSize: '12px', color: 'var(--brand-accent)', marginTop: '4px', fontWeight: 600 }}>
-                Next: CS-301 in 25 mins
+            <div className="mt-3">
+              <div className="text-2xl font-black text-white font-mono tracking-tight">
+                {formattedCountdown}
+              </div>
+              <div className="text-xs text-emerald-400 font-semibold mt-1">
+                CS-301 • Room B-204 (Eng Block)
               </div>
             </div>
-          </Card>
+          </div>
 
-          {/* Card 2 */}
-          <Card interactive style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Active Care Ticket</span>
-              <LifeBuoy size={18} style={{ color: 'var(--brand-accent)' }} />
+          {/* Metric 2: Attendance Safety Meter */}
+          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-lg flex flex-col justify-between backdrop-blur-md">
+            <div className="flex items-center justify-between text-slate-400 text-xs">
+              <span className="font-mono uppercase tracking-wider">Term Attendance</span>
+              <Award className="w-4 h-4 text-sky-400" />
             </div>
-            <div style={{ marginTop: '12px' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>1 In Progress</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px', display: 'flex', justifyContent: 'space-between' }}>
-                <span>Ticket #CMP-1042</span>
-                <span style={{ color: 'var(--brand-primary)', fontWeight: 600 }}>ETA 25m</span>
+            <div className="mt-3">
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-black text-white">89.4%</span>
+                <span className="text-[11px] text-emerald-400 font-semibold">Safe (&gt;75%)</span>
+              </div>
+              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1.5">
+                <div className="bg-sky-400 h-full rounded-full" style={{ width: '89.4%' }}></div>
               </div>
             </div>
-          </Card>
+          </div>
 
-          {/* Card 3 */}
-          <Card interactive style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Reserved SmartRooms</span>
-              <DoorOpen size={18} style={{ color: 'var(--brand-primary)' }} />
+          {/* Metric 3: Active Care Grievance SLA */}
+          <div
+            onClick={() => navigate('/complaints')}
+            className="cursor-pointer p-4 rounded-2xl bg-slate-900/80 border border-rose-500/30 hover:border-rose-400/60 shadow-lg flex flex-col justify-between backdrop-blur-md transition-all group"
+          >
+            <div className="flex items-center justify-between text-slate-400 text-xs">
+              <span className="font-mono uppercase tracking-wider">Active Care Ticket</span>
+              <LifeBuoy className="w-4 h-4 text-rose-400 group-hover:rotate-45 transition-transform" />
             </div>
-            <div style={{ marginTop: '12px' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>2 Bookings</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                Library Pod 4B Confirmed
+            <div className="mt-3">
+              <div className="text-2xl font-black text-white flex items-center justify-between">
+                <span>1 In Progress</span>
+                <ArrowRight className="w-4 h-4 text-rose-400 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+              </div>
+              <div className="text-xs text-slate-400 mt-1 flex items-center justify-between font-mono">
+                <span>#CMP-1042 Projector</span>
+                <span className="text-rose-400 font-bold">ETA 18m</span>
               </div>
             </div>
-          </Card>
+          </div>
 
-          {/* Card 4 */}
-          <Card interactive style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Campus IoT Mesh</span>
-              <Activity size={18} style={{ color: 'var(--brand-primary)' }} />
+          {/* Metric 4: Reserved Space Pass */}
+          <div
+            onClick={() => navigate('/smartroom')}
+            className="cursor-pointer p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-emerald-500/40 shadow-lg flex flex-col justify-between backdrop-blur-md transition-all group"
+          >
+            <div className="flex items-center justify-between text-slate-400 text-xs">
+              <span className="font-mono uppercase tracking-wider">Space Booking</span>
+              <DoorOpen className="w-4 h-4 text-emerald-400" />
             </div>
-            <div style={{ marginTop: '12px' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>100% Online</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                98 telemetry nodes active
+            <div className="mt-3">
+              <div className="text-2xl font-black text-white flex items-center justify-between">
+                <span>1 Active Pass</span>
+                <ArrowRight className="w-4 h-4 text-emerald-400 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+              </div>
+              <div className="text-xs text-slate-400 mt-1 font-mono">
+                B-206 Pods • 11:30 AM
               </div>
             </div>
-          </Card>
+          </div>
         </div>
       </section>
 
-      {/* 2. TACTILE QUICK ACTIONS TOOLBAR */}
-      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+      {/* =========================================================================
+          2. TACTILE QUICK ACTIONS LAUNCHER BAR
+          ========================================================================= */}
+      <section className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
         <button
           onClick={() => navigate('/campus-map')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            padding: '14px',
-            backgroundColor: 'var(--bg-surface)',
-            border: '1px solid var(--border-interactive)',
-            borderRadius: 'var(--radius-md)',
-            color: 'var(--text-primary)',
-            cursor: 'pointer',
-            textAlign: 'left',
-          }}
+          className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800/80 transition-all flex items-center gap-3 text-left shadow-md group"
         >
-          <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
-            <Compass size={20} />
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 group-hover:scale-105 transition-transform">
+            <Compass className="w-5 h-5" />
           </div>
           <div>
-            <div style={{ fontWeight: 600, fontSize: '14px' }}>Campus Map</div>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>3D Indoor & Outdoor routes</div>
+            <div className="text-xs sm:text-sm font-bold text-white leading-tight">Campus Map</div>
+            <div className="text-[11px] text-slate-400 mt-0.5">Vector CAD &amp; GIS</div>
           </div>
         </button>
 
         <button
           onClick={() => navigate('/smartroom')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            padding: '14px',
-            backgroundColor: 'var(--bg-surface)',
-            border: '1px solid var(--border-interactive)',
-            borderRadius: 'var(--radius-md)',
-            color: 'var(--text-primary)',
-            cursor: 'pointer',
-            textAlign: 'left',
-          }}
+          className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800/80 transition-all flex items-center gap-3 text-left shadow-md group"
         >
-          <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#FFE4E6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-primary)' }}>
-            <DoorOpen size={20} />
+          <div className="w-10 h-10 rounded-xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-teal-400 shrink-0 group-hover:scale-105 transition-transform">
+            <DoorOpen className="w-5 h-5" />
           </div>
           <div>
-            <div style={{ fontWeight: 600, fontSize: '14px' }}>Find a SmartRoom</div>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>1-click study pod reservations</div>
+            <div className="text-xs sm:text-sm font-bold text-white leading-tight">SmartRooms</div>
+            <div className="text-[11px] text-slate-400 mt-0.5">Study Pods &amp; Labs</div>
           </div>
         </button>
 
         <button
           onClick={() => navigate('/directory')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            padding: '14px',
-            backgroundColor: 'var(--bg-surface)',
-            border: '1px solid var(--border-interactive)',
-            borderRadius: 'var(--radius-md)',
-            color: 'var(--text-primary)',
-            cursor: 'pointer',
-            textAlign: 'left',
-          }}
+          className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-sky-500/50 hover:bg-slate-800/80 transition-all flex items-center gap-3 text-left shadow-md group"
         >
-          <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--bg-surface-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-primary)' }}>
-            <Users size={20} />
+          <div className="w-10 h-10 rounded-xl bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0 group-hover:scale-105 transition-transform">
+            <Users className="w-5 h-5" />
           </div>
           <div>
-            <div style={{ fontWeight: 600, fontSize: '14px' }}>Campus Directory</div>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Faculty hours & staff desk</div>
+            <div className="text-xs sm:text-sm font-bold text-white leading-tight">Faculty Directory</div>
+            <div className="text-[11px] text-slate-400 mt-0.5">Office Hours &amp; Rooms</div>
           </div>
         </button>
 
         <button
           onClick={() => navigate('/complaints')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            padding: '14px',
-            backgroundColor: 'var(--bg-surface)',
-            border: '1px solid var(--border-interactive)',
-            borderRadius: 'var(--radius-md)',
-            color: 'var(--text-primary)',
-            cursor: 'pointer',
-            textAlign: 'left',
-          }}
+          className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-rose-500/50 hover:bg-slate-800/80 transition-all flex items-center gap-3 text-left shadow-md group"
         >
-          <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#FEE2E2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#DC2626' }}>
-            <LifeBuoy size={20} />
+          <div className="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0 group-hover:scale-105 transition-transform">
+            <LifeBuoy className="w-5 h-5" />
           </div>
           <div>
-            <div style={{ fontWeight: 600, fontSize: '14px' }}>Report Issue</div>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Fast Care ticket dispatch</div>
+            <div className="text-xs sm:text-sm font-bold text-white leading-tight">Grievance SLA</div>
+            <div className="text-[11px] text-slate-400 mt-0.5">&lt;45 min CAFM Fix</div>
           </div>
         </button>
       </section>
 
-      {/* 3. MAIN DASHBOARD CONTENT GRID */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', alignItems: 'start' }}>
-        {/* LEFT MAIN COLUMN */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', gridColumn: 'span 2' }}>
-          {/* A. TODAY'S ACADEMIC SCHEDULE */}
-          <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Clock size={20} style={{ color: 'var(--brand-primary)' }} />
-                <h2 style={{ fontSize: '1.25rem', margin: 0 }}>Academic Schedule</h2>
+      {/* =========================================================================
+          3. MAIN CONTENT: 2/3 AGENDA & TWIN vs 1/3 AI & PASSES
+          ========================================================================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* LEFT COLUMN: HERO SCHEDULE & DIGITAL TWIN (8 COLS) */}
+        <div className="lg:col-span-8 flex flex-col gap-6">
+          {/* A. TODAY'S ACADEMIC AGENDA */}
+          <section className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-emerald-400" />
+                <h2 className="text-lg font-bold text-white">Today's Academic Agenda</h2>
               </div>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Monday, Oct 12 • 3 Sessions</span>
+              <span className="text-xs font-mono text-slate-400">Monday, Oct 12 • 3 Lectures</span>
             </div>
 
-            {/* Next Up Hero Class Card */}
-            <Card style={{ borderLeft: '4px solid var(--brand-primary)', position: 'relative' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                    <Badge status="active">IN 25 MINS • 10:00 AM – 11:30 AM</Badge>
-                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Lecture Hall #B</span>
+            {/* Next Up Hero Class Spotlight Card */}
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900/95 to-slate-950 border-2 border-emerald-500/60 shadow-xl flex flex-col gap-4 relative overflow-hidden backdrop-blur-md">
+              <div className="absolute top-0 right-0 w-44 h-44 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold border border-emerald-500/40">
+                      STARTS IN {formattedCountdown}
+                    </span>
+                    <span className="text-xs font-mono text-slate-400">10:00 AM – 11:30 AM</span>
                   </div>
-                  <h3 style={{ fontSize: '1.2rem', color: 'var(--text-primary)', margin: 0 }}>
-                    CS-301: Distributed Systems & Cloud Infrastructure
+
+                  <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight mt-1">
+                    CS-301: Distributed Systems &amp; Cloud Infrastructure
                   </h3>
-                  <div style={{ fontSize: '13px', color: 'var(--text-muted)', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                    <span>Instructor: <strong style={{ color: 'var(--text-primary)' }}>Prof. Ananya Roy</strong></span>
-                    <span>•</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <MapPin size={14} style={{ color: 'var(--brand-accent)' }} />
+
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-300 mt-1">
+                    <span className="text-slate-400">Instructor:</span>
+                    <span className="font-semibold text-white">Prof. Ananya Roy</span>
+                    <span className="text-slate-600">•</span>
+                    <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="font-medium text-emerald-300">
                       Faculty of Engineering (Block ENG-02), Room B-204
                     </span>
                   </div>
                 </div>
 
-                <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px 14px', borderRadius: '8px', fontSize: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--brand-primary)' }}>
-                    <Thermometer size={14} />
-                    <span>21.8°C Comfort</span>
+                {/* IoT Live Room Telemetry Pill */}
+                <div className="p-3 rounded-xl bg-slate-950/90 border border-slate-800 flex flex-col gap-1 text-xs shrink-0">
+                  <div className="flex items-center gap-2 text-emerald-400 font-semibold">
+                    <Thermometer className="w-3.5 h-3.5" />
+                    <span>21.8°C Climate</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                    <Users size={14} />
-                    <span>48/60 seats</span>
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <Users className="w-3.5 h-3.5" />
+                    <span>48/60 Desks Filled</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sky-400 text-[11px] font-mono">
+                    <Wind className="w-3.5 h-3.5" />
+                    <span>410 ppm Pristine Air</span>
                   </div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', pt: '12px', borderTop: '1px solid var(--border-subtle)', flexWrap: 'wrap', gap: '12px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Smart Projector Ready • Airflow Optimal
+              <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
+                <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  Dual 4K Laser Projection Ready • Wi-Fi 7 Core AP Online
                 </span>
-                <Button variant="primary" size="sm" icon={Navigation} onClick={() => navigate('/campus-map')}>
-                  Navigate to Room (3 min walk)
-                </Button>
-              </div>
-            </Card>
 
-            {/* Later Sessions Timeline */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--brand-primary)', backgroundColor: 'var(--bg-surface-subtle)', padding: '4px 8px', borderRadius: '6px' }}>
-                    1:00 PM – 2:30 PM
+                <button
+                  onClick={() => navigate('/campus-map?bldg=eng&room=B-204')}
+                  className="py-2 px-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md shadow-emerald-950 transition-all active:scale-[0.98]"
+                >
+                  <Navigation className="w-3.5 h-3.5" />
+                  <span>Navigate to Room B-204 (1.2 min walk)</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Subsequent Sessions Timeline */}
+            <div className="flex flex-col gap-2.5">
+              <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all hover:border-slate-700">
+                <div className="flex items-center gap-3">
+                  <span className="px-2.5 py-1 rounded-lg bg-slate-950 text-sky-400 font-mono text-xs font-bold border border-slate-800">
+                    01:00 PM – 02:30 PM
                   </span>
                   <div>
-                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>MATH-240: Linear Algebra & Neural Nets</div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Ramanujan Science Block, Room S-108 • Prof. K. Venkatesh</div>
+                    <h4 className="text-sm font-bold text-white">
+                      MATH-240: Linear Algebra &amp; Neural Nets
+                    </h4>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Ramanujan Block, Room S-108 • Prof. K. Venkatesh
+                    </p>
                   </div>
                 </div>
-                <Button variant="ghost" size="sm" icon={Compass} onClick={() => navigate('/campus-map')} />
+                <button
+                  onClick={() => navigate('/campus-map?bldg=eng')}
+                  className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors self-end sm:self-auto"
+                >
+                  <Compass className="w-4 h-4" />
+                </button>
               </div>
 
-              <div style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--brand-accent)', backgroundColor: 'var(--bg-surface-subtle)', padding: '4px 8px', borderRadius: '6px' }}>
-                    3:15 PM – 5:00 PM
+              <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all hover:border-slate-700">
+                <div className="flex items-center gap-3">
+                  <span className="px-2.5 py-1 rounded-lg bg-slate-950 text-teal-400 font-mono text-xs font-bold border border-slate-800">
+                    03:15 PM – 05:00 PM
                   </span>
                   <div>
-                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>CS-305: Embedded IoT Systems Lab</div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Innovation Hub, Hardware Lab 4 • Bench #14 Reserved</div>
+                    <h4 className="text-sm font-bold text-white">
+                      CS-305: Embedded IoT Systems Lab
+                    </h4>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Faculty of Engineering Level 2, Bench #14 Reserved
+                    </p>
                   </div>
                 </div>
-                <Button variant="ghost" size="sm" icon={Compass} onClick={() => navigate('/campus-map')} />
+                <button
+                  onClick={() => navigate('/campus-map?bldg=eng')}
+                  className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors self-end sm:self-auto"
+                >
+                  <Compass className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </section>
 
-          {/* B. DIGITAL TWIN & LIVE WAYFINDING PREVIEW */}
-          <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <MapPin size={20} style={{ color: 'var(--brand-primary)' }} />
-                <h2 style={{ fontSize: '1.25rem', margin: 0 }}>Digital Twin & Live Wayfinding</h2>
+          {/* B. DIGITAL TWIN & LIVE WAYFINDING PORTAL */}
+          <section className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-emerald-400" />
+                <h2 className="text-lg font-bold text-white">Digital Twin &amp; Campus Perimeter</h2>
               </div>
-              <Link to="/campus-map" style={{ fontSize: '12px', color: 'var(--brand-accent)', fontWeight: 600 }}>
-                View Full Interactive Map →
+              <Link to="/campus-map" className="text-xs text-emerald-400 font-semibold hover:underline flex items-center gap-1">
+                <span>Open Vector CAD &amp; GIS Map</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
 
-            <Card style={{ padding: '0', overflow: 'hidden' }}>
-              <div style={{ position: 'relative', height: '240px', width: '100%', backgroundColor: 'var(--bg-surface-subtle)' }}>
+            <div className="rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden shadow-xl">
+              <div className="relative h-56 w-full">
                 <img
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBf9GggO2878hSOBwyC9jOGK_ul92QgPwCrbIO1fCXbZ2hMDBi1yob2ACl2vEyc4wH3L_1QJqZnxheFSBbWxU5K4huTjzXRdbeSfwPDDXt_LH6c_h3FAZzxPexlEOL7OOZ5Dzi9SFHsbPu_scz4L0iG5vXMYZhTDHIRHbwGZle98jLnVmhN_PgyjvPz_ThYGwNvX0_wBgtQG3A_llHoIUOYsW9vJ2v0D3ICSdYKxrWnZnz-dDz2ua60Q"
-                  alt="Campus spatial twin"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }}
+                  src="https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=1200&q=80"
+                  alt="Mewar Campus Twin"
+                  className="w-full h-full object-cover opacity-75"
                 />
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, var(--bg-surface) 0%, transparent 80%)' }} />
-                
-                <div style={{ position: 'absolute', top: '12px', left: '12px' }}>
-                  <Badge status="active">250m covered pathway • Skybridge active</Badge>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+
+                <div className="absolute top-3 left-3 flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-full bg-slate-900/90 backdrop-blur-md text-emerald-400 text-xs font-mono font-bold border border-emerald-500/30">
+                    Mewar University Geographic Boundary Clamped
+                  </span>
+                </div>
+
+                <div className="absolute bottom-3 left-3 right-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-white">Mewar University Central Campus</span>
+                    <span className="text-xs text-slate-400">NH-48, Gangrar, Chittorgarh • 30+ Academic Blocks</span>
+                  </div>
+
+                  <button
+                    onClick={() => navigate('/campus-map')}
+                    className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md shrink-0"
+                  >
+                    <Compass className="w-3.5 h-3.5" />
+                    <span>Launch 3D Indoor CAD</span>
+                  </button>
                 </div>
               </div>
-
-              <div style={{ padding: '16px', display: 'flex', gap: '10px' }}>
-                <Input placeholder="Quick find building, lab, cafe or auditorium..." icon={Search} />
-                <Button variant="secondary" onClick={() => navigate('/campus-map')}>
-                  Map
-                </Button>
-              </div>
-            </Card>
+            </div>
           </section>
 
           {/* C. CAMPUS BULLETINS & ANNOUNCEMENTS */}
-          <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ fontSize: '1.25rem', margin: 0 }}>Campus Bulletins & Notices</h2>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Live Feed</span>
+          <section className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-white">Campus Bulletins &amp; Notices</h2>
+              <span className="text-xs font-mono text-slate-400">Verified Broadcasts</span>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <Card>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--brand-misty)', marginBottom: '4px' }}>
-                  <span>INFRASTRUCTURE</span>
-                  <span>4:00 PM Today</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between text-[11px] font-mono text-emerald-400 mb-1">
+                    <span>INFRASTRUCTURE</span>
+                    <span>Today, 4:00 PM</span>
+                  </div>
+                  <h4 className="text-sm font-bold text-white">
+                    Central Library Level 2 Wi-Fi 7 Core Migration
+                  </h4>
+                  <p className="text-xs text-slate-400 mt-1">
+                    AP nodes 12–16 firmware upgrade active. Acoustic study pods in West Wing remain fully online.
+                  </p>
                 </div>
-                <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', color: 'var(--text-primary)' }}>
-                  Central Library 3rd Floor East Wing Network Upgrade
-                </h4>
-                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Wi-Fi AP nodes 12–16 will undergo firmware re-indexing. Quiet study pods in West Wing remain fully connected.
-                </p>
-              </Card>
+              </div>
 
-              <Card>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--brand-accent)', marginBottom: '4px' }}>
-                  <span>ACADEMIC • HACKATHON</span>
-                  <span>Due Oct 18</span>
+              <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between text-[11px] font-mono text-sky-400 mb-1">
+                    <span>ACADEMIC • HACKATHON</span>
+                    <span>Due Oct 18</span>
+                  </div>
+                  <h4 className="text-sm font-bold text-white">
+                    Mewar SmartCampus Innovation Submissions
+                  </h4>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Interim architecture documentation open for student teams in AI and Robotics verticals.
+                  </p>
                 </div>
-                <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', color: 'var(--text-primary)' }}>
-                  MU Hackathon 2026 Project Milestone Submissions Open
-                </h4>
-                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Teams registered in AI, Autonomous Robotics, and Smart Grid verticals can submit interim architecture docs via the department coordinator desk.
-                </p>
-              </Card>
+              </div>
             </div>
           </section>
         </div>
 
-        {/* RIGHT SIDEBAR COLUMN */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        {/* RIGHT SIDEBAR: AI COPILOT & ACADEMIC STANDING (4 COLS) */}
+        <div className="lg:col-span-4 flex flex-col gap-5">
           {/* A. NEXTCAMPUS AI COPILOT CARD */}
-          <Card style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
-                  <Bot size={18} />
+          <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl flex flex-col gap-4 backdrop-blur-md">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                  <Bot className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '14px', color: 'var(--text-primary)' }}>NextCampus AI</h3>
-                  <span style={{ fontSize: '11px', color: 'var(--brand-accent)' }}>Active Campus Copilot</span>
+                  <h3 className="text-sm font-bold text-white">NextCampus Copilot</h3>
+                  <span className="text-[11px] text-emerald-400 font-mono">24/7 Smart Campus AI</span>
                 </div>
               </div>
-              <span style={{ fontSize: '10px', color: 'var(--text-muted)', backgroundColor: 'var(--bg-surface-subtle)', padding: '2px 6px', borderRadius: '4px' }}>
+              <span className="text-[10px] font-mono text-slate-400 px-2 py-0.5 rounded bg-slate-950 border border-slate-800">
                 GPT-Campus
               </span>
             </div>
 
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px', backgroundColor: 'var(--bg-surface-subtle)', padding: '10px', borderRadius: '8px' }}>
-              Hi {studentName}! Need a quiet space or walking directions across Mewar University? Tap a prompt or ask me below:
+            <p className="text-xs text-slate-300 p-3 rounded-xl bg-slate-950/80 border border-slate-800/80 leading-relaxed">
+              Hi {studentName}! Tap any prompt or ask me anything about classrooms, professors, or library pods:
             </p>
 
             {/* Quick Prompt Chips */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
-              <button
-                onClick={() => handleChipClick("Where is Prof. Roy's office right now?")}
-                style={{ textAlign: 'left', padding: '8px 10px', backgroundColor: 'var(--bg-surface-subtle)', border: 'none', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '12px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}
-              >
-                <span>“Where is Prof. Roy's office right now?”</span>
-                <ArrowRight size={14} style={{ color: 'var(--brand-accent)' }} />
-              </button>
-              <button
-                onClick={() => handleChipClick("Book quiet study pod for 4:00 PM")}
-                style={{ textAlign: 'left', padding: '8px 10px', backgroundColor: 'var(--bg-surface-subtle)', border: 'none', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '12px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}
-              >
-                <span>“Book quiet study pod for 4:00 PM”</span>
-                <ArrowRight size={14} style={{ color: 'var(--brand-accent)' }} />
-              </button>
-              <button
-                onClick={() => handleChipClick("Where is the nearest open color printer?")}
-                style={{ textAlign: 'left', padding: '8px 10px', backgroundColor: 'var(--bg-surface-subtle)', border: 'none', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '12px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}
-              >
-                <span>“Where is nearest open color printer?”</span>
-                <ArrowRight size={14} style={{ color: 'var(--brand-accent)' }} />
-              </button>
+            <div className="flex flex-col gap-1.5">
+              {[
+                "Where is Prof. Roy's office right now?",
+                "Book quiet study pod for 4:00 PM",
+                "Where is Room B-204 in Turing Hall?"
+              ].map((chip) => (
+                <button
+                  key={chip}
+                  onClick={() => handleChipClick(chip)}
+                  className="w-full text-left p-2.5 rounded-xl bg-slate-950/60 hover:bg-slate-800 border border-slate-800/80 hover:border-emerald-500/40 text-xs text-slate-300 flex items-center justify-between transition-all"
+                >
+                  <span className="truncate pr-2">“{chip}”</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                </button>
+              ))}
             </div>
 
-            {/* AI Response Output */}
+            {/* AI Response Display */}
             {aiResponse && (
-              <div style={{ backgroundColor: '#FFE4E6', border: '1px solid rgba(158, 21, 62, 0.2)', padding: '10px', borderRadius: '8px', fontSize: '12px', color: 'var(--text-primary)', marginBottom: '12px' }}>
-                <div>{aiResponse.reply}</div>
+              <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 text-xs text-slate-200 animate-in fade-in duration-200">
+                <p className="leading-relaxed">{aiResponse.reply}</p>
                 {aiResponse.suggestedAction && (
                   <button
                     onClick={() => navigate(aiResponse.suggestedAction)}
-                    style={{ marginTop: '8px', background: 'none', border: 'none', color: 'var(--brand-primary)', fontWeight: 600, fontSize: '11px', cursor: 'pointer', padding: 0 }}
+                    className="mt-2 text-emerald-400 hover:underline font-bold text-[11px] flex items-center gap-1"
                   >
-                    Open Feature →
+                    <span>Launch Feature</span>
+                    <ArrowRight className="w-3 h-3" />
                   </button>
                 )}
               </div>
             )}
 
-            {/* Live Prompt Input */}
-            <form onSubmit={handleAiSubmit} style={{ display: 'flex', gap: '6px' }}>
+            {/* Ask Input */}
+            <form onSubmit={handleAiSubmit} className="flex items-center gap-2 pt-1">
               <input
                 type="text"
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
-                placeholder="Ask anything about timetable or labs..."
-                style={{ flex: 1, padding: '8px 12px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-subtle)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '12px', outline: 'none' }}
+                placeholder="Ask about timetable, labs, buses..."
+                className="flex-1 h-9 px-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
-              <Button type="submit" variant="primary" size="sm" disabled={aiLoading}>
-                <Send size={14} />
-              </Button>
+              <button
+                type="submit"
+                disabled={aiLoading}
+                className="h-9 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold flex items-center justify-center transition-all disabled:opacity-40"
+              >
+                <Send className="w-3.5 h-3.5" />
+              </button>
             </form>
-          </Card>
+          </div>
 
-          {/* B. UPCOMING DEADLINES WIDGET */}
-          <Card>
-            <h3 style={{ fontSize: '14px', margin: '0 0 12px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Calendar size={16} style={{ color: 'var(--brand-accent)' }} />
-              Upcoming Deadlines
+          {/* B. UPCOMING DEADLINES */}
+          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col gap-3">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-emerald-400" />
+              <span>Upcoming Academic Deadlines</span>
             </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px' }}>
-              <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px', borderRadius: '8px' }}>
-                <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--brand-accent)' }}>TODAY • 11:59 PM</span>
-                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '2px' }}>Distributed Systems Lab 3</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>CS-301 Git Tag: v0.3.1</div>
+
+            <div className="flex flex-col gap-2.5">
+              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex flex-col gap-1">
+                <span className="text-[10px] font-mono font-bold text-rose-400">TODAY • 11:59 PM</span>
+                <span className="text-xs font-bold text-white">Distributed Systems Lab Practical #3</span>
+                <span className="text-[11px] text-slate-400">CS-301 Git Commit tag: v0.3.1</span>
               </div>
 
-              <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px', borderRadius: '8px' }}>
-                <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--brand-primary)' }}>TOMORROW • 2:00 PM</span>
-                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '2px' }}>Robotics Club Project Review</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Room C-102 Milestone</div>
+              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex flex-col gap-1">
+                <span className="text-[10px] font-mono font-bold text-sky-400">TOMORROW • 2:00 PM</span>
+                <span className="text-xs font-bold text-white">Robotics Autonomous Drone Flight Review</span>
+                <span className="text-[11px] text-slate-400">Room B-205 Flight Netting Enclosure</span>
               </div>
             </div>
-          </Card>
-
-          {/* C. MY ACTIVE REQUESTS & RESERVATIONS WIDGET */}
-          <Card>
-            <h3 style={{ fontSize: '14px', margin: '0 0 12px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <CheckCircle2 size={16} style={{ color: 'var(--brand-accent)' }} />
-              My Active Requests
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px' }}>
-              <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px', borderRadius: '8px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--brand-accent)', fontSize: '11px', fontWeight: 600 }}>
-                  <span>#CMP-1042</span>
-                  <span>In Progress</span>
-                </div>
-                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px' }}>CS Lab B Projector Glitch</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>ETA: 25 mins</div>
-              </div>
-
-              <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px', borderRadius: '8px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--brand-primary)', fontSize: '11px', fontWeight: 600 }}>
-                  <span>#RS-882</span>
-                  <span>Confirmed</span>
-                </div>
-                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px' }}>Group Study Room C-102</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Today: 4:00 PM – 6:00 PM • PIN: 4920</div>
-              </div>
-            </div>
-          </Card>
+          </div>
         </div>
       </div>
+
+      {/* =========================================================================
+          MODAL: DIGITAL NFC CAMPUS SMART GATE PASS
+          ========================================================================= */}
+      {isGatePassOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-sm rounded-2xl bg-slate-900 border-2 border-emerald-500 shadow-2xl p-6 flex flex-col gap-5 text-slate-100">
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-white">Mewar University Smart ID</span>
+                  <span className="text-[10px] font-mono text-emerald-400">Official Turnstile Gate Pass</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsGatePassOpen(false)}
+                className="w-7 h-7 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* High-res Digital Pass Body */}
+            <div className="p-4 rounded-xl bg-gradient-to-b from-slate-950 to-slate-900 border border-slate-800 flex flex-col items-center gap-3">
+              <div className="w-36 h-36 p-2 rounded-xl bg-white flex items-center justify-center shadow-md">
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                  <rect x="0" y="0" width="100" height="100" fill="#FFFFFF" />
+                  <rect x="10" y="10" width="25" height="25" fill="#000000" />
+                  <rect x="15" y="15" width="15" height="15" fill="#FFFFFF" />
+                  <rect x="18" y="18" width="9" height="9" fill="#000000" />
+
+                  <rect x="65" y="10" width="25" height="25" fill="#000000" />
+                  <rect x="70" y="15" width="15" height="15" fill="#FFFFFF" />
+                  <rect x="73" y="18" width="9" height="9" fill="#000000" />
+
+                  <rect x="10" y="65" width="25" height="25" fill="#000000" />
+                  <rect x="15" y="70" width="15" height="15" fill="#FFFFFF" />
+                  <rect x="18" y="73" width="9" height="9" fill="#000000" />
+
+                  <rect x="42" y="15" width="6" height="6" fill="#000000" />
+                  <rect x="52" y="25" width="6" height="6" fill="#000000" />
+                  <rect x="40" y="45" width="6" height="6" fill="#000000" />
+                  <rect x="55" y="55" width="6" height="6" fill="#000000" />
+                  <rect x="65" y="70" width="6" height="6" fill="#000000" />
+                  <rect x="75" y="45" width="6" height="6" fill="#000000" />
+                  <circle cx="50" cy="50" r="5" fill="#10B981" />
+                </svg>
+              </div>
+
+              <div className="text-center">
+                <h4 className="text-base font-bold text-white">{studentName}</h4>
+                <p className="text-xs font-mono text-emerald-400">{studentRoll}</p>
+                <p className="text-[11px] text-slate-400 mt-1">B.Tech Computer Science &amp; Eng (2023-2027)</p>
+              </div>
+
+              <div className="w-full pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                <span>Gate Turnstile: Auth Pass</span>
+                <span className="text-emerald-400 font-bold">VALID 2026</span>
+              </div>
+            </div>
+
+            {/* Turnstile Tap Simulator */}
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={handleSimulateTurnstile}
+                className={`w-full py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+                  turnstileUnlocked
+                    ? 'bg-emerald-500 text-slate-950'
+                    : 'bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/40'
+                }`}
+              >
+                {turnstileUnlocked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+                <span>{turnstileUnlocked ? 'Turnstile Access Granted! ✓' : 'Simulate NFC Tap at Gate Reader'}</span>
+              </button>
+
+              <button
+                onClick={handleCopyPass}
+                className="w-full py-2 rounded-xl text-xs text-slate-400 hover:text-white flex items-center justify-center gap-1.5 font-mono"
+              >
+                {hasCopiedPassId ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{hasCopiedPassId ? 'Roll Number Copied' : 'Copy Student Roll ID'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+}
 
 export default StudentDashboard;

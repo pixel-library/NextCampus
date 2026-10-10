@@ -34,7 +34,10 @@ export function App() {
             <Route path="campus-map" element={<CampusMap />} />
             <Route path="directory" element={<CampusDirectory />} />
             <Route path="smartroom" element={<SmartRooms />} />
+            <Route path="care" element={<CareComplaints />} />
             <Route path="complaints" element={<CareComplaints />} />
+            <Route path="smartrooms" element={<SmartRooms />} />
+            <Route path="management" element={<CampusManagement />} />
             <Route path="ai-assistant" element={<AiAssistant />} />
             <Route path="profile" element={<ProfileSettings />} />
 
