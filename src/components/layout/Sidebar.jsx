@@ -18,36 +18,52 @@ import { useAuth } from '../../hooks/useAuth';
 
 export const Sidebar = () => {
   const { user, logout } = useAuth();
+  const isAdmin = user?.role === 'admin' || user?.role === 'care_admin';
 
-  const navGroups = [
-    {
-      title: 'Main Navigation',
-      items: [
-        { label: 'Student Dashboard', path: '/dashboard', icon: LayoutDashboard },
-        { label: 'Interactive Campus Map', path: '/campus-map', icon: MapPin },
-        { label: 'Campus Directory', path: '/directory', icon: Users },
-        { label: 'SmartRooms IoT', path: '/smartroom', icon: DoorOpen },
-        { label: 'NextCampus Care', path: '/complaints', icon: LifeBuoy },
-        { label: 'AI Assistant', path: '/ai-assistant', icon: Bot },
-        { label: 'EcoCampus', path: '/ecocampus', icon: Leaf },
-        { label: 'SkillCampus', path: '/skillcampus', icon: FolderGit2 },
-      ],
-    },
-    {
-      title: 'Administration',
-      items: [
-        { label: 'Admin Dashboard', path: '/admin', icon: ShieldAlert, role: 'admin' },
-        { label: 'Campus Management', path: '/admin/campus-management', icon: Sliders, role: 'admin' },
-        { label: 'Complaint Admin', path: '/admin/complaints', icon: LifeBuoy, role: 'admin' },
-      ],
-    },
-    {
-      title: 'Account',
-      items: [
-        { label: 'Profile & Settings', path: '/profile', icon: Settings },
-      ],
-    },
-  ];
+  const navGroups = isAdmin
+    ? [
+        {
+          title: 'Administration',
+          items: [
+            { label: 'Admin Dashboard', path: '/admin', icon: ShieldAlert },
+            { label: 'Campus Management', path: '/admin/campus-management', icon: Sliders },
+            { label: 'Complaint Admin', path: '/admin/complaints', icon: LifeBuoy },
+          ],
+        },
+        {
+          title: 'Campus Operations',
+          items: [
+            { label: 'Interactive Campus Map', path: '/campus-map', icon: MapPin },
+            { label: 'SmartRooms & Space', path: '/smartroom', icon: DoorOpen },
+            { label: 'Campus Directory', path: '/directory', icon: Users },
+            { label: 'Sustainability Ops', path: '/ecocampus', icon: Leaf },
+            { label: 'AI Assistant', path: '/ai-assistant', icon: Bot },
+          ],
+        },
+        {
+          title: 'Account',
+          items: [{ label: 'Profile & Settings', path: '/profile', icon: Settings }],
+        },
+      ]
+    : [
+        {
+          title: 'Student Workspace',
+          items: [
+            { label: 'Student Dashboard', path: '/dashboard', icon: LayoutDashboard },
+            { label: 'Interactive Campus Map', path: '/campus-map', icon: MapPin },
+            { label: 'Campus Directory', path: '/directory', icon: Users },
+            { label: 'SmartRooms IoT', path: '/smartroom', icon: DoorOpen },
+            { label: 'NextCampus Care', path: '/complaints', icon: LifeBuoy },
+            { label: 'AI Assistant', path: '/ai-assistant', icon: Bot },
+            { label: 'EcoCampus', path: '/ecocampus', icon: Leaf },
+            { label: 'SkillCampus', path: '/skillcampus', icon: FolderGit2 },
+          ],
+        },
+        {
+          title: 'Account',
+          items: [{ label: 'Profile & Settings', path: '/profile', icon: Settings }],
+        },
+      ];
 
   return (
     <aside

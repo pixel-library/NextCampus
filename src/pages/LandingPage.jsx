@@ -27,8 +27,10 @@ import Button from '../components/common/Button';
 import Card from '../components/common/Card';
 import Badge from '../components/common/Badge';
 import Logo from '../components/common/Logo';
+import { useAuth } from '../hooks/useAuth';
 
 export const LandingPage = () => {
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [selectedNode, setSelectedNode] = useState('block-a');
   const [searchQuery, setSearchQuery] = useState('');
@@ -83,9 +85,69 @@ export const LandingPage = () => {
   const activeData = nodeDetails[selectedNode] || nodeDetails['block-a'];
 
   return (
-    <div style={{ width: '100%', backgroundColor: 'var(--bg-canvas)', color: 'var(--text-secondary)' }}>
+    <div style={{ width: '100%', minHeight: '100vh', backgroundColor: 'var(--bg-canvas)', color: 'var(--text-secondary)' }}>
+      {/* STANDALONE PUBLIC NAVBAR */}
+      <header
+        style={{
+          width: '100%',
+          height: '68px',
+          backgroundColor: 'rgba(25, 21, 22, 0.95)',
+          backdropFilter: 'blur(16px)',
+          borderBottom: '1px solid var(--border-subtle)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 32px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+          <Logo size="md" showText={true} />
+          <nav style={{ display: 'flex', gap: '20px' }}>
+            <a href="#campus-preview" style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}>
+              Campus Preview
+            </a>
+            <a href="#core-modules" style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}>
+              Core Features
+            </a>
+          </nav>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          {user ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                Active: <strong style={{ color: '#FFFFFF' }}>{user.name}</strong> ({user.role})
+              </span>
+              <Button
+                variant="primary"
+                size="sm"
+                icon={ArrowRight}
+                onClick={() => navigate(user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard')}
+              >
+                {user.role === 'admin' || user.role === 'care_admin' ? 'Enter Admin Console' : 'Enter Student Portal'}
+              </Button>
+              <Button variant="ghost" size="sm" onClick={logout}>
+                Log Out
+              </Button>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/auth')}>
+                Sign In
+              </Button>
+              <Button variant="primary" size="sm" icon={ArrowRight} onClick={() => navigate('/auth')}>
+                Get Started / Login
+              </Button>
+            </div>
+          )}
+        </div>
+      </header>
+
       {/* HERO SECTION */}
-      <section style={{ position: 'relative', overflow: 'hidden', padding: '40px 24px 64px 24px' }}>
+      <section style={{ position: 'relative', overflow: 'hidden', padding: '48px 24px 64px 24px' }}>
         {/* Ambient Radial Glow */}
         <div
           style={{
@@ -135,11 +197,24 @@ export const LandingPage = () => {
 
           {/* Hero Action Buttons */}
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '48px' }}>
-            <a href="#campus-preview">
-              <Button variant="primary" size="lg" icon={Compass}>
-                Explore Your Campus
-              </Button>
-            </a>
+            <Button
+              variant="primary"
+              size="lg"
+              icon={Compass}
+              onClick={() => {
+                if (user) {
+                  navigate(user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard');
+                } else {
+                  navigate('/auth');
+                }
+              }}
+            >
+              {user
+                ? user.role === 'admin' || user.role === 'care_admin'
+                  ? 'Open Admin Console'
+                  : 'Open Student Portal'
+                : 'Explore Portal (Sign In)'}
+            </Button>
             <a href="#core-modules">
               <Button variant="secondary" size="lg" icon={LayoutGrid}>
                 Discover Features
@@ -213,11 +288,24 @@ export const LandingPage = () => {
                   Synchronized with campus sensors, room occupancy telemetry, and department logistics grids.
                 </div>
               </div>
-              <Link to="/dashboard">
-                <Button variant="primary" size="sm" icon={ArrowRight}>
-                  Enter Student Portal
-                </Button>
-              </Link>
+              <Button
+                variant="primary"
+                size="sm"
+                icon={ArrowRight}
+                onClick={() => {
+                  if (user) {
+                    navigate(user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard');
+                  } else {
+                    navigate('/auth');
+                  }
+                }}
+              >
+                {user
+                  ? user.role === 'admin' || user.role === 'care_admin'
+                    ? 'Enter Admin Console'
+                    : 'Enter Student Portal'
+                  : 'Enter Student Portal (Sign In)'}
+              </Button>
             </div>
           </div>
         </div>
@@ -547,9 +635,17 @@ export const LandingPage = () => {
             NextCampus Smart Campus Management Platform © 2026. All rights reserved.
           </div>
           <div style={{ display: 'flex', gap: '16px', fontSize: '13px' }}>
-            <Link to="/dashboard" style={{ color: 'var(--brand-accent)' }}>Student Dashboard</Link>
+            <Link to={user ? (user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard') : '/auth'} style={{ color: 'var(--brand-accent)' }}>
+              {user ? (user.role === 'admin' || user.role === 'care_admin' ? 'Admin Dashboard' : 'Student Dashboard') : 'Sign In Portal'}
+            </Link>
             <Link to="/campus-map" style={{ color: 'var(--text-muted)' }}>Campus Map</Link>
-            <Link to="/auth" style={{ color: 'var(--text-muted)' }}>Sign In</Link>
+            {!user ? (
+              <Link to="/auth" style={{ color: 'var(--text-muted)' }}>Sign In / Register</Link>
+            ) : (
+              <button onClick={logout} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0, fontSize: '13px' }}>
+                Sign Out
+              </button>
+            )}
           </div>
         </div>
       </footer>

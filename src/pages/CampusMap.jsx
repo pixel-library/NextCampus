@@ -21,17 +21,175 @@ import {
   X,
   Share2,
   ExternalLink,
+  Edit3,
+  Save,
+  Trash2,
+  Crosshair,
+  Move,
+  ShieldCheck,
+  Check,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
 } from 'lucide-react';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
+import { useAuth } from '../hooks/useAuth';
+import api from '../services/api';
+
+const INITIAL_BUILDINGS = {
+  turing: {
+    id: 'turing',
+    code: 'A-01',
+    name: 'Alan Turing Hall',
+    block: 'Block A-01',
+    dept: 'School of Computing & Cybernetics',
+    category: 'academic',
+    x: 680,
+    y: 190,
+    width: 240,
+    height: 150,
+    description: 'High-performance research facility, algorithmic labs, and tiered multi-media lecture halls B-201 to B-208.',
+    occupancy: '68%',
+    seats: '312 / 460 Seats',
+    temp: '21.8°C',
+    air: '410 ppm CO₂',
+    accessibility: '2 Smart Lifts & Ramps',
+    hours: '07:30 AM – 10:00 PM',
+    status: 'open',
+    targetRoom: 'Room B-204 (Level 2)',
+    targetDesc: 'Distributed Computing Seminar Lab',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAOzYh3wsFNkpG0Wr5PmEiEPyjUf81LeiY5vJ9B9Sxyo3dx3yKkLKEvuobY_stKWREYAm-xtryUr5CzNxRyp6kWcBW6mT1RYIQTKJZ1RFKhr1tCBUBahI5VA3CoCK_p5Np_LAfs1PaC3M7y7-ya4VPmmZ6A0gZuvA1inx88ISY2DXthL3xPA_0Ju_y1UkJVdkVWxf1DF6cfxFkdwDK99UIQJqyKNJQuQEQa8WnHcYuWoBBwNhieVUe0Tg',
+    steps: [
+      { num: 1, text: 'Depart Central Library East Gate', sub: 'Exit through double glass doors towards lawn', dist: '0 m' },
+      { num: 2, text: 'Walk North past Fountain Plaza', sub: 'Follow tactile paved promenade path', dist: '120 m • 1.5 min' },
+      { num: 3, text: 'Enter South Colonnade / Skybridge', sub: 'Use accessible automatic glass ramp doors', dist: '240 m • 3 min' },
+      { num: 4, text: 'Arrive at Room B-204 (Floor 2)', sub: 'Destination on your left past elevator bank', dist: '320 m • Total 4 min' },
+    ],
+  },
+  library: {
+    id: 'library',
+    code: 'B-02',
+    name: 'Central Campus Library',
+    block: 'Block B-02',
+    dept: 'Digital Reference & Learning Commons',
+    category: 'libraries',
+    x: 200,
+    y: 420,
+    width: 180,
+    height: 150,
+    description: 'Floor-by-floor quiet study pods, high-speed digital research terminals, reserve desks, and thesis archives.',
+    occupancy: '42%',
+    seats: '142 / 400 Seats',
+    temp: '22.0°C',
+    air: '390 ppm CO₂',
+    accessibility: 'Full ADA Elevator & Braille',
+    hours: 'Open 24/7 with Student ID',
+    status: 'open',
+    targetRoom: 'Quiet Pod 4B (Floor 2)',
+    targetDesc: 'Group Collaboration Pod',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBBf9GggO2878hSOBwyC9jOGK_ul92QgPwCrbIO1fCXbZ2hMDBi1yob2ACl2vEyc4wH3L_1QJqZnxheFSBbWxU5K4huTjzXRdbeSfwPDDXt_LH6c_h3FAZzxPexlEOL7OOZ5Dzi9SFHsbPu_scz4L0iG5vXMYZhTDHIRHbwGZle98jLnVmhN_PgyjvPz_ThYGwNvX0_wBgtQG3A_llHoIUOYsW9vJ2v0D3ICSdYKxrWnZnz-dDz2ua60Q',
+    steps: [
+      { num: 1, text: 'Current Location: Library Lobby', sub: 'Central Registration Desk', dist: '0 m' },
+      { num: 2, text: 'Ascend Elevator to Floor 2', sub: 'West Wing Quiet Pod Corridor', dist: '40 m • 1 min' },
+    ],
+  },
+  ramanujan: {
+    id: 'ramanujan',
+    code: 'C-03',
+    name: 'Ramanujan Science Complex',
+    block: 'Block C-03',
+    dept: 'Department of Mathematics & Physics',
+    category: 'academic',
+    x: 1140,
+    y: 180,
+    width: 210,
+    height: 160,
+    description: 'Applied Physics laboratories, Computational Mathematics suites, and Nanotechnology prototyping cleanrooms.',
+    occupancy: '55%',
+    seats: '110 / 200 Seats',
+    temp: '20.5°C',
+    air: '400 ppm CO₂',
+    accessibility: 'Elevators & Accessible Ramp',
+    hours: '08:00 AM – 09:00 PM',
+    status: 'open',
+    targetRoom: 'Room S-108 (Level 1)',
+    targetDesc: 'Linear Algebra & Neural Nets Lab',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBnsBFmdYqr6jHc-tYoJj9aCEEbfKyFo5L3SLupQ0ikKDdXvkE8ZnSUMjdGmIop8z5KCO7QmVOsIqHy9HYbjtta90SqR4wGPlU-2wqtRGDiq5rUGxAyV903zRKjRYWmoztCiNad357-F5wzNP-stQIagLuV-V9RJTr5eWXoeezLsB_Qjl-q6e13GHym0Nopm46ykpFUvv08rbvxuEQW96J72Y2DHoTV7V4NV_eChXmGJjkKxk7Yk9JxWA',
+    steps: [
+      { num: 1, text: 'Depart Central Library Promenade', sub: 'Head East along Main Arterial Walkway', dist: '0 m' },
+      { num: 2, text: 'Cross North Lawn Plaza', sub: 'Paved step-free pathway', dist: '200 m • 2.5 min' },
+      { num: 3, text: 'Arrive at Ramanujan Entrance', sub: 'Room S-108 on Ground Floor Right', dist: '410 m • Total 5 min' },
+    ],
+  },
+  sac: {
+    id: 'sac',
+    code: 'D-04',
+    name: 'Student Activity Center (SAC)',
+    block: 'Block SAC-01',
+    dept: 'Student Union, Dining & Clubs',
+    category: 'facility',
+    x: 700,
+    y: 630,
+    width: 220,
+    height: 140,
+    description: 'Central campus dining hall, student council offices, medical dispensary, and event amphitheater.',
+    occupancy: '80%',
+    seats: '180 / 250 Seats',
+    temp: '22.5°C',
+    air: '430 ppm CO₂',
+    accessibility: 'Full Wheelchair Ramp',
+    hours: '07:00 AM – 11:00 PM',
+    status: 'open',
+    targetRoom: 'Central Commons Lounge',
+    targetDesc: 'Student Union Lounge & Cafeteria',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAUP4RYE-W2J2Ft821zjJpsBzRYRojXJDRXUqB6yOdIkZbofKwSHQLnWm1NQu3eC7VGc-ERs04rZgZTiUDP8KOZ6QZVp8JKH8p7y1gH0hwf-1iwFlJA2Yn3lFToy3JxsuOkHu3PCtSUrWCyOdUjDkyODiLlL5fkPpDH8Y2Fib-tI9Nf54lZeQ7Q4-E1-3m_bl6qmut1C4NMjuEh66NBAQEoiO1a30sn1FPIFy_Knx0WDT3MrcU18sNtCQ',
+    steps: [
+      { num: 1, text: 'Depart Library South Plaza', sub: 'Walk South along Main Promenade', dist: '0 m' },
+      { num: 2, text: 'Arrive at SAC Main Arcade', sub: 'Ground floor dining entrance', dist: '220 m • 3 min' },
+    ],
+  },
+  robotics: {
+    id: 'robotics',
+    code: 'INN-HUB-01',
+    name: 'Robotics & AI Innovation Hub',
+    block: 'Block D-04',
+    dept: 'Autonomous Systems & Mechatronics',
+    category: 'laboratories',
+    x: 1160,
+    y: 450,
+    width: 190,
+    height: 130,
+    description: 'Hardware prototyping garage, drone flight test chamber, quadruped robotics lab, and 3D printing suites.',
+    occupancy: '72%',
+    seats: '28 / 40 Workbenches',
+    temp: '21.0°C',
+    air: '420 ppm CO₂',
+    accessibility: 'Ground Floor Direct Access',
+    hours: '08:00 AM – 10:00 PM',
+    status: 'open',
+    targetRoom: 'Hardware Lab 4',
+    targetDesc: 'Embedded IoT & Robotics Workbench #14',
+    image: 'https://lh3.googleusercontent.com/aida/AEtjO1V6NaAN18Lf9daDEOiUCcg0Qz9TKAJTZEk9ECU3aySgNV_3O2hapiSnHSeUeScEXSjx47TLmk0cx0dsb_ZVA9EORszw3fNNN0V5EICouIgNfcs0lFyeVR0z0-fBJTvFLwabJeDl7KTSnD62my8TfA-M8AVfxPtiTO4SRRFQokqKIaWdLNfZtih4yUWkpusJLlN7f8edtZ98cv56xSSZJgS1akZwa_mq0qR3mAERMOY_rHpGJyiEVsGYmjpP',
+    steps: [
+      { num: 1, text: 'Depart Central Library East Gate', sub: 'Head East across North Quad', dist: '0 m' },
+      { num: 2, text: 'Pass Ramanujan Science Complex', sub: 'Continue past Reflection Pond', dist: '350 m • 4 min' },
+      { num: 3, text: 'Arrive at Innovation Hub Entrance', sub: 'Hardware Lab 4 Ground Floor', dist: '520 m • Total 6 min' },
+    ],
+  },
+};
 
 export const CampusMap = () => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin' || user?.role === 'care_admin';
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const initialBldg = searchParams.get('bldg') || 'turing';
 
+  // Spatial data state
+  const [buildings, setBuildings] = useState(INITIAL_BUILDINGS);
   const [selectedBldg, setSelectedBldg] = useState(initialBldg);
   const [startPoint, setStartPoint] = useState('Central Library (East Entrance)');
   const [destination, setDestination] = useState('Alan Turing Hall — Room B-204');
@@ -42,132 +200,120 @@ export const CampusMap = () => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(true);
 
+  // Admin Map Editor states
+  const [adminMapMode, setAdminMapMode] = useState(isAdmin);
+  const [isClickToPlace, setIsClickToPlace] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [adminToast, setAdminToast] = useState('');
+  const [isSavingGis, setIsSavingGis] = useState(false);
+
+  // Edit building form state
+  const [editFormData, setEditFormData] = useState({
+    name: '',
+    code: '',
+    category: 'academic',
+    dept: '',
+    description: '',
+    x: 700,
+    y: 300,
+    width: 220,
+    height: 140,
+    hours: '',
+    occupancy: '',
+    targetRoom: '',
+    targetDesc: '',
+  });
+
+  // Add building form state
+  const [newBldgForm, setNewBldgForm] = useState({
+    name: '',
+    code: '',
+    category: 'academic',
+    dept: '',
+    description: '',
+    x: 480,
+    y: 400,
+    width: 200,
+    height: 140,
+    hours: '08:00 AM – 09:00 PM',
+  });
+
   // Sync selected building when URL search params change
   useEffect(() => {
     const bldgFromUrl = searchParams.get('bldg');
-    if (bldgFromUrl) {
+    if (bldgFromUrl && buildings[bldgFromUrl]) {
       setSelectedBldg(bldgFromUrl);
       setDrawerOpen(true);
     }
-  }, [searchParams]);
+  }, [searchParams, buildings]);
 
-  const buildingData = {
-    turing: {
-      id: 'turing',
-      name: 'Alan Turing Hall',
-      block: 'Block A-01',
-      dept: 'School of Computing & Cybernetics',
-      code: 'BLK-A-L3',
-      description: 'High-performance research facility, algorithmic labs, and tiered multi-media lecture halls B-201 to B-208.',
-      occupancy: '68%',
-      seats: '312 / 460 Seats',
-      temp: '21.8°C',
-      air: '410 ppm CO₂',
-      accessibility: '2 Smart Lifts & Ramps',
-      hours: '07:30 AM – 10:00 PM',
-      targetRoom: 'Room B-204 (Level 2)',
-      targetDesc: 'Distributed Computing Seminar Lab',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAOzYh3wsFNkpG0Wr5PmEiEPyjUf81LeiY5vJ9B9Sxyo3dx3yKkLKEvuobY_stKWREYAm-xtryUr5CzNxRyp6kWcBW6mT1RYIQTKJZ1RFKhr1tCBUBahI5VA3CoCK_p5Np_LAfs1PaC3M7y7-ya4VPmmZ6A0gZuvA1inx88ISY2DXthL3xPA_0Ju_y1UkJVdkVWxf1DF6cfxFkdwDK99UIQJqyKNJQuQEQa8WnHcYuWoBBwNhieVUe0Tg',
-      steps: [
-        { num: 1, text: 'Depart Central Library East Gate', sub: 'Exit through double glass doors towards lawn', dist: '0 m' },
-        { num: 2, text: 'Walk North past Fountain Plaza', sub: 'Follow tactile paved promenade path', dist: '120 m • 1.5 min' },
-        { num: 3, text: 'Enter South Colonnade / Skybridge', sub: 'Use accessible automatic glass ramp doors', dist: '240 m • 3 min' },
-        { num: 4, text: 'Arrive at Room B-204 (Floor 2)', sub: 'Destination on your left past elevator bank', dist: '320 m • Total 4 min' },
-      ],
-    },
-    library: {
-      id: 'library',
-      name: 'Central Campus Library',
-      block: 'Block B-02',
-      dept: 'Digital Reference & Learning Commons',
-      code: 'LIB-CENTRAL',
-      description: 'Floor-by-floor quiet study pods, high-speed digital research terminals, reserve desks, and thesis archives.',
-      occupancy: '42%',
-      seats: '142 / 400 Seats',
-      temp: '22.0°C',
-      air: '390 ppm CO₂',
-      accessibility: 'Full ADA Elevator & Braille',
-      hours: 'Open 24/7 with Student ID',
-      targetRoom: 'Quiet Pod 4B (Floor 2)',
-      targetDesc: 'Group Collaboration Pod',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBBf9GggO2878hSOBwyC9jOGK_ul92QgPwCrbIO1fCXbZ2hMDBi1yob2ACl2vEyc4wH3L_1QJqZnxheFSBbWxU5K4huTjzXRdbeSfwPDDXt_LH6c_h3FAZzxPexlEOL7OOZ5Dzi9SFHsbPu_scz4L0iG5vXMYZhTDHIRHbwGZle98jLnVmhN_PgyjvPz_ThYGwNvX0_wBgtQG3A_llHoIUOYsW9vJ2v0D3ICSdYKxrWnZnz-dDz2ua60Q',
-      steps: [
-        { num: 1, text: 'Current Location: Library Lobby', sub: 'Central Registration Desk', dist: '0 m' },
-        { num: 2, text: 'Ascend Elevator to Floor 2', sub: 'West Wing Quiet Pod Corridor', dist: '40 m • 1 min' },
-      ],
-    },
-    ramanujan: {
-      id: 'ramanujan',
-      name: 'Ramanujan Science Complex',
-      block: 'Block C-03',
-      dept: 'Department of Mathematics & Physics',
-      code: 'SCI-RAM-03',
-      description: 'Applied Physics laboratories, Computational Mathematics suites, and Nanotechnology prototyping cleanrooms.',
-      occupancy: '55%',
-      seats: '110 / 200 Seats',
-      temp: '20.5°C',
-      air: '400 ppm CO₂',
-      accessibility: 'Elevators & Accessible Ramp',
-      hours: '08:00 AM – 09:00 PM',
-      targetRoom: 'Room S-108 (Level 1)',
-      targetDesc: 'Linear Algebra & Neural Nets Lab',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBnsBFmdYqr6jHc-tYoJj9aCEEbfKyFo5L3SLupQ0ikKDdXvkE8ZnSUMjdGmIop8z5KCO7QmVOsIqHy9HYbjtta90SqR4wGPlU-2wqtRGDiq5rUGxAyV903zRKjRYWmoztCiNad357-F5wzNP-stQIagLuV-V9RJTr5eWXoeezLsB_Qjl-q6e13GHym0Nopm46ykpFUvv08rbvxuEQW96J72Y2DHoTV7V4NV_eChXmGJjkKxk7Yk9JxWA',
-      steps: [
-        { num: 1, text: 'Depart Central Library Promenade', sub: 'Head East along Main Arterial Walkway', dist: '0 m' },
-        { num: 2, text: 'Cross North Lawn Plaza', sub: 'Paved step-free pathway', dist: '200 m • 2.5 min' },
-        { num: 3, text: 'Arrive at Ramanujan Entrance', sub: 'Room S-108 on Ground Floor Right', dist: '410 m • Total 5 min' },
-      ],
-    },
-    robotics: {
-      id: 'robotics',
-      name: 'Robotics & AI Innovation Hub',
-      block: 'Block D-04',
-      dept: 'Autonomous Systems & Mechatronics',
-      code: 'INN-HUB-01',
-      description: 'Hardware prototyping garage, drone flight test chamber, quadruped robotics lab, and 3D printing suites.',
-      occupancy: '72%',
-      seats: '28 / 40 Workbenches',
-      temp: '21.0°C',
-      air: '420 ppm CO₂',
-      accessibility: 'Ground Floor Direct Access',
-      hours: '08:00 AM – 10:00 PM',
-      targetRoom: 'Hardware Lab 4',
-      targetDesc: 'Embedded IoT & Robotics Workbench #14',
-      image: 'https://lh3.googleusercontent.com/aida/AEtjO1V6NaAN18Lf9daDEOiUCcg0Qz9TKAJTZEk9ECU3aySgNV_3O2hapiSnHSeUeScEXSjx47TLmk0cx0dsb_ZVA9EORszw3fNNN0V5EICouIgNfcs0lFyeVR0z0-fBJTvFLwabJeDl7KTSnD62my8TfA-M8AVfxPtiTO4SRRFQokqKIaWdLNfZtih4yUWkpusJLlN7f8edtZ98cv56xSSZJgS1akZwa_mq0qR3mAERMOY_rHpGJyiEVsGYmjpP',
-      steps: [
-        { num: 1, text: 'Depart Central Library East Gate', sub: 'Head East across North Quad', dist: '0 m' },
-        { num: 2, text: 'Pass Ramanujan Science Complex', sub: 'Continue past Reflection Pond', dist: '350 m • 4 min' },
-        { num: 3, text: 'Arrive at Innovation Hub Entrance', sub: 'Hardware Lab 4 Ground Floor', dist: '520 m • Total 6 min' },
-      ],
-    },
-    sac: {
-      id: 'sac',
-      name: 'Student Activity Center (SAC)',
-      block: 'Block SAC-01',
-      dept: 'Student Union, Dining & Clubs',
-      code: 'SAC-MAIN',
-      description: 'Central campus dining hall, student council offices, medical dispensary, and event amphitheater.',
-      occupancy: '80%',
-      seats: '180 / 250 Seats',
-      temp: '22.5°C',
-      air: '430 ppm CO₂',
-      accessibility: 'Full Wheelchair Ramp',
-      hours: '07:00 AM – 11:00 PM',
-      targetRoom: 'Central Commons Lounge',
-      targetDesc: 'Student Union Lounge & Cafeteria',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAUP4RYE-W2J2Ft821zjJpsBzRYRojXJDRXUqB6yOdIkZbofKwSHQLnWm1NQu3eC7VGc-ERs04rZgZTiUDP8KOZ6QZVp8JKH8p7y1gH0hwf-1iwFlJA2Yn3lFToy3JxsuOkHu3PCtSUrWCyOdUjDkyODiLlL5fkPpDH8Y2Fib-tI9Nf54lZeQ7Q4-E1-3m_bl6qmut1C4NMjuEh66NBAQEoiO1a30sn1FPIFy_Knx0WDT3MrcU18sNtCQ',
-      steps: [
-        { num: 1, text: 'Depart Library South Plaza', sub: 'Walk South along Main Promenade', dist: '0 m' },
-        { num: 2, text: 'Arrive at SAC Main Arcade', sub: 'Ground floor dining entrance', dist: '220 m • 3 min' },
-      ],
-    },
+  // Fetch live GIS buildings from backend
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const res = await api.get('/campus/locations');
+        if (res && res.data && Array.isArray(res.data) && res.data.length > 0) {
+          setBuildings((prev) => {
+            const updated = { ...prev };
+            res.data.forEach((loc) => {
+              const slug = loc.code ? loc.code.toLowerCase().replace(/[^a-z0-9]/g, '') : loc._id;
+              const matchKey = Object.keys(updated).find(
+                (k) => updated[k].code?.toUpperCase() === loc.code?.toUpperCase() || k === slug
+              );
+              const key = matchKey || slug;
+              updated[key] = {
+                ...updated[key],
+                id: key,
+                _id: loc._id,
+                code: loc.code || updated[key]?.code || 'BLD',
+                name: loc.name || updated[key]?.name,
+                block: loc.precinct || updated[key]?.block || 'Central Precinct',
+                dept: (Array.isArray(loc.departments) ? loc.departments.join(', ') : loc.departments) || updated[key]?.dept || 'Department of Instruction',
+                category: loc.category || updated[key]?.category || 'academic',
+                x: loc.coordinates?.x ?? updated[key]?.x ?? 600,
+                y: loc.coordinates?.y ?? updated[key]?.y ?? 400,
+                width: updated[key]?.width || 210,
+                height: updated[key]?.height || 140,
+                description: loc.description || updated[key]?.description || 'Campus Academic Facility',
+                hours: loc.openingHours || updated[key]?.hours || '08:00 AM – 09:00 PM',
+                status: loc.status || updated[key]?.status || 'open',
+                occupancy: updated[key]?.occupancy || `${loc.loadPercentage || 65}%`,
+                seats: updated[key]?.seats || '150 / 200 Seats',
+                temp: updated[key]?.temp || '21.5°C',
+                air: updated[key]?.air || '410 ppm CO₂',
+                accessibility: updated[key]?.accessibility || 'Step-Free Ramp & Lifts',
+                targetRoom: updated[key]?.targetRoom || 'Room 101',
+                targetDesc: updated[key]?.targetDesc || 'Main Lecture Hall',
+                image: loc.image || updated[key]?.image || 'https://lh3.googleusercontent.com/aida-public/AB6AXuAOzYh3wsFNkpG0Wr5PmEiEPyjUf81LeiY5vJ9B9Sxyo3dx3yKkLKEvuobY_stKWREYAm-xtryUr5CzNxRyp6kWcBW6mT1RYIQTKJZ1RFKhr1tCBUBahI5VA3CoCK_p5Np_LAfs1PaC3M7y7-ya4VPmmZ6A0gZuvA1inx88ISY2DXthL3xPA_0Ju_y1UkJVdkVWxf1DF6cfxFkdwDK99UIQJqyKNJQuQEQa8WnHcYuWoBBwNhieVUe0Tg',
+                steps: updated[key]?.steps || [
+                  { num: 1, text: 'Depart Central Library East Gate', sub: 'Walk towards Campus North Promenade', dist: '0 m' },
+                  { num: 2, text: `Arrive at ${loc.name}`, sub: 'Main Entrance Lobby', dist: '250 m • 3 min' },
+                ],
+              };
+            });
+            return updated;
+          });
+        }
+      } catch (err) {
+        console.warn('[CampusMap] Live GIS sync notice:', err.message);
+      }
+    };
+    fetchLocations();
+  }, []);
+
+  // Show temporary toast message
+  const triggerToast = (msg) => {
+    setAdminToast(msg);
+    setTimeout(() => setAdminToast(''), 3500);
   };
 
-  const currentBldg = buildingData[selectedBldg] || buildingData.turing;
+  const currentBldg = buildings[selectedBldg] || buildings.turing || Object.values(buildings)[0];
 
   const handleSelectBuilding = (id) => {
+    if (!buildings[id]) return;
     setSelectedBldg(id);
-    setDestination(`${buildingData[id]?.name} — ${buildingData[id]?.targetRoom}`);
+    setDestination(`${buildings[id].name} — ${buildings[id].targetRoom || 'Main Entrance'}`);
     setDrawerOpen(true);
     setSearchParams({ bldg: id });
   };
@@ -178,8 +324,267 @@ export const CampusMap = () => {
     setDestination(temp);
   };
 
+  // Nudge selected building on map canvas
+  const handleNudgeBuilding = async (dx, dy) => {
+    if (!isAdmin || !buildings[selectedBldg]) return;
+    const bldg = buildings[selectedBldg];
+    const newX = Math.max(20, Math.min(1500, bldg.x + dx));
+    const newY = Math.max(20, Math.min(900, bldg.y + dy));
+
+    setBuildings((prev) => ({
+      ...prev,
+      [selectedBldg]: {
+        ...prev[selectedBldg],
+        x: newX,
+        y: newY,
+      },
+    }));
+
+    triggerToast(`Moved ${bldg.name} to (X: ${newX}, Y: ${newY})`);
+
+    // Sync to backend if location has an ID/code
+    try {
+      await api.put(`/campus/locations/${bldg._id || bldg.code || selectedBldg}`, {
+        coordinates: { x: newX, y: newY, floor: selectedFloor },
+      });
+    } catch (e) {
+      // Local state is already updated
+    }
+  };
+
+  // Handle map click for click-to-reposition
+  const handleSvgMapClick = async (e) => {
+    if (!isAdmin || !adminMapMode || !isClickToPlace) return;
+    const svg = e.currentTarget;
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX;
+    pt.y = e.clientY;
+    const svgPoint = pt.matrixTransform(svg.getScreenCTM().inverse());
+    const newX = Math.round(svgPoint.x - (currentBldg.width || 200) / 2);
+    const newY = Math.round(svgPoint.y - (currentBldg.height || 140) / 2);
+
+    setBuildings((prev) => ({
+      ...prev,
+      [selectedBldg]: {
+        ...prev[selectedBldg],
+        x: newX,
+        y: newY,
+      },
+    }));
+
+    setIsClickToPlace(false);
+    triggerToast(`Repositioned ${currentBldg.name} to (X: ${newX}, Y: ${newY})`);
+
+    try {
+      await api.put(`/campus/locations/${currentBldg._id || currentBldg.code || selectedBldg}`, {
+        coordinates: { x: newX, y: newY, floor: selectedFloor },
+      });
+    } catch (err) {
+      console.warn('GIS coordinate sync fallback');
+    }
+  };
+
+  // Open Edit Modal for current building
+  const handleOpenEditModal = () => {
+    setEditFormData({
+      name: currentBldg.name || '',
+      code: currentBldg.code || '',
+      category: currentBldg.category || 'academic',
+      dept: currentBldg.dept || '',
+      description: currentBldg.description || '',
+      x: currentBldg.x || 700,
+      y: currentBldg.y || 300,
+      width: currentBldg.width || 220,
+      height: currentBldg.height || 140,
+      hours: currentBldg.hours || '',
+      occupancy: currentBldg.occupancy || '',
+      targetRoom: currentBldg.targetRoom || '',
+      targetDesc: currentBldg.targetDesc || '',
+    });
+    setShowEditModal(true);
+  };
+
+  // Save edited building
+  const handleSaveBuildingEdits = async (e) => {
+    e.preventDefault();
+    setIsSavingGis(true);
+
+    const updatedBldg = {
+      ...currentBldg,
+      name: editFormData.name,
+      code: editFormData.code,
+      category: editFormData.category,
+      dept: editFormData.dept,
+      description: editFormData.description,
+      x: Number(editFormData.x),
+      y: Number(editFormData.y),
+      width: Number(editFormData.width),
+      height: Number(editFormData.height),
+      hours: editFormData.hours,
+      occupancy: editFormData.occupancy,
+      targetRoom: editFormData.targetRoom,
+      targetDesc: editFormData.targetDesc,
+    };
+
+    setBuildings((prev) => ({
+      ...prev,
+      [selectedBldg]: updatedBldg,
+    }));
+
+    try {
+      await api.put(`/campus/locations/${currentBldg._id || currentBldg.code || selectedBldg}`, {
+        name: editFormData.name,
+        code: editFormData.code,
+        category: editFormData.category,
+        departments: editFormData.dept,
+        description: editFormData.description,
+        openingHours: editFormData.hours,
+        coordinates: { x: Number(editFormData.x), y: Number(editFormData.y), floor: selectedFloor },
+      });
+      triggerToast(`Saved GIS updates for ${editFormData.name} successfully!`);
+    } catch (err) {
+      triggerToast(`Saved updates locally for ${editFormData.name}.`);
+    } finally {
+      setIsSavingGis(false);
+      setShowEditModal(false);
+    }
+  };
+
+  // Create new facility on map
+  const handleCreateNewBuilding = async (e) => {
+    e.preventDefault();
+    if (!newBldgForm.name || !newBldgForm.code) return;
+
+    setIsSavingGis(true);
+    const slug = newBldgForm.code.toLowerCase().replace(/[^a-z0-9]/g, '') || `bldg_${Date.now()}`;
+
+    const newBuildingObj = {
+      id: slug,
+      code: newBldgForm.code,
+      name: newBldgForm.name,
+      block: `Block ${newBldgForm.code}`,
+      dept: newBldgForm.dept || 'Academic Department',
+      category: newBldgForm.category,
+      x: Number(newBldgForm.x) || 500,
+      y: Number(newBldgForm.y) || 400,
+      width: Number(newBldgForm.width) || 200,
+      height: Number(newBldgForm.height) || 140,
+      description: newBldgForm.description || 'Newly registered campus facility.',
+      occupancy: '40%',
+      seats: '120 Seats',
+      temp: '22.0°C',
+      air: '400 ppm CO₂',
+      accessibility: 'Step-Free Ramp & Lifts',
+      hours: newBldgForm.hours || '08:00 AM – 09:00 PM',
+      status: 'open',
+      targetRoom: 'Main Reception (Level 1)',
+      targetDesc: 'Facility Administrative Portal',
+      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAOzYh3wsFNkpG0Wr5PmEiEPyjUf81LeiY5vJ9B9Sxyo3dx3yKkLKEvuobY_stKWREYAm-xtryUr5CzNxRyp6kWcBW6mT1RYIQTKJZ1RFKhr1tCBUBahI5VA3CoCK_p5Np_LAfs1PaC3M7y7-ya4VPmmZ6A0gZuvA1inx88ISY2DXthL3xPA_0Ju_y1UkJVdkVWxf1DF6cfxFkdwDK99UIQJqyKNJQuQEQa8WnHcYuWoBBwNhieVUe0Tg',
+      steps: [
+        { num: 1, text: 'Depart Central Library East Gate', sub: 'Walk North across Campus Quad', dist: '0 m' },
+        { num: 2, text: `Arrive at ${newBldgForm.name}`, sub: 'Main Entrance Arcade', dist: '280 m • 3.5 min' },
+      ],
+    };
+
+    setBuildings((prev) => ({
+      ...prev,
+      [slug]: newBuildingObj,
+    }));
+    setSelectedBldg(slug);
+
+    try {
+      await api.post('/campus/locations', {
+        name: newBldgForm.name,
+        code: newBldgForm.code,
+        category: newBldgForm.category,
+        departments: newBldgForm.dept,
+        description: newBldgForm.description,
+        openingHours: newBldgForm.hours,
+        coordinates: { x: Number(newBldgForm.x), y: Number(newBldgForm.y), floor: 'Level 1' },
+      });
+      triggerToast(`Created new facility ${newBldgForm.name} on map!`);
+    } catch (err) {
+      triggerToast(`Added ${newBldgForm.name} to campus map view.`);
+    } finally {
+      setIsSavingGis(false);
+      setShowAddModal(false);
+      setNewBldgForm({
+        name: '',
+        code: '',
+        category: 'academic',
+        dept: '',
+        description: '',
+        x: 480,
+        y: 400,
+        width: 200,
+        height: 140,
+        hours: '08:00 AM – 09:00 PM',
+      });
+    }
+  };
+
+  // Delete facility from map
+  const handleDeleteBuilding = async () => {
+    if (!window.confirm(`Are you sure you want to remove "${currentBldg.name}" from the campus map?`)) return;
+
+    try {
+      await api.delete(`/campus/locations/${currentBldg._id || currentBldg.code || selectedBldg}`);
+    } catch (err) {
+      console.warn('GIS delete fallback');
+    }
+
+    setBuildings((prev) => {
+      const copy = { ...prev };
+      delete copy[selectedBldg];
+      return copy;
+    });
+
+    const remainingKeys = Object.keys(buildings).filter((k) => k !== selectedBldg);
+    if (remainingKeys.length > 0) {
+      setSelectedBldg(remainingKeys[0]);
+    }
+    setShowEditModal(false);
+    triggerToast(`Removed facility from map.`);
+  };
+
+  // Filter buildings list
+  const filteredBuildingList = Object.values(buildings).filter((b) => {
+    if (categoryFilter === 'all') return true;
+    if (categoryFilter === 'academic') return b.category === 'academic';
+    if (categoryFilter === 'laboratories') return b.category === 'laboratories' || b.category === 'lab';
+    if (categoryFilter === 'libraries') return b.category === 'libraries' || b.category === 'library';
+    if (categoryFilter === 'facility') return b.category === 'facility' || b.category === 'facilities';
+    return true;
+  });
+
   return (
     <div style={{ position: 'relative', width: '100%', height: 'calc(100vh - 64px)', overflow: 'hidden', backgroundColor: 'var(--bg-canvas)' }}>
+      {/* TOAST NOTIFICATION */}
+      {adminToast && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 100,
+            backgroundColor: 'rgba(235, 99, 139, 0.95)',
+            color: '#FFFFFF',
+            padding: '10px 24px',
+            borderRadius: '9999px',
+            fontSize: '13px',
+            fontWeight: 700,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          <CheckCircle2 size={16} />
+          <span>{adminToast}</span>
+        </div>
+      )}
+
       {/* TOP FLOATING WAYFINDING CONTROL BAR & FILTER CHIPS */}
       <div style={{ position: 'absolute', top: '16px', left: '16px', right: '16px', zIndex: 40, display: 'flex', flexDirection: 'column', gap: '10px', pointerEvents: 'none' }}>
         {/* Main Route Calculation Bar */}
@@ -280,78 +685,228 @@ export const CampusMap = () => {
           </Button>
         </div>
 
-        {/* Facility Category Filter Chips */}
-        <div style={{ pointerEvents: 'auto', display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
-          <button
-            onClick={() => setCategoryFilter('all')}
-            style={{
-              padding: '6px 14px',
-              borderRadius: '9999px',
-              fontSize: '12px',
-              fontWeight: 600,
-              backgroundColor: categoryFilter === 'all' ? 'var(--brand-primary)' : 'var(--bg-surface)',
-              color: '#FFFFFF',
-              border: '1px solid var(--border-subtle)',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            All Facilities (48)
-          </button>
-          <button
-            onClick={() => setCategoryFilter('academic')}
-            style={{
-              padding: '6px 14px',
-              borderRadius: '9999px',
-              fontSize: '12px',
-              fontWeight: 600,
-              backgroundColor: categoryFilter === 'academic' ? 'var(--brand-primary)' : 'var(--bg-surface)',
-              color: '#FFFFFF',
-              border: '1px solid var(--border-subtle)',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Academic Blocks (14)
-          </button>
-          <button
-            onClick={() => setCategoryFilter('laboratories')}
-            style={{
-              padding: '6px 14px',
-              borderRadius: '9999px',
-              fontSize: '12px',
-              fontWeight: 600,
-              backgroundColor: categoryFilter === 'laboratories' ? 'var(--brand-primary)' : 'var(--bg-surface)',
-              color: '#FFFFFF',
-              border: '1px solid var(--border-subtle)',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Laboratories (9)
-          </button>
-          <button
-            onClick={() => setCategoryFilter('libraries')}
-            style={{
-              padding: '6px 14px',
-              borderRadius: '9999px',
-              fontSize: '12px',
-              fontWeight: 600,
-              backgroundColor: categoryFilter === 'libraries' ? 'var(--brand-primary)' : 'var(--bg-surface)',
-              color: '#FFFFFF',
-              border: '1px solid var(--border-subtle)',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Libraries (3)
-          </button>
+        {/* Facility Category Filter Chips + Admin Control Toolbar */}
+        <div style={{ pointerEvents: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+            <button
+              onClick={() => setCategoryFilter('all')}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '9999px',
+                fontSize: '12px',
+                fontWeight: 600,
+                backgroundColor: categoryFilter === 'all' ? 'var(--brand-primary)' : 'var(--bg-surface)',
+                color: '#FFFFFF',
+                border: '1px solid var(--border-subtle)',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              All Facilities ({Object.keys(buildings).length})
+            </button>
+            <button
+              onClick={() => setCategoryFilter('academic')}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '9999px',
+                fontSize: '12px',
+                fontWeight: 600,
+                backgroundColor: categoryFilter === 'academic' ? 'var(--brand-primary)' : 'var(--bg-surface)',
+                color: '#FFFFFF',
+                border: '1px solid var(--border-subtle)',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Academic Blocks
+            </button>
+            <button
+              onClick={() => setCategoryFilter('laboratories')}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '9999px',
+                fontSize: '12px',
+                fontWeight: 600,
+                backgroundColor: categoryFilter === 'laboratories' ? 'var(--brand-primary)' : 'var(--bg-surface)',
+                color: '#FFFFFF',
+                border: '1px solid var(--border-subtle)',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Laboratories
+            </button>
+            <button
+              onClick={() => setCategoryFilter('libraries')}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '9999px',
+                fontSize: '12px',
+                fontWeight: 600,
+                backgroundColor: categoryFilter === 'libraries' ? 'var(--brand-primary)' : 'var(--bg-surface)',
+                color: '#FFFFFF',
+                border: '1px solid var(--border-subtle)',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Libraries
+            </button>
+          </div>
+
+          {/* ADMIN EXCLUSIVE MAP CONTROLS BAR */}
+          {isAdmin && (
+            <div
+              style={{
+                backgroundColor: 'rgba(30, 25, 26, 0.95)',
+                backdropFilter: 'blur(16px)',
+                padding: '6px 12px',
+                borderRadius: '9999px',
+                border: '1px solid var(--brand-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: 'var(--shadow-md)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', paddingRight: '8px', borderRight: '1px solid var(--border-subtle)' }}>
+                <ShieldCheck size={16} style={{ color: 'var(--brand-accent)' }} />
+                <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--brand-misty)', textTransform: 'uppercase' }}>Admin GIS</span>
+              </div>
+
+              {/* Mode Toggle */}
+              <button
+                onClick={() => setAdminMapMode(!adminMapMode)}
+                style={{
+                  padding: '4px 10px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  backgroundColor: adminMapMode ? 'var(--brand-primary)' : 'var(--bg-surface-elevated)',
+                  color: '#FFFFFF',
+                }}
+              >
+                {adminMapMode ? 'Editor Active' : 'Enable Editor'}
+              </button>
+
+              {adminMapMode && (
+                <>
+                  {/* Click to Reposition Toggle */}
+                  <button
+                    onClick={() => {
+                      setIsClickToPlace(!isClickToPlace);
+                      triggerToast(!isClickToPlace ? `Click on the map to place "${currentBldg.name}"` : 'Reposition mode off');
+                    }}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      border: '1px solid var(--border-interactive)',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      backgroundColor: isClickToPlace ? 'var(--brand-accent)' : 'var(--bg-surface)',
+                      color: isClickToPlace ? '#1E191A' : '#FFFFFF',
+                    }}
+                    title="Click anywhere on map to reposition selected building"
+                  >
+                    <Crosshair size={13} />
+                    <span>{isClickToPlace ? 'Click Map Now' : 'Click-to-Move'}</span>
+                  </button>
+
+                  {/* Nudge Arrow Controls */}
+                  <div style={{ display: 'flex', gap: '2px', alignItems: 'center', backgroundColor: 'var(--bg-surface)', padding: '2px 4px', borderRadius: '6px' }}>
+                    <button
+                      onClick={() => handleNudgeBuilding(-20, 0)}
+                      style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer', padding: '2px' }}
+                      title="Nudge Left 20px"
+                    >
+                      <ArrowLeft size={13} />
+                    </button>
+                    <button
+                      onClick={() => handleNudgeBuilding(0, -20)}
+                      style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer', padding: '2px' }}
+                      title="Nudge Up 20px"
+                    >
+                      <ArrowUp size={13} />
+                    </button>
+                    <button
+                      onClick={() => handleNudgeBuilding(0, 20)}
+                      style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer', padding: '2px' }}
+                      title="Nudge Down 20px"
+                    >
+                      <ArrowDown size={13} />
+                    </button>
+                    <button
+                      onClick={() => handleNudgeBuilding(20, 0)}
+                      style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer', padding: '2px' }}
+                      title="Nudge Right 20px"
+                    >
+                      <ArrowRight size={13} />
+                    </button>
+                  </div>
+
+                  {/* Edit Building Details Button */}
+                  <button
+                    onClick={handleOpenEditModal}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      backgroundColor: 'var(--brand-accent)',
+                      color: '#1E191A',
+                    }}
+                  >
+                    <Edit3 size={13} />
+                    <span>Edit Info</span>
+                  </button>
+
+                  {/* Add New Facility Button */}
+                  <button
+                    onClick={() => setShowAddModal(true)}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      backgroundColor: '#2E7D32',
+                      color: '#FFFFFF',
+                    }}
+                  >
+                    <Plus size={13} />
+                    <span>+ Add Facility</span>
+                  </button>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       {/* MAP SVG CANVAS */}
-      <div style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: '#141011' }}>
-        <svg width="100%" height="100%" viewBox="0 0 1600 1000" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center center', transition: 'transform 0.3s ease' }}>
+      <div style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: '#141011', cursor: isClickToPlace ? 'crosshair' : 'default' }}>
+        <svg
+          width="100%"
+          height="100%"
+          viewBox="0 0 1600 1000"
+          onClick={handleSvgMapClick}
+          style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center center', transition: 'transform 0.3s ease' }}
+        >
           <defs>
             <pattern id="campusGridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
               <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 217, 218, 0.04)" strokeWidth="1" />
@@ -381,47 +936,110 @@ export const CampusMap = () => {
           {/* ANIMATED WAYFINDING ROUTE PATH */}
           <path d="M 380,480 L 520,480 L 610,420 L 710,420 L 750,340" stroke="#EB638B" strokeWidth="6" fill="none" strokeDasharray="8 6" />
 
-          {/* Interactive Buildings */}
-          {/* 1. Central Library */}
-          <g onClick={() => handleSelectBuilding('library')} style={{ cursor: 'pointer' }}>
-            <rect x="200" y="420" width="180" height="150" rx="10" fill={selectedBldg === 'library' ? '#AC274F' : '#383335'} stroke={selectedBldg === 'library' ? '#EB638B' : 'rgba(255, 217, 218, 0.1)'} strokeWidth="2" />
-            <text x="290" y="495" fill="#FFFFFF" fontSize="14" textAnchor="middle" fontWeight="bold" fontFamily="Plus Jakarta Sans">Central Library</text>
-            <text x="290" y="515" fill="#FFD9DA" fontSize="11" textAnchor="middle">Origin (East Entrance)</text>
-          </g>
+          {/* DYNAMICALLY RENDERED INTERACTIVE BUILDINGS */}
+          {filteredBuildingList.map((bldg) => {
+            const isSelected = selectedBldg === bldg.id;
+            const w = bldg.width || 210;
+            const h = bldg.height || 140;
+            const cx = bldg.x + w / 2;
+            const cy = bldg.y + h / 2;
 
-          {/* 2. Alan Turing Hall */}
-          <g onClick={() => handleSelectBuilding('turing')} style={{ cursor: 'pointer' }}>
-            <rect x="680" y="190" width="240" height="150" rx="12" fill={selectedBldg === 'turing' ? '#AC274F' : '#383335'} stroke={selectedBldg === 'turing' ? '#EB638B' : 'rgba(255, 217, 218, 0.1)'} strokeWidth="2" />
-            <text x="800" y="260" fill="#FFFFFF" fontSize="16" textAnchor="middle" fontWeight="bold" fontFamily="Plus Jakarta Sans">Alan Turing Hall</text>
-            <text x="800" y="280" fill="#FFD9DA" fontSize="12" textAnchor="middle">Academic Block A • Selected</text>
-          </g>
+            return (
+              <g
+                key={bldg.id}
+                onClick={(e) => {
+                  if (isClickToPlace) return; // handled by svg click
+                  e.stopPropagation();
+                  handleSelectBuilding(bldg.id);
+                }}
+                style={{ cursor: 'pointer' }}
+              >
+                {/* Active Selection Glow Ring */}
+                {isSelected && (
+                  <rect
+                    x={bldg.x - 6}
+                    y={bldg.y - 6}
+                    width={w + 12}
+                    height={h + 12}
+                    rx="14"
+                    fill="none"
+                    stroke="#EB638B"
+                    strokeWidth="3"
+                    strokeDasharray="6 4"
+                    opacity="0.8"
+                  />
+                )}
 
-          {/* 3. Ramanujan Science */}
-          <g onClick={() => handleSelectBuilding('ramanujan')} style={{ cursor: 'pointer' }}>
-            <rect x="1140" y="180" width="210" height="160" rx="10" fill={selectedBldg === 'ramanujan' ? '#AC274F' : '#383335'} stroke={selectedBldg === 'ramanujan' ? '#EB638B' : 'rgba(255, 217, 218, 0.1)'} strokeWidth="2" />
-            <text x="1245" y="255" fill="#FFFFFF" fontSize="14" textAnchor="middle" fontWeight="bold" fontFamily="Plus Jakarta Sans">Ramanujan Science</text>
-            <text x="1245" y="275" fill="#D6C4C8" fontSize="11" textAnchor="middle">Science & Math Labs</text>
-          </g>
+                {/* Building Body Rectangle */}
+                <rect
+                  x={bldg.x}
+                  y={bldg.y}
+                  width={w}
+                  height={h}
+                  rx="10"
+                  fill={isSelected ? '#AC274F' : '#383335'}
+                  stroke={isSelected ? '#EB638B' : 'rgba(255, 217, 218, 0.12)'}
+                  strokeWidth={isSelected ? '2' : '1'}
+                />
 
-          {/* 4. Student Activity Center */}
-          <g onClick={() => handleSelectBuilding('sac')} style={{ cursor: 'pointer' }}>
-            <rect x="700" y="630" width="220" height="140" rx="12" fill={selectedBldg === 'sac' ? '#AC274F' : '#383335'} stroke={selectedBldg === 'sac' ? '#EB638B' : 'rgba(255, 217, 218, 0.1)'} strokeWidth="2" />
-            <text x="810" y="695" fill="#FFFFFF" fontSize="14" textAnchor="middle" fontWeight="bold" fontFamily="Plus Jakarta Sans">Student Activity Center</text>
-            <text x="810" y="715" fill="#D6C4C8" fontSize="11" textAnchor="middle">Union & Cafeteria</text>
-          </g>
+                {/* Building Title */}
+                <text
+                  x={cx}
+                  y={cy - 10}
+                  fill="#FFFFFF"
+                  fontSize="14"
+                  textAnchor="middle"
+                  fontWeight="bold"
+                  fontFamily="Plus Jakarta Sans"
+                >
+                  {bldg.name}
+                </text>
 
-          {/* 5. Innovation & Robotics Hub */}
-          <g onClick={() => handleSelectBuilding('robotics')} style={{ cursor: 'pointer' }}>
-            <rect x="1160" y="450" width="190" height="130" rx="8" fill={selectedBldg === 'robotics' ? '#AC274F' : '#383335'} stroke={selectedBldg === 'robotics' ? '#EB638B' : 'rgba(255, 217, 218, 0.1)'} strokeWidth="2" />
-            <text x="1255" y="510" fill="#FFFFFF" fontSize="14" textAnchor="middle" fontWeight="bold" fontFamily="Plus Jakarta Sans">Robotics & AI Hub</text>
-            <text x="1255" y="530" fill="#D6C4C8" fontSize="11" textAnchor="middle">Hardware Garage</text>
-          </g>
+                {/* Subtitle / Department / Code */}
+                <text
+                  x={cx}
+                  y={cy + 12}
+                  fill={isSelected ? '#FFD9DA' : '#D6C4C8'}
+                  fontSize="11"
+                  textAnchor="middle"
+                >
+                  {bldg.block || bldg.code} {isSelected ? '• Selected' : ''}
+                </text>
 
-          {/* Destination Pin Marker */}
-          <g transform="translate(750, 340)">
-            <circle cx="0" cy="0" r="16" fill="rgba(172, 39, 79, 0.4)" />
-            <circle cx="0" cy="0" r="8" fill="#EB638B" />
-          </g>
+                {/* Category Pill */}
+                <text
+                  x={cx}
+                  y={cy + 28}
+                  fill={isSelected ? '#FFD9DA' : 'rgba(255, 255, 255, 0.5)'}
+                  fontSize="9.5"
+                  textAnchor="middle"
+                  textTransform="uppercase"
+                  fontWeight="600"
+                >
+                  {bldg.category}
+                </text>
+
+                {/* Admin Mode Badge on marker */}
+                {isAdmin && adminMapMode && (
+                  <g transform={`translate(${bldg.x + w - 16}, ${bldg.y + 16})`}>
+                    <circle cx="0" cy="0" r="9" fill="#EB638B" />
+                    <text x="0" y="3" fill="#FFFFFF" fontSize="8" fontWeight="bold" textAnchor="middle">
+                      GIS
+                    </text>
+                  </g>
+                )}
+              </g>
+            );
+          })}
+
+          {/* Destination Pin Marker on Selected Building */}
+          {currentBldg && (
+            <g transform={`translate(${currentBldg.x + (currentBldg.width || 210) / 2}, ${currentBldg.y})`}>
+              <circle cx="0" cy="-14" r="14" fill="rgba(235, 99, 139, 0.4)" />
+              <circle cx="0" cy="-14" r="7" fill="#EB638B" />
+              <path d="M -4,-14 L 0,0 L 4,-14 Z" fill="#EB638B" />
+            </g>
+          )}
         </svg>
 
         {/* MAP CONTROLS (Top & Bottom Right) */}
@@ -464,18 +1082,21 @@ export const CampusMap = () => {
           <button
             onClick={() => setZoomLevel((z) => Math.min(z + 0.2, 1.8))}
             style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFF', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            title="Zoom In"
           >
             <Plus size={18} />
           </button>
           <button
             onClick={() => setZoomLevel((z) => Math.max(z - 0.2, 0.8))}
             style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFF', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            title="Zoom Out"
           >
             <Minus size={18} />
           </button>
           <button
             onClick={() => setZoomLevel(1)}
             style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: 'var(--brand-accent)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            title="Reset Zoom"
           >
             <RotateCcw size={18} />
           </button>
@@ -506,10 +1127,10 @@ export const CampusMap = () => {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>
-              In 120m, cross Central Quad colonnade towards {currentBldg.name}
+              In 120m, cross Central Quad colonnade towards {currentBldg?.name}
             </span>
             <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-              Approaching {currentBldg.name} • South Skybridge Entrance
+              Approaching {currentBldg?.name} • Coordinates: ({currentBldg?.x}, {currentBldg?.y})
             </span>
           </div>
           <div style={{ borderLeft: '1px solid var(--border-subtle)', paddingLeft: '12px', fontSize: '14px', fontWeight: 800, color: 'var(--brand-accent)' }}>
@@ -519,7 +1140,7 @@ export const CampusMap = () => {
       </div>
 
       {/* SELECTED BUILDING & LOCATION DETAIL PANEL (Side Drawer) */}
-      {drawerOpen && (
+      {drawerOpen && currentBldg && (
         <aside
           style={{
             position: 'absolute',
@@ -551,17 +1172,29 @@ export const CampusMap = () => {
               <X size={16} />
             </button>
 
-            <div style={{ position: 'absolute', bottom: '12px', left: '16px' }}>
+            <div style={{ position: 'absolute', bottom: '12px', left: '16px', display: 'flex', gap: '8px' }}>
               <Badge status="active">{currentBldg.hours}</Badge>
+              {isAdmin && <span style={{ fontSize: '10px', background: 'rgba(235,99,139,0.3)', border: '1px solid #EB638B', padding: '2px 8px', borderRadius: '4px', color: '#FFF', fontWeight: 700 }}>X:{currentBldg.x} Y:{currentBldg.y}</span>}
             </div>
           </div>
 
           {/* Drawer Body */}
           <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
-              <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--brand-accent)', textTransform: 'uppercase' }}>
-                {currentBldg.dept}
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--brand-accent)', textTransform: 'uppercase' }}>
+                  {currentBldg.dept}
+                </span>
+                {isAdmin && (
+                  <button
+                    onClick={handleOpenEditModal}
+                    style={{ background: 'none', border: 'none', color: 'var(--brand-accent)', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}
+                  >
+                    <Edit3 size={13} />
+                    <span>Edit</span>
+                  </button>
+                )}
+              </div>
               <h2 style={{ fontSize: '1.4rem', color: '#FFFFFF', margin: '4px 0 6px 0' }}>{currentBldg.name}</h2>
               <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>{currentBldg.description}</p>
             </div>
@@ -595,7 +1228,7 @@ export const CampusMap = () => {
             <div>
               <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--brand-misty)', textTransform: 'uppercase' }}>Turn-by-Turn Steps</span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
-                {currentBldg.steps.map((st) => (
+                {currentBldg.steps && currentBldg.steps.map((st) => (
                   <div key={st.num} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
                     <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'var(--brand-primary)', color: '#FFF', fontSize: '11px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', shrink: 0 }}>
                       {st.num}
@@ -626,6 +1259,311 @@ export const CampusMap = () => {
             </Button>
           </div>
         </aside>
+      )}
+
+      {/* ADMIN MODAL: EDIT BUILDING DETAILS & MAP COORDINATES */}
+      {showEditModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.75)',
+            backdropFilter: 'blur(8px)',
+            zIndex: 200,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+          }}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '560px',
+              backgroundColor: '#1E191A',
+              borderRadius: '16px',
+              border: '1px solid var(--border-interactive)',
+              boxShadow: 'var(--shadow-xl)',
+              overflow: 'hidden',
+            }}
+          >
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Edit3 size={18} style={{ color: 'var(--brand-accent)' }} />
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#FFFFFF' }}>Edit Campus Facility &amp; Map Coordinates</h3>
+              </div>
+              <button onClick={() => setShowEditModal(false)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer' }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveBuildingEdits} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '75vh', overflowY: 'auto' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Building Name</label>
+                <input
+                  type="text"
+                  required
+                  value={editFormData.name}
+                  onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Facility Code</label>
+                  <input
+                    type="text"
+                    required
+                    value={editFormData.code}
+                    onChange={(e) => setEditFormData({ ...editFormData, code: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Category</label>
+                  <select
+                    value={editFormData.category}
+                    onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                  >
+                    <option value="academic">Academic Block</option>
+                    <option value="laboratories">Laboratories</option>
+                    <option value="libraries">Libraries</option>
+                    <option value="facility">Campus Facility</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Department / Precinct</label>
+                <input
+                  type="text"
+                  value={editFormData.dept}
+                  onChange={(e) => setEditFormData({ ...editFormData, dept: e.target.value })}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Description</label>
+                <textarea
+                  rows="2"
+                  value={editFormData.description}
+                  onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px', resize: 'vertical' }}
+                />
+              </div>
+
+              {/* Coordinates & Map Placement */}
+              <div style={{ backgroundColor: 'var(--bg-canvas)', padding: '14px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--brand-accent)', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
+                  Map SVG Coordinates &amp; Box Size
+                </span>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '8px' }}>
+                  <div>
+                    <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>X (Left)</label>
+                    <input
+                      type="number"
+                      value={editFormData.x}
+                      onChange={(e) => setEditFormData({ ...editFormData, x: e.target.value })}
+                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFF', fontSize: '12px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Y (Top)</label>
+                    <input
+                      type="number"
+                      value={editFormData.y}
+                      onChange={(e) => setEditFormData({ ...editFormData, y: e.target.value })}
+                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFF', fontSize: '12px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Width</label>
+                    <input
+                      type="number"
+                      value={editFormData.width}
+                      onChange={(e) => setEditFormData({ ...editFormData, width: e.target.value })}
+                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFF', fontSize: '12px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Height</label>
+                    <input
+                      type="number"
+                      value={editFormData.height}
+                      onChange={(e) => setEditFormData({ ...editFormData, height: e.target.value })}
+                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFF', fontSize: '12px' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Operating Hours</label>
+                  <input
+                    type="text"
+                    value={editFormData.hours}
+                    onChange={(e) => setEditFormData({ ...editFormData, hours: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Target Room</label>
+                  <input
+                    type="text"
+                    value={editFormData.targetRoom}
+                    onChange={(e) => setEditFormData({ ...editFormData, targetRoom: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
+                <button
+                  type="button"
+                  onClick={handleDeleteBuilding}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', color: '#ff5c5c', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}
+                >
+                  <Trash2 size={15} />
+                  <span>Remove Facility</span>
+                </button>
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <Button variant="ghost" size="sm" type="button" onClick={() => setShowEditModal(false)}>
+                    Cancel
+                  </Button>
+                  <Button variant="primary" size="sm" icon={Save} type="submit" disabled={isSavingGis}>
+                    {isSavingGis ? 'Saving GIS...' : 'Save Changes'}
+                  </Button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ADMIN MODAL: ADD NEW FACILITY TO CAMPUS MAP */}
+      {showAddModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.75)',
+            backdropFilter: 'blur(8px)',
+            zIndex: 200,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+          }}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '520px',
+              backgroundColor: '#1E191A',
+              borderRadius: '16px',
+              border: '1px solid var(--border-interactive)',
+              boxShadow: 'var(--shadow-xl)',
+              overflow: 'hidden',
+            }}
+          >
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Plus size={18} style={{ color: '#4CAF50' }} />
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#FFFFFF' }}>Register New Facility on Campus Map</h3>
+              </div>
+              <button onClick={() => setShowAddModal(false)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer' }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateNewBuilding} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Facility Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Bio-Tech Research Complex"
+                  value={newBldgForm.name}
+                  onChange={(e) => setNewBldgForm({ ...newBldgForm, name: e.target.value })}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Building Code</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. E-05"
+                    value={newBldgForm.code}
+                    onChange={(e) => setNewBldgForm({ ...newBldgForm, code: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Category</label>
+                  <select
+                    value={newBldgForm.category}
+                    onChange={(e) => setNewBldgForm({ ...newBldgForm, category: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                  >
+                    <option value="academic">Academic Block</option>
+                    <option value="laboratories">Laboratories</option>
+                    <option value="libraries">Libraries</option>
+                    <option value="facility">Campus Facility</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Map X Position</label>
+                  <input
+                    type="number"
+                    value={newBldgForm.x}
+                    onChange={(e) => setNewBldgForm({ ...newBldgForm, x: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Map Y Position</label>
+                  <input
+                    type="number"
+                    value={newBldgForm.y}
+                    onChange={(e) => setNewBldgForm({ ...newBldgForm, y: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Department</label>
+                <input
+                  type="text"
+                  placeholder="e.g. School of Biological & Chemical Sciences"
+                  value={newBldgForm.dept}
+                  onChange={(e) => setNewBldgForm({ ...newBldgForm, dept: e.target.value })}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px' }}>
+                <Button variant="ghost" size="sm" type="button" onClick={() => setShowAddModal(false)}>
+                  Cancel
+                </Button>
+                <Button variant="primary" size="sm" icon={Plus} type="submit" disabled={isSavingGis}>
+                  {isSavingGis ? 'Placing Facility...' : 'Place on Map'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

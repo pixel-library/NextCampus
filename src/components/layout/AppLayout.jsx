@@ -1,10 +1,37 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import MobileNav from './MobileNav';
+import { useAuth } from '../../hooks/useAuth';
 
 export const AppLayout = () => {
+  const { user, isAuthenticated, loading } = useAuth();
+  const location = useLocation();
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: 'var(--bg-canvas)', color: '#FFFFFF' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span className="material-symbols-outlined text-[28px] animate-spin text-primary">progress_activity</span>
+          <span style={{ fontSize: '15px', fontWeight: 600 }}>Loading NextCampus Session...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Unauthenticated guests cannot access internal app features
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/auth" state={{ from: location }} replace />;
+  }
+
+  // Administrative route guard: students cannot access admin consoles
+  const isAdminPath = location.pathname.startsWith('/admin');
+  const isAdminUser = user.role === 'admin' || user.role === 'care_admin';
+  if (isAdminPath && !isAdminUser) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-canvas)' }}>
       {/* Sidebar for Desktop */}

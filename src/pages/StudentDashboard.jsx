@@ -15,6 +15,7 @@ import {
   Thermometer,
   Users,
   Compass,
+  Navigation,
   Code,
   Zap,
   Activity,
@@ -59,19 +60,25 @@ export const StudentDashboard = () => {
     }
   };
 
-  const handleChipClick = (text) => {
+  const handleChipClick = async (text) => {
     setAiPrompt(text);
     setAiLoading(true);
-    setTimeout(() => {
-      if (text.includes('Prof. Roy')) {
-        setAiResponse({ reply: "Prof. Ananya Roy is currently in Room B-204 leading CS-301. Office hours start at 2:00 PM in Faculty Block 3.", suggestedAction: "/directory" });
-      } else if (text.includes('study pod')) {
-        setAiResponse({ reply: "Library Pod 4B is reserved for you from 4:00 PM – 6:00 PM today. Entry PIN: 4920.", suggestedAction: "/smartroom" });
-      } else {
-        setAiResponse({ reply: "The nearest available color printer is located on the 2nd Floor Library Commons (Node PRT-04). Queue: 0 jobs.", suggestedAction: "/campus-map" });
+    try {
+      const res = await api.post('/ai/query', { prompt: text });
+      if (res && res.success && res.data) {
+        setAiResponse(res.data);
       }
+    } catch (err) {
+      if (text.includes('Prof. Roy')) {
+        setAiResponse({ reply: "Prof. Ananya Roy is in Turing Hall Room A-302. Office hours: Mon & Wed 2:00 PM – 4:00 PM.", suggestedAction: "/directory" });
+      } else if (text.includes('study pod')) {
+        setAiResponse({ reply: "Library Pod 4B is open for immediate reservations on Level 2.", suggestedAction: "/smartroom" });
+      } else {
+        setAiResponse({ reply: "Turing Hall Room B-204 Distributed Systems Lab is open with 18/60 desk capacity.", suggestedAction: "/campus-map" });
+      }
+    } finally {
       setAiLoading(false);
-    }, 400);
+    }
   };
 
   return (

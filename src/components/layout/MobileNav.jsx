@@ -1,15 +1,27 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, MapPin, DoorOpen, LifeBuoy, Bot } from 'lucide-react';
+import { LayoutDashboard, MapPin, DoorOpen, LifeBuoy, Bot, ShieldAlert, Sliders } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 export const MobileNav = () => {
-  const items = [
-    { label: 'Dash', path: '/dashboard', icon: LayoutDashboard },
-    { label: 'Map', path: '/campus-map', icon: MapPin },
-    { label: 'Rooms', path: '/smartroom', icon: DoorOpen },
-    { label: 'Care', path: '/complaints', icon: LifeBuoy },
-    { label: 'AI', path: '/ai-assistant', icon: Bot },
-  ];
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin' || user?.role === 'care_admin';
+
+  const items = isAdmin
+    ? [
+        { label: 'Admin', path: '/admin', icon: ShieldAlert },
+        { label: 'Campus', path: '/admin/campus-management', icon: Sliders },
+        { label: 'Map', path: '/campus-map', icon: MapPin },
+        { label: 'Care', path: '/admin/complaints', icon: LifeBuoy },
+        { label: 'AI', path: '/ai-assistant', icon: Bot },
+      ]
+    : [
+        { label: 'Dash', path: '/dashboard', icon: LayoutDashboard },
+        { label: 'Map', path: '/campus-map', icon: MapPin },
+        { label: 'Rooms', path: '/smartroom', icon: DoorOpen },
+        { label: 'Care', path: '/complaints', icon: LifeBuoy },
+        { label: 'AI', path: '/ai-assistant', icon: Bot },
+      ];
 
   return (
     <nav

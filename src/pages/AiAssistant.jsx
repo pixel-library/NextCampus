@@ -160,9 +160,14 @@ export function AiAssistant() {
           isLiveModel: aiData.isLiveModel || false,
           engineName: aiData.engineName || 'Simulated Copilot Engine (Demo Service)',
           suggestedAction: aiData.suggestedAction,
-          cards: aiData.richCards ? [aiData.richCards] : undefined
+          thought: aiData.thought || [],
+          cards: Array.isArray(aiData.richCards)
+            ? aiData.richCards
+            : aiData.richCards
+            ? [aiData.richCards]
+            : undefined
         };
-        setEngineMode(aiData.engineName || 'Simulated Copilot Engine (Demo Service)');
+        setEngineMode(aiData.engineName || 'NextCampus AI Engine');
         setMessages((prev) => [...prev, aiMsg]);
       } else {
         throw new Error(res?.message || 'Failed to process AI response');
@@ -546,11 +551,16 @@ export function AiAssistant() {
                 <span className="material-symbols-outlined text-[14px] text-primary">tips_and_updates</span> Quick:
               </span>
               {[
-                'Where is the computer laboratory?',
-                'How do I reach the library?',
-                'Where can I report a maintenance problem?',
-                'What facilities are available in this building?',
-                'Book an acoustic study pod'
+                'Directions to Turing B-204',
+                'Find quiet study pods in Library',
+                'Report classroom AV projector glitch',
+                'Prof. Ananya Roy office hours',
+                'My timetable & next class',
+                'EcoCampus solar generation metrics',
+                'Campus EV Shuttle schedule',
+                'Dining Hall & Cafeteria hours',
+                'SkillCampus student projects',
+                'How to edit campus map (Admin)'
               ].map((chip, idx) => (
                 <button
                   key={idx}

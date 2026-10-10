@@ -25,9 +25,13 @@ export function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Main App Layout Shell Routes */}
-          <Route path="/" element={<AppLayout />}>
-            <Route index element={<LandingPage />} />
+          {/* Public Unauthenticated Entry Points */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+
+          {/* Authenticated Application Shell */}
+          <Route element={<AppLayout />}>
+            {/* Student Accessible Features */}
             <Route path="dashboard" element={<StudentDashboard />} />
             <Route path="campus-map" element={<CampusMap />} />
             <Route path="directory" element={<CampusDirectory />} />
@@ -36,13 +40,15 @@ export function App() {
             <Route path="ai-assistant" element={<AiAssistant />} />
             <Route path="ecocampus" element={<EcoCampus />} />
             <Route path="skillcampus" element={<SkillCampus />} />
+            <Route path="profile" element={<ProfileSettings />} />
+
+            {/* Admin Exclusive Features */}
             <Route path="admin" element={<AdminDashboard />} />
             <Route path="admin/campus-management" element={<CampusManagement />} />
             <Route path="admin/complaints" element={<ComplaintAdmin />} />
-            <Route path="auth" element={<AuthPage />} />
-            <Route path="profile" element={<ProfileSettings />} />
-            <Route path="*" element={<NotFoundPage />} />
           </Route>
+
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
