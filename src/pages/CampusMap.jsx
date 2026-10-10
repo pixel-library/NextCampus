@@ -37,145 +37,281 @@ import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
 import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
+import CampusGisMap from '../components/map/CampusGisMap';
 
 const INITIAL_BUILDINGS = {
-  turing: {
-    id: 'turing',
-    code: 'A-01',
-    name: 'Alan Turing Hall',
-    block: 'Block A-01',
-    dept: 'School of Computing & Cybernetics',
+  admin: {
+    id: 'admin',
+    code: 'ADM-01',
+    name: 'Maharana Pratap Main Academic & Admin Block',
+    block: 'Block ADM-01',
+    dept: 'University Secretariat & Administrative Council',
     category: 'academic',
     x: 680,
-    y: 190,
-    width: 240,
-    height: 150,
-    description: 'High-performance research facility, algorithmic labs, and tiered multi-media lecture halls B-201 to B-208.',
-    occupancy: '68%',
-    seats: '312 / 460 Seats',
-    temp: '21.8°C',
-    air: '410 ppm CO₂',
-    accessibility: '2 Smart Lifts & Ramps',
-    hours: '07:30 AM – 10:00 PM',
+    y: 280,
+    width: 260,
+    height: 160,
+    description: 'Central university reception, registrar office, admissions desk, accounts, and examination branch.',
+    occupancy: '62%',
+    seats: '350 / 500 Capacity',
+    temp: '22.0°C',
+    air: '395 ppm CO₂',
+    accessibility: 'Step-Free Ramp & Dual Lifts',
+    hours: '08:30 AM – 06:00 PM',
     status: 'open',
-    targetRoom: 'Room B-204 (Level 2)',
-    targetDesc: 'Distributed Computing Seminar Lab',
+    targetRoom: 'Room 102 (Ground Floor)',
+    targetDesc: 'Admissions & Student Welfare Secretariat',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAOzYh3wsFNkpG0Wr5PmEiEPyjUf81LeiY5vJ9B9Sxyo3dx3yKkLKEvuobY_stKWREYAm-xtryUr5CzNxRyp6kWcBW6mT1RYIQTKJZ1RFKhr1tCBUBahI5VA3CoCK_p5Np_LAfs1PaC3M7y7-ya4VPmmZ6A0gZuvA1inx88ISY2DXthL3xPA_0Ju_y1UkJVdkVWxf1DF6cfxFkdwDK99UIQJqyKNJQuQEQa8WnHcYuWoBBwNhieVUe0Tg',
     steps: [
-      { num: 1, text: 'Depart Central Library East Gate', sub: 'Exit through double glass doors towards lawn', dist: '0 m' },
-      { num: 2, text: 'Walk North past Fountain Plaza', sub: 'Follow tactile paved promenade path', dist: '120 m • 1.5 min' },
-      { num: 3, text: 'Enter South Colonnade / Skybridge', sub: 'Use accessible automatic glass ramp doors', dist: '240 m • 3 min' },
-      { num: 4, text: 'Arrive at Room B-204 (Floor 2)', sub: 'Destination on your left past elevator bank', dist: '320 m • Total 4 min' },
+      { num: 1, text: 'Depart Main Campus Gate (NH-48)', sub: 'Enter through the main ceremonial archway', dist: '0 m' },
+      { num: 2, text: 'Walk along Central Avenue', sub: 'Paved tree-lined walkway heading north', dist: '150 m • 2 min' },
+      { num: 3, text: 'Arrive at Maharana Pratap Block', sub: 'Reception and administrative foyer', dist: '220 m • Total 3 min' },
+    ],
+  },
+  eng: {
+    id: 'eng',
+    code: 'ENG-02',
+    name: 'Faculty of Engineering & Technology',
+    block: 'Block ENG-02',
+    dept: 'Department of Computer Science & Engineering (AI & ML)',
+    category: 'academic',
+    x: 1040,
+    y: 190,
+    width: 250,
+    height: 160,
+    description: 'High-performance research computing labs, Artificial Intelligence & ML center, IoT workstations, and smart classrooms.',
+    occupancy: '74%',
+    seats: '420 / 550 Seats',
+    temp: '21.5°C',
+    air: '410 ppm CO₂',
+    accessibility: 'Smart Lifts, Ramps & Tactile Paths',
+    hours: '08:00 AM – 08:00 PM',
+    status: 'open',
+    targetRoom: 'Lab B-204 (Level 2)',
+    targetDesc: 'AI & Machine Learning Innovation Hub',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBnsBFmdYqr6jHc-tYoJj9aCEEbfKyFo5L3SLupQ0ikKDdXvkE8ZnSUMjdGmIop8z5KCO7QmVOsIqHy9HYbjtta90SqR4wGPlU-2wqtRGDiq5rUGxAyV903zRKjRYWmoztCiNad357-F5wzNP-stQIagLuV-V9RJTr5eWXoeezLsB_Qjl-q6e13GHym0Nopm46ykpFUvv08rbvxuEQW96J72Y2DHoTV7V4NV_eChXmGJjkKxk7Yk9JxWA',
+    steps: [
+      { num: 1, text: 'Depart Maharana Pratap Block', sub: 'Cross Academic Quad East Pathway', dist: '0 m' },
+      { num: 2, text: 'Follow Engineering Promenade', sub: 'Pass North Lawn towards Tech Wing', dist: '140 m • 1.8 min' },
+      { num: 3, text: 'Ascend Lift to Floor 2', sub: 'Department of Computer Science', dist: '230 m • 3 min' },
+      { num: 4, text: 'Arrive at Room B-204 (AI Hub)', sub: 'Destination on your right past corridor', dist: '280 m • Total 3.5 min' },
     ],
   },
   library: {
     id: 'library',
-    code: 'B-02',
-    name: 'Central Campus Library',
-    block: 'Block B-02',
-    dept: 'Digital Reference & Learning Commons',
+    code: 'LIB-03',
+    name: 'Swami Vivekananda Central Library',
+    block: 'Block LIB-03',
+    dept: 'Central Library & Digital Knowledge Commons',
     category: 'libraries',
-    x: 200,
-    y: 420,
-    width: 180,
+    x: 320,
+    y: 280,
+    width: 220,
     height: 150,
-    description: 'Floor-by-floor quiet study pods, high-speed digital research terminals, reserve desks, and thesis archives.',
-    occupancy: '42%',
-    seats: '142 / 400 Seats',
+    description: 'Over 50,000 academic volumes, IEEE/Elsevier e-journal division, quiet research pods, and 200+ reading seats.',
+    occupancy: '48%',
+    seats: '180 / 350 Seats',
     temp: '22.0°C',
     air: '390 ppm CO₂',
-    accessibility: 'Full ADA Elevator & Braille',
-    hours: 'Open 24/7 with Student ID',
+    accessibility: 'Full ADA Elevator & Braille Nav',
+    hours: '08:00 AM – 10:00 PM (24/7 in Exams)',
     status: 'open',
-    targetRoom: 'Quiet Pod 4B (Floor 2)',
-    targetDesc: 'Group Collaboration Pod',
+    targetRoom: 'Digital Commons (Floor 2)',
+    targetDesc: 'Research Terminals & IEEE Reference',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBBf9GggO2878hSOBwyC9jOGK_ul92QgPwCrbIO1fCXbZ2hMDBi1yob2ACl2vEyc4wH3L_1QJqZnxheFSBbWxU5K4huTjzXRdbeSfwPDDXt_LH6c_h3FAZzxPexlEOL7OOZ5Dzi9SFHsbPu_scz4L0iG5vXMYZhTDHIRHbwGZle98jLnVmhN_PgyjvPz_ThYGwNvX0_wBgtQG3A_llHoIUOYsW9vJ2v0D3ICSdYKxrWnZnz-dDz2ua60Q',
     steps: [
-      { num: 1, text: 'Current Location: Library Lobby', sub: 'Central Registration Desk', dist: '0 m' },
-      { num: 2, text: 'Ascend Elevator to Floor 2', sub: 'West Wing Quiet Pod Corridor', dist: '40 m • 1 min' },
+      { num: 1, text: 'Current Location: Library Foyer', sub: 'Main Circulation Desk & RFID Scanner', dist: '0 m' },
+      { num: 2, text: 'Ascend to Level 2', sub: 'Reference & High-Speed Workstations', dist: '40 m • 1 min' },
     ],
   },
-  ramanujan: {
-    id: 'ramanujan',
-    code: 'C-03',
-    name: 'Ramanujan Science Complex',
-    block: 'Block C-03',
-    dept: 'Department of Mathematics & Physics',
-    category: 'academic',
-    x: 1140,
-    y: 180,
-    width: 210,
-    height: 160,
-    description: 'Applied Physics laboratories, Computational Mathematics suites, and Nanotechnology prototyping cleanrooms.',
-    occupancy: '55%',
-    seats: '110 / 200 Seats',
-    temp: '20.5°C',
-    air: '400 ppm CO₂',
-    accessibility: 'Elevators & Accessible Ramp',
-    hours: '08:00 AM – 09:00 PM',
-    status: 'open',
-    targetRoom: 'Room S-108 (Level 1)',
-    targetDesc: 'Linear Algebra & Neural Nets Lab',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBnsBFmdYqr6jHc-tYoJj9aCEEbfKyFo5L3SLupQ0ikKDdXvkE8ZnSUMjdGmIop8z5KCO7QmVOsIqHy9HYbjtta90SqR4wGPlU-2wqtRGDiq5rUGxAyV903zRKjRYWmoztCiNad357-F5wzNP-stQIagLuV-V9RJTr5eWXoeezLsB_Qjl-q6e13GHym0Nopm46ykpFUvv08rbvxuEQW96J72Y2DHoTV7V4NV_eChXmGJjkKxk7Yk9JxWA',
-    steps: [
-      { num: 1, text: 'Depart Central Library Promenade', sub: 'Head East along Main Arterial Walkway', dist: '0 m' },
-      { num: 2, text: 'Cross North Lawn Plaza', sub: 'Paved step-free pathway', dist: '200 m • 2.5 min' },
-      { num: 3, text: 'Arrive at Ramanujan Entrance', sub: 'Room S-108 on Ground Floor Right', dist: '410 m • Total 5 min' },
-    ],
-  },
-  sac: {
-    id: 'sac',
-    code: 'D-04',
-    name: 'Student Activity Center (SAC)',
-    block: 'Block SAC-01',
-    dept: 'Student Union, Dining & Clubs',
+  auditorium: {
+    id: 'auditorium',
+    code: 'AUD-04',
+    name: 'Mewar University Central Auditorium',
+    block: 'Block AUD-04',
+    dept: 'Cultural & Academic Convocation Center',
     category: 'facility',
-    x: 700,
-    y: 630,
-    width: 220,
-    height: 140,
-    description: 'Central campus dining hall, student council offices, medical dispensary, and event amphitheater.',
-    occupancy: '80%',
-    seats: '180 / 250 Seats',
-    temp: '22.5°C',
-    air: '430 ppm CO₂',
-    accessibility: 'Full Wheelchair Ramp',
-    hours: '07:00 AM – 11:00 PM',
-    status: 'open',
-    targetRoom: 'Central Commons Lounge',
-    targetDesc: 'Student Union Lounge & Cafeteria',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAUP4RYE-W2J2Ft821zjJpsBzRYRojXJDRXUqB6yOdIkZbofKwSHQLnWm1NQu3eC7VGc-ERs04rZgZTiUDP8KOZ6QZVp8JKH8p7y1gH0hwf-1iwFlJA2Yn3lFToy3JxsuOkHu3PCtSUrWCyOdUjDkyODiLlL5fkPpDH8Y2Fib-tI9Nf54lZeQ7Q4-E1-3m_bl6qmut1C4NMjuEh66NBAQEoiO1a30sn1FPIFy_Knx0WDT3MrcU18sNtCQ',
-    steps: [
-      { num: 1, text: 'Depart Library South Plaza', sub: 'Walk South along Main Promenade', dist: '0 m' },
-      { num: 2, text: 'Arrive at SAC Main Arcade', sub: 'Ground floor dining entrance', dist: '220 m • 3 min' },
-    ],
-  },
-  robotics: {
-    id: 'robotics',
-    code: 'INN-HUB-01',
-    name: 'Robotics & AI Innovation Hub',
-    block: 'Block D-04',
-    dept: 'Autonomous Systems & Mechatronics',
-    category: 'laboratories',
-    x: 1160,
-    y: 450,
-    width: 190,
-    height: 130,
-    description: 'Hardware prototyping garage, drone flight test chamber, quadruped robotics lab, and 3D printing suites.',
-    occupancy: '72%',
-    seats: '28 / 40 Workbenches',
+    x: 720,
+    y: 520,
+    width: 240,
+    height: 150,
+    description: '500-seat multi-tiered air-conditioned auditorium for convocations, tech symposiums, workshops, and youth festivals.',
+    occupancy: '30%',
+    seats: '500 Capacity',
     temp: '21.0°C',
     air: '420 ppm CO₂',
-    accessibility: 'Ground Floor Direct Access',
-    hours: '08:00 AM – 10:00 PM',
+    accessibility: 'Ground Floor Level Entrance',
+    hours: '09:00 AM – 07:00 PM',
     status: 'open',
-    targetRoom: 'Hardware Lab 4',
-    targetDesc: 'Embedded IoT & Robotics Workbench #14',
+    targetRoom: 'Main Amphitheater Stage',
+    targetDesc: 'Convocation & Seminar Stage',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAUP4RYE-W2J2Ft821zjJpsBzRYRojXJDRXUqB6yOdIkZbofKwSHQLnWm1NQu3eC7VGc-ERs04rZgZTiUDP8KOZ6QZVp8JKH8p7y1gH0hwf-1iwFlJA2Yn3lFToy3JxsuOkHu3PCtSUrWCyOdUjDkyODiLlL5fkPpDH8Y2Fib-tI9Nf54lZeQ7Q4-E1-3m_bl6qmut1C4NMjuEh66NBAQEoiO1a30sn1FPIFy_Knx0WDT3MrcU18sNtCQ',
+    steps: [
+      { num: 1, text: 'Depart Maharana Pratap Block', sub: 'Walk South along central green quad', dist: '0 m' },
+      { num: 2, text: 'Cross Cultural Plaza', sub: 'Direct paved pathway', dist: '110 m • 1.5 min' },
+      { num: 3, text: 'Arrive at Auditorium Portico', sub: 'Main glass entrance doors', dist: '160 m • Total 2 min' },
+    ],
+  },
+  cafeteria: {
+    id: 'cafeteria',
+    code: 'CAF-05',
+    name: 'University Cafeteria & Food Court',
+    block: 'Block CAF-05',
+    dept: 'Student Dining & Amenities Hub',
+    category: 'facility',
+    x: 340,
+    y: 510,
+    width: 210,
+    height: 140,
+    description: 'Multi-cuisine campus canteen, tea & snack kiosk, student dining hall, and campus helpdesk station.',
+    occupancy: '82%',
+    seats: '220 / 280 Seats',
+    temp: '23.0°C',
+    air: '440 ppm CO₂',
+    accessibility: 'Step-Free Ramp Access',
+    hours: '07:30 AM – 10:30 PM',
+    status: 'open',
+    targetRoom: 'Central Dining Hall',
+    targetDesc: 'Student Dining & Refreshments',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAUP4RYE-W2J2Ft821zjJpsBzRYRojXJDRXUqB6yOdIkZbofKwSHQLnWm1NQu3eC7VGc-ERs04rZgZTiUDP8KOZ6QZVp8JKH8p7y1gH0hwf-1iwFlJA2Yn3lFToy3JxsuOkHu3PCtSUrWCyOdUjDkyODiLlL5fkPpDH8Y2Fib-tI9Nf54lZeQ7Q4-E1-3m_bl6qmut1C4NMjuEh66NBAQEoiO1a30sn1FPIFy_Knx0WDT3MrcU18sNtCQ',
+    steps: [
+      { num: 1, text: 'Depart Swami Vivekananda Library', sub: 'Walk south towards amenities zone', dist: '0 m' },
+      { num: 2, text: 'Arrive at Cafeteria Court', sub: 'Ground floor dining entrance', dist: '120 m • 1.5 min' },
+    ],
+  },
+  hostel_b: {
+    id: 'hostel_b',
+    code: 'HST-06',
+    name: 'Aravalli Boys Residential Hostel',
+    block: 'Block HST-06',
+    dept: 'Male Student Residence Precinct (Blocks 1–4)',
+    category: 'facility',
+    x: 1060,
+    y: 470,
+    width: 240,
+    height: 150,
+    description: 'Air-cooled residential blocks, Wi-Fi connectivity, recreation room, student mess, and 24/7 security outpost.',
+    occupancy: '91%',
+    seats: '360 Resident Capacity',
+    temp: '22.8°C',
+    air: '415 ppm CO₂',
+    accessibility: 'Ramp and Ground Floor Units',
+    hours: 'Open 24/7 (Gate curfew 09:30 PM)',
+    status: 'open',
+    targetRoom: 'Block 2 Warden Office & Common Room',
+    targetDesc: 'Residential Administration Desk',
     image: 'https://lh3.googleusercontent.com/aida/AEtjO1V6NaAN18Lf9daDEOiUCcg0Qz9TKAJTZEk9ECU3aySgNV_3O2hapiSnHSeUeScEXSjx47TLmk0cx0dsb_ZVA9EORszw3fNNN0V5EICouIgNfcs0lFyeVR0z0-fBJTvFLwabJeDl7KTSnD62my8TfA-M8AVfxPtiTO4SRRFQokqKIaWdLNfZtih4yUWkpusJLlN7f8edtZ98cv56xSSZJgS1akZwa_mq0qR3mAERMOY_rHpGJyiEVsGYmjpP',
     steps: [
-      { num: 1, text: 'Depart Central Library East Gate', sub: 'Head East across North Quad', dist: '0 m' },
-      { num: 2, text: 'Pass Ramanujan Science Complex', sub: 'Continue past Reflection Pond', dist: '350 m • 4 min' },
-      { num: 3, text: 'Arrive at Innovation Hub Entrance', sub: 'Hardware Lab 4 Ground Floor', dist: '520 m • Total 6 min' },
+      { num: 1, text: 'Depart Faculty of Engineering', sub: 'Head southeast past Sports Arena', dist: '0 m' },
+      { num: 2, text: 'Arrive at Aravalli Hostel Gate', sub: 'Turn into Block 1-4 residential corridor', dist: '180 m • 2.5 min' },
+    ],
+  },
+  hostel_g: {
+    id: 'hostel_g',
+    code: 'HST-07',
+    name: 'Meera Bai Girls Residential Hostel',
+    block: 'Block HST-07',
+    dept: 'Female Student Residence Precinct',
+    category: 'facility',
+    x: 1060,
+    y: 710,
+    width: 240,
+    height: 150,
+    description: 'Secure female student quarters, landscaped courtyard, study library, sports room, and dedicated dining mess.',
+    occupancy: '88%',
+    seats: '280 Resident Capacity',
+    temp: '22.0°C',
+    air: '400 ppm CO₂',
+    accessibility: 'Fully Accessible Ground Level',
+    hours: 'Open 24/7 (Gate curfew 09:00 PM)',
+    status: 'open',
+    targetRoom: 'Warden Office & Common Study Room',
+    targetDesc: 'Residence Administration',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAUP4RYE-W2J2Ft821zjJpsBzRYRojXJDRXUqB6yOdIkZbofKwSHQLnWm1NQu3eC7VGc-ERs04rZgZTiUDP8KOZ6QZVp8JKH8p7y1gH0hwf-1iwFlJA2Yn3lFToy3JxsuOkHu3PCtSUrWCyOdUjDkyODiLlL5fkPpDH8Y2Fib-tI9Nf54lZeQ7Q4-E1-3m_bl6qmut1C4NMjuEh66NBAQEoiO1a30sn1FPIFy_Knx0WDT3MrcU18sNtCQ',
+    steps: [
+      { num: 1, text: 'Depart Central Campus Promenade', sub: 'Walk south towards residential park', dist: '0 m' },
+      { num: 2, text: 'Arrive at Meera Bai Hostel Gate', sub: 'Biometric security access entry', dist: '240 m • 3 min' },
+    ],
+  },
+  sports: {
+    id: 'sports',
+    code: 'SPT-08',
+    name: 'Mewar Sports Arena & Cricket Ground',
+    block: 'Block SPT-08',
+    dept: 'Department of Physical Education & Sports',
+    category: 'facility',
+    x: 1360,
+    y: 310,
+    width: 220,
+    height: 180,
+    description: 'Full-size cricket ground, outdoor athletic track, basketball courts, badminton pavilion, and fitness gym.',
+    occupancy: '50%',
+    seats: 'Open Pavilion 600 Seats',
+    temp: '24.5°C',
+    air: '380 ppm CO₂',
+    accessibility: 'Step-Free Ground Level Arena',
+    hours: '06:00 AM – 09:00 PM',
+    status: 'open',
+    targetRoom: 'Sports Pavilion & Equipment Room',
+    targetDesc: 'Indoor Gymnasium & Badminton Pavilion',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAOzYh3wsFNkpG0Wr5PmEiEPyjUf81LeiY5vJ9B9Sxyo3dx3yKkLKEvuobY_stKWREYAm-xtryUr5CzNxRyp6kWcBW6mT1RYIQTKJZ1RFKhr1tCBUBahI5VA3CoCK_p5Np_LAfs1PaC3M7y7-ya4VPmmZ6A0gZuvA1inx88ISY2DXthL3xPA_0Ju_y1UkJVdkVWxf1DF6cfxFkdwDK99UIQJqyKNJQuQEQa8WnHcYuWoBBwNhieVUe0Tg',
+    steps: [
+      { num: 1, text: 'Depart Faculty of Engineering', sub: 'Head East along stadium walkway', dist: '0 m' },
+      { num: 2, text: 'Arrive at Sports Pavilion', sub: 'Athletic complex entrance', dist: '150 m • 2 min' },
+    ],
+  },
+  hospital: {
+    id: 'hospital',
+    code: 'MED-09',
+    name: 'Mewar University Hospital & Health Centre',
+    block: 'Block MED-09',
+    dept: 'Campus Medical & Emergency Care Services',
+    category: 'facility',
+    x: 720,
+    y: 740,
+    width: 240,
+    height: 140,
+    description: '24/7 on-campus health center, emergency ambulance service, resident doctors, and pharmacy dispensary.',
+    occupancy: '25%',
+    seats: '20 Inpatient Beds',
+    temp: '21.0°C',
+    air: '390 ppm CO₂',
+    accessibility: 'Emergency Stretcher & Wheelchair Ramp',
+    hours: 'Open 24/7 Emergency Care',
+    status: 'open',
+    targetRoom: 'Emergency Triage & Consultation Room 1',
+    targetDesc: 'Campus Medical Dispensary',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBBf9GggO2878hSOBwyC9jOGK_ul92QgPwCrbIO1fCXbZ2hMDBi1yob2ACl2vEyc4wH3L_1QJqZnxheFSBbWxU5K4huTjzXRdbeSfwPDDXt_LH6c_h3FAZzxPexlEOL7OOZ5Dzi9SFHsbPu_scz4L0iG5vXMYZhTDHIRHbwGZle98jLnVmhN_PgyjvPz_ThYGwNvX0_wBgtQG3A_llHoIUOYsW9vJ2v0D3ICSdYKxrWnZnz-dDz2ua60Q',
+    steps: [
+      { num: 1, text: 'Depart Main Campus Gate', sub: 'Follow medical signposts along East Perimeter', dist: '0 m' },
+      { num: 2, text: 'Arrive at Health Centre Emergency Bay', sub: 'Ground floor triage entry', dist: '160 m • 2 min' },
+    ],
+  },
+  gate: {
+    id: 'gate',
+    code: 'GATE-10',
+    name: 'Main Campus Gate (NH-48, Gangrar)',
+    block: 'Gate GATE-10',
+    dept: 'National Highway 48 / 79 Campus Entrance',
+    category: 'facility',
+    x: 340,
+    y: 740,
+    width: 210,
+    height: 130,
+    description: 'Official entrance on NH-48 near Gangrar, automated RFID student verification barrier, and 24/7 security outpost.',
+    occupancy: '45%',
+    seats: 'Security Station',
+    temp: '25.0°C',
+    air: '380 ppm CO₂',
+    accessibility: 'Barrier-Free Pedestrian Walkway',
+    hours: 'Open 24/7',
+    status: 'open',
+    targetRoom: 'Security Control & Visitor Registration Outpost',
+    targetDesc: 'NH-48 Pedestrian & Vehicle Portal',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAOzYh3wsFNkpG0Wr5PmEiEPyjUf81LeiY5vJ9B9Sxyo3dx3yKkLKEvuobY_stKWREYAm-xtryUr5CzNxRyp6kWcBW6mT1RYIQTKJZ1RFKhr1tCBUBahI5VA3CoCK_p5Np_LAfs1PaC3M7y7-ya4VPmmZ6A0gZuvA1inx88ISY2DXthL3xPA_0Ju_y1UkJVdkVWxf1DF6cfxFkdwDK99UIQJqyKNJQuQEQa8WnHcYuWoBBwNhieVUe0Tg',
+    steps: [
+      { num: 1, text: 'Current Location: NH-48 Campus Gate', sub: 'Security & Student Verification Desk', dist: '0 m' },
+      { num: 2, text: 'Pass Security Turnstiles', sub: 'Enter into Central University Boulevard', dist: '30 m • 0.5 min' },
     ],
   },
 };
@@ -186,15 +322,16 @@ export const CampusMap = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const initialBldg = searchParams.get('bldg') || 'turing';
+  const initialBldg = searchParams.get('bldg') || 'eng';
 
   // Spatial data state
   const [buildings, setBuildings] = useState(INITIAL_BUILDINGS);
   const [selectedBldg, setSelectedBldg] = useState(initialBldg);
-  const [startPoint, setStartPoint] = useState('Central Library (East Entrance)');
-  const [destination, setDestination] = useState('Alan Turing Hall — Room B-204');
+  const [startPoint, setStartPoint] = useState('Main Campus Gate (NH-48, Gangrar)');
+  const [destination, setDestination] = useState('Faculty of Engineering & Technology — CS & AI Hub (Lab B-204)');
   const [mobilityMode, setMobilityMode] = useState('walk'); // walk | wheelchair | shuttle
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [viewEngine, setViewEngine] = useState('gis'); // 'gis' (Leaflet OpenStreetMap + GPS) | 'blueprint' (Indoor SVG)
   const [is3DMode, setIs3DMode] = useState(true);
   const [selectedFloor, setSelectedFloor] = useState('F2');
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -308,7 +445,7 @@ export const CampusMap = () => {
     setTimeout(() => setAdminToast(''), 3500);
   };
 
-  const currentBldg = buildings[selectedBldg] || buildings.turing || Object.values(buildings)[0];
+  const currentBldg = buildings[selectedBldg] || buildings.eng || Object.values(buildings)[0];
 
   const handleSelectBuilding = (id) => {
     if (!buildings[id]) return;
@@ -680,10 +817,63 @@ export const CampusMap = () => {
             </button>
           </div>
 
-          <Button variant="primary" icon={Navigation} onClick={() => setDrawerOpen(true)}>
-            Start Nav
-          </Button>
-        </div>
+            <Button
+              variant="primary"
+              icon={Navigation}
+              onClick={() => {
+                setViewEngine('gis');
+                setDrawerOpen(true);
+              }}
+            >
+              Start Nav
+            </Button>
+          </div>
+
+          {/* Engine Mode Toggle: Live GIS Map vs Indoor Blueprint */}
+          <div style={{ display: 'flex', gap: '4px', backgroundColor: 'var(--bg-surface)', padding: '4px', borderRadius: '10px', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-sm)', alignSelf: 'flex-start' }}>
+            <button
+              type="button"
+              onClick={() => setViewEngine('gis')}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                backgroundColor: viewEngine === 'gis' ? 'var(--brand-primary)' : 'transparent',
+                color: viewEngine === 'gis' ? '#FFFFFF' : 'var(--text-secondary)',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <Compass size={14} />
+              <span>Live GPS GIS Map</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewEngine('blueprint')}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                backgroundColor: viewEngine === 'blueprint' ? 'var(--brand-primary)' : 'transparent',
+                color: viewEngine === 'blueprint' ? '#FFFFFF' : 'var(--text-secondary)',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <Layers size={14} />
+              <span>Indoor Blueprint</span>
+            </button>
+          </div>
 
         {/* Facility Category Filter Chips + Admin Control Toolbar */}
         <div style={{ pointerEvents: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
@@ -902,8 +1092,18 @@ export const CampusMap = () => {
         </div>
       </div>
 
-      {/* MAP SVG CANVAS */}
-      <div style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: 'var(--bg-canvas)', cursor: isClickToPlace ? 'crosshair' : 'default' }}>
+      {/* MAP VIEW ENGINE: GIS Leaflet OpenStreetMap vs SVG Blueprint */}
+      {viewEngine === 'gis' ? (
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <CampusGisMap
+            selectedBuildingKey={selectedBldg}
+            onSelectBuilding={handleSelectBuilding}
+            mobilityMode={mobilityMode}
+          />
+        </div>
+      ) : (
+        /* MAP SVG CANVAS */
+        <div style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: 'var(--bg-canvas)', cursor: isClickToPlace ? 'crosshair' : 'default' }}>
         <svg
           width="100%"
           height="100%"
@@ -1142,6 +1342,7 @@ export const CampusMap = () => {
           </div>
         </div>
       </div>
+      )}
 
       {/* SELECTED BUILDING & LOCATION DETAIL PANEL (Side Drawer) */}
       {drawerOpen && currentBldg && (

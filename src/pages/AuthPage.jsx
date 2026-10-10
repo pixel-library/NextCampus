@@ -425,8 +425,8 @@ export const AuthPage = () => {
                 <Zap size={20} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>NextCampus Care Rapid Triage</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Automated campus operations & resolver routing</div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Campus Helpdesk & Grievance</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Automated university incident triage & SLA resolution</div>
               </div>
               <span
                 style={{
@@ -1033,12 +1033,12 @@ export const AuthPage = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
                     <ShieldCheck size={16} style={{ color: 'var(--brand-primary)', flexShrink: 0 }} />
                     <span style={{ color: 'var(--text-secondary)' }}>
-                      Test Admission Verification: <strong style={{ color: 'var(--text-primary)' }}>Priya Patel (MUR2501045)</strong>
+                      Test Admission Verification: <strong style={{ color: 'var(--text-primary)' }}>Priya Patel (MUR2502101)</strong>
                     </span>
                   </div>
                   <button
                     type="button"
-                    onClick={() => fillSampleRegistration('Priya Patel', 'MUR2501045', 'priya.p@nextcampus.edu', 'Artificial Intelligence & Data', 'Class of 2028 (Undergrad)')}
+                    onClick={() => fillSampleRegistration('Priya Patel', 'MUR2502101', 'priya.patel@nextcampus.edu', 'Department of Computer Science & Engineering (B.Tech CSE - AI & ML)', 'Class of 2029')}
                     style={{
                       padding: '4px 10px',
                       borderRadius: '6px',

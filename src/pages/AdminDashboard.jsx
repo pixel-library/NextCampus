@@ -320,11 +320,11 @@ export function AdminDashboard() {
           <section className="bg-surface-container rounded-xl p-space-lg shadow-md border border-outline-variant/20">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-space-md gap-2">
               <div>
-                <h2 className="font-headline-sm text-headline-sm text-on-surface font-bold">NextCampus Care — Defect Triage &amp; SLA Queue</h2>
+                <h2 className="font-headline-sm text-headline-sm text-on-surface font-bold">Campus Helpdesk &amp; Grievances — Defect Triage &amp; SLA Queue</h2>
                 <p className="font-body-sm text-body-sm text-on-surface-variant">Live incident response stream prioritized by institutional severity</p>
               </div>
               <button onClick={() => navigate('/admin/complaints')} className="inline-flex items-center gap-1.5 text-primary hover:text-secondary font-label-md text-label-md transition-colors font-semibold">
-                <span>View Complaint Admin Queue</span>
+                <span>View Helpdesk Admin Queue</span>
                 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </button>
             </div>

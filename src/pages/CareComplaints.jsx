@@ -227,16 +227,16 @@ export function CareComplaints() {
           <span className="w-2 h-2 rounded-full bg-[#9E153E]"></span>
           <span>NextCampus Support</span>
           <span>/</span>
-          <span className="text-slate-800 font-semibold">Campus Care &amp; Maintenance</span>
+          <span className="text-slate-800 font-semibold">Campus Helpdesk &amp; Grievance</span>
         </div>
 
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
           <div>
             <h1 className="font-display font-extrabold text-3xl tracking-tight text-slate-900 flex items-center gap-3">
-              Campus Care <span className="text-[#9E153E] font-light">—</span> Issue &amp; Support Requests
+              Campus Helpdesk &amp; Grievance <span className="text-[#9E153E] font-light">—</span> Redressal &amp; Support
             </h1>
             <p className="text-sm text-slate-600 mt-1 max-w-2xl">
-              Report classroom equipment, hostel facilities, or campus maintenance issues and monitor resolution updates.
+              Official university grievance redressal and facility service desk. Lodge maintenance or academic infrastructure tickets and monitor live SLA resolution.
             </p>
           </div>
 
@@ -253,7 +253,7 @@ export function CareComplaints() {
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#9E153E] hover:bg-[#831843] text-white text-xs font-bold shadow-sm transition-all"
             >
               <span className="material-symbols-outlined text-[18px]">add_circle</span>
-              <span>Report Issue</span>
+              <span>Lodge Grievance</span>
             </a>
           </div>
         </div>
@@ -330,9 +330,9 @@ export function CareComplaints() {
                     {isAuthenticated ? `Student: ${user?.name || user?.email}` : 'Student Request'}
                   </span>
                 </div>
-                <h2 className="font-display font-bold text-lg text-slate-900 mt-1.5">Submit an Issue</h2>
+                <h2 className="font-display font-bold text-lg text-slate-900 mt-1.5">Lodge an Official Grievance</h2>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Your ticket will be routed to campus facility staff and tracked until resolved.
+                  Your grievance will be logged into the central database, assigned to the facility resolution unit, and tracked to completion.
                 </p>
               </div>
               <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-[#9E153E]">

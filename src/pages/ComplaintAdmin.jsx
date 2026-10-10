@@ -340,7 +340,7 @@ export function ComplaintAdmin() {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2 flex-wrap font-mono">
             <span className="font-caption text-caption uppercase tracking-wider text-primary font-bold">
-              NEXTCAMPUS CARE
+              CAMPUS HELPDESK &amp; GRIEVANCES
             </span>
             <span className="text-outline-variant font-caption text-caption">•</span>
             <span className="font-caption text-caption uppercase tracking-wider text-on-surface-variant font-medium">
@@ -348,13 +348,13 @@ export function ComplaintAdmin() {
             </span>
             <span className="text-outline-variant font-caption text-caption">•</span>
             <span className="font-caption text-caption uppercase tracking-wider text-secondary font-bold">
-              APEX POLYTECHNIC INSTITUTE
+              CENTRAL OPERATIONS
             </span>
             <span className="text-outline-variant font-caption text-caption">•</span>
             <span className="font-caption text-caption uppercase tracking-wider text-outline">SLA ENGINE V2.4</span>
           </div>
           <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight font-extrabold">
-            Complaint Administration &amp; Incident Triage
+            Helpdesk Administration &amp; Grievance Triage
           </h1>
           <p className="font-body-md text-body-md text-on-surface-variant max-w-3xl">
             Review real-time ticket queues, allocate engineering dispatches, monitor SLA velocity thresholds, and

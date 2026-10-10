@@ -640,9 +640,9 @@ export const LandingPage = () => {
                 </div>
                 <Badge status="active">Module 05</Badge>
               </div>
-              <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '8px' }}>5. NextCampus Care</h3>
+              <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '8px' }}>5. Campus Helpdesk &amp; Grievance</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.5 }}>
-                Rapid incident reporting, facility maintenance dispatch, photo attachments, and real-time resolution tracking.
+                Official grievance redressal cell, automated facility incident dispatch, evidence attachments, and SLA status tracking.
               </p>
             </Card>
           </div>

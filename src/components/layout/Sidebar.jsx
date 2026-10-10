@@ -25,7 +25,7 @@ export const Sidebar = () => {
           items: [
             { label: 'Admin Dashboard', path: '/admin', icon: ShieldAlert },
             { label: 'Campus Management', path: '/admin/campus-management', icon: Sliders },
-            { label: 'Complaint Admin', path: '/admin/complaints', icon: LifeBuoy },
+            { label: 'Helpdesk & Grievances', path: '/admin/complaints', icon: LifeBuoy },
           ],
         },
         {
@@ -50,7 +50,7 @@ export const Sidebar = () => {
             { label: 'Interactive Campus Map', path: '/campus-map', icon: MapPin },
             { label: 'Campus Directory', path: '/directory', icon: Users },
             { label: 'SmartRooms IoT', path: '/smartroom', icon: DoorOpen },
-            { label: 'NextCampus Care', path: '/complaints', icon: LifeBuoy },
+            { label: 'Helpdesk & Grievance', path: '/complaints', icon: LifeBuoy },
             { label: 'AI Assistant', path: '/ai-assistant', icon: Bot },
           ],
         },
