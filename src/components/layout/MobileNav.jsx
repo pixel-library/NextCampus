@@ -16,7 +16,7 @@ export const MobileNav = () => {
         { label: 'AI', path: '/ai-assistant', icon: Bot },
       ]
     : [
-        { label: 'Dash', path: '/dashboard', icon: LayoutDashboard },
+        { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
         { label: 'Map', path: '/campus-map', icon: MapPin },
         { label: 'Rooms', path: '/smartroom', icon: DoorOpen },
         { label: 'Care', path: '/complaints', icon: LifeBuoy },
@@ -24,41 +24,35 @@ export const MobileNav = () => {
       ];
 
   return (
-    <nav
-      className="mobile-nav-bar"
-      style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: '60px',
-        backgroundColor: '#1E191A',
-        borderTop: '1px solid var(--border-subtle)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-around',
-        zIndex: 100,
-      }}
-    >
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md border-t border-slate-200/90 flex items-center justify-around z-40 px-2 shadow-[0_-2px_8px_rgba(0,0,0,0.03)]">
       {items.map((item, idx) => {
         const Icon = item.icon;
         return (
           <NavLink
             key={idx}
             to={item.path}
-            style={({ isActive }) => ({
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              fontSize: '10px',
-              fontWeight: 600,
-              color: isActive ? '#EB638B' : 'var(--text-muted)',
-              textDecoration: 'none',
-            })}
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-1 py-1.5 px-3 rounded-xl transition-all duration-150 text-decoration-none ${
+                isActive
+                  ? 'text-[#9E153E] font-bold'
+                  : 'text-slate-500 hover:text-slate-800 font-medium'
+              }`
+            }
           >
-            <Icon size={18} />
-            <span>{item.label}</span>
+            {({ isActive }) => (
+              <>
+                <div
+                  className={`p-1 rounded-lg transition-colors ${
+                    isActive ? 'bg-rose-50 text-[#9E153E]' : 'text-slate-400'
+                  }`}
+                >
+                  <Icon size={18} />
+                </div>
+                <span className="text-[10px] leading-none tracking-tight">
+                  {item.label}
+                </span>
+              </>
+            )}
           </NavLink>
         );
       })}

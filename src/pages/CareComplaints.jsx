@@ -223,7 +223,6 @@ export function CareComplaints() {
     try {
       const res = await api.get('/care/complaints');
       if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
-        // Merge backend complaints with enriched UI fields
         setComplaints(res.data);
         if (res.data[0]) setSelectedTicket(res.data[0]);
       }
@@ -387,7 +386,6 @@ export function CareComplaints() {
       createdAt: 'Just now'
     };
 
-    // Optimistically update selected ticket
     const updatedTicket = {
       ...selectedTicket,
       updates: [...(selectedTicket.updates || []), newUpdate]
@@ -456,35 +454,35 @@ export function CareComplaints() {
   }, [complaints, activeFilter, activeCategoryFilter, searchQuery]);
 
   return (
-    <div className="flex flex-col w-full text-slate-100 min-h-screen pb-16">
+    <div className="flex flex-col w-full text-slate-900 min-h-screen pb-16 font-sans">
       {/* =========================================================================
           TOP BREADCRUMB & CONTEXT STRIP
           ========================================================================= */}
-      <div className="flex flex-col gap-3 pb-6 border-b border-slate-800/80 mb-6">
+      <div className="flex flex-col gap-3 pb-6 border-b border-slate-200 mb-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-slate-400">
-            <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30 font-semibold flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></span>
+          <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-slate-500">
+            <span className="px-2.5 py-0.5 rounded-full bg-rose-50 text-[#9E153E] border border-rose-200/80 font-semibold flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E11D48] animate-pulse"></span>
               CAFM Rapid SLA
             </span>
             <span className="hidden sm:inline">Mewar University • Gangrar, Chittorgarh</span>
-            <span className="text-slate-600">/</span>
-            <span className="text-slate-300 font-medium">Campus Helpdesk &amp; Grievances</span>
-            <span className="text-slate-600">/</span>
-            <span className="text-rose-400 font-semibold">Active Dispatch Protocol</span>
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-700 font-medium">Campus Helpdesk &amp; Grievances</span>
+            <span className="text-slate-300">/</span>
+            <span className="text-[#9E153E] font-semibold">Active Dispatch Protocol</span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={fetchComplaints}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700/80 hover:border-rose-500/50 hover:bg-slate-800 text-xs font-medium text-slate-200 transition-all shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-all shadow-xs"
             >
-              <RefreshCw className="w-3.5 h-3.5 text-rose-400" />
+              <RefreshCw className="w-3.5 h-3.5 text-[#9E153E]" />
               <span>Refresh SLA Telemetry</span>
             </button>
 
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-slate-400 text-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               Emergency Dispatch: 24/7 Hot
             </span>
           </div>
@@ -493,38 +491,38 @@ export function CareComplaints() {
         {/* Page Title & SLA Metrics Ribbon */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mt-1">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight flex items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
               <span>Campus Care &amp; Grievance Redressal</span>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-mono font-normal">
+              <span className="text-xs px-2.5 py-1 rounded-full bg-rose-50 text-[#9E153E] border border-rose-200 font-mono font-bold">
                 SLA &lt;45 Min
               </span>
             </h1>
-            <p className="text-sm text-slate-400 max-w-2xl mt-1.5">
+            <p className="text-xs sm:text-sm text-slate-600 max-w-2xl mt-1.5 leading-relaxed">
               Official university grievance redressal and CAFM facility service desk. Lodge academic infrastructure tickets, track live technician dispatch, and monitor real-time SLA countdowns.
             </p>
           </div>
 
           {/* Quick Metrics Bar */}
           <div className="flex flex-wrap items-center gap-2.5">
-            <div className="px-3.5 py-2 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Active Tickets</span>
-              <span className="text-lg font-bold text-white">
+            <div className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 shadow-xs flex flex-col min-w-[95px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold">Active Tickets</span>
+              <span className="text-lg font-black text-slate-900">
                 {complaints.filter((c) => c.status !== 'resolved').length}
               </span>
             </div>
-            <div className="px-3.5 py-2 rounded-xl bg-slate-900/90 border border-rose-500/30 flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-rose-400">In Dispatch</span>
-              <span className="text-lg font-bold text-rose-400">
+            <div className="px-3.5 py-2 rounded-xl bg-white border border-rose-200 shadow-xs flex flex-col min-w-[95px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#9E153E] font-semibold">In Dispatch</span>
+              <span className="text-lg font-black text-[#9E153E]">
                 {complaints.filter((c) => c.status === 'in_progress').length}
               </span>
             </div>
-            <div className="px-3.5 py-2 rounded-xl bg-slate-900/90 border border-emerald-500/30 flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400">Resolved Term</span>
-              <span className="text-lg font-bold text-emerald-400">128</span>
+            <div className="px-3.5 py-2 rounded-xl bg-white border border-emerald-200 shadow-xs flex flex-col min-w-[95px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700 font-semibold">Resolved Term</span>
+              <span className="text-lg font-black text-emerald-700">128</span>
             </div>
-            <div className="px-3.5 py-2 rounded-xl bg-slate-900/90 border border-sky-500/30 flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-sky-400">SLA Compliance</span>
-              <span className="text-lg font-bold text-sky-400">98.4%</span>
+            <div className="px-3.5 py-2 rounded-xl bg-white border border-sky-200 shadow-xs flex flex-col min-w-[95px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-sky-700 font-semibold">SLA Compliance</span>
+              <span className="text-lg font-black text-sky-700">98.4%</span>
             </div>
           </div>
         </div>
@@ -533,25 +531,25 @@ export function CareComplaints() {
       {/* =========================================================================
           EMERGENCY DISPATCH QUICK BANNER
           ========================================================================= */}
-      <div className="p-3.5 px-4 rounded-2xl bg-gradient-to-r from-rose-950/40 via-slate-900/80 to-slate-900/80 border border-rose-900/60 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-rose-50 via-rose-50/50 to-white border border-rose-200/80 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-[#9E153E] text-white flex items-center justify-center shrink-0 shadow-xs">
             <PhoneCall className="w-4 h-4" />
           </div>
           <div>
-            <span className="text-xs font-bold text-white flex items-center gap-2">
+            <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
               <span>Emergency Campus Infrastructure Hotline</span>
-              <span className="px-2 py-0.2 rounded bg-rose-500/30 text-rose-300 text-[10px] font-mono">Priority 0</span>
+              <span className="px-2 py-0.5 rounded bg-rose-200/60 text-[#9E153E] text-[10px] font-mono font-bold">Priority 0</span>
             </span>
-            <p className="text-[11px] text-slate-400 mt-0.5">
-              For active power hazards, lab chemical exhaust alarms, or stuck elevators, dial Security Desk: <span className="text-rose-400 font-mono font-bold">+91 1471-291148 / Ext. 108</span>
+            <p className="text-[11.5px] text-slate-600 mt-0.5">
+              For active power hazards, lab chemical exhaust alarms, or stuck elevators, dial Security Desk: <span className="text-[#9E153E] font-mono font-bold">+91 1471-291148 / Ext. 108</span>
             </p>
           </div>
         </div>
 
         <a
           href="tel:+911471291148"
-          className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-rose-900/40 transition-all shrink-0"
+          className="px-3.5 py-2 rounded-xl bg-[#9E153E] hover:bg-[#881337] text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition-all shrink-0 text-decoration-none"
         >
           <span>Direct Emergency Call</span>
           <ArrowUpRight className="w-3.5 h-3.5" />
@@ -564,47 +562,47 @@ export function CareComplaints() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* LEFT COLUMN: LODGE GRIEVANCE FORM (5 COLS) */}
         <div className="lg:col-span-5 flex flex-col gap-4">
-          <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl flex flex-col gap-5 backdrop-blur-md">
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col gap-5">
             {/* Header */}
-            <div className="flex items-start justify-between pb-4 border-b border-slate-800">
+            <div className="flex items-start justify-between pb-4 border-b border-slate-100">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-md bg-rose-500/20 text-rose-300 text-[10px] font-mono font-bold uppercase tracking-wider border border-rose-500/30">
+                  <span className="px-2.5 py-0.5 rounded-full bg-rose-50 text-[#9E153E] text-[10px] font-mono font-bold uppercase tracking-wider border border-rose-200/80">
                     Lodge New Ticket
                   </span>
-                  <span className="text-xs text-slate-400 font-medium">
+                  <span className="text-xs text-slate-500 font-medium">
                     {isAuthenticated ? `Student: ${user?.name || user?.email}` : 'Mewar Student Request'}
                   </span>
                 </div>
-                <h2 className="text-xl font-bold text-white mt-1.5">Lodge an Official Grievance</h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <h2 className="text-lg font-bold text-slate-900 mt-1.5">Lodge an Official Grievance</h2>
+                <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
                   Your ticket is instantly assigned to the responsible building maintenance unit with strict SLA tracking.
                 </p>
               </div>
-              <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-rose-400 shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-rose-50 text-[#9E153E] border border-rose-200/80 flex items-center justify-center shrink-0">
                 <FileText className="w-4 h-4" />
               </div>
             </div>
 
             {submitSuccess && (
-              <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/80 text-emerald-300 text-xs flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="font-medium">{submitSuccess}</span>
+              <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span className="font-semibold">{submitSuccess}</span>
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               {/* Summary / Headline */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider font-mono">
-                  Issue Summary / Title <span className="text-rose-400">*</span>
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                  Issue Summary / Title <span className="text-[#9E153E]">*</span>
                 </label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. CS Lab B Projector HDMI Glitch & Green Tint"
-                  className="w-full h-10 px-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-rose-500 transition-all"
+                  className="w-full h-10 px-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100 transition-all"
                   required
                 />
               </div>
@@ -612,10 +610,10 @@ export function CareComplaints() {
               {/* Infrastructure Domain */}
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider font-mono">
-                    Infrastructure Domain <span className="text-rose-400">*</span>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                    Infrastructure Domain <span className="text-[#9E153E]">*</span>
                   </label>
-                  <span className="text-[11px] font-mono text-rose-400">Selected: {category}</span>
+                  <span className="text-[11px] font-mono text-[#9E153E] font-semibold">Selected: {category}</span>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   {[
@@ -635,11 +633,11 @@ export function CareComplaints() {
                         onClick={() => setCategory(cat.id)}
                         className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
                           isSelected
-                            ? 'bg-rose-950/40 border-rose-500 text-white font-bold shadow-md shadow-rose-950/50'
-                            : 'bg-slate-950/80 border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900'
+                            ? 'bg-rose-50 border-[#9E153E] text-[#9E153E] font-bold shadow-xs'
+                            : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                         }`}
                       >
-                        <IconComp className={`w-4 h-4 mb-1 ${isSelected ? 'text-rose-400' : 'text-slate-500'}`} />
+                        <IconComp className={`w-4 h-4 mb-1 ${isSelected ? 'text-[#9E153E]' : 'text-slate-400'}`} />
                         <span className="text-[11px] leading-tight">{cat.label}</span>
                       </button>
                     );
@@ -650,14 +648,14 @@ export function CareComplaints() {
               {/* Building Node & Zone */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider font-mono">
-                    Building Node <span className="text-rose-400">*</span>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                    Building Node <span className="text-[#9E153E]">*</span>
                   </label>
                   <div className="relative">
                     <select
                       value={building}
                       onChange={(e) => setBuilding(e.target.value)}
-                      className="w-full h-10 pl-3 pr-8 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-rose-500"
+                      className="w-full h-10 pl-3 pr-8 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 appearance-none cursor-pointer focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100"
                     >
                       <option>Faculty of Engineering &amp; Technology (ENG-02)</option>
                       <option>Maharana Pratap Main Academic Block (ADM-01)</option>
@@ -669,20 +667,20 @@ export function CareComplaints() {
                       <option>Mewar Sports Arena &amp; Cricket Ground (SPT-08)</option>
                       <option>Mewar University Hospital &amp; Health Centre (MED-09)</option>
                     </select>
-                    <Building2 className="w-4 h-4 text-slate-500 absolute right-2.5 top-3 pointer-events-none" />
+                    <Building2 className="w-4 h-4 text-slate-400 absolute right-2.5 top-3 pointer-events-none" />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider font-mono">
-                    Room / Zone <span className="text-rose-400">*</span>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                    Room / Zone <span className="text-[#9E153E]">*</span>
                   </label>
                   <input
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="e.g. Room B-204 (Level 2)"
-                    className="w-full h-10 px-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-rose-500"
+                    className="w-full h-10 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100"
                     required
                   />
                 </div>
@@ -691,19 +689,19 @@ export function CareComplaints() {
               {/* Priority & SLA Impact Matrix */}
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider font-mono">
-                    Urgency &amp; Impact Tier <span className="text-rose-400">*</span>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                    Urgency &amp; Impact Tier <span className="text-[#9E153E]">*</span>
                   </label>
-                  <span className="text-[11px] font-mono text-rose-400">
+                  <span className="text-[11px] font-mono text-[#9E153E] font-semibold">
                     SLA Target: {priority === 'urgent' ? '<30 min' : priority === 'high' ? '<45 min' : priority === 'medium' ? '<2 hours' : '<24 hours'}
                   </span>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
                   {[
-                    { id: 'low', label: 'Low', sub: 'Routine', color: 'text-slate-300' },
-                    { id: 'medium', label: 'Medium', sub: 'Disruptive', color: 'text-amber-400' },
-                    { id: 'high', label: 'High', sub: 'Halts Class', color: 'text-orange-400' },
-                    { id: 'urgent', label: 'Urgent', sub: 'Hazard / P0', color: 'text-rose-400' }
+                    { id: 'low', label: 'Low', sub: 'Routine', color: 'text-slate-700' },
+                    { id: 'medium', label: 'Medium', sub: 'Disruptive', color: 'text-amber-700' },
+                    { id: 'high', label: 'High', sub: 'Halts Class', color: 'text-orange-700' },
+                    { id: 'urgent', label: 'Urgent', sub: 'Hazard / P0', color: 'text-red-700' }
                   ].map((p) => {
                     const isSelected = priority === p.id;
                     return (
@@ -713,14 +711,14 @@ export function CareComplaints() {
                         onClick={() => setPriority(p.id)}
                         className={`flex flex-col items-center justify-center p-2 rounded-xl text-center border transition-all ${
                           isSelected
-                            ? 'bg-slate-800 border-2 border-rose-500 shadow-md'
-                            : 'bg-slate-950 border-slate-800 hover:border-slate-700'
+                            ? 'bg-rose-50 border-2 border-[#9E153E] shadow-xs'
+                            : 'bg-white border-slate-200 hover:border-slate-300'
                         }`}
                       >
-                        <span className={`text-xs font-bold ${isSelected ? p.color : 'text-slate-400'}`}>
+                        <span className={`text-xs font-bold ${isSelected ? p.color : 'text-slate-600'}`}>
                           {p.label}
                         </span>
-                        <span className="text-[10px] text-slate-500 mt-0.5">{p.sub}</span>
+                        <span className="text-[10px] text-slate-400 mt-0.5">{p.sub}</span>
                       </button>
                     );
                   })}
@@ -730,56 +728,56 @@ export function CareComplaints() {
               {/* Defect Description */}
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider font-mono">
-                    Defect Description &amp; Fault Details <span className="text-rose-400">*</span>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                    Defect Description &amp; Fault Details <span className="text-[#9E153E]">*</span>
                   </label>
-                  <span className="text-[11px] font-mono text-slate-500">{description.length} / 500 chars</span>
+                  <span className="text-[11px] font-mono text-slate-400">{description.length} / 500 chars</span>
                 </div>
                 <textarea
                   rows="3"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Describe the issue, specific equipment error messages, observed behavior..."
-                  className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-rose-500 resize-none leading-relaxed"
+                  className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100 resize-none leading-relaxed"
                   required
                 ></textarea>
               </div>
 
               {/* Diagnostic Photo Attachment */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider font-mono">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
                   Diagnostic Photo (Max 10MB)
                 </label>
-                <div className="relative p-3 rounded-xl bg-slate-950 border border-dashed border-slate-700 hover:border-rose-500/60 transition-all flex flex-col items-center justify-center text-center cursor-pointer group">
+                <div className="relative p-3.5 rounded-xl bg-slate-50 border border-dashed border-slate-300 hover:border-[#9E153E] transition-all flex flex-col items-center justify-center text-center cursor-pointer group">
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp,image/svg+xml,application/pdf"
                     onChange={handleFileChange}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
-                  <ImageIcon className="w-5 h-5 text-rose-400 mb-1 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-medium text-slate-300">
+                  <ImageIcon className="w-5 h-5 text-[#9E153E] mb-1 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-semibold text-slate-700">
                     {fileAttachment ? fileAttachment.name : 'Click or drop photo here for technician diagnosis'}
                   </span>
-                  <span className="text-[10px] text-slate-500 mt-0.5">JPG, PNG, WEBP, PDF up to 10MB</span>
+                  <span className="text-[10px] text-slate-400 mt-0.5">JPG, PNG, WEBP, PDF up to 10MB</span>
                 </div>
 
-                {fileError && <p className="text-xs text-rose-400 font-mono">{fileError}</p>}
+                {fileError && <p className="text-xs text-red-600 font-mono font-medium">{fileError}</p>}
 
                 {/* Instant Image Preview Thumbnail */}
                 {filePreviewUrl && (
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950 border border-slate-800">
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200">
                     <div className="flex items-center gap-3">
                       <img
                         src={filePreviewUrl}
                         alt="Upload preview"
-                        className="w-12 h-12 object-cover rounded-lg border border-slate-700"
+                        className="w-12 h-12 object-cover rounded-lg border border-slate-200"
                       />
                       <div className="flex flex-col">
-                        <span className="text-xs font-mono text-white truncate max-w-[180px]">
+                        <span className="text-xs font-mono text-slate-800 truncate max-w-[180px]">
                           {fileAttachment?.name}
                         </span>
-                        <span className="text-[10px] text-slate-400 font-mono">
+                        <span className="text-[10px] text-slate-500 font-mono">
                           {(fileAttachment?.size / (1024 * 1024)).toFixed(2)} MB
                         </span>
                       </div>
@@ -790,7 +788,7 @@ export function CareComplaints() {
                         setFileAttachment(null);
                         setFilePreviewUrl('');
                       }}
-                      className="text-xs text-rose-400 hover:text-rose-300 font-medium"
+                      className="text-xs text-red-600 hover:text-red-700 font-semibold"
                     >
                       Remove
                     </button>
@@ -803,14 +801,14 @@ export function CareComplaints() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3 px-4 rounded-xl bg-rose-600 hover:bg-rose-500 active:scale-[0.99] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-rose-900/40 transition-all disabled:opacity-50"
+                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#9E153E] to-[#BE123C] hover:from-[#881337] hover:to-[#9E153E] active:scale-[0.99] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all disabled:opacity-50 cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
                   <span>{isSubmitting ? 'Submitting & Dispatching...' : 'Lodge Grievance & Dispatch Technician'}</span>
                 </button>
               </div>
 
-              <p className="text-[11px] text-slate-500 text-center leading-relaxed">
+              <p className="text-[11px] text-slate-400 text-center leading-relaxed">
                 Notice: All tickets are registered into Mewar University Central Administrative Council &amp; Facility Operations Node.
               </p>
             </form>
@@ -820,7 +818,7 @@ export function CareComplaints() {
         {/* RIGHT COLUMN: LIVE SLA TRACKER & TICKET AUDIT TRAIL (7 COLS) */}
         <div className="lg:col-span-7 flex flex-col gap-4">
           {/* Filter & Search Bar */}
-          <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-md flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
               {['All', 'In Progress', 'Under Review', 'Resolved'].map((flt) => {
                 const isActive = activeFilter === flt;
@@ -830,8 +828,8 @@ export function CareComplaints() {
                     onClick={() => setActiveFilter(flt)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                       isActive
-                        ? 'bg-rose-600 text-white shadow-sm'
-                        : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+                        ? 'bg-[#9E153E] text-white shadow-xs'
+                        : 'bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200'
                     }`}
                   >
                     {flt}
@@ -841,77 +839,75 @@ export function CareComplaints() {
             </div>
 
             <div className="relative min-w-[200px]">
-              <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5 pointer-events-none" />
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search ticket # or room..."
-                className="w-full h-8 pl-8 pr-3 rounded-lg bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-rose-500"
+                className="w-full h-8 pl-8 pr-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-1 focus:ring-rose-100"
               />
             </div>
           </div>
 
           {/* ACTIVE SPOTLIGHT TICKET DETAILS */}
           {selectedTicket && (
-            <div className="p-6 rounded-2xl bg-slate-900/90 border-2 border-rose-500/60 shadow-2xl flex flex-col gap-5 relative overflow-hidden backdrop-blur-md">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-rose-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
+            <div className="p-6 rounded-2xl bg-white border-2 border-[#9E153E]/40 shadow-md flex flex-col gap-5 relative overflow-hidden">
               {/* Ticket Header & Status Badges */}
-              <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-slate-800">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-slate-100">
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-md bg-slate-950 text-rose-400 font-mono text-xs font-bold border border-rose-500/40">
+                  <span className="px-2.5 py-1 rounded-md bg-rose-50 text-[#9E153E] font-mono text-xs font-bold border border-rose-200">
                     {selectedTicket.ticketId}
                   </span>
                   <span
                     className={`px-2 py-0.5 rounded font-mono text-[11px] font-bold uppercase border ${
                       selectedTicket.priority === 'urgent'
-                        ? 'bg-rose-950/60 text-rose-300 border-rose-500/50'
+                        ? 'bg-red-50 text-red-700 border-red-200'
                         : selectedTicket.priority === 'high'
-                        ? 'bg-orange-950/60 text-orange-300 border-orange-500/50'
-                        : 'bg-amber-950/60 text-amber-300 border-amber-500/50'
+                        ? 'bg-orange-50 text-orange-700 border-orange-200'
+                        : 'bg-amber-50 text-amber-700 border-amber-200'
                     }`}
                   >
                     {selectedTicket.priority} PRIORITY
                   </span>
                   <span className="text-xs text-slate-400 flex items-center gap-1 font-mono">
-                    <Clock className="w-3.5 h-3.5 text-slate-500" />
+                    <Clock className="w-3.5 h-3.5 text-slate-400" />
                     <span>{selectedTicket.createdAt}</span>
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950 border border-slate-800 text-xs font-semibold">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold">
                   <span
                     className={`w-2 h-2 rounded-full ${
                       selectedTicket.status === 'resolved'
-                        ? 'bg-emerald-400'
+                        ? 'bg-emerald-500'
                         : selectedTicket.status === 'in_progress'
-                        ? 'bg-rose-400 animate-ping'
-                        : 'bg-amber-400 animate-pulse'
+                        ? 'bg-rose-500 animate-ping'
+                        : 'bg-amber-500 animate-pulse'
                     }`}
                   ></span>
-                  <span className="text-slate-200">{selectedTicket.statusText || selectedTicket.status}</span>
+                  <span className="text-slate-700">{selectedTicket.statusText || selectedTicket.status}</span>
                 </div>
               </div>
 
               {/* Title & Location */}
               <div>
-                <span className="text-[11px] font-mono text-rose-400 uppercase font-bold tracking-wider">
+                <span className="text-[11px] font-mono text-[#9E153E] uppercase font-bold tracking-wider">
                   Domain: {selectedTicket.categoryName || selectedTicket.category}
                 </span>
-                <h3 className="text-xl font-bold text-white mt-1 leading-snug">
+                <h3 className="text-xl font-bold text-slate-900 mt-1 leading-snug">
                   {selectedTicket.title}
                 </h3>
-                <div className="flex items-center gap-2 text-xs text-slate-300 mt-2">
-                  <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-                  <span className="font-semibold text-white">{selectedTicket.building}</span>
-                  <span className="text-slate-600">•</span>
-                  <span className="text-slate-400">{selectedTicket.location}</span>
+                <div className="flex items-center gap-2 text-xs text-slate-600 mt-2">
+                  <MapPin className="w-3.5 h-3.5 text-[#9E153E] shrink-0" />
+                  <span className="font-semibold text-slate-900">{selectedTicket.building}</span>
+                  <span className="text-slate-300">•</span>
+                  <span className="text-slate-600">{selectedTicket.location}</span>
                 </div>
               </div>
 
               {/* Issue Description Box */}
-              <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-300 leading-relaxed font-sans">
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 leading-relaxed">
                 "{selectedTicket.description}"
               </div>
 
@@ -919,52 +915,52 @@ export function CareComplaints() {
                   LIVE SLA COUNTDOWN & BREACH TIMER WIDGET
                   =================================================================== */}
               {selectedTicket.status !== 'resolved' && (
-                <div className="p-4 rounded-xl bg-gradient-to-r from-rose-950/50 to-slate-950/90 border border-rose-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+                <div className="p-4 rounded-xl bg-gradient-to-r from-rose-50 to-white border border-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-rose-100 text-[#9E153E] flex items-center justify-center shrink-0">
                       <Clock className="w-5 h-5 animate-pulse" />
                     </div>
                     <div>
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-rose-400 font-bold">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-[#9E153E] font-bold">
                         Live SLA Resolution Window
                       </span>
-                      <div className="text-xl font-mono font-black text-white tracking-wider">
+                      <div className="text-xl font-mono font-black text-slate-900 tracking-wider">
                         {formattedCountdown}
                       </div>
-                      <span className="text-[11px] text-slate-400">
+                      <span className="text-[11px] text-slate-500">
                         Max SLA Target: &lt;{selectedTicket.slaTargetMins || 45} mins • Auto-Escalation Enabled
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 bg-slate-900/90 px-3.5 py-2 rounded-xl border border-slate-800 shrink-0">
-                    <Activity className="w-4 h-4 text-emerald-400" />
+                  <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shrink-0 shadow-xs">
+                    <Activity className="w-4 h-4 text-emerald-600" />
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold text-white">ETA: {selectedTicket.eta || '18 mins'}</span>
-                      <span className="text-[10px] text-emerald-400">Technician en route</span>
+                      <span className="text-xs font-bold text-slate-900">ETA: {selectedTicket.eta || '18 mins'}</span>
+                      <span className="text-[10px] text-emerald-700 font-semibold">Technician en route</span>
                     </div>
                   </div>
                 </div>
               )}
 
               {/* Assigned Technician Card */}
-              <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 font-bold text-xs font-mono">
+                  <div className="w-9 h-9 rounded-full bg-rose-100 text-[#9E153E] flex items-center justify-center font-bold text-xs font-mono">
                     {selectedTicket.assignedTo?.split(' ').map((n) => n[0]).join('') || 'MV'}
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-white">
+                    <div className="text-xs font-bold text-slate-900">
                       Assigned: {selectedTicket.assignedTo || 'Rapid Response Unit'}
                     </div>
-                    <div className="text-[11px] text-slate-400">
+                    <div className="text-[11px] text-slate-500">
                       {selectedTicket.assignedRole || 'Facility Operations Lead'}
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-lg bg-slate-900 text-[11px] font-mono text-emerald-400 border border-emerald-500/30">
+                  <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-[11px] font-mono text-emerald-700 font-semibold border border-emerald-200">
                     Radio Channel 4 Active
                   </span>
                 </div>
@@ -973,10 +969,10 @@ export function CareComplaints() {
               {/* ===================================================================
                   4-STAGE RESOLUTION MILESTONE PIPELINE
                   =================================================================== */}
-              <div className="flex flex-col gap-3 pt-1">
-                <div className="flex items-center justify-between text-xs font-mono uppercase tracking-wider text-slate-400">
+              <div className="flex flex-col gap-2.5 pt-1">
+                <div className="flex items-center justify-between text-xs font-mono uppercase tracking-wider text-slate-500">
                   <span>Milestone Resolution Stepper</span>
-                  <span className="text-rose-400 font-bold">4-Stage CAFM Flow</span>
+                  <span className="text-[#9E153E] font-bold">4-Stage CAFM Flow</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
@@ -993,24 +989,24 @@ export function CareComplaints() {
                         key={st.id}
                         className={`p-2.5 rounded-xl border flex flex-col justify-between transition-all ${
                           isDone
-                            ? 'bg-emerald-950/20 border-emerald-500/40 text-emerald-300'
+                            ? 'bg-emerald-50/70 border-emerald-200 text-emerald-800'
                             : isActive
-                            ? 'bg-rose-950/30 border-rose-500 text-white shadow-sm'
-                            : 'bg-slate-950/60 border-slate-800 text-slate-500'
+                            ? 'bg-rose-50 border-rose-300 text-slate-900 shadow-xs'
+                            : 'bg-slate-50 border-slate-200 text-slate-400'
                         }`}
                       >
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-[10px] font-mono font-bold">Step 0{st.id}</span>
                           {isDone ? (
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                           ) : isActive ? (
-                            <Clock className="w-3.5 h-3.5 text-rose-400 animate-spin" />
+                            <Clock className="w-3.5 h-3.5 text-[#9E153E] animate-spin" />
                           ) : (
-                            <span className="w-2 h-2 rounded-full bg-slate-700"></span>
+                            <span className="w-2 h-2 rounded-full bg-slate-300"></span>
                           )}
                         </div>
                         <span className="text-xs font-bold leading-tight line-clamp-1">{st.label}</span>
-                        <span className="text-[10px] text-slate-400 mt-1 font-mono">{st.time}</span>
+                        <span className="text-[10px] text-slate-500 mt-1 font-mono">{st.time}</span>
                       </div>
                     );
                   })}
@@ -1019,8 +1015,8 @@ export function CareComplaints() {
 
               {/* Diagnostic Attachment Thumbnail Preview */}
               {selectedTicket.attachments && selectedTicket.attachments.length > 0 && (
-                <div className="flex flex-col gap-2 pt-1 border-t border-slate-800">
-                  <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+                <div className="flex flex-col gap-2 pt-1 border-t border-slate-100">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
                     Diagnostic Photo Evidence (Click to Inspect)
                   </span>
                   <div className="flex items-center gap-3">
@@ -1028,15 +1024,15 @@ export function CareComplaints() {
                       <div
                         key={idx}
                         onClick={() => setLightboxImage(attUrl)}
-                        className="cursor-pointer group relative w-24 h-16 rounded-xl overflow-hidden border border-slate-700 hover:border-rose-400 transition-all shadow-md"
+                        className="cursor-pointer group relative w-24 h-16 rounded-xl overflow-hidden border border-slate-200 hover:border-[#9E153E] transition-all shadow-xs"
                       >
                         <img src={attUrl} alt="Ticket attachment" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 flex items-center justify-center transition-colors">
+                        <div className="absolute inset-0 bg-slate-900/30 group-hover:bg-slate-900/10 flex items-center justify-center transition-colors">
                           <Eye className="w-4 h-4 text-white opacity-80 group-hover:opacity-100" />
                         </div>
                       </div>
                     ))}
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-slate-500">
                       {selectedTicket.attachmentNames?.[0] || 'Inspection photo verified by student'}
                     </span>
                   </div>
@@ -1044,32 +1040,32 @@ export function CareComplaints() {
               )}
 
               {/* Resolution Audit Updates Log */}
-              <div className="flex flex-col gap-2.5 pt-2 border-t border-slate-800">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+              <div className="flex flex-col gap-2.5 pt-2 border-t border-slate-100">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
                   Real-Time Dispatch Audit Log
                 </span>
 
-                <div className="flex flex-col gap-2.5 relative pl-4 border-l-2 border-rose-500/40 ml-1.5">
+                <div className="flex flex-col gap-2.5 relative pl-4 border-l-2 border-[#9E153E]/30 ml-1.5">
                   {(selectedTicket.updates || []).map((upd, idx) => (
                     <div key={idx} className="flex flex-col gap-0.5">
                       <div className="flex items-baseline justify-between text-xs">
-                        <span className="font-bold text-white flex items-center gap-1.5">
+                        <span className="font-bold text-slate-900 flex items-center gap-1.5">
                           <span>{upd.updatedBy}</span>
-                          <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 font-normal">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-normal">
                             {upd.role || 'Staff'}
                           </span>
                         </span>
-                        <span className="text-[11px] font-mono text-slate-500">{upd.createdAt}</span>
+                        <span className="text-[11px] font-mono text-slate-400">{upd.createdAt}</span>
                       </div>
-                      <p className="text-xs text-slate-300">{upd.message}</p>
+                      <p className="text-xs text-slate-600">{upd.message}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Direct Message Dispatcher Input Strip */}
-              <div className="pt-2 border-t border-slate-800 flex flex-col gap-2">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+              <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
                   Send Direct Note to Field Dispatcher
                 </span>
                 <div className="flex items-center gap-2">
@@ -1078,7 +1074,7 @@ export function CareComplaints() {
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder="e.g. Professor shifted lecture to Room B-205, please meet there..."
-                    className="flex-1 h-10 px-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-rose-500"
+                    className="flex-1 h-10 px-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleSendReply();
                     }}
@@ -1086,7 +1082,7 @@ export function CareComplaints() {
                   <button
                     onClick={handleSendReply}
                     disabled={isSendingReply || !replyText.trim()}
-                    className="h-10 px-4 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold flex items-center gap-1.5 transition-all disabled:opacity-40"
+                    className="h-10 px-4 rounded-xl bg-[#9E153E] hover:bg-[#881337] text-white text-xs font-bold flex items-center gap-1.5 transition-all disabled:opacity-40 cursor-pointer"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>Send</span>
@@ -1096,10 +1092,10 @@ export function CareComplaints() {
 
               {/* One-Click Resolution Sign-Off Button (If not yet resolved) */}
               {selectedTicket.status !== 'resolved' && (
-                <div className="pt-2 flex items-center justify-between gap-3">
+                <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <button
                     onClick={handleStudentSignOff}
-                    className="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-2 transition-all shadow-md shadow-emerald-900/30"
+                    className="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 transition-all shadow-xs cursor-pointer"
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Confirm Issue Resolved (Student Sign-Off)</span>
@@ -1117,7 +1113,7 @@ export function CareComplaints() {
               HISTORICAL TICKETS LIST (Interactive Switcher)
               ===================================================================== */}
           <div className="flex flex-col gap-2.5 pt-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono px-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-600 font-mono px-1">
               Logged Grievance Records ({filteredComplaintsList.length})
             </span>
 
@@ -1129,42 +1125,39 @@ export function CareComplaints() {
                   onClick={() => setSelectedTicket(c)}
                   className={`cursor-pointer p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                     isSelected
-                      ? 'bg-slate-900 border-2 border-rose-500 shadow-lg'
-                      : 'bg-slate-900/60 border-slate-800 hover:border-slate-700'
+                      ? 'bg-rose-50/50 border-2 border-[#9E153E] shadow-sm'
+                      : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs'
                   }`}
                 >
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs font-bold text-rose-400">{c.ticketId}</span>
+                      <span className="font-mono text-xs font-bold text-[#9E153E]">{c.ticketId}</span>
                       <span
                         className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold border uppercase ${
                           c.status === 'resolved'
-                            ? 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                             : c.status === 'in_progress'
-                            ? 'bg-rose-950/60 text-rose-300 border-rose-500/40'
-                            : 'bg-amber-950/60 text-amber-300 border-amber-500/40'
+                            ? 'bg-rose-50 text-[#9E153E] border-rose-200'
+                            : 'bg-amber-50 text-amber-700 border-amber-200'
                         }`}
                       >
                         {c.status}
                       </span>
-                      <span className="text-[11px] text-slate-500 font-mono">{c.createdAt}</span>
+                      <span className="text-[11px] text-slate-400 font-mono">{c.createdAt}</span>
                     </div>
-
-                    <h4 className="text-sm font-bold text-white line-clamp-1">{c.title}</h4>
-
-                    <div className="text-xs text-slate-400 flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-rose-400" />
+                    <h4 className="text-sm font-bold text-slate-900 line-clamp-1">{c.title}</h4>
+                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                      <span>{c.building}</span>
+                      <span className="text-slate-300">•</span>
                       <span>{c.location}</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="px-2.5 py-1 rounded-lg bg-slate-950 text-slate-300 text-xs font-mono font-medium uppercase border border-slate-800">
-                      {c.priority} PRIORITY
+                  <div className="flex items-center gap-3 self-end sm:self-auto">
+                    <span className="text-xs text-slate-500 font-mono">
+                      {c.priority.toUpperCase()} PRIORITY
                     </span>
-                    <button className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
+                    <ChevronRight size={16} className={isSelected ? 'text-[#9E153E]' : 'text-slate-400'} />
                   </div>
                 </div>
               );
@@ -1174,42 +1167,42 @@ export function CareComplaints() {
       </div>
 
       {/* =========================================================================
-          LIGHTBOX MODAL: FULL RESOLUTION ATTACHMENT INSPECTOR
+          LIGHTBOX MODAL FOR DIAGNOSTIC PHOTO EVIDENCE
           ========================================================================= */}
       {lightboxImage && (
         <div
           onClick={() => setLightboxImage(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative max-w-3xl max-h-[85vh] rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 shadow-2xl flex flex-col"
+            className="relative max-w-3xl max-h-[85vh] rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-2xl flex flex-col"
           >
-            <div className="flex items-center justify-between p-3.5 bg-slate-900 border-b border-slate-800">
-              <span className="text-xs font-mono text-slate-300 font-bold">
+            <div className="flex items-center justify-between p-3.5 bg-slate-50 border-b border-slate-200">
+              <span className="text-xs font-mono text-slate-800 font-bold">
                 Diagnostic Attachment Inspector • {selectedTicket.ticketId}
               </span>
               <button
                 onClick={() => setLightboxImage(null)}
-                className="w-7 h-7 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center"
+                className="w-7 h-7 rounded-lg bg-slate-200 text-slate-600 hover:text-slate-900 flex items-center justify-center"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="p-2 flex items-center justify-center bg-black overflow-hidden">
+            <div className="p-2 flex items-center justify-center bg-slate-950 overflow-hidden">
               <img
                 src={lightboxImage}
                 alt="Enlarged diagnostic evidence"
                 className="max-h-[70vh] w-auto object-contain rounded-lg"
               />
             </div>
-            <div className="p-3 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+            <div className="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
               <span>Verified CAFM Optical Telemetry Inspection</span>
               <a
                 href={lightboxImage}
                 target="_blank"
                 rel="noreferrer"
-                className="text-rose-400 hover:underline flex items-center gap-1"
+                className="text-[#9E153E] hover:underline flex items-center gap-1 font-semibold"
               >
                 <span>Open Raw Image</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />

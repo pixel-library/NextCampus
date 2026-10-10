@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import MobileNav from './MobileNav';
 import { useAuth } from '../../hooks/useAuth';
 
 export const AppLayout = () => {
@@ -10,10 +11,10 @@ export const AppLayout = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: 'var(--bg-canvas)', color: 'var(--text-primary)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span className="material-symbols-outlined text-[28px] animate-spin text-primary">progress_activity</span>
-          <span style={{ fontSize: '15px', fontWeight: 600 }}>Loading NextCampus Session...</span>
+      <div className="flex items-center justify-center min-h-screen bg-slate-50 text-slate-800">
+        <div className="flex items-center gap-3">
+          <span className="w-6 h-6 border-2 border-[#9E153E] border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm font-semibold">Loading NextCampus Session...</span>
         </div>
       </div>
     );
@@ -32,17 +33,22 @@ export const AppLayout = () => {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-canvas)' }}>
-      {/* Sidebar Navigation */}
-      <Sidebar />
+    <div className="flex min-h-screen bg-slate-50/70 font-sans text-slate-800 antialiased selection:bg-rose-100 selection:text-rose-900">
+      {/* Desktop Sidebar Navigation */}
+      <div className="hidden md:block">
+        <Sidebar />
+      </div>
 
       {/* Main Content Area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0">
         <Navbar />
 
-        <main style={{ flex: 1, padding: '24px', overflowY: 'auto', marginBottom: 0 }}>
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
           <Outlet />
         </main>
+
+        {/* Mobile Bottom Navigation */}
+        <MobileNav />
       </div>
     </div>
   );

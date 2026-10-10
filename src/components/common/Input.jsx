@@ -11,24 +11,22 @@ export const Input = ({
   required = false,
   className = '',
   icon: Icon,
+  helperText,
+  disabled = false,
+  ...props
 }) => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }} className={className}>
+    <div className={`flex flex-col gap-1.5 w-full ${className}`}>
       {label && (
-        <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }}>
-          {label} {required && <span style={{ color: 'var(--brand-accent)' }}>*</span>}
+        <label className="text-xs font-semibold text-slate-700 select-none">
+          {label} {required && <span className="text-rose-500">*</span>}
         </label>
       )}
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <div className="relative flex items-center">
         {Icon && (
           <Icon
-            size={18}
-            style={{
-              position: 'absolute',
-              left: '12px',
-              color: 'var(--text-muted)',
-              pointerEvents: 'none',
-            }}
+            size={16}
+            className="absolute left-3.5 text-slate-400 pointer-events-none"
           />
         )}
         <input
@@ -38,20 +36,21 @@ export const Input = ({
           onChange={onChange}
           placeholder={placeholder}
           required={required}
-          style={{
-            width: '100%',
-            padding: Icon ? '10px 14px 10px 40px' : '10px 14px',
-            backgroundColor: 'var(--bg-surface-subtle)',
-            border: error ? '1px solid #93000A' : '1px solid var(--border-interactive)',
-            borderRadius: '10px',
-            color: 'var(--text-primary)',
-            fontSize: '14px',
-            outline: 'none',
-            transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
-          }}
+          disabled={disabled}
+          className={`w-full text-sm text-slate-900 bg-slate-50/70 border rounded-xl outline-none transition-all duration-200 placeholder:text-slate-400 disabled:opacity-60 disabled:cursor-not-allowed ${
+            Icon ? 'pl-10 pr-3.5 py-2.5' : 'px-3.5 py-2.5'
+          } ${
+            error
+              ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 bg-red-50/20'
+              : 'border-slate-200 focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100 focus:bg-white'
+          }`}
+          {...props}
         />
       </div>
-      {error && <span style={{ fontSize: '12px', color: '#DC2626' }}>{error}</span>}
+      {error && <span className="text-xs text-red-600 font-medium">{error}</span>}
+      {helperText && !error && (
+        <span className="text-xs text-slate-500">{helperText}</span>
+      )}
     </div>
   );
 };

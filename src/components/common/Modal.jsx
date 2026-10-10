@@ -1,60 +1,65 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 
-export const Modal = ({ isOpen, onClose, title, children }) => {
+export const Modal = ({
+  isOpen,
+  onClose,
+  title,
+  subtitle,
+  children,
+  maxWidth = 'max-w-lg',
+  className = '',
+}) => {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isOpen) onClose?.();
+    };
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 1000,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'rgba(15, 23, 42, 0.6)',
-        backdropFilter: 'blur(12px)',
-        padding: '20px',
-      }}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      {/* Blurred Backdrop */}
       <div
-        style={{
-          width: '100%',
-          maxWidth: '560px',
-          backgroundColor: 'var(--bg-surface)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: 'var(--radius-lg)',
-          boxShadow: 'var(--shadow-lg)',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
+        onClick={onClose}
+        className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+      />
+
+      {/* Modal Dialog Card */}
+      <div
+        className={`relative w-full ${maxWidth} bg-white border border-slate-200/90 rounded-2xl shadow-2xl overflow-hidden z-10 flex flex-col my-auto animate-in fade-in zoom-in-95 duration-150 ${className}`}
       >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '16px 24px',
-            borderBottom: '1px solid var(--border-subtle)',
-          }}
-        >
-          <h3 style={{ margin: 0, fontSize: '18px', color: 'var(--text-primary)' }}>{title}</h3>
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4.5 border-b border-slate-100">
+          <div>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+              {title}
+            </h3>
+            {subtitle && (
+              <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>
+            )}
+          </div>
           <button
             onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--text-muted)',
-              cursor: 'pointer',
-              padding: '4px',
-            }}
+            className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
-        <div style={{ padding: '24px' }}>{children}</div>
+
+        {/* Content */}
+        <div className="p-6 overflow-y-auto max-h-[calc(85vh-100px)]">
+          {children}
+        </div>
       </div>
     </div>
   );

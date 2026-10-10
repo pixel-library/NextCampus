@@ -28,6 +28,9 @@ import {
   Radio,
   FileText
 } from 'lucide-react';
+import Card from '../components/common/Card';
+import Button from '../components/common/Button';
+import Badge from '../components/common/Badge';
 
 // ============================================================================
 // DATA: Comprehensive Mewar University Institutional Directory
@@ -292,33 +295,32 @@ export function CampusDirectory() {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto text-slate-100 min-h-screen pb-16">
+    <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto text-slate-900 min-h-screen pb-16 font-sans">
       {/* =========================================================================
           TOP BREADCRUMB & CONTEXT STRIP
           ========================================================================= */}
-      <section className="flex flex-col gap-4 pb-6 border-b border-slate-800/80">
+      <section className="flex flex-col gap-4 pb-6 border-b border-slate-200">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <Badge variant="success" size="sm">
                 Mewar University Directory 2026
-              </span>
-              <span className="text-xs text-slate-400 font-mono">
+              </Badge>
+              <span className="text-xs text-slate-500 font-medium">
                 Gangrar, Chittorgarh • Verified Academic Roster
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               Campus Faculty &amp; Facility Directory
             </h1>
-            <p className="text-sm text-slate-400 max-w-2xl mt-1">
+            <p className="text-xs sm:text-sm text-slate-600 max-w-2xl mt-1 leading-relaxed">
               Locate professors, live office hour walk-in availability, academic departments, research labs, and indoor CAD room directions across Mewar campus grounds.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 flex items-center gap-2 shadow-sm">
-              <Compass className="w-4 h-4 text-emerald-400" />
+            <span className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 flex items-center gap-2 shadow-xs">
+              <Compass className="w-4 h-4 text-emerald-600" />
               <span>Geo-Spatial Indoor Engine Connected</span>
             </span>
           </div>
@@ -326,21 +328,21 @@ export function CampusDirectory() {
 
         {/* Quick Directory Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mt-2">
-          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-md">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Academic Blocks</span>
-            <div className="text-2xl font-black text-white mt-1">14 Blocks</div>
+          <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">Academic Blocks</span>
+            <div className="text-xl sm:text-2xl font-black text-slate-900 mt-1">14 Blocks</div>
           </div>
-          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-md">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Verified Faculty</span>
-            <div className="text-2xl font-black text-white mt-1">180+ Faculty</div>
+          <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">Verified Faculty</span>
+            <div className="text-xl sm:text-2xl font-black text-slate-900 mt-1">180+ Faculty</div>
           </div>
-          <div className="p-4 rounded-2xl bg-slate-900/80 border border-emerald-500/30 shadow-md">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400">In Office Hours</span>
-            <div className="text-2xl font-black text-emerald-400 mt-1">Available Now</div>
+          <div className="p-4 rounded-2xl bg-white border border-emerald-200 shadow-xs">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-700 font-semibold">In Office Hours</span>
+            <div className="text-xl sm:text-2xl font-black text-emerald-700 mt-1">Available Now</div>
           </div>
-          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-md">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">CAD Mapped</span>
-            <div className="text-2xl font-black text-white mt-1">100% Vector</div>
+          <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">CAD Mapped</span>
+            <div className="text-xl sm:text-2xl font-black text-slate-900 mt-1">100% Vector</div>
           </div>
         </div>
       </section>
@@ -348,16 +350,16 @@ export function CampusDirectory() {
       {/* =========================================================================
           SEARCH & CATEGORY TOOLBAR
           ========================================================================= */}
-      <section className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-lg flex flex-col gap-3.5 backdrop-blur-md">
+      <section className="p-4.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col gap-3.5">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
           <div className="md:col-span-7 lg:col-span-8 relative">
-            <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search faculty (Prof. Roy, Dr. Seth), department, research area (Cloud, SLAM), room (B-204)..."
-              className="w-full h-10 pl-10 pr-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full h-10 pl-10 pr-4 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100 transition-all"
             />
           </div>
 
@@ -365,7 +367,7 @@ export function CampusDirectory() {
             <select
               value={disciplineFilter}
               onChange={(e) => setDisciplineFilter(e.target.value)}
-              className="w-full h-10 px-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium"
+              className="w-full h-10 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 appearance-none cursor-pointer focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100 font-medium"
             >
               <option value="all">All Academic Disciplines</option>
               <option value="computing">School of Computing &amp; AI</option>
@@ -375,10 +377,10 @@ export function CampusDirectory() {
 
             <button
               onClick={() => setAvailableOnly(!availableOnly)}
-              className={`px-3 h-10 rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
+              className={`px-3.5 h-10 rounded-xl text-xs font-bold whitespace-nowrap transition-all border cursor-pointer ${
                 availableOnly
-                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-sm'
-                  : 'bg-slate-950 text-slate-400 hover:text-white border-slate-800'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300 shadow-xs'
+                  : 'bg-slate-50 text-slate-600 hover:text-slate-900 border-slate-200'
               }`}
             >
               Open Now
@@ -387,7 +389,7 @@ export function CampusDirectory() {
         </div>
 
         {/* Category Switcher Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pt-1 border-t border-slate-800/80">
+        <div className="flex items-center gap-2 overflow-x-auto pt-2 border-t border-slate-100">
           {[
             { id: 'all', label: `All Entries (${MEWAR_BUILDINGS.length + MEWAR_FACULTY.length + MEWAR_SERVICES.length})` },
             { id: 'faculty', label: `Faculty (${filteredFaculty.length})` },
@@ -397,10 +399,10 @@ export function CampusDirectory() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === tab.id
-                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                  : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+                  ? 'bg-[#9E153E] text-white font-bold shadow-xs'
+                  : 'bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200'
               }`}
             >
               {tab.label}
@@ -418,10 +420,10 @@ export function CampusDirectory() {
           <section className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-emerald-400" />
-                <h2 className="text-lg font-bold text-white">Faculty &amp; Research Advisors</h2>
+                <Users className="w-5 h-5 text-[#9E153E]" />
+                <h2 className="text-lg font-bold text-slate-900">Faculty &amp; Research Advisors</h2>
               </div>
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs font-mono text-slate-500">
                 Showing {filteredFaculty.length} Faculty Members
               </span>
             </div>
@@ -430,45 +432,42 @@ export function CampusDirectory() {
               {filteredFaculty.map((fac) => (
                 <div
                   key={fac.id}
-                  className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 transition-all flex flex-col justify-between gap-4 shadow-lg backdrop-blur-md group"
+                  className="p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all flex flex-col justify-between gap-4 shadow-sm group hover:-translate-y-0.5"
                 >
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 text-slate-950 font-black text-lg flex items-center justify-center shrink-0 shadow-md">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#9E153E] to-[#BE123C] text-white font-black text-base flex items-center justify-center shrink-0 shadow-xs">
                       {fac.initials}
                     </div>
 
                     <div className="flex flex-col gap-1 flex-1">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <h3 className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors">
+                        <h3 className="text-base font-bold text-slate-900 group-hover:text-[#9E153E] transition-colors">
                           {fac.name}
                         </h3>
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                            fac.statusType === 'available'
-                              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                              : 'bg-slate-800 text-slate-400 border-slate-700'
-                          }`}
+                        <Badge
+                          variant={fac.statusType === 'available' ? 'success' : 'neutral'}
+                          size="sm"
                         >
                           {fac.status}
-                        </span>
+                        </Badge>
                       </div>
 
-                      <span className="text-xs font-semibold text-emerald-400">{fac.title}</span>
-                      <span className="text-xs text-slate-400">{fac.dept}</span>
+                      <span className="text-xs font-semibold text-[#9E153E]">{fac.title}</span>
+                      <span className="text-xs text-slate-500">{fac.dept}</span>
 
                       {/* Room & Contact Chips */}
-                      <div className="flex flex-col gap-1 mt-2 text-xs text-slate-300">
-                        <div className="flex items-center gap-2 text-slate-300">
-                          <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                          <span className="font-medium text-white">{fac.room}</span>
-                          <span className="text-slate-500">•</span>
-                          <span className="text-slate-400">{fac.bldgName}</span>
+                      <div className="flex flex-col gap-1 mt-2 text-xs text-slate-700">
+                        <div className="flex items-center gap-2 text-slate-700">
+                          <MapPin className="w-3.5 h-3.5 text-[#9E153E] shrink-0" />
+                          <span className="font-semibold text-slate-900">{fac.room}</span>
+                          <span className="text-slate-300">•</span>
+                          <span className="text-slate-500">{fac.bldgName}</span>
                         </div>
 
-                        <div className="flex items-center gap-3 mt-1 text-slate-400 text-[11px] font-mono">
+                        <div className="flex items-center gap-3 mt-1 text-slate-500 text-[11px] font-mono">
                           <button
                             onClick={() => copyEmail(fac.email)}
-                            className="flex items-center gap-1 hover:text-white transition-colors"
+                            className="flex items-center gap-1 hover:text-slate-900 transition-colors cursor-pointer"
                             title="Click to copy email"
                           >
                             <Mail className="w-3.5 h-3.5" />
@@ -481,17 +480,17 @@ export function CampusDirectory() {
                           </span>
                         </div>
 
-                        <div className="text-[11px] text-emerald-300/90 font-mono mt-1 bg-slate-950 p-2 rounded-lg border border-slate-800">
+                        <div className="text-[11px] text-emerald-800 font-mono mt-1.5 bg-emerald-50 p-2 rounded-lg border border-emerald-200">
                           {fac.officeHours}
                         </div>
                       </div>
 
                       {/* Research Tags */}
-                      <div className="flex flex-wrap gap-1.5 mt-2">
+                      <div className="flex flex-wrap gap-1.5 mt-2.5">
                         {fac.researchAreas.map((res, i) => (
                           <span
                             key={i}
-                            className="px-2 py-0.5 rounded bg-slate-950 text-slate-400 border border-slate-800 text-[10px] font-mono"
+                            className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-mono"
                           >
                             {res}
                           </span>
@@ -501,30 +500,32 @@ export function CampusDirectory() {
                   </div>
 
                   {/* Actions: CAD Navigation & Consultation Booking */}
-                  <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
-                    <button
+                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      icon={Calendar}
                       onClick={() => {
                         setBookingModalFaculty(fac);
                         setSelectedSlot(fac.slots[0]);
                         setBookingConfirmedPass(null);
                       }}
-                      className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 flex items-center gap-1.5 border border-slate-700 transition-all"
                     >
-                      <Calendar className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Book Consultation</span>
-                    </button>
+                      Book Consultation
+                    </Button>
 
-                    <button
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      icon={Navigation}
                       onClick={() =>
                         navigate(
                           `/campus-map?bldg=${fac.bldgId}&room=${fac.room.split(' ')[1] || 'B-204'}`
                         )
                       }
-                      className="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md shadow-emerald-950 transition-all active:scale-[0.98]"
                     >
-                      <Navigation className="w-3.5 h-3.5" />
-                      <span>Navigate to Office</span>
-                    </button>
+                      Navigate to Office
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -537,10 +538,10 @@ export function CampusDirectory() {
           <section className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-emerald-400" />
-                <h2 className="text-lg font-bold text-white">Campus Academic Blocks &amp; Facilities</h2>
+                <Building2 className="w-5 h-5 text-[#9E153E]" />
+                <h2 className="text-lg font-bold text-slate-900">Campus Academic Blocks &amp; Facilities</h2>
               </div>
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs font-mono text-slate-500">
                 Showing {filteredBuildings.length} Facilities
               </span>
             </div>
@@ -549,17 +550,17 @@ export function CampusDirectory() {
               {filteredBuildings.map((bldg) => (
                 <div
                   key={bldg.id}
-                  className="rounded-2xl bg-slate-900/90 border border-slate-800 overflow-hidden shadow-lg flex flex-col justify-between group"
+                  className="rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-sm flex flex-col justify-between group hover:-translate-y-0.5 transition-all"
                 >
-                  <div className="relative h-44 w-full bg-slate-950 overflow-hidden">
+                  <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
                     <img
                       src={bldg.image}
                       alt={bldg.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
                     <div className="absolute top-3 left-3">
-                      <span className="px-2.5 py-0.5 rounded-full bg-slate-900/90 backdrop-blur-md text-emerald-400 font-mono text-xs font-bold border border-emerald-500/30">
+                      <span className="px-2.5 py-0.5 rounded-full bg-white/95 backdrop-blur-md text-slate-900 font-mono text-xs font-bold border border-slate-200 shadow-xs">
                         {bldg.block}
                       </span>
                     </div>
@@ -567,24 +568,26 @@ export function CampusDirectory() {
 
                   <div className="p-5 flex flex-col gap-3 flex-1 justify-between">
                     <div>
-                      <h3 className="text-base font-bold text-white leading-snug">{bldg.name}</h3>
-                      <p className="text-xs text-emerald-400 mt-0.5 font-medium">{bldg.subtitle}</p>
-                      <p className="text-xs text-slate-400 mt-2 leading-relaxed">{bldg.description}</p>
+                      <h3 className="text-base font-bold text-slate-900 leading-snug">{bldg.name}</h3>
+                      <p className="text-xs text-[#9E153E] mt-0.5 font-semibold">{bldg.subtitle}</p>
+                      <p className="text-xs text-slate-600 mt-2 leading-relaxed">{bldg.description}</p>
                     </div>
 
-                    <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
-                      <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
                         <span>Hours: {bldg.hours}</span>
-                        <span className="text-emerald-400 font-bold">{bldg.occupancy}</span>
+                        <span className="text-emerald-700 font-bold">{bldg.occupancy}</span>
                       </div>
 
-                      <button
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        icon={Compass}
+                        className="w-full mt-1"
                         onClick={() => navigate(`/campus-map?bldg=${bldg.id}`)}
-                        className="w-full py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition-all mt-1"
                       >
-                        <Compass className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Open in Campus Map</span>
-                      </button>
+                        Open in Campus Map
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -598,8 +601,8 @@ export function CampusDirectory() {
           <section className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <LifeBuoy className="w-5 h-5 text-emerald-400" />
-                <h2 className="text-lg font-bold text-white">Administrative &amp; Student Service Desks</h2>
+                <LifeBuoy className="w-5 h-5 text-[#9E153E]" />
+                <h2 className="text-lg font-bold text-slate-900">Administrative &amp; Student Service Desks</h2>
               </div>
             </div>
 
@@ -607,29 +610,31 @@ export function CampusDirectory() {
               {filteredServices.map((srv) => (
                 <div
                   key={srv.id}
-                  className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-lg flex flex-col justify-between gap-4"
+                  className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between gap-4"
                 >
                   <div>
-                    <span className="text-[11px] font-mono text-emerald-400 uppercase font-bold tracking-wider">
+                    <span className="text-[11px] font-mono text-[#9E153E] uppercase font-bold tracking-wider">
                       {srv.dept}
                     </span>
-                    <h3 className="text-base font-bold text-white mt-1 leading-snug">{srv.name}</h3>
-                    <p className="text-xs text-slate-400 mt-2 leading-relaxed">{srv.description}</p>
-                    <div className="text-xs text-slate-300 font-medium mt-3 flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                    <h3 className="text-base font-bold text-slate-900 mt-1 leading-snug">{srv.name}</h3>
+                    <p className="text-xs text-slate-600 mt-2 leading-relaxed">{srv.description}</p>
+                    <div className="text-xs text-slate-700 font-medium mt-3 flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-[#9E153E]" />
                       <span>{srv.location}</span>
                     </div>
                     <div className="text-[11px] text-slate-500 font-mono mt-1">{srv.contact}</div>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-800">
-                    <button
+                  <div className="pt-3 border-t border-slate-100">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      icon={Compass}
+                      className="w-full"
                       onClick={() => navigate(`/campus-map?bldg=${srv.bldgId}`)}
-                      className="w-full py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 flex items-center justify-center gap-1.5 transition-all"
                     >
-                      <Compass className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>View Service Location</span>
-                    </button>
+                      View Service Location
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -642,66 +647,68 @@ export function CampusDirectory() {
           MODAL: BOOK FACULTY OFFICE CONSULTATION
           ========================================================================= */}
       {bookingModalFaculty && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 flex flex-col gap-4 text-slate-100">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl p-6 flex flex-col gap-4 text-slate-900">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-emerald-400" />
-                <h3 className="text-base font-bold text-white">Book Office Hour Consultation</h3>
+                <Calendar className="w-5 h-5 text-[#9E153E]" />
+                <h3 className="text-base font-bold text-slate-900">Book Office Hour Consultation</h3>
               </div>
               <button
                 onClick={() => setBookingModalFaculty(null)}
-                className="w-7 h-7 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center"
+                className="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {bookingConfirmedPass ? (
-              <div className="p-4 rounded-xl bg-gradient-to-b from-slate-950 to-slate-900 border-2 border-emerald-500 flex flex-col gap-3">
+              <div className="p-4 rounded-xl bg-gradient-to-b from-slate-50 to-white border-2 border-emerald-500 flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-emerald-400">
+                  <span className="text-xs font-mono font-bold text-emerald-700">
                     {bookingConfirmedPass.passId}
                   </span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                  <Badge variant="success" size="sm">
                     Confirmed
-                  </span>
+                  </Badge>
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">{bookingConfirmedPass.facultyName}</h4>
-                  <p className="text-xs text-slate-400">{bookingConfirmedPass.room}</p>
+                  <h4 className="text-sm font-bold text-slate-900">{bookingConfirmedPass.facultyName}</h4>
+                  <p className="text-xs text-slate-500">{bookingConfirmedPass.room}</p>
                 </div>
-                <div className="pt-2 border-t border-slate-800 text-xs text-slate-300">
-                  <span>Slot Time: <strong className="text-emerald-400">{bookingConfirmedPass.slot}</strong></span>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Topic: {bookingConfirmedPass.topic}</p>
+                <div className="pt-2 border-t border-slate-100 text-xs text-slate-700">
+                  <span>Slot Time: <strong className="text-emerald-700">{bookingConfirmedPass.slot}</strong></span>
+                  <p className="text-[11px] text-slate-500 mt-0.5">Topic: {bookingConfirmedPass.topic}</p>
                 </div>
-                <button
+                <Button
+                  variant="primary"
+                  size="md"
+                  className="w-full mt-2"
                   onClick={() => setBookingModalFaculty(null)}
-                  className="w-full mt-2 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white"
                 >
                   Close &amp; Return to Directory
-                </button>
+                </Button>
               </div>
             ) : (
               <div className="flex flex-col gap-3.5 text-xs">
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex flex-col gap-0.5">
-                  <span className="text-slate-400 font-medium">Faculty Member</span>
-                  <span className="font-bold text-white text-sm">{bookingModalFaculty.name}</span>
-                  <span className="text-emerald-400">{bookingModalFaculty.room}</span>
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col gap-0.5">
+                  <span className="text-slate-500 font-medium">Faculty Member</span>
+                  <span className="font-bold text-slate-900 text-sm">{bookingModalFaculty.name}</span>
+                  <span className="text-[#9E153E] font-medium">{bookingModalFaculty.room}</span>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-400 font-semibold">Select Available Slot</label>
+                  <label className="text-slate-700 font-bold uppercase tracking-wider text-[11px]">Select Available Slot</label>
                   <div className="grid grid-cols-1 gap-2">
                     {bookingModalFaculty.slots.map((slot, i) => (
                       <button
                         key={i}
                         type="button"
                         onClick={() => setSelectedSlot(slot)}
-                        className={`p-2.5 rounded-xl border text-left font-mono font-semibold transition-all ${
+                        className={`p-2.5 rounded-xl border text-left font-mono font-semibold transition-all cursor-pointer ${
                           selectedSlot === slot
-                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                            : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                            ? 'bg-rose-50 text-[#9E153E] border-rose-300'
+                            : 'bg-slate-50 text-slate-600 border-slate-200 hover:text-slate-900 hover:bg-white'
                         }`}
                       >
                         {slot} (Today)
@@ -711,30 +718,30 @@ export function CampusDirectory() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-slate-400 font-semibold">Consultation Subject</label>
+                  <label className="text-slate-700 font-bold uppercase tracking-wider text-[11px]">Consultation Subject</label>
                   <input
                     type="text"
                     value={consultationTopic}
                     onChange={(e) => setConsultationTopic(e.target.value)}
-                    className="h-10 px-3 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="h-10 px-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100"
                   />
                 </div>
 
-                <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-800">
-                  <button
-                    type="button"
+                <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setBookingModalFaculty(null)}
-                    className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold"
                   >
                     Cancel
-                  </button>
-                  <button
-                    type="button"
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
                     onClick={handleConfirmConsultation}
-                    className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold"
                   >
                     Confirm Appointment
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}

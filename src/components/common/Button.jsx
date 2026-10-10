@@ -7,65 +7,55 @@ export const Button = ({
   onClick,
   type = 'button',
   disabled = false,
+  loading = false,
   className = '',
   icon: Icon,
+  iconRight: IconRight,
+  ...props
 }) => {
-  const baseStyle = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '8px',
-    fontWeight: 600,
-    fontFamily: 'var(--font-heading)',
-    borderRadius: '10px',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-    border: 'none',
-    outline: 'none',
-    opacity: disabled ? 0.6 : 1,
+  const baseClasses =
+    'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 outline-none select-none disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]';
+
+  const sizeClasses = {
+    sm: 'text-xs px-3 py-1.5 gap-1.5 rounded-lg',
+    md: 'text-sm px-4 py-2 gap-2 rounded-xl',
+    lg: 'text-base px-5 py-2.5 gap-2.5 rounded-xl',
   };
 
-  const sizes = {
-    sm: { padding: '6px 12px', fontSize: '12px' },
-    md: { padding: '10px 18px', fontSize: '14px' },
-    lg: { padding: '14px 24px', fontSize: '16px' },
+  const variantClasses = {
+    primary:
+      'bg-gradient-to-r from-[#9E153E] to-[#BE123C] hover:from-[#881337] hover:to-[#9E153E] text-white shadow-sm hover:shadow hover:shadow-rose-900/10 border border-transparent',
+    secondary:
+      'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm hover:border-slate-300',
+    ghost:
+      'bg-transparent hover:bg-slate-100/80 text-slate-600 hover:text-slate-900 border border-transparent',
+    brandSoft:
+      'bg-rose-50 hover:bg-rose-100 text-[#9E153E] border border-rose-200/80',
+    danger:
+      'bg-red-600 hover:bg-red-700 text-white shadow-sm border border-transparent',
   };
 
-  const variants = {
-    primary: {
-      background: 'var(--brand-primary)',
-      color: '#FFFFFF',
-      boxShadow: '0 4px 12px rgba(158, 21, 62, 0.25)',
-    },
-    secondary: {
-      background: 'var(--bg-surface)',
-      border: '1px solid var(--border-interactive)',
-      color: 'var(--brand-primary)',
-    },
-    ghost: {
-      background: 'transparent',
-      color: 'var(--text-secondary)',
-    },
-    danger: {
-      background: '#93000A',
-      color: '#FFFFFF',
-    }
+  const iconSizes = {
+    sm: 14,
+    md: 16,
+    lg: 18,
   };
 
   return (
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled}
-      style={{
-        ...baseStyle,
-        ...sizes[size],
-        ...variants[variant],
-      }}
-      className={`btn-${variant} ${className}`}
+      disabled={disabled || loading}
+      className={`${baseClasses} ${sizeClasses[size] || sizeClasses.md} ${variantClasses[variant] || variantClasses.primary} ${className}`}
+      {...props}
     >
-      {Icon && <Icon size={size === 'sm' ? 14 : size === 'lg' ? 20 : 16} />}
-      {children}
+      {loading ? (
+        <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin shrink-0" />
+      ) : (
+        Icon && <Icon size={iconSizes[size] || 16} className="shrink-0" />
+      )}
+      {children && <span>{children}</span>}
+      {IconRight && !loading && <IconRight size={iconSizes[size] || 16} className="shrink-0" />}
     </button>
   );
 };

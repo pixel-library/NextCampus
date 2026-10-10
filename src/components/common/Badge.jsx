@@ -1,55 +1,57 @@
 import React from 'react';
 
-export const Badge = ({ children, status = 'active', className = '' }) => {
-  const statusStyles = {
-    active: {
-      bg: '#FFE4E6',
-      color: '#9E153E',
-      border: '1px solid rgba(158, 21, 62, 0.2)',
-    },
-    pending: {
-      bg: '#FEF3C7',
-      color: '#B45309',
-      border: '1px solid rgba(180, 83, 9, 0.25)',
-    },
-    resolved: {
-      bg: '#DCFCE7',
-      color: '#15803D',
-      border: '1px solid rgba(21, 128, 61, 0.25)',
-    },
-    closed: {
-      bg: '#F1F5F9',
-      color: '#64748B',
-      border: '1px solid #E2E8F0',
-    },
+export const Badge = ({
+  children,
+  variant = 'brand',
+  status,
+  size = 'md',
+  dot = true,
+  className = '',
+}) => {
+  // Map legacy status prop to variant if provided
+  const resolvedVariant = status
+    ? status === 'active' || status === 'resolved'
+      ? 'success'
+      : status === 'pending'
+      ? 'warning'
+      : status === 'closed'
+      ? 'neutral'
+      : 'brand'
+    : variant;
+
+  const variantStyles = {
+    brand: 'bg-rose-50 text-[#9E153E] border-rose-200/80',
+    success: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+    warning: 'bg-amber-50 text-amber-700 border-amber-200/80',
+    danger: 'bg-red-50 text-red-700 border-red-200/80',
+    info: 'bg-sky-50 text-sky-700 border-sky-200/80',
+    neutral: 'bg-slate-100 text-slate-700 border-slate-200',
   };
 
-  const style = statusStyles[status] || statusStyles.active;
+  const dotStyles = {
+    brand: 'bg-[#9E153E]',
+    success: 'bg-emerald-500',
+    warning: 'bg-amber-500',
+    danger: 'bg-red-500',
+    info: 'bg-sky-500',
+    neutral: 'bg-slate-400',
+  };
+
+  const sizeStyles = {
+    sm: 'text-[11px] px-2 py-0.5 gap-1.5',
+    md: 'text-xs px-2.5 py-1 gap-1.5',
+    lg: 'text-sm px-3 py-1.5 gap-2',
+  };
 
   return (
     <span
-      className={className}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '6px',
-        padding: '3px 10px',
-        borderRadius: '9999px',
-        fontSize: '12px',
-        fontWeight: 600,
-        backgroundColor: style.bg,
-        color: style.color,
-        border: style.border,
-      }}
+      className={`inline-flex items-center font-medium rounded-full border ${variantStyles[resolvedVariant] || variantStyles.brand} ${sizeStyles[size] || sizeStyles.md} ${className}`}
     >
-      <span
-        style={{
-          width: '6px',
-          height: '6px',
-          borderRadius: '50%',
-          backgroundColor: style.color,
-        }}
-      />
+      {dot && (
+        <span
+          className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotStyles[resolvedVariant] || dotStyles.brand}`}
+        />
+      )}
       {children}
     </span>
   );

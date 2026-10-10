@@ -1,12 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { Search, Bell, User as UserIcon, X, CheckCircle2, AlertTriangle, Calendar, DoorOpen } from 'lucide-react';
-import Logo from '../common/Logo';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import {
+  Search,
+  Bell,
+  User as UserIcon,
+  CheckCircle2,
+  Calendar,
+  DoorOpen,
+  Compass,
+  Sparkles,
+  Command,
+} from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 export const Navbar = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
@@ -76,118 +86,64 @@ export const Navbar = () => {
   const unreadCount = notifications.filter((n) => n.unread).length;
 
   return (
-    <header
-      style={{
-        height: 'var(--topbar-height)',
-        backgroundColor: 'var(--bg-surface)',
-        borderBottom: '1px solid var(--border-subtle)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 24px',
-        position: 'sticky',
-        top: 0,
-        zIndex: 80,
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-        <Logo size="sm" showText={true} />
+    <header className="h-16 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 flex items-center justify-between sticky top-0 z-30 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+      {/* Left: Campus Live Status */}
+      <div className="flex items-center gap-3">
+        <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-[11px] font-semibold text-emerald-700">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span>Mewar University • Term 2026</span>
+        </div>
+        <div className="text-xs text-slate-400 hidden md:inline">|</div>
+        <span className="text-xs text-slate-500 font-medium hidden md:inline">
+          Gangrar, Chittorgarh (Rajasthan)
+        </span>
       </div>
 
       {/* Global Interactive Search Input */}
-      <form onSubmit={handleSearchSubmit} style={{ flex: 1, maxWidth: '420px', margin: '0 24px' }}>
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-          <Search size={16} style={{ position: 'absolute', left: '12px', color: 'var(--text-muted)' }} />
+      <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md mx-4 sm:mx-8">
+        <div className="relative flex items-center">
+          <Search size={15} className="absolute left-3.5 text-slate-400 pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search rooms, campus map, directory or care tickets..."
-            style={{
-              width: '100%',
-              padding: '8px 14px 8px 38px',
-              backgroundColor: 'var(--bg-surface-subtle)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: '9999px',
-              color: 'var(--text-primary)',
-              fontSize: '13px',
-              outline: 'none',
-              transition: 'border-color 0.2s ease',
-            }}
-            onFocus={(e) => (e.target.style.borderColor = 'var(--brand-accent)')}
-            onBlur={(e) => (e.target.style.borderColor = 'var(--border-subtle)')}
+            placeholder="Search rooms, buildings, staff, tickets..."
+            className="w-full text-xs font-medium pl-9 pr-12 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100 transition-all"
           />
+          <div className="absolute right-2.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-slate-200/60 text-slate-500 text-[10px] font-semibold">
+            <span>⌘</span>
+            <span>K</span>
+          </div>
         </div>
       </form>
 
-      {/* Notification and User Actions */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', position: 'relative' }}>
-        <div ref={notifRef} style={{ position: 'relative' }}>
+      {/* Right Actions: Notifications & Profile */}
+      <div className="flex items-center gap-3">
+        {/* Notifications Popover */}
+        <div ref={notifRef} className="relative">
           <button
             type="button"
             onClick={() => setShowNotifications(!showNotifications)}
             title="Campus Notifications"
-            style={{
-              position: 'relative',
-              background: 'none',
-              border: 'none',
-              color: showNotifications ? 'var(--brand-primary)' : 'var(--text-muted)',
-              cursor: 'pointer',
-              padding: '6px',
-              display: 'flex',
-              alignItems: 'center',
-            }}
+            className={`relative p-2 rounded-xl transition-colors ${
+              showNotifications
+                ? 'bg-rose-50 text-[#9E153E]'
+                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+            }`}
           >
-            <Bell size={20} />
+            <Bell size={18} />
             {unreadCount > 0 && (
-              <span
-                style={{
-                  position: 'absolute',
-                  top: '4px',
-                  right: '4px',
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  backgroundColor: 'var(--brand-accent)',
-                }}
-              />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
             )}
           </button>
 
-          {/* Interactive Notifications Popover */}
           {showNotifications && (
-            <div
-              style={{
-                position: 'absolute',
-                top: '40px',
-                right: 0,
-                width: '340px',
-                backgroundColor: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: '14px',
-                boxShadow: 'var(--shadow-lg)',
-                zIndex: 100,
-                padding: '16px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-                animation: 'fadeIn 0.2s ease',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>Campus Notifications</span>
+            <div className="absolute top-12 right-0 w-80 sm:w-96 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 p-4 space-y-3 animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-slate-900">Campus Alerts</span>
                   {unreadCount > 0 && (
-                    <span
-                      style={{
-                        fontSize: '10px',
-                        padding: '2px 6px',
-                        borderRadius: '9999px',
-                        backgroundColor: 'var(--brand-primary)',
-                        color: '#FFFFFF',
-                        fontWeight: 700,
-                      }}
-                    >
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#9E153E] text-white">
                       {unreadCount} New
                     </span>
                   )}
@@ -196,57 +152,38 @@ export const Navbar = () => {
                   <button
                     type="button"
                     onClick={markAllRead}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: 'var(--brand-primary)',
-                      fontSize: '11px',
-                      cursor: 'pointer',
-                      textDecoration: 'underline',
-                    }}
+                    className="text-[11px] font-semibold text-[#9E153E] hover:underline"
                   >
-                    Mark read
+                    Mark all read
                   </button>
                 )}
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '280px', overflowY: 'auto' }}>
+              <div className="space-y-2 max-h-72 overflow-y-auto">
                 {notifications.map((n) => {
                   const Icon = n.icon;
                   return (
                     <div
                       key={n.id}
-                      style={{
-                        padding: '10px',
-                        borderRadius: '8px',
-                        backgroundColor: n.unread ? 'rgba(158, 21, 62, 0.06)' : 'var(--bg-surface-subtle)',
-                        border: '1px solid var(--border-subtle)',
-                        display: 'flex',
-                        gap: '10px',
-                      }}
+                      className={`p-2.5 rounded-xl border flex gap-3 transition-colors ${
+                        n.unread
+                          ? 'bg-rose-50/40 border-rose-100'
+                          : 'bg-slate-50/60 border-slate-100'
+                      }`}
                     >
-                      <div
-                        style={{
-                          width: '28px',
-                          height: '28px',
-                          borderRadius: '6px',
-                          backgroundColor: 'rgba(158, 21, 62, 0.12)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'var(--brand-primary)',
-                          flexShrink: 0,
-                          marginTop: '2px',
-                        }}
-                      >
+                      <div className="w-7 h-7 rounded-lg bg-white border border-slate-200/80 text-[#9E153E] flex items-center justify-center shrink-0 shadow-xs mt-0.5">
                         <Icon size={14} />
                       </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                          <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>{n.title}</span>
-                          <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{n.time}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-baseline justify-between gap-1">
+                          <span className="text-xs font-bold text-slate-900 truncate">
+                            {n.title}
+                          </span>
+                          <span className="text-[10px] text-slate-400 shrink-0">
+                            {n.time}
+                          </span>
                         </div>
-                        <p style={{ margin: '3px 0 0 0', fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                        <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
                           {n.desc}
                         </p>
                       </div>
@@ -255,61 +192,36 @@ export const Navbar = () => {
                 })}
               </div>
 
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  paddingTop: '6px',
-                  borderTop: '1px solid var(--border-subtle)',
-                }}
-              >
+              <div className="pt-2 border-t border-slate-100 text-center">
                 <NavLink
                   to="/profile"
                   onClick={() => setShowNotifications(false)}
-                  style={{
-                    fontSize: '11px',
-                    color: 'var(--brand-primary)',
-                    textDecoration: 'none',
-                    fontWeight: 600,
-                  }}
+                  className="text-[11px] font-semibold text-[#9E153E] hover:underline inline-flex items-center gap-1"
                 >
-                  Configure Notification Preferences →
+                  Notification Preferences →
                 </NavLink>
               </div>
             </div>
           )}
         </div>
 
+        {/* Profile Pill */}
         {user ? (
           <NavLink
             to="/profile"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '6px 14px',
-              backgroundColor: 'var(--bg-surface-subtle)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: '9999px',
-              textDecoration: 'none',
-              color: 'var(--text-primary)',
-            }}
+            className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 transition-colors text-decoration-none"
           >
-            <UserIcon size={16} style={{ color: 'var(--brand-primary)' }} />
-            <span style={{ fontSize: '13px', fontWeight: 600 }}>{user.name}</span>
+            <div className="w-6 h-6 rounded-lg bg-[#9E153E] text-white flex items-center justify-center text-[11px] font-bold">
+              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+            </div>
+            <span className="text-xs font-semibold text-slate-800 hidden sm:inline truncate max-w-[120px]">
+              {user.name}
+            </span>
           </NavLink>
         ) : (
           <NavLink
             to="/auth"
-            style={{
-              padding: '8px 16px',
-              backgroundColor: 'var(--brand-primary)',
-              borderRadius: '8px',
-              color: '#FFFFFF',
-              fontSize: '13px',
-              fontWeight: 600,
-              textDecoration: 'none',
-            }}
+            className="px-3.5 py-1.5 rounded-xl bg-[#9E153E] hover:bg-[#881337] text-white text-xs font-semibold shadow-xs transition-colors text-decoration-none"
           >
             Sign In
           </NavLink>
