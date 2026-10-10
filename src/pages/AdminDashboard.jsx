@@ -61,12 +61,12 @@ export function AdminDashboard() {
     <div className="flex flex-col w-full text-on-surface space-y-6">
       {/* Access Control Notice Banner if user lacks admin role */}
       {!isAdminRole && (
-        <div className="p-4 rounded-xl bg-amber-950/80 border border-amber-500/40 text-amber-200 text-xs font-mono flex items-center justify-between shadow-lg">
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-mono flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[18px] text-amber-400">shield</span>
+            <span className="material-symbols-outlined text-[18px] text-amber-600">shield</span>
             <span>Demonstration Access: Backend RBAC restricts admin API mutations to authorized roles (admin, staff, care_admin).</span>
           </div>
-          <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">READ ONLY DEMO</span>
+          <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold border border-amber-200">READ ONLY DEMO</span>
         </div>
       )}
 
@@ -214,19 +214,19 @@ export function AdminDashboard() {
         {/* KPI 5 */}
         <div className="bg-surface-container rounded-xl p-space-md flex flex-col justify-between shadow-md hover:bg-surface-container-high transition-colors border border-outline-variant/20">
           <div className="flex items-center justify-between">
-            <span className="font-label-md text-label-md text-on-surface-variant font-medium">EcoCampus Efficiency</span>
+            <span className="font-label-md text-label-md text-on-surface-variant font-medium">Facility Automation</span>
             <div className="w-8 h-8 rounded-lg bg-primary-container/20 text-secondary flex items-center justify-center">
-              <span className="material-symbols-outlined text-[20px]">energy_savings_leaf</span>
+              <span className="material-symbols-outlined text-[20px]">bolt</span>
             </div>
           </div>
           <div className="mt-space-sm">
-            <div className="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">-8.2%</div>
-            <p className="font-caption text-caption text-on-surface-variant mt-1 truncate">32.4 MWh Today • 480 kg Diverted</p>
+            <div className="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">98.4%</div>
+            <p className="font-caption text-caption text-on-surface-variant mt-1 truncate">32.4 MWh Monitored • Smart Grid Active</p>
           </div>
           <div className="mt-space-md pt-space-xs flex items-center">
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container/30 text-secondary font-caption text-caption font-semibold">
-              <span className="material-symbols-outlined text-[14px]">eco</span>
-              Net-Zero Charter A-
+              <span className="material-symbols-outlined text-[14px]">check_circle</span>
+              High Efficiency
             </span>
           </div>
         </div>

@@ -3,24 +3,24 @@ import React from 'react';
 export const Badge = ({ children, status = 'active', className = '' }) => {
   const statusStyles = {
     active: {
-      bg: 'rgba(172, 39, 79, 0.18)',
-      color: '#FFD9DA',
-      border: '1px solid rgba(235, 99, 139, 0.3)',
+      bg: '#FFE4E6',
+      color: '#9E153E',
+      border: '1px solid rgba(158, 21, 62, 0.2)',
     },
     pending: {
-      bg: 'rgba(235, 99, 139, 0.12)',
-      color: '#EB638B',
-      border: '1px solid rgba(235, 99, 139, 0.25)',
+      bg: '#FEF3C7',
+      color: '#B45309',
+      border: '1px solid rgba(180, 83, 9, 0.25)',
     },
     resolved: {
-      bg: 'rgba(255, 255, 255, 0.08)',
-      color: '#FFFFFF',
-      border: '1px solid rgba(255, 255, 255, 0.15)',
+      bg: '#DCFCE7',
+      color: '#15803D',
+      border: '1px solid rgba(21, 128, 61, 0.25)',
     },
     closed: {
-      bg: 'rgba(56, 46, 49, 0.6)',
-      color: '#D6C4C8',
-      border: '1px solid rgba(255, 217, 218, 0.08)',
+      bg: '#F1F5F9',
+      color: '#64748B',
+      border: '1px solid #E2E8F0',
     },
   };
 

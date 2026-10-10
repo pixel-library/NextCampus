@@ -17,8 +17,8 @@ export let IN_MEMORY_ENROLLMENTS = [
     department: 'Department of Computer Science & Engineering (B.Tech CSE - AI & ML)',
     academicYear: 'Class of 2029',
     admissionYear: 2025,
-    isClaimed: false,
-    claimedAt: null,
+    isClaimed: true,
+    claimedAt: new Date('2025-08-01T09:00:00Z'),
   },
   {
     enrollmentNumber: 'MUR2501045',
@@ -76,6 +76,51 @@ export let IN_MEMORY_ENROLLMENTS = [
  * Pre-seeded mock users with real bcrypt hashes for decoupled/test/offline operations
  */
 let IN_MEMORY_USERS = [
+  {
+    _id: 'usr_student_01',
+    name: 'Rudra Sharma',
+    preferredName: 'Rudra',
+    email: 'rudra@nextcampus.edu',
+    password: bcrypt.hashSync('password123', 10),
+    role: 'student',
+    studentId: 'MUR2502162',
+    enrollmentNumber: 'MUR2502162',
+    department: 'Department of Computer Science & Engineering (B.Tech CSE - AI & ML)',
+    academicYear: 'Class of 2029',
+    semester: '1st Year • Semester 1',
+    bio: 'First-year computer science undergraduate specializing in AI & Machine Learning.',
+    phone: '+91 98765 43210',
+    residence: 'Aryabhata Residence Hall (Block C, Room 314)',
+    emergencyContact: 'Mr. Sharma (+91 98765 00000)',
+    skills: ['Python', 'Machine Learning', 'FastAPI', 'React'],
+    societies: ['ACM Student Chapter', 'AI Robotics Club'],
+    preferences: {
+      notifications: {
+        scheduleAlerts: true,
+        careUpdates: true,
+        ecoDigests: false,
+        skillInvites: true,
+        emergencyBroadcasts: true,
+      },
+      accessibility: {
+        highContrast: false,
+        reduceMotion: false,
+        screenReader: false,
+        textScale: 'Default (100%)',
+        themePreset: 'Light',
+      },
+      privacy: {
+        skillCampusVisible: false,
+        directoryVisible: true,
+      },
+      twoFactorEnabled: false,
+      notificationsEnabled: true,
+      darkTheme: false,
+      emailAlerts: true,
+    },
+    createdAt: new Date('2025-08-01T08:00:00Z'),
+    updatedAt: new Date(),
+  },
   {
     _id: 'usr_admin_01',
     name: 'Campus Administrator',

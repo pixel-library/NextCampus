@@ -2,7 +2,6 @@ import React from 'react';
 import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
-import MobileNav from './MobileNav';
 import { useAuth } from '../../hooks/useAuth';
 
 export const AppLayout = () => {
@@ -11,7 +10,7 @@ export const AppLayout = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: 'var(--bg-canvas)', color: '#FFFFFF' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: 'var(--bg-canvas)', color: 'var(--text-primary)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span className="material-symbols-outlined text-[28px] animate-spin text-primary">progress_activity</span>
           <span style={{ fontSize: '15px', fontWeight: 600 }}>Loading NextCampus Session...</span>
@@ -34,20 +33,17 @@ export const AppLayout = () => {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-canvas)' }}>
-      {/* Sidebar for Desktop */}
+      {/* Sidebar Navigation */}
       <Sidebar />
 
       {/* Main Content Area */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <Navbar />
 
-        <main style={{ flex: 1, padding: '24px', overflowY: 'auto', marginBottom: '60px' }}>
+        <main style={{ flex: 1, padding: '24px', overflowY: 'auto', marginBottom: 0 }}>
           <Outlet />
         </main>
       </div>
-
-      {/* Mobile Bottom Navigation */}
-      <MobileNav />
     </div>
   );
 };

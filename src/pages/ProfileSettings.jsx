@@ -73,9 +73,9 @@ export const ProfileSettings = () => {
         badge: 'Active Member',
       },
       {
-        name: 'Green Campus Initiative (EcoCampus)',
-        role: 'IoT Energy Monitor Contributor',
-        badge: 'Volunteer',
+        name: 'Robotics & AI Student Chapter',
+        role: 'Autonomous Systems & Edge AI Contributor',
+        badge: 'Technical Lead',
       },
     ],
     preferences: {
@@ -316,7 +316,7 @@ export const ProfileSettings = () => {
         maxWidth: '1280px',
         margin: '0 auto',
         padding: '12px 16px 48px 16px',
-        color: '#EAE0E1',
+        color: 'var(--text-primary)',
       }}
     >
       {/* Toast Notification */}
@@ -331,10 +331,10 @@ export const ProfileSettings = () => {
             alignItems: 'center',
             gap: '12px',
             padding: '12px 18px',
-            backgroundColor: '#2D292A',
-            border: '1px solid #AC274F',
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
             borderRadius: '12px',
-            boxShadow: '0 12px 28px rgba(0,0,0,0.4)',
+            boxShadow: 'var(--shadow-md)',
             transition: 'all 0.3s ease',
             animation: 'fadeIn 0.25s ease',
           }}
@@ -344,18 +344,18 @@ export const ProfileSettings = () => {
               width: '32px',
               height: '32px',
               borderRadius: '8px',
-              backgroundColor: 'rgba(172, 39, 79, 0.3)',
+              backgroundColor: 'var(--brand-soft-bg)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#FFB2BF',
+              color: 'var(--brand-primary)',
             }}
           >
             <Check size={18} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: '#FFFFFF' }}>{toast.message}</span>
-            <span style={{ fontSize: '11px', color: '#DFBFC3' }}>{toast.submessage}</span>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{toast.message}</span>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{toast.submessage}</span>
           </div>
         </div>
       )}
@@ -378,14 +378,14 @@ export const ProfileSettings = () => {
                 width: '6px',
                 height: '6px',
                 borderRadius: '50%',
-                backgroundColor: '#FFB2BF',
+                backgroundColor: 'var(--brand-primary)',
                 animation: 'pulse 2s infinite',
               }}
             />
             <span
               style={{
                 fontSize: '11px',
-                color: '#A68A8D',
+                color: 'var(--text-muted)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em',
                 fontWeight: 600,
@@ -394,10 +394,10 @@ export const ProfileSettings = () => {
               STUDENT IDENTITY & PREFERENCES • NEXTCAMPUS ID NODE • [YOUR COLLEGE NAME]
             </span>
           </div>
-          <h1 style={{ fontSize: '30px', fontWeight: 800, margin: 0, color: '#FFFFFF', letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '30px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
             Student Profile & Settings
           </h1>
-          <p style={{ fontSize: '13px', color: '#DFBFC3', margin: 0, maxWidth: '680px' }}>
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0, maxWidth: '680px' }}>
             Manage your institutional identity, notification routing, accessibility needs, and campus security preferences.
           </p>
         </div>
@@ -409,9 +409,9 @@ export const ProfileSettings = () => {
             style={{
               padding: '10px 18px',
               borderRadius: '10px',
-              backgroundColor: 'transparent',
-              border: '1px solid rgba(255, 217, 218, 0.15)',
-              color: '#DFBFC3',
+              backgroundColor: 'var(--bg-surface)',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-secondary)',
               fontSize: '13px',
               fontWeight: 600,
               cursor: 'pointer',
@@ -427,7 +427,7 @@ export const ProfileSettings = () => {
             style={{
               padding: '10px 22px',
               borderRadius: '10px',
-              backgroundColor: '#AC274F',
+              backgroundColor: 'var(--brand-primary)',
               color: '#FFFFFF',
               border: 'none',
               fontSize: '13px',
@@ -436,7 +436,7 @@ export const ProfileSettings = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              boxShadow: '0 4px 14px rgba(172, 39, 79, 0.35)',
+              boxShadow: 'var(--shadow-brand-glow)',
               transition: 'all 0.2s ease',
             }}
           >
@@ -449,13 +449,13 @@ export const ProfileSettings = () => {
       {/* Student Profile Hero Card */}
       <div
         style={{
-          backgroundColor: '#231E1F',
+          backgroundColor: 'var(--bg-surface)',
           borderRadius: '18px',
           padding: '28px',
-          border: '1px solid rgba(255, 217, 218, 0.12)',
+          border: '1px solid var(--border-subtle)',
           position: 'relative',
           overflow: 'hidden',
-          boxShadow: '0 12px 32px rgba(0,0,0,0.25)',
+          boxShadow: 'var(--shadow-sm)',
         }}
       >
         <div
@@ -466,7 +466,7 @@ export const ProfileSettings = () => {
             width: '280px',
             height: '280px',
             borderRadius: '50%',
-            backgroundColor: 'rgba(172, 39, 79, 0.12)',
+            backgroundColor: 'rgba(158, 21, 62, 0.05)',
             filter: 'blur(60px)',
             pointerEvents: 'none',
           }}
@@ -492,15 +492,15 @@ export const ProfileSettings = () => {
                   width: '84px',
                   height: '84px',
                   borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #AC274F 0%, #8C1844 50%, #383335 100%)',
+                  background: 'var(--grad-brand)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#FFFFFF',
                   fontWeight: 800,
                   fontSize: '28px',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-                  border: '3px solid #2D292A',
+                  boxShadow: 'var(--shadow-brand-glow)',
+                  border: '3px solid var(--bg-surface-subtle)',
                 }}
               >
                 {getInitials(formData.name)}
@@ -513,12 +513,12 @@ export const ProfileSettings = () => {
                   width: '22px',
                   height: '22px',
                   borderRadius: '50%',
-                  backgroundColor: '#231E1F',
+                  backgroundColor: 'var(--bg-surface)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#FFB2BF',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                  color: 'var(--brand-primary)',
+                  boxShadow: 'var(--shadow-sm)',
                 }}
               >
                 <BadgeCheck size={16} />
@@ -527,7 +527,7 @@ export const ProfileSettings = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#FFFFFF', margin: 0 }}>
+                <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
                   {formData.name}
                 </h2>
                 <span
@@ -536,8 +536,8 @@ export const ProfileSettings = () => {
                     fontWeight: 700,
                     padding: '3px 10px',
                     borderRadius: '9999px',
-                    backgroundColor: '#2D292A',
-                    color: '#FFB2BF',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    color: 'var(--brand-primary)',
                     letterSpacing: '0.05em',
                   }}
                 >
@@ -550,8 +550,8 @@ export const ProfileSettings = () => {
                       fontWeight: 700,
                       padding: '3px 10px',
                       borderRadius: '9999px',
-                      backgroundColor: 'rgba(235, 99, 139, 0.2)',
-                      color: '#EB638B',
+                      backgroundColor: 'var(--brand-soft-bg)',
+                      color: 'var(--brand-primary)',
                     }}
                   >
                     Role: {user.role.toUpperCase()}
@@ -559,8 +559,8 @@ export const ProfileSettings = () => {
                 )}
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#DFBFC3', fontSize: '13px' }}>
-                <School size={16} style={{ color: '#FFB2BF' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)', fontSize: '13px' }}>
+                <School size={16} style={{ color: 'var(--brand-primary)' }} />
                 <span>{formData.department}</span>
               </div>
 
@@ -569,14 +569,14 @@ export const ProfileSettings = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '14px',
-                  color: '#A68A8D',
+                  color: 'var(--text-muted)',
                   fontSize: '11px',
                   marginTop: '4px',
                   flexWrap: 'wrap',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <Calendar size={13} style={{ color: '#E2BEBF' }} />
+                  <Calendar size={13} style={{ color: 'var(--text-muted)' }} />
                   <span>
                     {formData.semester} ({formData.academicYear})
                   </span>
@@ -586,10 +586,10 @@ export const ProfileSettings = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '5px',
-                    backgroundColor: '#1F1A1B',
+                    backgroundColor: 'var(--bg-surface-subtle)',
                     padding: '2px 8px',
                     borderRadius: '9999px',
-                    color: '#EAE0E1',
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#22c55e' }} />
@@ -609,9 +609,9 @@ export const ProfileSettings = () => {
               gap: '8px',
               padding: '9px 16px',
               borderRadius: '10px',
-              backgroundColor: '#2D292A',
-              border: '1px solid rgba(255, 217, 218, 0.1)',
-              color: '#DFBFC3',
+              backgroundColor: 'var(--bg-surface-subtle)',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-secondary)',
               fontSize: '13px',
               fontWeight: 600,
               cursor: 'pointer',
@@ -631,7 +631,7 @@ export const ProfileSettings = () => {
             gap: '12px',
             marginTop: '24px',
             paddingTop: '18px',
-            borderTop: '1px solid rgba(255, 217, 218, 0.08)',
+            borderTop: '1px solid var(--border-subtle)',
           }}
         >
           <div
@@ -640,8 +640,9 @@ export const ProfileSettings = () => {
               alignItems: 'center',
               gap: '12px',
               padding: '12px 14px',
-              backgroundColor: '#1F1A1B',
+              backgroundColor: 'var(--bg-surface-subtle)',
               borderRadius: '12px',
+              border: '1px solid var(--border-subtle)',
             }}
           >
             <div
@@ -649,18 +650,18 @@ export const ProfileSettings = () => {
                 width: '38px',
                 height: '38px',
                 borderRadius: '8px',
-                backgroundColor: '#2D292A',
+                backgroundColor: 'var(--bg-surface)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#FFB2BF',
+                color: 'var(--brand-primary)',
               }}
             >
               <FolderGit2 size={20} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '18px', fontWeight: 800, color: '#FFFFFF' }}>4</span>
-              <span style={{ fontSize: '10px', color: '#A68A8D', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)' }}>4</span>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                 Campus Projects
               </span>
             </div>
@@ -672,8 +673,9 @@ export const ProfileSettings = () => {
               alignItems: 'center',
               gap: '12px',
               padding: '12px 14px',
-              backgroundColor: '#1F1A1B',
+              backgroundColor: 'var(--bg-surface-subtle)',
               borderRadius: '12px',
+              border: '1px solid var(--border-subtle)',
             }}
           >
             <div
@@ -681,18 +683,18 @@ export const ProfileSettings = () => {
                 width: '38px',
                 height: '38px',
                 borderRadius: '8px',
-                backgroundColor: '#2D292A',
+                backgroundColor: 'var(--bg-surface)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#FFB1C2',
+                color: 'var(--brand-accent)',
               }}
             >
               <LifeBuoy size={20} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '18px', fontWeight: 800, color: '#FFFFFF' }}>1 Active</span>
-              <span style={{ fontSize: '10px', color: '#A68A8D', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)' }}>1 Active</span>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                 Open Care Ticket
               </span>
             </div>
@@ -704,8 +706,9 @@ export const ProfileSettings = () => {
               alignItems: 'center',
               gap: '12px',
               padding: '12px 14px',
-              backgroundColor: '#1F1A1B',
+              backgroundColor: 'var(--bg-surface-subtle)',
               borderRadius: '12px',
+              border: '1px solid var(--border-subtle)',
             }}
           >
             <div
@@ -713,19 +716,19 @@ export const ProfileSettings = () => {
                 width: '38px',
                 height: '38px',
                 borderRadius: '8px',
-                backgroundColor: '#2D292A',
+                backgroundColor: 'var(--bg-surface)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#E2BEBF',
+                color: '#16a34a',
               }}
             >
               <Leaf size={20} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '18px', fontWeight: 800, color: '#FFFFFF' }}>340 pts</span>
-              <span style={{ fontSize: '10px', color: '#A68A8D', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                EcoCampus Tier 2
+              <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)' }}>340 pts</span>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                Academic Merit Tier 2
               </span>
             </div>
           </div>
@@ -736,8 +739,9 @@ export const ProfileSettings = () => {
               alignItems: 'center',
               gap: '12px',
               padding: '12px 14px',
-              backgroundColor: '#1F1A1B',
+              backgroundColor: 'var(--bg-surface-subtle)',
               borderRadius: '12px',
+              border: '1px solid var(--border-subtle)',
             }}
           >
             <div
@@ -745,18 +749,18 @@ export const ProfileSettings = () => {
                 width: '38px',
                 height: '38px',
                 borderRadius: '8px',
-                backgroundColor: '#2D292A',
+                backgroundColor: 'var(--bg-surface)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#FFC7D0',
+                color: 'var(--brand-primary)',
               }}
             >
               <GraduationCap size={20} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '18px', fontWeight: 800, color: '#FFFFFF' }}>94.2%</span>
-              <span style={{ fontSize: '10px', color: '#A68A8D', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)' }}>94.2%</span>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                 Semester Attendance
               </span>
             </div>
@@ -769,11 +773,11 @@ export const ProfileSettings = () => {
         style={{
           display: 'flex',
           gap: '6px',
-          backgroundColor: '#1F1A1B',
+          backgroundColor: 'var(--bg-surface-subtle)',
           padding: '6px',
           borderRadius: '14px',
           overflowX: 'auto',
-          border: '1px solid rgba(255, 217, 218, 0.08)',
+          border: '1px solid var(--border-subtle)',
         }}
       >
         {[
@@ -798,13 +802,13 @@ export const ProfileSettings = () => {
                 borderRadius: '10px',
                 fontSize: '13px',
                 fontWeight: isActive ? 700 : 500,
-                color: isActive ? '#FFC7D0' : '#A68A8D',
-                backgroundColor: isActive ? '#AC274F' : 'transparent',
+                color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
+                backgroundColor: isActive ? 'var(--brand-primary)' : 'transparent',
                 border: 'none',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
                 transition: 'all 0.2s ease',
-                boxShadow: isActive ? '0 2px 8px rgba(172, 39, 79, 0.3)' : 'none',
+                boxShadow: isActive ? 'var(--shadow-sm)' : 'none',
               }}
             >
               <Icon size={16} />
@@ -822,22 +826,23 @@ export const ProfileSettings = () => {
           {/* Left Form: Editable Personal & Contact Details */}
           <div
             style={{
-              backgroundColor: '#231E1F',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
               padding: '28px',
-              border: '1px solid rgba(255, 217, 218, 0.1)',
+              border: '1px solid var(--border-subtle)',
               display: 'flex',
               flexDirection: 'column',
               gap: '20px',
               gridColumn: 'span 2',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: '#FFFFFF' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: 'var(--text-primary)' }}>
                   Institutional & Personal Info
                 </h3>
-                <span style={{ fontSize: '12px', color: '#A68A8D' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                   Synchronized with Academic Affairs & Hostel Wardenship
                 </span>
               </div>
@@ -846,8 +851,8 @@ export const ProfileSettings = () => {
                   fontSize: '11px',
                   padding: '3px 10px',
                   borderRadius: '9999px',
-                  backgroundColor: '#1F1A1B',
-                  color: '#FFB1C2',
+                  backgroundColor: 'var(--brand-soft-bg)',
+                  color: 'var(--brand-primary)',
                   fontWeight: 600,
                 }}
               >
@@ -857,7 +862,7 @@ export const ProfileSettings = () => {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: '#DFBFC3', textTransform: 'uppercase' }}>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                   Legal Full Name
                 </label>
                 <input
@@ -865,11 +870,11 @@ export const ProfileSettings = () => {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   style={{
-                    backgroundColor: '#161213',
-                    border: '1px solid #584144',
+                    backgroundColor: 'var(--bg-canvas)',
+                    border: '1px solid var(--border-interactive)',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#FFFFFF',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                   }}
@@ -877,7 +882,7 @@ export const ProfileSettings = () => {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: '#DFBFC3', textTransform: 'uppercase' }}>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                   Preferred First Name
                 </label>
                 <input
@@ -885,11 +890,11 @@ export const ProfileSettings = () => {
                   value={formData.preferredName}
                   onChange={(e) => setFormData({ ...formData, preferredName: e.target.value })}
                   style={{
-                    backgroundColor: '#161213',
-                    border: '1px solid #584144',
+                    backgroundColor: 'var(--bg-canvas)',
+                    border: '1px solid var(--border-interactive)',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#FFFFFF',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                   }}
@@ -897,7 +902,7 @@ export const ProfileSettings = () => {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: '#DFBFC3', textTransform: 'uppercase' }}>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                   Institutional Email (Federated)
                 </label>
                 <div
@@ -905,24 +910,24 @@ export const ProfileSettings = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    backgroundColor: '#110D0E',
-                    border: '1px solid rgba(255, 217, 218, 0.08)',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    border: '1px solid var(--border-subtle)',
                     borderRadius: '8px',
                     padding: '10px 14px',
                     fontSize: '13px',
-                    color: '#DFBFC3',
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   <span>{formData.email}</span>
-                  <Lock size={14} style={{ color: '#FFB2BF' }} />
+                  <Lock size={14} style={{ color: 'var(--brand-primary)' }} />
                 </div>
-                <span style={{ fontSize: '10px', color: '#A68A8D' }}>
+                <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
                   Managed via Institutional Keycloak Identity Provider
                 </span>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: '#DFBFC3', textTransform: 'uppercase' }}>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                   Personal Contact Number
                 </label>
                 <input
@@ -930,11 +935,11 @@ export const ProfileSettings = () => {
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   style={{
-                    backgroundColor: '#161213',
-                    border: '1px solid #584144',
+                    backgroundColor: 'var(--bg-canvas)',
+                    border: '1px solid var(--border-interactive)',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#FFFFFF',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                   }}
@@ -942,7 +947,7 @@ export const ProfileSettings = () => {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: '#DFBFC3', textTransform: 'uppercase' }}>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                   Campus Residence / Hostel Allocation
                 </label>
                 <input
@@ -950,11 +955,11 @@ export const ProfileSettings = () => {
                   value={formData.residence}
                   onChange={(e) => setFormData({ ...formData, residence: e.target.value })}
                   style={{
-                    backgroundColor: '#161213',
-                    border: '1px solid #584144',
+                    backgroundColor: 'var(--bg-canvas)',
+                    border: '1px solid var(--border-interactive)',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#FFFFFF',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                   }}
@@ -962,7 +967,7 @@ export const ProfileSettings = () => {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: '#DFBFC3', textTransform: 'uppercase' }}>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                   Emergency Contact & Relation
                 </label>
                 <input
@@ -970,11 +975,11 @@ export const ProfileSettings = () => {
                   value={formData.emergencyContact}
                   onChange={(e) => setFormData({ ...formData, emergencyContact: e.target.value })}
                   style={{
-                    backgroundColor: '#161213',
-                    border: '1px solid #584144',
+                    backgroundColor: 'var(--bg-canvas)',
+                    border: '1px solid var(--border-interactive)',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#FFFFFF',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                   }}
@@ -983,7 +988,7 @@ export const ProfileSettings = () => {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '11px', fontWeight: 600, color: '#DFBFC3', textTransform: 'uppercase' }}>
+              <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                 Academic Bio / Research Statement
               </label>
               <textarea
@@ -991,11 +996,11 @@ export const ProfileSettings = () => {
                 value={formData.bio}
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                 style={{
-                  backgroundColor: '#161213',
-                  border: '1px solid #584144',
+                  backgroundColor: 'var(--bg-canvas)',
+                  border: '1px solid var(--border-interactive)',
                   borderRadius: '8px',
                   padding: '10px 14px',
-                  color: '#FFFFFF',
+                  color: 'var(--text-primary)',
                   fontSize: '13px',
                   outline: 'none',
                   resize: 'vertical',
@@ -1009,31 +1014,31 @@ export const ProfileSettings = () => {
             {/* Digital RFID Student Card */}
             <div
               style={{
-                background: 'linear-gradient(135deg, #2D292A 0%, #110D0E 100%)',
+                background: 'linear-gradient(135deg, #9E153E 0%, #700E2B 100%)',
                 borderRadius: '16px',
                 padding: '24px',
-                border: '1px solid rgba(255, 217, 218, 0.12)',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+                border: '1px solid rgba(158, 21, 62, 0.4)',
+                boxShadow: 'var(--shadow-brand-glow)',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#FFB2BF' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#FFE4E6' }}>
                   <Radio size={20} />
                   <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                     Campus RFID Active
                   </span>
                 </div>
-                <span style={{ fontSize: '11px', color: '#FFB1C2', fontWeight: 600 }}>AY 2025-26</span>
+                <span style={{ fontSize: '11px', color: '#FFE4E6', fontWeight: 600 }}>AY 2025-26</span>
               </div>
 
               <div style={{ margin: '20px 0' }}>
                 <div style={{ fontSize: '20px', fontWeight: 800, color: '#FFFFFF', letterSpacing: '0.05em' }}>
                   {formData.studentId}
                 </div>
-                <div style={{ fontSize: '11px', color: '#DFBFC3', marginTop: '4px' }}>
+                <div style={{ fontSize: '11px', color: '#FFE4E6', marginTop: '4px' }}>
                   Hostel Gate • Library • Lab Access Tier A
                 </div>
               </div>
@@ -1041,14 +1046,13 @@ export const ProfileSettings = () => {
               {/* Simulated Barcode */}
               <div
                 style={{
-                  backgroundColor: '#231E1F',
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
                   padding: '10px 14px',
                   borderRadius: '8px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-around',
                   height: '36px',
-                  opacity: 0.85,
                 }}
               >
                 {[3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7, 9, 3, 2, 3, 8, 4, 6].map((w, i) => (
@@ -1057,7 +1061,7 @@ export const ProfileSettings = () => {
                     style={{
                       width: `${(w % 3) + 1}px`,
                       height: '100%',
-                      backgroundColor: i % 2 === 0 ? '#FFB2BF' : '#FFFFFF',
+                      backgroundColor: i % 2 === 0 ? '#FFE4E6' : '#FFFFFF',
                     }}
                   />
                 ))}
@@ -1067,16 +1071,17 @@ export const ProfileSettings = () => {
             {/* Quick Setting Modules */}
             <div
               style={{
-                backgroundColor: '#231E1F',
+                backgroundColor: 'var(--bg-surface)',
                 borderRadius: '16px',
                 padding: '24px',
-                border: '1px solid rgba(255, 217, 218, 0.1)',
+                border: '1px solid var(--border-subtle)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '12px',
+                boxShadow: 'var(--shadow-sm)',
               }}
             >
-              <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#FFFFFF', margin: '0 0 4px 0' }}>
+              <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 4px 0' }}>
                 Quick Setting Modules
               </h4>
 
@@ -1089,9 +1094,9 @@ export const ProfileSettings = () => {
                   justifyContent: 'space-between',
                   padding: '12px',
                   borderRadius: '10px',
-                  backgroundColor: '#1F1A1B',
-                  border: '1px solid rgba(255, 217, 218, 0.06)',
-                  color: '#FFFFFF',
+                  backgroundColor: 'var(--bg-surface-subtle)',
+                  border: '1px solid var(--border-subtle)',
+                  color: 'var(--text-primary)',
                   cursor: 'pointer',
                   textAlign: 'left',
                 }}
@@ -1102,21 +1107,21 @@ export const ProfileSettings = () => {
                       width: '32px',
                       height: '32px',
                       borderRadius: '8px',
-                      backgroundColor: 'rgba(172, 39, 79, 0.25)',
+                      backgroundColor: 'var(--brand-soft-bg)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: '#FFB2BF',
+                      color: 'var(--brand-primary)',
                     }}
                   >
                     <Key size={16} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '12px', fontWeight: 600 }}>Change Master Password</div>
-                    <div style={{ fontSize: '10px', color: '#A68A8D' }}>Last updated 42 days ago</div>
+                    <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Change Master Password</div>
+                    <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Last updated 42 days ago</div>
                   </div>
                 </div>
-                <span style={{ color: '#DFBFC3', fontSize: '16px' }}>›</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '16px' }}>›</span>
               </button>
 
               <button
@@ -1128,9 +1133,9 @@ export const ProfileSettings = () => {
                   justifyContent: 'space-between',
                   padding: '12px',
                   borderRadius: '10px',
-                  backgroundColor: '#1F1A1B',
-                  border: '1px solid rgba(255, 217, 218, 0.06)',
-                  color: '#FFFFFF',
+                  backgroundColor: 'var(--bg-surface-subtle)',
+                  border: '1px solid var(--border-subtle)',
+                  color: 'var(--text-primary)',
                   cursor: 'pointer',
                   textAlign: 'left',
                 }}
@@ -1141,21 +1146,21 @@ export const ProfileSettings = () => {
                       width: '32px',
                       height: '32px',
                       borderRadius: '8px',
-                      backgroundColor: 'rgba(140, 24, 68, 0.25)',
+                      backgroundColor: 'var(--brand-soft-bg)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: '#FFB1C2',
+                      color: 'var(--brand-primary)',
                     }}
                   >
                     <Bell size={16} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '12px', fontWeight: 600 }}>Notification Channels</div>
-                    <div style={{ fontSize: '10px', color: '#A68A8D' }}>Emergency, LMS, Care</div>
+                    <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Notification Channels</div>
+                    <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Emergency, LMS, Care</div>
                   </div>
                 </div>
-                <span style={{ color: '#DFBFC3', fontSize: '16px' }}>›</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '16px' }}>›</span>
               </button>
 
               <button
@@ -1167,9 +1172,9 @@ export const ProfileSettings = () => {
                   justifyContent: 'space-between',
                   padding: '12px',
                   borderRadius: '10px',
-                  backgroundColor: '#1F1A1B',
-                  border: '1px solid rgba(255, 217, 218, 0.06)',
-                  color: '#FFFFFF',
+                  backgroundColor: 'var(--bg-surface-subtle)',
+                  border: '1px solid var(--border-subtle)',
+                  color: 'var(--text-primary)',
                   cursor: 'pointer',
                   textAlign: 'left',
                 }}
@@ -1180,21 +1185,21 @@ export const ProfileSettings = () => {
                       width: '32px',
                       height: '32px',
                       borderRadius: '8px',
-                      backgroundColor: 'rgba(113, 85, 86, 0.25)',
+                      backgroundColor: 'var(--brand-soft-bg)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: '#E2BEBF',
+                      color: 'var(--brand-primary)',
                     }}
                   >
                     <Shield size={16} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '12px', fontWeight: 600 }}>Security & 2FA Status</div>
-                    <div style={{ fontSize: '10px', color: '#A68A8D' }}>Campus Authenticator TOTP</div>
+                    <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Security & 2FA Status</div>
+                    <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Campus Authenticator TOTP</div>
                   </div>
                 </div>
-                <span style={{ color: '#DFBFC3', fontSize: '16px' }}>›</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '16px' }}>›</span>
               </button>
             </div>
           </div>
@@ -1209,22 +1214,23 @@ export const ProfileSettings = () => {
           {/* Skills & Domains */}
           <div
             style={{
-              backgroundColor: '#231E1F',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
               padding: '28px',
-              border: '1px solid rgba(255, 217, 218, 0.1)',
+              border: '1px solid var(--border-subtle)',
               display: 'flex',
               flexDirection: 'column',
               gap: '16px',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: '#FFFFFF' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: 'var(--text-primary)' }}>
                   Technical Skills & Competencies
                 </h3>
-                <span style={{ fontSize: '12px', color: '#A68A8D' }}>
-                  Badges highlighted here are visible to project recruiters across SkillCampus
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                  Skills highlighted here are visible on your verified academic profile
                 </span>
               </div>
               <span
@@ -1232,12 +1238,12 @@ export const ProfileSettings = () => {
                   fontSize: '11px',
                   padding: '3px 10px',
                   borderRadius: '9999px',
-                  backgroundColor: '#1F1A1B',
-                  color: '#FFB2BF',
+                  backgroundColor: 'var(--brand-soft-bg)',
+                  color: 'var(--brand-primary)',
                   fontWeight: 600,
                 }}
               >
-                SkillCampus Verified
+                Campus Verified
               </span>
             </div>
 
@@ -1251,9 +1257,9 @@ export const ProfileSettings = () => {
                     gap: '8px',
                     padding: '6px 14px',
                     borderRadius: '9999px',
-                    backgroundColor: '#2D292A',
-                    border: '1px solid rgba(255, 217, 218, 0.1)',
-                    color: '#FFFFFF',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    border: '1px solid var(--border-subtle)',
+                    color: 'var(--text-primary)',
                     fontSize: '12px',
                     fontWeight: 500,
                   }}
@@ -1265,7 +1271,7 @@ export const ProfileSettings = () => {
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: '#A68A8D',
+                      color: 'var(--text-muted)',
                       cursor: 'pointer',
                       padding: 0,
                       display: 'flex',
@@ -1294,9 +1300,9 @@ export const ProfileSettings = () => {
                     style={{
                       padding: '5px 12px',
                       borderRadius: '9999px',
-                      backgroundColor: '#110D0E',
-                      border: '1px solid #AC274F',
-                      color: '#FFFFFF',
+                      backgroundColor: 'var(--bg-canvas)',
+                      border: '1px solid var(--brand-primary)',
+                      color: 'var(--text-primary)',
                       fontSize: '12px',
                       outline: 'none',
                     }}
@@ -1307,7 +1313,7 @@ export const ProfileSettings = () => {
                     style={{
                       padding: '5px 10px',
                       borderRadius: '9999px',
-                      backgroundColor: '#AC274F',
+                      backgroundColor: 'var(--brand-primary)',
                       border: 'none',
                       color: '#FFFFFF',
                       fontSize: '11px',
@@ -1323,7 +1329,7 @@ export const ProfileSettings = () => {
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: '#A68A8D',
+                      color: 'var(--text-muted)',
                       cursor: 'pointer',
                       fontSize: '14px',
                     }}
@@ -1341,7 +1347,7 @@ export const ProfileSettings = () => {
                     gap: '6px',
                     padding: '6px 14px',
                     borderRadius: '9999px',
-                    backgroundColor: '#AC274F',
+                    backgroundColor: 'var(--brand-primary)',
                     border: 'none',
                     color: '#FFFFFF',
                     fontSize: '12px',
@@ -1359,29 +1365,30 @@ export const ProfileSettings = () => {
           {/* Society & Clubs Affiliations */}
           <div
             style={{
-              backgroundColor: '#231E1F',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
               padding: '28px',
-              border: '1px solid rgba(255, 217, 218, 0.1)',
+              border: '1px solid var(--border-subtle)',
               display: 'flex',
               flexDirection: 'column',
               gap: '16px',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: '#FFFFFF' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: 'var(--text-primary)' }}>
                   Campus Society & Club Roles
                 </h3>
-                <span style={{ fontSize: '12px', color: '#A68A8D' }}>Dean of Student Affairs Approved</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Dean of Student Affairs Approved</span>
               </div>
               <span
                 style={{
                   fontSize: '11px',
                   padding: '3px 10px',
                   borderRadius: '9999px',
-                  backgroundColor: '#1F1A1B',
-                  color: '#FFB1C2',
+                  backgroundColor: 'var(--brand-soft-bg)',
+                  color: 'var(--brand-primary)',
                   fontWeight: 600,
                 }}
               >
@@ -1398,9 +1405,9 @@ export const ProfileSettings = () => {
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     padding: '12px 14px',
-                    backgroundColor: '#1F1A1B',
+                    backgroundColor: 'var(--bg-surface-subtle)',
                     borderRadius: '10px',
-                    border: '1px solid rgba(255, 217, 218, 0.06)',
+                    border: '1px solid var(--border-subtle)',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -1409,18 +1416,18 @@ export const ProfileSettings = () => {
                         width: '36px',
                         height: '36px',
                         borderRadius: '8px',
-                        backgroundColor: '#2D292A',
+                        backgroundColor: 'var(--bg-surface)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#FFB2BF',
+                        color: 'var(--brand-primary)',
                       }}
                     >
                       <School size={18} />
                     </div>
                     <div>
-                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>{soc.name}</div>
-                      <div style={{ fontSize: '11px', color: '#A68A8D' }}>{soc.role}</div>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{soc.name}</div>
+                      <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{soc.role}</div>
                     </div>
                   </div>
                   <span
@@ -1428,8 +1435,8 @@ export const ProfileSettings = () => {
                       fontSize: '11px',
                       padding: '2px 8px',
                       borderRadius: '9999px',
-                      backgroundColor: 'rgba(172, 39, 79, 0.25)',
-                      color: '#FFB2BF',
+                      backgroundColor: 'var(--brand-soft-bg)',
+                      color: 'var(--brand-primary)',
                       fontWeight: 600,
                     }}
                   >
@@ -1448,20 +1455,21 @@ export const ProfileSettings = () => {
       {activeTab === 'notifications' && (
         <div
           style={{
-            backgroundColor: '#231E1F',
+            backgroundColor: 'var(--bg-surface)',
             borderRadius: '16px',
             padding: '28px',
-            border: '1px solid rgba(255, 217, 218, 0.1)',
+            border: '1px solid var(--border-subtle)',
             display: 'flex',
             flexDirection: 'column',
             gap: '20px',
+            boxShadow: 'var(--shadow-sm)',
           }}
         >
           <div>
-            <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: '#FFFFFF' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: 'var(--text-primary)' }}>
               Campus Routing & Push Notification Channels
             </h3>
-            <p style={{ fontSize: '13px', color: '#DFBFC3', margin: 0 }}>
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
               Configure how urgent class shifts, care desk tickets, and green challenge announcements reach your device.
             </p>
           </div>
@@ -1474,8 +1482,9 @@ export const ProfileSettings = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '14px 18px',
-                backgroundColor: '#1F1A1B',
+                backgroundColor: 'var(--bg-surface-subtle)',
                 borderRadius: '12px',
+                border: '1px solid var(--border-subtle)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -1484,20 +1493,20 @@ export const ProfileSettings = () => {
                     width: '38px',
                     height: '38px',
                     borderRadius: '10px',
-                    backgroundColor: '#2D292A',
+                    backgroundColor: 'var(--bg-surface)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#FFB2BF',
+                    color: 'var(--brand-primary)',
                   }}
                 >
                   <Calendar size={18} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
                     Class Schedule & Room Relocation Alerts
                   </div>
-                  <div style={{ fontSize: '11px', color: '#A68A8D' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
                     Instant SMS & Mobile push for last-minute venue or lecture time alterations.
                   </div>
                 </div>
@@ -1517,7 +1526,7 @@ export const ProfileSettings = () => {
                     },
                   })
                 }
-                style={{ accentColor: '#AC274F', width: '20px', height: '20px', cursor: 'pointer' }}
+                style={{ accentColor: 'var(--brand-primary)', width: '20px', height: '20px', cursor: 'pointer' }}
               />
             </div>
 
@@ -1528,8 +1537,9 @@ export const ProfileSettings = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '14px 18px',
-                backgroundColor: '#1F1A1B',
+                backgroundColor: 'var(--bg-surface-subtle)',
                 borderRadius: '12px',
+                border: '1px solid var(--border-subtle)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -1538,20 +1548,20 @@ export const ProfileSettings = () => {
                     width: '38px',
                     height: '38px',
                     borderRadius: '10px',
-                    backgroundColor: '#2D292A',
+                    backgroundColor: 'var(--bg-surface)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#FFB1C2',
+                    color: 'var(--brand-accent)',
                   }}
                 >
                   <LifeBuoy size={18} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
                     NextCampus Care Ticket Updates
                   </div>
-                  <div style={{ fontSize: '11px', color: '#A68A8D' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
                     Real-time alerts when facility technicians or wardens update ticket statuses.
                   </div>
                 </div>
@@ -1571,7 +1581,7 @@ export const ProfileSettings = () => {
                     },
                   })
                 }
-                style={{ accentColor: '#AC274F', width: '20px', height: '20px', cursor: 'pointer' }}
+                style={{ accentColor: 'var(--brand-primary)', width: '20px', height: '20px', cursor: 'pointer' }}
               />
             </div>
 
@@ -1582,8 +1592,9 @@ export const ProfileSettings = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '14px 18px',
-                backgroundColor: '#1F1A1B',
+                backgroundColor: 'var(--bg-surface-subtle)',
                 borderRadius: '12px',
+                border: '1px solid var(--border-subtle)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -1592,21 +1603,21 @@ export const ProfileSettings = () => {
                     width: '38px',
                     height: '38px',
                     borderRadius: '10px',
-                    backgroundColor: '#2D292A',
+                    backgroundColor: 'var(--bg-surface)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#E2BEBF',
+                    color: '#16a34a',
                   }}
                 >
                   <Leaf size={18} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>
-                    EcoCampus & Green Initiative Digests
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    Campus Announcements & Event Digests
                   </div>
-                  <div style={{ fontSize: '11px', color: '#A68A8D' }}>
-                    Weekly roundup of campus sustainability leaderboards and active hostel challenges.
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    Weekly roundup of campus guest lectures, workshops, and student notices.
                   </div>
                 </div>
               </div>
@@ -1625,19 +1636,20 @@ export const ProfileSettings = () => {
                     },
                   })
                 }
-                style={{ accentColor: '#AC274F', width: '20px', height: '20px', cursor: 'pointer' }}
+                style={{ accentColor: 'var(--brand-primary)', width: '20px', height: '20px', cursor: 'pointer' }}
               />
             </div>
 
-            {/* Switch 4: SkillCampus */}
+            {/* Switch 4: Study Groups */}
             <div
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '14px 18px',
-                backgroundColor: '#1F1A1B',
+                backgroundColor: 'var(--bg-surface-subtle)',
                 borderRadius: '12px',
+                border: '1px solid var(--border-subtle)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -1646,21 +1658,21 @@ export const ProfileSettings = () => {
                     width: '38px',
                     height: '38px',
                     borderRadius: '10px',
-                    backgroundColor: '#2D292A',
+                    backgroundColor: 'var(--bg-surface)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#FFB2BF',
+                    color: 'var(--brand-primary)',
                   }}
                 >
-                  <FolderGit2 size={18} />
+                  <Users size={18} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>
-                    SkillCampus Collaboration Invites
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    Study Group & Peer Invites
                   </div>
-                  <div style={{ fontSize: '11px', color: '#A68A8D' }}>
-                    In-app alerts when fellow students request your participation in project teams.
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    In-app alerts when fellow students invite you to join academic project teams.
                   </div>
                 </div>
               </div>
@@ -1679,7 +1691,7 @@ export const ProfileSettings = () => {
                     },
                   })
                 }
-                style={{ accentColor: '#AC274F', width: '20px', height: '20px', cursor: 'pointer' }}
+                style={{ accentColor: 'var(--brand-primary)', width: '20px', height: '20px', cursor: 'pointer' }}
               />
             </div>
 
@@ -1690,9 +1702,9 @@ export const ProfileSettings = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '14px 18px',
-                backgroundColor: '#110D0E',
+                backgroundColor: '#FEF2F2',
                 borderRadius: '12px',
-                opacity: 0.9,
+                border: '1px solid #FECACA',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -1701,18 +1713,18 @@ export const ProfileSettings = () => {
                     width: '38px',
                     height: '38px',
                     borderRadius: '10px',
-                    backgroundColor: '#2D292A',
+                    backgroundColor: '#FEE2E2',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#FFB4AB',
+                    color: '#DC2626',
                   }}
                 >
                   <AlertTriangle size={18} />
                 </div>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#991B1B' }}>
                       Campus Emergency & Security Broadcasts
                     </span>
                     <span
@@ -1720,7 +1732,7 @@ export const ProfileSettings = () => {
                         fontSize: '10px',
                         padding: '2px 6px',
                         borderRadius: '4px',
-                        backgroundColor: '#AC274F',
+                        backgroundColor: 'var(--brand-primary)',
                         color: '#FFFFFF',
                         fontWeight: 700,
                       }}
@@ -1728,7 +1740,7 @@ export const ProfileSettings = () => {
                       MANDATORY
                     </span>
                   </div>
-                  <div style={{ fontSize: '11px', color: '#A68A8D' }}>
+                  <div style={{ fontSize: '11px', color: '#B91C1C' }}>
                     Critical weather, fire protocols, and lockdown notices cannot be disabled.
                   </div>
                 </div>
@@ -1738,7 +1750,7 @@ export const ProfileSettings = () => {
                   width: '24px',
                   height: '24px',
                   borderRadius: '50%',
-                  backgroundColor: '#AC274F',
+                  backgroundColor: 'var(--brand-primary)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1760,20 +1772,21 @@ export const ProfileSettings = () => {
           {/* Assistive Controls */}
           <div
             style={{
-              backgroundColor: '#231E1F',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
               padding: '28px',
-              border: '1px solid rgba(255, 217, 218, 0.1)',
+              border: '1px solid var(--border-subtle)',
               display: 'flex',
               flexDirection: 'column',
               gap: '18px',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: '#FFFFFF' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: 'var(--text-primary)' }}>
                 Accessibility & Assistive Tools
               </h3>
-              <span style={{ fontSize: '12px', color: '#A68A8D' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                 WCAG 2.1 AAA Compliant student interface controls
               </span>
             </div>
@@ -1781,8 +1794,8 @@ export const ProfileSettings = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>High-Contrast Mode</div>
-                  <div style={{ fontSize: '11px', color: '#A68A8D' }}>Forces 7:1 minimum contrast across all cards</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>High-Contrast Mode</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Forces 7:1 minimum contrast across all cards</div>
                 </div>
                 <input
                   type="checkbox"
@@ -1799,14 +1812,14 @@ export const ProfileSettings = () => {
                       },
                     })
                   }
-                  style={{ accentColor: '#AC274F', width: '20px', height: '20px', cursor: 'pointer' }}
+                  style={{ accentColor: 'var(--brand-primary)', width: '20px', height: '20px', cursor: 'pointer' }}
                 />
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>Reduce Motion</div>
-                  <div style={{ fontSize: '11px', color: '#A68A8D' }}>Disables heavy 3D transformations and transitions</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Reduce Motion</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Disables heavy 3D transformations and transitions</div>
                 </div>
                 <input
                   type="checkbox"
@@ -1823,14 +1836,14 @@ export const ProfileSettings = () => {
                       },
                     })
                   }
-                  style={{ accentColor: '#AC274F', width: '20px', height: '20px', cursor: 'pointer' }}
+                  style={{ accentColor: 'var(--brand-primary)', width: '20px', height: '20px', cursor: 'pointer' }}
                 />
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>Screen Reader Optimization</div>
-                  <div style={{ fontSize: '11px', color: '#A68A8D' }}>Injects ARIA live regions for realtime telemetry</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Screen Reader Optimization</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Injects ARIA live regions for realtime telemetry</div>
                 </div>
                 <input
                   type="checkbox"
@@ -1847,7 +1860,7 @@ export const ProfileSettings = () => {
                       },
                     })
                   }
-                  style={{ accentColor: '#AC274F', width: '20px', height: '20px', cursor: 'pointer' }}
+                  style={{ accentColor: 'var(--brand-primary)', width: '20px', height: '20px', cursor: 'pointer' }}
                 />
               </div>
             </div>
@@ -1856,26 +1869,27 @@ export const ProfileSettings = () => {
           {/* Display & Presets */}
           <div
             style={{
-              backgroundColor: '#231E1F',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
               padding: '28px',
-              border: '1px solid rgba(255, 217, 218, 0.1)',
+              border: '1px solid var(--border-subtle)',
               display: 'flex',
               flexDirection: 'column',
               gap: '18px',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: '#FFFFFF' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: 'var(--text-primary)' }}>
                 Display & Scale Presets
               </h3>
-              <span style={{ fontSize: '12px', color: '#A68A8D' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                 Adjust interface font scale and visual temperature
               </span>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '11px', fontWeight: 600, color: '#DFBFC3', textTransform: 'uppercase' }}>
+              <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                 Text Scale Level
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
@@ -1900,9 +1914,9 @@ export const ProfileSettings = () => {
                       style={{
                         padding: '10px 8px',
                         borderRadius: '8px',
-                        backgroundColor: isSelected ? '#AC274F' : '#1F1A1B',
-                        color: isSelected ? '#FFFFFF' : '#DFBFC3',
-                        border: '1px solid rgba(255, 217, 218, 0.1)',
+                        backgroundColor: isSelected ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
+                        color: isSelected ? '#FFFFFF' : 'var(--text-secondary)',
+                        border: '1px solid var(--border-subtle)',
                         fontSize: '12px',
                         fontWeight: isSelected ? 700 : 500,
                         cursor: 'pointer',
@@ -1916,7 +1930,7 @@ export const ProfileSettings = () => {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '6px' }}>
-              <label style={{ fontSize: '11px', fontWeight: 600, color: '#DFBFC3', textTransform: 'uppercase' }}>
+              <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                 Portal Color Theme
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
@@ -1924,8 +1938,8 @@ export const ProfileSettings = () => {
                   style={{
                     padding: '12px',
                     borderRadius: '10px',
-                    backgroundColor: '#1F1A1B',
-                    border: '1px solid #AC274F',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    border: '1px solid var(--brand-primary)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '10px',
@@ -1937,17 +1951,18 @@ export const ProfileSettings = () => {
                       width: '24px',
                       height: '24px',
                       borderRadius: '50%',
-                      backgroundColor: '#110D0E',
+                      backgroundColor: 'var(--bg-surface)',
+                      border: '1px solid var(--border-subtle)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
                   >
-                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#FFB2BF' }} />
+                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'var(--brand-primary)' }} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '12px', fontWeight: 600, color: '#FFFFFF' }}>Dark Licorice</div>
-                    <div style={{ fontSize: '10px', color: '#FFB2BF' }}>Active Preset</div>
+                    <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>White Light (Default)</div>
+                    <div style={{ fontSize: '10px', color: 'var(--brand-primary)', fontWeight: 600 }}>Active Preset</div>
                   </div>
                 </div>
 
@@ -1955,12 +1970,12 @@ export const ProfileSettings = () => {
                   style={{
                     padding: '12px',
                     borderRadius: '10px',
-                    backgroundColor: '#1F1A1B',
-                    border: '1px solid rgba(255, 217, 218, 0.08)',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    border: '1px solid var(--border-subtle)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '10px',
-                    opacity: 0.7,
+                    opacity: 0.8,
                     cursor: 'pointer',
                   }}
                 >
@@ -1969,17 +1984,17 @@ export const ProfileSettings = () => {
                       width: '24px',
                       height: '24px',
                       borderRadius: '50%',
-                      backgroundColor: '#3D3839',
+                      backgroundColor: '#1E293B',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
                   >
-                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#FFB1C2' }} />
+                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#E11D48' }} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '12px', fontWeight: 600, color: '#FFFFFF' }}>Charcoal Steel</div>
-                    <div style={{ fontSize: '10px', color: '#A68A8D' }}>High Luminance</div>
+                    <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Midnight Slate</div>
+                    <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>High Contrast</div>
                   </div>
                 </div>
               </div>
@@ -1996,20 +2011,21 @@ export const ProfileSettings = () => {
           {/* Privacy Preferences */}
           <div
             style={{
-              backgroundColor: '#231E1F',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
               padding: '28px',
-              border: '1px solid rgba(255, 217, 218, 0.1)',
+              border: '1px solid var(--border-subtle)',
               display: 'flex',
               flexDirection: 'column',
               gap: '18px',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: '#FFFFFF' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: 'var(--text-primary)' }}>
                 Directory & Peer Privacy
               </h3>
-              <span style={{ fontSize: '12px', color: '#A68A8D' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                 Control visibility in campus searches and directory records
               </span>
             </div>
@@ -2021,16 +2037,17 @@ export const ProfileSettings = () => {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   padding: '14px 16px',
-                  backgroundColor: '#1F1A1B',
+                  backgroundColor: 'var(--bg-surface-subtle)',
                   borderRadius: '10px',
+                  border: '1px solid var(--border-subtle)',
                 }}
               >
                 <div style={{ paddingRight: '12px' }}>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>
-                    SkillCampus Project Visibility
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    Peer Collaboration Visibility
                   </div>
-                  <div style={{ fontSize: '11px', color: '#A68A8D' }}>
-                    Allow student project leads and researchers to find your profile by skill tags.
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    Allow fellow students and study project leads to find your profile by skill tags.
                   </div>
                 </div>
                 <input
@@ -2048,7 +2065,7 @@ export const ProfileSettings = () => {
                       },
                     })
                   }
-                  style={{ accentColor: '#AC274F', width: '20px', height: '20px', cursor: 'pointer' }}
+                  style={{ accentColor: 'var(--brand-primary)', width: '20px', height: '20px', cursor: 'pointer' }}
                 />
               </div>
 
@@ -2058,13 +2075,14 @@ export const ProfileSettings = () => {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   padding: '14px 16px',
-                  backgroundColor: '#1F1A1B',
+                  backgroundColor: 'var(--bg-surface-subtle)',
                   borderRadius: '10px',
+                  border: '1px solid var(--border-subtle)',
                 }}
               >
                 <div style={{ paddingRight: '12px' }}>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>Campus Directory Listing</div>
-                  <div style={{ fontSize: '11px', color: '#A68A8D' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Campus Directory Listing</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
                     Expose hostel block & room allotment in student peer phonebooks.
                   </div>
                 </div>
@@ -2083,7 +2101,7 @@ export const ProfileSettings = () => {
                       },
                     })
                   }
-                  style={{ accentColor: '#AC274F', width: '20px', height: '20px', cursor: 'pointer' }}
+                  style={{ accentColor: 'var(--brand-primary)', width: '20px', height: '20px', cursor: 'pointer' }}
                 />
               </div>
             </div>
@@ -2092,20 +2110,21 @@ export const ProfileSettings = () => {
           {/* Authentication & Active Sessions */}
           <div
             style={{
-              backgroundColor: '#231E1F',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
               padding: '28px',
-              border: '1px solid rgba(255, 217, 218, 0.1)',
+              border: '1px solid var(--border-subtle)',
               display: 'flex',
               flexDirection: 'column',
               gap: '18px',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: '#FFFFFF' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 4px 0', color: 'var(--text-primary)' }}>
                 Authentication & Active Sessions
               </h3>
-              <span style={{ fontSize: '12px', color: '#A68A8D' }}>Zero-trust campus network security status</span>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Zero-trust campus network security status</span>
             </div>
 
             {/* 2FA Status */}
@@ -2115,8 +2134,9 @@ export const ProfileSettings = () => {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '14px 16px',
-                backgroundColor: '#1F1A1B',
+                backgroundColor: 'var(--bg-surface-subtle)',
                 borderRadius: '12px',
+                border: '1px solid var(--border-subtle)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -2125,20 +2145,20 @@ export const ProfileSettings = () => {
                     width: '38px',
                     height: '38px',
                     borderRadius: '8px',
-                    backgroundColor: '#2D292A',
+                    backgroundColor: 'var(--brand-soft-bg)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#FFB2BF',
+                    color: 'var(--brand-primary)',
                   }}
                 >
                   <Shield size={20} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
                     Two-Factor Authentication (2FA)
                   </div>
-                  <div style={{ fontSize: '11px', color: '#FFB1C2' }}>Active via Campus Authenticator (TOTP)</div>
+                  <div style={{ fontSize: '11px', color: 'var(--brand-primary)', fontWeight: 600 }}>Active via Campus Authenticator (TOTP)</div>
                 </div>
               </div>
               <button
@@ -2147,11 +2167,12 @@ export const ProfileSettings = () => {
                 style={{
                   padding: '6px 12px',
                   borderRadius: '6px',
-                  backgroundColor: '#2D292A',
-                  border: '1px solid rgba(255, 217, 218, 0.1)',
-                  color: '#FFFFFF',
+                  backgroundColor: 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)',
+                  color: 'var(--text-secondary)',
                   fontSize: '11px',
                   cursor: 'pointer',
+                  fontWeight: 600,
                 }}
               >
                 Reconfigure
@@ -2161,7 +2182,7 @@ export const ProfileSettings = () => {
             {/* Active Sessions */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '11px', fontWeight: 600, color: '#DFBFC3', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                   Logged In Terminals
                 </span>
                 <button
@@ -2170,7 +2191,7 @@ export const ProfileSettings = () => {
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#FFB2BF',
+                    color: 'var(--brand-primary)',
                     fontSize: '11px',
                     fontWeight: 600,
                     cursor: 'pointer',
@@ -2191,15 +2212,16 @@ export const ProfileSettings = () => {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       padding: '12px 14px',
-                      backgroundColor: '#1F1A1B',
+                      backgroundColor: 'var(--bg-surface-subtle)',
                       borderRadius: '10px',
+                      border: '1px solid var(--border-subtle)',
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Icon size={18} style={{ color: sess.current ? '#FFB2BF' : '#A68A8D' }} />
+                      <Icon size={18} style={{ color: sess.current ? 'var(--brand-primary)' : 'var(--text-muted)' }} />
                       <div>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#FFFFFF' }}>{sess.name}</div>
-                        <div style={{ fontSize: '10px', color: sess.current ? '#FFB1C2' : '#A68A8D' }}>{sess.desc}</div>
+                        <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>{sess.name}</div>
+                        <div style={{ fontSize: '10px', color: sess.current ? 'var(--brand-primary)' : 'var(--text-muted)' }}>{sess.desc}</div>
                       </div>
                     </div>
                     {sess.current ? (
@@ -2208,7 +2230,7 @@ export const ProfileSettings = () => {
                       <button
                         type="button"
                         onClick={() => setSessions(sessions.filter((s) => s.id !== sess.id))}
-                        style={{ background: 'none', border: 'none', color: '#A68A8D', cursor: 'pointer' }}
+                        style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
                       >
                         <X size={14} />
                       </button>
@@ -2224,7 +2246,7 @@ export const ProfileSettings = () => {
       {/* Bottom Action Ribbon / Institutional Security Protocol */}
       <div
         style={{
-          backgroundColor: '#1F1A1B',
+          backgroundColor: 'var(--bg-surface)',
           borderRadius: '14px',
           padding: '20px 24px',
           display: 'flex',
@@ -2233,17 +2255,31 @@ export const ProfileSettings = () => {
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '16px',
-          border: '1px solid rgba(255, 217, 218, 0.08)',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: 'var(--shadow-sm)',
           marginTop: '12px',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Shield size={22} style={{ color: '#FFB2BF' }} />
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              backgroundColor: 'var(--brand-soft-bg)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--brand-primary)',
+            }}
+          >
+            <Shield size={22} />
+          </div>
           <div>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>
+            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
               Institutional Security Protocol
             </div>
-            <div style={{ fontSize: '11px', color: '#DFBFC3' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
               Always sign out when leaving computer lab terminals or shared kiosk stations.
             </div>
           </div>
@@ -2256,7 +2292,7 @@ export const ProfileSettings = () => {
             style={{
               background: 'none',
               border: 'none',
-              color: '#DFBFC3',
+              color: 'var(--text-muted)',
               fontSize: '13px',
               cursor: 'pointer',
               fontWeight: 500,
@@ -2271,13 +2307,13 @@ export const ProfileSettings = () => {
             style={{
               padding: '10px 22px',
               borderRadius: '8px',
-              backgroundColor: '#AC274F',
+              backgroundColor: 'var(--brand-primary)',
               color: '#FFFFFF',
               border: 'none',
               fontSize: '13px',
               fontWeight: 700,
               cursor: saving ? 'not-allowed' : 'pointer',
-              boxShadow: '0 4px 12px rgba(172, 39, 79, 0.35)',
+              boxShadow: '0 4px 12px rgba(158, 21, 62, 0.25)',
             }}
           >
             Save Profile Changes
@@ -2294,8 +2330,8 @@ export const ProfileSettings = () => {
             position: 'fixed',
             inset: 0,
             zIndex: 110,
-            backgroundColor: 'rgba(17, 13, 14, 0.85)',
-            backdropFilter: 'blur(8px)',
+            backgroundColor: 'rgba(15, 23, 42, 0.5)',
+            backdropFilter: 'blur(6px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -2304,13 +2340,13 @@ export const ProfileSettings = () => {
         >
           <div
             style={{
-              backgroundColor: '#231E1F',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
               padding: '28px',
               maxWidth: '440px',
               width: '100%',
-              border: '1px solid rgba(255, 217, 218, 0.15)',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)',
               display: 'flex',
               flexDirection: 'column',
               gap: '16px',
@@ -2321,21 +2357,21 @@ export const ProfileSettings = () => {
                 width: '44px',
                 height: '44px',
                 borderRadius: '12px',
-                backgroundColor: 'rgba(172, 39, 79, 0.25)',
+                backgroundColor: 'var(--brand-soft-bg)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#FFB2BF',
+                color: 'var(--brand-primary)',
               }}
             >
               <LogOut size={22} />
             </div>
 
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#FFFFFF', margin: '0 0 6px 0' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 6px 0' }}>
                 Sign out of NextCampus?
               </h3>
-              <p style={{ fontSize: '13px', color: '#DFBFC3', margin: 0, lineHeight: 1.5 }}>
+              <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
                 You are currently logged in across the Campus Mesh. Ensure you terminate your session on shared lab
                 terminals.
               </p>
@@ -2348,11 +2384,12 @@ export const ProfileSettings = () => {
                 style={{
                   padding: '9px 16px',
                   borderRadius: '8px',
-                  backgroundColor: '#2D292A',
-                  color: '#DFBFC3',
-                  border: 'none',
+                  backgroundColor: 'var(--bg-surface-subtle)',
+                  color: 'var(--text-secondary)',
+                  border: '1px solid var(--border-subtle)',
                   fontSize: '13px',
                   cursor: 'pointer',
+                  fontWeight: 500,
                 }}
               >
                 Cancel
@@ -2363,13 +2400,13 @@ export const ProfileSettings = () => {
                 style={{
                   padding: '9px 18px',
                   borderRadius: '8px',
-                  backgroundColor: '#AC274F',
+                  backgroundColor: 'var(--brand-primary)',
                   color: '#FFFFFF',
                   border: 'none',
                   fontSize: '13px',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(172, 39, 79, 0.35)',
+                  boxShadow: '0 4px 12px rgba(158, 21, 62, 0.25)',
                 }}
               >
                 Confirm Sign Out
@@ -2388,8 +2425,8 @@ export const ProfileSettings = () => {
             position: 'fixed',
             inset: 0,
             zIndex: 110,
-            backgroundColor: 'rgba(17, 13, 14, 0.85)',
-            backdropFilter: 'blur(8px)',
+            backgroundColor: 'rgba(15, 23, 42, 0.5)',
+            backdropFilter: 'blur(6px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -2398,42 +2435,42 @@ export const ProfileSettings = () => {
         >
           <div
             style={{
-              backgroundColor: '#231E1F',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
               padding: '28px',
               maxWidth: '480px',
               width: '100%',
-              border: '1px solid rgba(255, 217, 218, 0.15)',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)',
               display: 'flex',
               flexDirection: 'column',
               gap: '16px',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', spaceBetween: 'center', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div
                   style={{
                     width: '36px',
                     height: '36px',
                     borderRadius: '8px',
-                    backgroundColor: 'rgba(172, 39, 79, 0.25)',
+                    backgroundColor: 'var(--brand-soft-bg)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#FFB2BF',
+                    color: 'var(--brand-primary)',
                   }}
                 >
                   <Key size={18} />
                 </div>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#FFFFFF', margin: 0 }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                   Change Master Password
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowPasswordModal(false)}
-                style={{ background: 'none', border: 'none', color: '#A68A8D', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
               >
                 <X size={18} />
               </button>
@@ -2444,9 +2481,9 @@ export const ProfileSettings = () => {
                 style={{
                   padding: '10px 14px',
                   borderRadius: '8px',
-                  backgroundColor: 'rgba(147, 0, 10, 0.35)',
-                  border: '1px solid #FFB4AB',
-                  color: '#FFDAD6',
+                  backgroundColor: '#FEF2F2',
+                  border: '1px solid #FECACA',
+                  color: '#DC2626',
                   fontSize: '12px',
                 }}
               >
@@ -2459,9 +2496,9 @@ export const ProfileSettings = () => {
                 style={{
                   padding: '10px 14px',
                   borderRadius: '8px',
-                  backgroundColor: 'rgba(34, 197, 94, 0.15)',
-                  border: '1px solid #22c55e',
-                  color: '#86efac',
+                  backgroundColor: '#F0FDF4',
+                  border: '1px solid #BBF7D0',
+                  color: '#16A34A',
                   fontSize: '12px',
                 }}
               >
@@ -2471,7 +2508,7 @@ export const ProfileSettings = () => {
 
             <form onSubmit={handlePasswordSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: '#DFBFC3', textTransform: 'uppercase' }}>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                   Current Password
                 </label>
                 <input
@@ -2481,11 +2518,11 @@ export const ProfileSettings = () => {
                   placeholder="••••••••••••"
                   required
                   style={{
-                    backgroundColor: '#110D0E',
-                    border: '1px solid #584144',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    border: '1px solid var(--border-interactive)',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#FFFFFF',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                   }}
@@ -2493,7 +2530,7 @@ export const ProfileSettings = () => {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: '#DFBFC3', textTransform: 'uppercase' }}>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                   New Secure Password
                 </label>
                 <input
@@ -2503,11 +2540,11 @@ export const ProfileSettings = () => {
                   placeholder="Enter new strong passphrase"
                   required
                   style={{
-                    backgroundColor: '#110D0E',
-                    border: '1px solid #584144',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    border: '1px solid var(--border-interactive)',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#FFFFFF',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                   }}
@@ -2516,7 +2553,7 @@ export const ProfileSettings = () => {
                   style={{
                     width: '100%',
                     height: '4px',
-                    backgroundColor: '#110D0E',
+                    backgroundColor: 'var(--border-subtle)',
                     borderRadius: '9999px',
                     marginTop: '2px',
                     overflow: 'hidden',
@@ -2526,18 +2563,18 @@ export const ProfileSettings = () => {
                     style={{
                       height: '100%',
                       width: passwordState.newPassword.length >= 8 ? '100%' : passwordState.newPassword.length >= 6 ? '65%' : '25%',
-                      backgroundColor: passwordState.newPassword.length >= 8 ? '#22c55e' : passwordState.newPassword.length >= 6 ? '#FFB1C2' : '#FFB4AB',
+                      backgroundColor: passwordState.newPassword.length >= 8 ? '#22c55e' : passwordState.newPassword.length >= 6 ? 'var(--brand-primary)' : '#EF4444',
                       transition: 'all 0.3s ease',
                     }}
                   />
                 </div>
-                <span style={{ fontSize: '10px', color: '#DFBFC3' }}>
+                <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
                   Requires minimum 6 characters with mixed entropy
                 </span>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: '#DFBFC3', textTransform: 'uppercase' }}>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                   Confirm New Password
                 </label>
                 <input
@@ -2547,11 +2584,11 @@ export const ProfileSettings = () => {
                   placeholder="Re-enter new passphrase"
                   required
                   style={{
-                    backgroundColor: '#110D0E',
-                    border: '1px solid #584144',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    border: '1px solid var(--border-interactive)',
                     borderRadius: '8px',
                     padding: '10px 14px',
-                    color: '#FFFFFF',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                   }}
@@ -2565,11 +2602,12 @@ export const ProfileSettings = () => {
                   style={{
                     padding: '9px 16px',
                     borderRadius: '8px',
-                    backgroundColor: '#2D292A',
-                    color: '#DFBFC3',
-                    border: 'none',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    color: 'var(--text-secondary)',
+                    border: '1px solid var(--border-subtle)',
                     fontSize: '13px',
                     cursor: 'pointer',
+                    fontWeight: 500,
                   }}
                 >
                   Cancel
@@ -2580,13 +2618,13 @@ export const ProfileSettings = () => {
                   style={{
                     padding: '9px 18px',
                     borderRadius: '8px',
-                    backgroundColor: '#AC274F',
+                    backgroundColor: 'var(--brand-primary)',
                     color: '#FFFFFF',
                     border: 'none',
                     fontSize: '13px',
                     fontWeight: 600,
                     cursor: passwordState.loading ? 'not-allowed' : 'pointer',
-                    boxShadow: '0 4px 12px rgba(172, 39, 79, 0.35)',
+                    boxShadow: '0 4px 12px rgba(158, 21, 62, 0.25)',
                   }}
                 >
                   {passwordState.loading ? 'Updating...' : 'Update Credentials'}

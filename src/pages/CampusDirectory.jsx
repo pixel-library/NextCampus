@@ -176,7 +176,7 @@ export const CampusDirectory = () => {
                 NEXTCAMPUS INSTITUTE • INSTITUTIONAL DIRECTORY 2026
               </span>
             </div>
-            <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: 0, color: '#FFFFFF' }}>Campus Directory</h1>
+            <h1 style={{ fontSize: '2rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>Campus Directory</h1>
             <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '4px', maxWidth: '720px' }}>
               Discover academic departments, faculty offices, campus facilities, and administrative services indexed across NextCampus main grounds.
             </p>
@@ -184,31 +184,31 @@ export const CampusDirectory = () => {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: 'var(--bg-surface)', padding: '8px 14px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
             <Compass size={18} style={{ color: 'var(--brand-accent)' }} />
-            <span style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>Geo-spatial Indoor Engine Live</span>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Geo-spatial Indoor Engine Live</span>
           </div>
         </div>
 
         {/* Summary Counters Bar */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
           <Card>
-            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFFFFF' }}>14</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)' }}>14</div>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Academic Blocks</div>
           </Card>
           <Card>
-            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFFFFF' }}>28</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)' }}>28</div>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Departments</div>
           </Card>
           <Card>
-            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFFFFF' }}>180+</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)' }}>180+</div>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Verified Faculty</div>
           </Card>
           <Card>
-            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFFFFF' }}>48</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)' }}>48</div>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Campus Facilities</div>
           </Card>
-          <Card style={{ background: 'linear-gradient(135deg, rgba(56, 46, 49, 0.8) 0%, rgba(25, 21, 22, 0.9) 100%)', border: '1px solid var(--border-interactive)' }}>
-            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--brand-accent)' }}>100%</div>
-            <div style={{ fontSize: '12px', color: 'var(--brand-misty)' }}>All Nodes GIS-Indexed</div>
+          <Card style={{ background: 'var(--brand-soft-bg)', border: '1px solid rgba(158, 21, 62, 0.2)' }}>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--brand-primary)' }}>100%</div>
+            <div style={{ fontSize: '12px', color: 'var(--brand-primary)', fontWeight: 600 }}>All Nodes GIS-Indexed</div>
           </Card>
         </div>
       </section>
@@ -229,7 +229,7 @@ export const CampusDirectory = () => {
                 backgroundColor: 'var(--bg-canvas)',
                 border: '1px solid var(--border-interactive)',
                 borderRadius: '10px',
-                color: '#FFFFFF',
+                color: 'var(--text-primary)',
                 outline: 'none',
                 fontSize: '13px',
               }}
@@ -245,7 +245,7 @@ export const CampusDirectory = () => {
                 backgroundColor: 'var(--bg-canvas)',
                 border: '1px solid var(--border-subtle)',
                 borderRadius: '10px',
-                color: '#FFFFFF',
+                color: 'var(--text-primary)',
                 fontSize: '13px',
                 outline: 'none',
               }}
@@ -269,8 +269,8 @@ export const CampusDirectory = () => {
               cursor: 'pointer',
               fontSize: '13px',
               fontWeight: 600,
-              backgroundColor: activeTab === 'all' ? 'var(--brand-primary)' : 'var(--bg-surface)',
-              color: '#FFFFFF',
+              backgroundColor: activeTab === 'all' ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
+              color: activeTab === 'all' ? '#FFFFFF' : 'var(--text-secondary)',
             }}
           >
             All Entries (270)
@@ -284,8 +284,8 @@ export const CampusDirectory = () => {
               cursor: 'pointer',
               fontSize: '13px',
               fontWeight: 600,
-              backgroundColor: activeTab === 'buildings' ? 'var(--brand-primary)' : 'var(--bg-surface)',
-              color: '#FFFFFF',
+              backgroundColor: activeTab === 'buildings' ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
+              color: activeTab === 'buildings' ? '#FFFFFF' : 'var(--text-secondary)',
             }}
           >
             Buildings (14)
@@ -299,8 +299,8 @@ export const CampusDirectory = () => {
               cursor: 'pointer',
               fontSize: '13px',
               fontWeight: 600,
-              backgroundColor: activeTab === 'faculty' ? 'var(--brand-primary)' : 'var(--bg-surface)',
-              color: '#FFFFFF',
+              backgroundColor: activeTab === 'faculty' ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
+              color: activeTab === 'faculty' ? '#FFFFFF' : 'var(--text-secondary)',
             }}
           >
             Faculty (142)
@@ -314,8 +314,8 @@ export const CampusDirectory = () => {
               cursor: 'pointer',
               fontSize: '13px',
               fontWeight: 600,
-              backgroundColor: activeTab === 'staff' ? 'var(--brand-primary)' : 'var(--bg-surface)',
-              color: '#FFFFFF',
+              backgroundColor: activeTab === 'staff' ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
+              color: activeTab === 'staff' ? '#FFFFFF' : 'var(--text-secondary)',
             }}
           >
             Staff & Services (38)
@@ -348,7 +348,7 @@ export const CampusDirectory = () => {
 
                   <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, justifyContent: 'space-between' }}>
                     <div>
-                      <h3 style={{ fontSize: '1.2rem', color: '#FFFFFF', margin: 0 }}>{bldg.name}</h3>
+                      <h3 style={{ fontSize: '1.2rem', color: 'var(--text-primary)', margin: 0 }}>{bldg.name}</h3>
                       <span style={{ fontSize: '12px', color: 'var(--brand-accent)' }}>{bldg.subtitle}</span>
                       <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '8px', lineHeight: 1.5 }}>{bldg.description}</p>
                     </div>
@@ -411,7 +411,7 @@ export const CampusDirectory = () => {
 
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                          <h3 style={{ fontSize: '1.2rem', color: '#FFFFFF', margin: 0 }}>{fac.name}</h3>
+                          <h3 style={{ fontSize: '1.2rem', color: 'var(--text-primary)', margin: 0 }}>{fac.name}</h3>
                           <Badge status="active">{fac.status}</Badge>
                         </div>
                         <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--brand-accent)' }}>{fac.title}</span>
@@ -470,7 +470,7 @@ export const CampusDirectory = () => {
                 <Card key={srv.id} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div>
                     <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--brand-accent)' }}>{srv.dept}</span>
-                    <h3 style={{ fontSize: '1.1rem', color: '#FFFFFF', margin: '4px 0 8px 0' }}>{srv.name}</h3>
+                    <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', margin: '4px 0 8px 0' }}>{srv.name}</h3>
                     <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>{srv.description}</p>
                     <div style={{ fontSize: '11px', color: 'var(--brand-misty)', marginTop: '8px' }}>{srv.location}</div>
                   </div>

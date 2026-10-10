@@ -417,28 +417,28 @@ export function SmartRooms() {
             {/* Canvas Top Bar Navigation Overlay */}
             <div className="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
               {/* Active Path Breadcrumb Pill */}
-              <div className="pointer-events-auto flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface/90 backdrop-blur-md shadow-md text-on-surface font-label-sm text-label-sm border border-outline-variant/30">
-                <span className="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
-                <span className="text-on-surface-variant">Active Route:</span>
-                <span className="font-semibold text-primary">Library Skybridge Arrival</span>
-                <span className="material-symbols-outlined text-[14px] text-outline">arrow_forward</span>
-                <span className="font-bold text-on-surface">Room {selectedRoom.roomNumber}</span>
-                <span className="text-on-surface-variant ml-1 font-mono text-caption">({selectedRoom.routeDistance})</span>
+              <div className="pointer-events-auto flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md shadow-sm text-slate-800 font-label-sm text-label-sm border border-slate-200">
+                <span className="w-2 h-2 rounded-full bg-[#E11D48] animate-ping"></span>
+                <span className="text-slate-500 font-medium">Active Route:</span>
+                <span className="font-semibold text-[#9E153E]">Library Skybridge Arrival</span>
+                <span className="material-symbols-outlined text-[14px] text-slate-400">arrow_forward</span>
+                <span className="font-bold text-slate-900">Room {selectedRoom.roomNumber}</span>
+                <span className="text-slate-500 ml-1 font-mono text-caption">({selectedRoom.routeDistance})</span>
               </div>
 
               {/* Floor Viewport Manipulation Tools */}
-              <div className="pointer-events-auto flex items-center gap-1 p-1 rounded-xl bg-surface/90 backdrop-blur-md shadow-md border border-outline-variant/30">
-                <button className="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Zoom in">
+              <div className="pointer-events-auto flex items-center gap-1 p-1 rounded-xl bg-white/95 backdrop-blur-md shadow-sm border border-slate-200">
+                <button className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors" title="Zoom in">
                   <span className="material-symbols-outlined text-[18px]">add</span>
                 </button>
-                <button className="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Zoom out">
+                <button className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors" title="Zoom out">
                   <span className="material-symbols-outlined text-[18px]">remove</span>
                 </button>
-                <button className="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Reset camera">
+                <button className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors" title="Reset camera">
                   <span className="material-symbols-outlined text-[18px]">center_focus_strong</span>
                 </button>
-                <div className="w-px h-4 bg-outline-variant/30 mx-0.5"></div>
-                <button className="px-2 py-1 flex items-center gap-1 rounded-lg text-primary hover:bg-primary/10 transition-colors text-caption font-semibold" title="Toggle ADA accessible paths">
+                <div className="w-px h-4 bg-slate-200 mx-0.5"></div>
+                <button className="px-2 py-1 flex items-center gap-1 rounded-lg text-[#9E153E] hover:bg-[#FFE4E6] transition-colors text-caption font-semibold" title="Toggle ADA accessible paths">
                   <span className="material-symbols-outlined text-[16px]">accessible</span>
                   Step-Free
                 </button>
@@ -446,13 +446,13 @@ export function SmartRooms() {
             </div>
 
             {/* 2D Architectural CAD Plan Floor Rendering */}
-            <div className="w-full h-[580px] bg-[#140f10] relative overflow-hidden select-none flex items-center justify-center">
+            <div className="w-full h-[580px] bg-[#F8FAFC] border border-slate-200 rounded-2xl relative overflow-hidden select-none flex items-center justify-center">
               {/* Subtle Blueprint Coordinate Grid Pattern */}
-              <svg className="absolute inset-0 w-full h-full opacity-15 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+              <svg className="absolute inset-0 w-full h-full opacity-25 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <pattern id="cadGrid" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffb2bf" strokeWidth="0.5"></path>
-                    <circle cx="0" cy="0" r="1" fill="#ffb2bf"></circle>
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#CBD5E1" strokeWidth="0.5"></path>
+                    <circle cx="0" cy="0" r="1" fill="#CBD5E1"></circle>
                   </pattern>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#cadGrid)"></rect>
@@ -461,28 +461,28 @@ export function SmartRooms() {
               {/* Architectural Plan Geometry */}
               <svg className="w-full h-full p-4 relative z-10 transition-transform duration-300" viewBox="0 0 960 620">
                 {/* Outer Perimeter */}
-                <polygon points="40,90 280,90 320,40 680,40 720,90 920,90 920,530 40,530" fill="#1b1517" stroke="#382e31" strokeWidth="6"></polygon>
+                <polygon points="40,90 280,90 320,40 680,40 720,90 920,90 920,530 40,530" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="3"></polygon>
 
                 {/* Main Corridor Lines */}
-                <path d="M 120,310 L 840,310" fill="none" stroke="#251e20" strokeWidth="64" strokeLinecap="round"></path>
-                <path d="M 480,90 L 480,510" fill="none" stroke="#251e20" strokeWidth="56" strokeLinecap="round"></path>
+                <path d="M 120,310 L 840,310" fill="none" stroke="#F1F5F9" strokeWidth="64" strokeLinecap="round"></path>
+                <path d="M 480,90 L 480,510" fill="none" stroke="#F1F5F9" strokeWidth="56" strokeLinecap="round"></path>
 
                 {/* Skybridge Arrival */}
-                <rect x="420" y="10" width="120" height="70" rx="8" fill="#231c1e" stroke="#584144" strokeWidth="2"></rect>
-                <text x="480" y="38" textAnchor="middle" fill="#ffdadb" fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">NORTH SKYBRIDGE</text>
-                <text x="480" y="54" textAnchor="middle" fill="#dfbfc3" fontFamily="Inter" fontSize="9">Conn: Central Library</text>
-                <circle cx="480" cy="68" r="7" fill="#ffb1c2"></circle>
-                <circle cx="480" cy="68" r="14" fill="#ffb1c2" fillOpacity="0.25" className="animate-ping"></circle>
+                <rect x="420" y="10" width="120" height="70" rx="8" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="2"></rect>
+                <text x="480" y="38" textAnchor="middle" fill="#9E153E" fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">NORTH SKYBRIDGE</text>
+                <text x="480" y="54" textAnchor="middle" fill="#64748B" fontFamily="Inter" fontSize="9">Conn: Central Library</text>
+                <circle cx="480" cy="68" r="7" fill="#E11D48"></circle>
+                <circle cx="480" cy="68" r="14" fill="#E11D48" fillOpacity="0.25" className="animate-ping"></circle>
 
                 {/* Elevators */}
-                <rect x="250" y="120" width="70" height="70" rx="6" fill="#282023" stroke="#504347" strokeWidth="1.5"></rect>
-                <text x="285" y="152" textAnchor="middle" fill="#dfbfc3" fontFamily="Inter" fontSize="10" fontWeight="600">LIFTS W</text>
-                <rect x="640" y="120" width="70" height="70" rx="6" fill="#282023" stroke="#504347" strokeWidth="1.5"></rect>
-                <text x="675" y="152" textAnchor="middle" fill="#dfbfc3" fontFamily="Inter" fontSize="10" fontWeight="600">LIFTS E</text>
+                <rect x="250" y="120" width="70" height="70" rx="6" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="1.5"></rect>
+                <text x="285" y="152" textAnchor="middle" fill="#475569" fontFamily="Inter" fontSize="10" fontWeight="600">LIFTS W</text>
+                <rect x="640" y="120" width="70" height="70" rx="6" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="1.5"></rect>
+                <text x="675" y="152" textAnchor="middle" fill="#475569" fontFamily="Inter" fontSize="10" fontWeight="600">LIFTS E</text>
 
                 {/* Restrooms */}
-                <rect x="440" y="330" width="80" height="60" rx="6" fill="#231e1f" stroke="#504347" strokeWidth="1"></rect>
-                <text x="480" y="358" textAnchor="middle" fill="#dfbfc3" fontFamily="Inter" fontSize="9" fontWeight="600">RESTROOMS</text>
+                <rect x="440" y="330" width="80" height="60" rx="6" fill="#F8FAFC" stroke="#CBD5E1" strokeWidth="1"></rect>
+                <text x="480" y="358" textAnchor="middle" fill="#64748B" fontFamily="Inter" fontSize="9" fontWeight="600">RESTROOMS</text>
 
                 {/* ROOM B-201 */}
                 <g className="cursor-pointer group" onClick={() => setSelectedRoomId('B-201')}>
@@ -492,15 +492,15 @@ export function SmartRooms() {
                     width="160"
                     height="150"
                     rx="10"
-                    fill={selectedRoomId === 'B-201' ? '#311922' : '#271f21'}
-                    stroke={selectedRoomId === 'B-201' ? '#eb638b' : '#48383c'}
-                    strokeWidth={selectedRoomId === 'B-201' ? '2.5' : '2'}
+                    fill={selectedRoomId === 'B-201' ? '#FFF1F2' : '#FFFFFF'}
+                    stroke={selectedRoomId === 'B-201' ? '#9E153E' : '#CBD5E1'}
+                    strokeWidth={selectedRoomId === 'B-201' ? '2.5' : '1.5'}
                   ></rect>
-                  <rect x="80" y="130" width="140" height="20" rx="4" fill="#382e31"></rect>
-                  <text x="90" y="144" fill="#eae0e1" fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-201 Amphitheatre</text>
-                  <circle cx="210" cy="140" r="4" fill="#ffb4ab"></circle>
-                  <text x="90" y="180" fill="#dfbfc3" fontFamily="Inter" fontSize="10">120 Seats • Occupied</text>
-                  <text x="90" y="200" fill="#a68a8d" fontFamily="Inter" fontSize="9">CS-204 Algorithms</text>
+                  <rect x="80" y="130" width="140" height="20" rx="4" fill={selectedRoomId === 'B-201' ? '#9E153E' : '#F1F5F9'}></rect>
+                  <text x="90" y="144" fill={selectedRoomId === 'B-201' ? '#FFFFFF' : '#0F172A'} fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-201 Amphitheatre</text>
+                  <circle cx="210" cy="140" r="4" fill="#EF4444"></circle>
+                  <text x="90" y="180" fill="#475569" fontFamily="Inter" fontSize="10">120 Seats • Occupied</text>
+                  <text x="90" y="200" fill="#64748B" fontFamily="Inter" fontSize="9">CS-204 Algorithms</text>
                 </g>
 
                 {/* ROOM B-202 */}
@@ -511,14 +511,14 @@ export function SmartRooms() {
                     width="160"
                     height="150"
                     rx="10"
-                    fill={selectedRoomId === 'B-202' ? '#311922' : '#251d1f'}
-                    stroke={selectedRoomId === 'B-202' ? '#eb638b' : '#48383c'}
-                    strokeWidth={selectedRoomId === 'B-202' ? '2.5' : '2'}
+                    fill={selectedRoomId === 'B-202' ? '#FFF1F2' : '#FFFFFF'}
+                    stroke={selectedRoomId === 'B-202' ? '#9E153E' : '#CBD5E1'}
+                    strokeWidth={selectedRoomId === 'B-202' ? '2.5' : '1.5'}
                   ></rect>
-                  <rect x="740" y="130" width="140" height="20" rx="4" fill="#382e31"></rect>
-                  <text x="750" y="144" fill="#eae0e1" fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-202 Seminar Suite</text>
-                  <circle cx="870" cy="140" r="4" fill="#ffb1c2"></circle>
-                  <text x="750" y="180" fill="#dfbfc3" fontFamily="Inter" fontSize="10">35 Seats • Reserved</text>
+                  <rect x="740" y="130" width="140" height="20" rx="4" fill={selectedRoomId === 'B-202' ? '#9E153E' : '#F1F5F9'}></rect>
+                  <text x="750" y="144" fill={selectedRoomId === 'B-202' ? '#FFFFFF' : '#0F172A'} fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-202 Seminar Suite</text>
+                  <circle cx="870" cy="140" r="4" fill="#F59E0B"></circle>
+                  <text x="750" y="180" fill="#475569" fontFamily="Inter" fontSize="10">35 Seats • Reserved</text>
                 </g>
 
                 {/* ROOM B-203 */}
@@ -529,14 +529,14 @@ export function SmartRooms() {
                     width="160"
                     height="160"
                     rx="10"
-                    fill={selectedRoomId === 'B-203' ? '#311922' : '#211a1c'}
-                    stroke={selectedRoomId === 'B-203' ? '#eb638b' : '#584144'}
-                    strokeWidth={selectedRoomId === 'B-203' ? '2.5' : '2'}
+                    fill={selectedRoomId === 'B-203' ? '#FFF1F2' : '#FFFFFF'}
+                    stroke={selectedRoomId === 'B-203' ? '#9E153E' : '#CBD5E1'}
+                    strokeWidth={selectedRoomId === 'B-203' ? '2.5' : '1.5'}
                   ></rect>
-                  <rect x="80" y="350" width="140" height="20" rx="4" fill="#382e31"></rect>
-                  <text x="90" y="364" fill="#eae0e1" fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-203 Systems Lab</text>
-                  <circle cx="210" cy="360" r="4" fill="#ffb2bf"></circle>
-                  <text x="90" y="400" fill="#dfbfc3" fontFamily="Inter" fontSize="10">40 Seats • Available</text>
+                  <rect x="80" y="350" width="140" height="20" rx="4" fill={selectedRoomId === 'B-203' ? '#9E153E' : '#F1F5F9'}></rect>
+                  <text x="90" y="364" fill={selectedRoomId === 'B-203' ? '#FFFFFF' : '#0F172A'} fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-203 Systems Lab</text>
+                  <circle cx="210" cy="360" r="4" fill="#22C55E"></circle>
+                  <text x="90" y="400" fill="#475569" fontFamily="Inter" fontSize="10">40 Seats • Available</text>
                 </g>
 
                 {/* ROOM B-204 TARGET NODE */}
@@ -547,19 +547,19 @@ export function SmartRooms() {
                     width="170"
                     height="160"
                     rx="12"
-                    fill={selectedRoomId === 'B-204' ? '#311922' : '#271f21'}
-                    stroke={selectedRoomId === 'B-204' ? '#eb638b' : '#584144'}
-                    strokeWidth={selectedRoomId === 'B-204' ? '2.5' : '2'}
+                    fill={selectedRoomId === 'B-204' ? '#FFF1F2' : '#FFFFFF'}
+                    stroke={selectedRoomId === 'B-204' ? '#9E153E' : '#CBD5E1'}
+                    strokeWidth={selectedRoomId === 'B-204' ? '2.5' : '1.5'}
                   ></rect>
-                  <rect x="260" y="350" width="150" height="24" rx="6" fill={selectedRoomId === 'B-204' ? '#ac274f' : '#382e31'}></rect>
-                  <text x="272" y="366" fill="#ffffff" fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="800">B-204 Smart Theatre</text>
-                  <circle cx="396" cy="362" r="5" fill="#ffd9de" className="animate-pulse"></circle>
-                  <text x="272" y="402" fill="#ffdadb" fontFamily="Inter" fontSize="11" fontWeight="600">60 Seats • Available Now</text>
-                  <text x="272" y="422" fill="#dfbfc3" fontFamily="Inter" fontSize="9">Dual 4K Laser + Spatial Pod</text>
+                  <rect x="260" y="350" width="150" height="24" rx="6" fill={selectedRoomId === 'B-204' ? '#9E153E' : '#F1F5F9'}></rect>
+                  <text x="272" y="366" fill={selectedRoomId === 'B-204' ? '#FFFFFF' : '#0F172A'} fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="800">B-204 Smart Theatre</text>
+                  <circle cx="396" cy="362" r="5" fill="#22C55E" className="animate-pulse"></circle>
+                  <text x="272" y="402" fill="#9E153E" fontFamily="Inter" fontSize="11" fontWeight="600">60 Seats • Available Now</text>
+                  <text x="272" y="422" fill="#64748B" fontFamily="Inter" fontSize="9">Dual 4K Laser + Spatial Pod</text>
                   {selectedRoomId === 'B-204' && (
                     <g transform="translate(320, 455)">
-                      <rect x="-42" y="-14" width="84" height="20" rx="10" fill="#ac274f"></rect>
-                      <text x="0" y="0" textAnchor="middle" fill="#ffffff" fontFamily="Inter" fontSize="9" fontWeight="700">TARGET NODE</text>
+                      <rect x="-42" y="-14" width="84" height="20" rx="10" fill="#9E153E"></rect>
+                      <text x="0" y="0" textAnchor="middle" fill="#FFFFFF" fontFamily="Inter" fontSize="9" fontWeight="700">TARGET NODE</text>
                     </g>
                   )}
                 </g>
@@ -572,14 +572,14 @@ export function SmartRooms() {
                     width="180"
                     height="160"
                     rx="10"
-                    fill={selectedRoomId === 'B-205' ? '#311922' : '#251d1f'}
-                    stroke={selectedRoomId === 'B-205' ? '#eb638b' : '#48383c'}
-                    strokeWidth={selectedRoomId === 'B-205' ? '2.5' : '2'}
+                    fill={selectedRoomId === 'B-205' ? '#FFF1F2' : '#FFFFFF'}
+                    stroke={selectedRoomId === 'B-205' ? '#9E153E' : '#CBD5E1'}
+                    strokeWidth={selectedRoomId === 'B-205' ? '2.5' : '1.5'}
                   ></rect>
-                  <rect x="550" y="350" width="160" height="20" rx="4" fill="#382e31"></rect>
-                  <text x="560" y="364" fill="#eae0e1" fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-205 AI &amp; Robotics</text>
-                  <circle cx="695" cy="360" r="4" fill="#ffb4ab"></circle>
-                  <text x="560" y="400" fill="#dfbfc3" fontFamily="Inter" fontSize="10">28 Seats • In Session</text>
+                  <rect x="550" y="350" width="160" height="20" rx="4" fill={selectedRoomId === 'B-205' ? '#9E153E' : '#F1F5F9'}></rect>
+                  <text x="560" y="364" fill={selectedRoomId === 'B-205' ? '#FFFFFF' : '#0F172A'} fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-205 AI &amp; Robotics</text>
+                  <circle cx="695" cy="360" r="4" fill="#EF4444"></circle>
+                  <text x="560" y="400" fill="#475569" fontFamily="Inter" fontSize="10">28 Seats • In Session</text>
                 </g>
 
                 {/* ROOM B-206 */}
@@ -590,28 +590,28 @@ export function SmartRooms() {
                     width="150"
                     height="160"
                     rx="10"
-                    fill={selectedRoomId === 'B-206' ? '#311922' : '#20181a'}
-                    stroke={selectedRoomId === 'B-206' ? '#eb638b' : '#584144'}
-                    strokeWidth={selectedRoomId === 'B-206' ? '2.5' : '2'}
+                    fill={selectedRoomId === 'B-206' ? '#FFF1F2' : '#FFFFFF'}
+                    stroke={selectedRoomId === 'B-206' ? '#9E153E' : '#CBD5E1'}
+                    strokeWidth={selectedRoomId === 'B-206' ? '2.5' : '1.5'}
                   ></rect>
-                  <rect x="750" y="350" width="130" height="20" rx="4" fill="#382e31"></rect>
-                  <text x="760" y="364" fill="#eae0e1" fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-206 Study Pods</text>
-                  <circle cx="865" cy="360" r="4" fill="#ffb2bf"></circle>
-                  <text x="760" y="400" fill="#dfbfc3" fontFamily="Inter" fontSize="10">16 Pods • 4 Open</text>
+                  <rect x="750" y="350" width="130" height="20" rx="4" fill={selectedRoomId === 'B-206' ? '#9E153E' : '#F1F5F9'}></rect>
+                  <text x="760" y="364" fill={selectedRoomId === 'B-206' ? '#FFFFFF' : '#0F172A'} fontFamily="Plus Jakarta Sans" fontSize="11" fontWeight="700">B-206 Study Pods</text>
+                  <circle cx="865" cy="360" r="4" fill="#22C55E"></circle>
+                  <text x="760" y="400" fill="#475569" fontFamily="Inter" fontSize="10">16 Pods • 4 Open</text>
                 </g>
 
                 {/* Emergency Stairs */}
-                <rect x="42" y="500" width="60" height="26" fill="#1b1214" stroke="#ffb4ab" strokeWidth="1" strokeDasharray="2 2"></rect>
-                <text x="72" y="516" textAnchor="middle" fill="#ffb4ab" fontFamily="Inter" fontSize="8" fontWeight="700">EXIT A</text>
-                <rect x="858" y="500" width="60" height="26" fill="#1b1214" stroke="#ffb4ab" strokeWidth="1" strokeDasharray="2 2"></rect>
-                <text x="888" y="516" textAnchor="middle" fill="#ffb4ab" fontFamily="Inter" fontSize="8" fontWeight="700">EXIT B</text>
+                <rect x="42" y="500" width="60" height="26" fill="#FEF2F2" stroke="#EF4444" strokeWidth="1" strokeDasharray="2 2"></rect>
+                <text x="72" y="516" textAnchor="middle" fill="#DC2626" fontFamily="Inter" fontSize="8" fontWeight="700">EXIT A</text>
+                <rect x="858" y="500" width="60" height="26" fill="#FEF2F2" stroke="#EF4444" strokeWidth="1" strokeDasharray="2 2"></rect>
+                <text x="888" y="516" textAnchor="middle" fill="#DC2626" fontFamily="Inter" fontSize="8" fontWeight="700">EXIT B</text>
 
                 {/* Dynamic SVG Animated Route Path to Selected Room */}
                 {selectedRoomId === 'B-204' && (
                   <path
                     d="M 480,72 L 480,310 L 335,310 L 335,340"
                     fill="none"
-                    stroke="#eb638b"
+                    stroke="#9E153E"
                     strokeWidth="5"
                     strokeDasharray="8 8"
                     strokeLinecap="round"
@@ -623,7 +623,7 @@ export function SmartRooms() {
                   <path
                     d="M 480,72 L 480,310 L 150,310 L 150,340"
                     fill="none"
-                    stroke="#eb638b"
+                    stroke="#9E153E"
                     strokeWidth="5"
                     strokeDasharray="8 8"
                     strokeLinecap="round"
@@ -635,7 +635,7 @@ export function SmartRooms() {
                   <path
                     d="M 480,72 L 480,310 L 630,310 L 630,340"
                     fill="none"
-                    stroke="#eb638b"
+                    stroke="#9E153E"
                     strokeWidth="5"
                     strokeDasharray="8 8"
                     strokeLinecap="round"
@@ -647,7 +647,7 @@ export function SmartRooms() {
                   <path
                     d="M 480,72 L 480,310 L 815,310 L 815,340"
                     fill="none"
-                    stroke="#eb638b"
+                    stroke="#9E153E"
                     strokeWidth="5"
                     strokeDasharray="8 8"
                     strokeLinecap="round"
@@ -658,9 +658,9 @@ export function SmartRooms() {
 
                 {/* Start Pulse Beacon */}
                 <g transform="translate(480, 72)">
-                  <circle cx="0" cy="0" r="6" fill="#ac274f"></circle>
-                  <circle cx="0" cy="0" r="10" fill="none" stroke="#ffb2bf" strokeWidth="1.5"></circle>
-                  <text x="14" y="4" fill="#ffb2bf" fontFamily="Inter" fontSize="10" fontWeight="700">YOU (Skybridge)</text>
+                  <circle cx="0" cy="0" r="6" fill="#9E153E"></circle>
+                  <circle cx="0" cy="0" r="10" fill="none" stroke="#E11D48" strokeWidth="1.5"></circle>
+                  <text x="14" y="4" fill="#9E153E" fontFamily="Inter" fontSize="10" fontWeight="700">YOU (Skybridge)</text>
                 </g>
               </svg>
 
@@ -671,32 +671,32 @@ export function SmartRooms() {
               `}</style>
 
               {/* Floating Floor Plan Legend Card */}
-              <div className="absolute bottom-4 left-4 p-3 rounded-xl bg-surface/90 backdrop-blur-md text-on-surface shadow-lg z-20 flex flex-wrap items-center gap-3 font-caption text-caption border border-outline-variant/30">
-                <span className="font-bold text-on-surface-variant uppercase tracking-wider">Legend:</span>
+              <div className="absolute bottom-4 left-4 p-3 rounded-xl bg-white/95 backdrop-blur-md text-slate-800 shadow-sm z-20 flex flex-wrap items-center gap-3 font-caption text-caption border border-slate-200">
+                <span className="font-bold text-slate-500 uppercase tracking-wider">Legend:</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-primary"></span>
-                  <span>Available</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A]"></span>
+                  <span className="font-medium text-slate-700">Available</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-error"></span>
-                  <span>Occupied</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#9E153E]"></span>
+                  <span className="font-medium text-slate-700">Occupied</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-secondary"></span>
-                  <span>Reserved</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#D97706]"></span>
+                  <span className="font-medium text-slate-700">Reserved</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[14px] text-primary">accessible</span>
-                  <span>Accessible</span>
+                  <span className="material-symbols-outlined text-[15px] text-[#2563EB]">accessible</span>
+                  <span className="font-medium text-slate-700">Accessible</span>
                 </div>
               </div>
 
               {/* Route Status Pill */}
-              <div className="absolute bottom-4 right-4 p-2.5 px-3 rounded-xl bg-surface/95 backdrop-blur-md shadow-lg z-20 flex items-center gap-2 border border-outline-variant/30">
-                <span className="material-symbols-outlined text-primary text-[18px]">directions_walk</span>
+              <div className="absolute bottom-4 right-4 p-2.5 px-3.5 rounded-xl bg-white/95 backdrop-blur-md shadow-sm z-20 flex items-center gap-2.5 border border-slate-200">
+                <span className="material-symbols-outlined text-[#9E153E] text-[20px]">directions_walk</span>
                 <div className="flex flex-col">
-                  <span className="font-label-sm text-label-sm font-bold text-on-surface">{selectedRoom.routeDistance}</span>
-                  <span className="font-caption text-caption text-on-surface-variant">Elevator-free direct path</span>
+                  <span className="font-label-sm text-label-sm font-bold text-slate-900">{selectedRoom.routeDistance}</span>
+                  <span className="font-caption text-caption text-slate-500">Elevator-free direct route</span>
                 </div>
               </div>
             </div>
@@ -705,8 +705,8 @@ export function SmartRooms() {
           {/* Quick Room Carousel / Rapid Discovery Cards */}
           <div className="flex flex-col gap-space-sm pt-2">
             <div className="flex items-center justify-between">
-              <h3 className="font-title-md text-title-md text-on-surface font-bold">Level 2 Key Spaces &amp; Live Telemetry</h3>
-              <span className="font-caption text-caption text-on-surface-variant">Tap any card to inspect &amp; set route target</span>
+              <h3 className="font-title-md text-title-md text-slate-900 font-bold">Level 2 Key Spaces &amp; Availability</h3>
+              <span className="font-caption text-caption text-slate-500">Select any room to view live directions</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">
@@ -716,34 +716,34 @@ export function SmartRooms() {
                   <div
                     key={r.id}
                     onClick={() => setSelectedRoomId(r.id)}
-                    className={`cursor-pointer p-space-md rounded-2xl flex flex-col justify-between transition-all ${
+                    className={`cursor-pointer p-4 rounded-xl flex flex-col justify-between transition-all ${
                       isSelected
-                        ? 'bg-surface-container-high ring-2 ring-primary shadow-md'
-                        : 'bg-surface-container-low border border-outline-variant/20 hover:bg-surface-container'
+                        ? 'bg-white ring-2 ring-[#9E153E] shadow-sm'
+                        : 'bg-white border border-slate-200 hover:border-slate-300 shadow-sm'
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className={`px-2 py-0.5 rounded-md font-caption text-caption font-bold ${isSelected ? 'bg-primary-container text-on-primary-container' : 'bg-surface-container-highest text-on-surface'}`}>
+                        <span className={`px-2.5 py-0.5 rounded-md font-caption text-caption font-bold ${isSelected ? 'bg-[#FFE4E6] text-[#9E153E]' : 'bg-slate-100 text-slate-700'}`}>
                           {r.roomNumber}
                         </span>
-                        <span className={`inline-flex items-center gap-1 font-caption text-caption font-semibold ${r.status === 'available' ? 'text-primary' : r.status === 'reserved' ? 'text-secondary' : 'text-error'}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${r.status === 'available' ? 'bg-primary' : r.status === 'reserved' ? 'bg-secondary' : 'bg-error'}`}></span>
+                        <span className={`inline-flex items-center gap-1 font-caption text-caption font-semibold ${r.status === 'available' ? 'text-[#16A34A]' : r.status === 'reserved' ? 'text-[#D97706]' : 'text-[#DC2626]'}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${r.status === 'available' ? 'bg-[#16A34A]' : r.status === 'reserved' ? 'bg-[#D97706]' : 'bg-[#DC2626]'}`}></span>
                           {r.statusText}
                         </span>
                       </div>
-                      <h4 className="font-label-md text-label-md font-bold text-on-surface">{r.name}</h4>
-                      <p className="font-caption text-caption text-on-surface-variant mt-1">
+                      <h4 className="font-label-md text-label-md font-bold text-slate-900">{r.name}</h4>
+                      <p className="font-caption text-caption text-slate-500 mt-1">
                         {r.capacity} Seats • {r.features[0]}
                       </p>
                     </div>
 
-                    <div className="pt-3 mt-3 border-t border-outline-variant/20 flex items-center justify-between text-caption text-on-surface-variant">
-                      <span className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px]">air</span> {r.co2}
+                    <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-caption text-slate-500">
+                      <span className="flex items-center gap-1 font-medium text-slate-600">
+                        <span className="material-symbols-outlined text-[14px]">group</span> {r.currentOccupancy} / {r.capacity} Seats
                       </span>
-                      <span className={isSelected ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}>
-                        {isSelected ? 'Active Destination →' : 'Inspect Space →'}
+                      <span className={isSelected ? 'text-[#9E153E] font-semibold' : 'text-slate-500 hover:text-[#9E153E]'}>
+                        {isSelected ? 'Selected Room ✓' : 'View Room →'}
                       </span>
                     </div>
                   </div>
@@ -755,115 +755,119 @@ export function SmartRooms() {
 
         {/* RIGHT: Selected Room Deep-Dive & Wayfinding Inspector Drawer */}
         <div className="xl:col-span-4 flex flex-col gap-space-md">
-          <div className="p-space-lg rounded-2xl bg-surface-container-low shadow-[0_8px_24px_rgba(0,0,0,0.45)] flex flex-col gap-space-md border border-outline-variant/20">
+          <div className="p-6 rounded-2xl bg-white shadow-sm flex flex-col gap-5 border border-slate-200">
             {/* Room Heading and Identification */}
             <div className="flex items-start justify-between">
               <div>
-                <div className="flex items-center gap-1.5 text-caption font-caption text-primary uppercase font-bold tracking-wider">
+                <div className="flex items-center gap-1.5 text-caption font-caption text-[#9E153E] uppercase font-bold tracking-wider">
                   <span>Block A-01</span>
                   <span>•</span>
                   <span>{selectedRoom.floor}</span>
                   <span>•</span>
-                  <span>Sector North</span>
+                  <span>West Wing</span>
                 </div>
-                <h2 className="font-headline-md text-headline-md text-on-surface tracking-tight font-bold mt-0.5" id="inspectorTitle">
+                <h2 className="font-headline-md text-headline-md text-slate-900 tracking-tight font-bold mt-0.5" id="inspectorTitle">
                   Room {selectedRoom.roomNumber}: {selectedRoom.name}
                 </h2>
               </div>
-              <span className="px-2.5 py-1 rounded-full bg-primary-container text-on-primary-container text-caption font-bold shrink-0">Selected</span>
+              <span className="px-2.5 py-1 rounded-full bg-[#FFE4E6] text-[#9E153E] text-caption font-bold shrink-0">Selected</span>
             </div>
 
-            {/* Room Architectural & Real Interior Preview Image */}
-            <div className="relative w-full h-44 rounded-xl overflow-hidden bg-surface-container-highest border border-outline-variant/30">
+            {/* Room Preview Image */}
+            <div className="relative w-full h-40 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
               <img
                 src={selectedRoom.image}
                 alt={selectedRoom.name}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/30 to-transparent"></div>
-              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-caption">
-                <span className="px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-md text-on-surface font-semibold">Interior Sensor Stream</span>
-                <span className="px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-md text-primary font-mono font-medium">
+              <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-caption">
+                <span className="px-2.5 py-1 rounded-md bg-white/95 backdrop-blur-md text-slate-800 font-semibold shadow-sm">
+                  {selectedRoom.name}
+                </span>
+                <span className="px-2.5 py-1 rounded-md bg-white/95 backdrop-blur-md text-[#9E153E] font-semibold shadow-sm">
                   Occupancy: {selectedRoom.currentOccupancy} / {selectedRoom.capacity}
                 </span>
               </div>
             </div>
 
             {/* Dynamic Status & Capacity Metrics */}
-            <div className="grid grid-cols-2 gap-space-sm">
-              <div className="p-3 rounded-xl bg-surface-container flex flex-col border border-outline-variant/20">
-                <span className="font-caption text-caption text-on-surface-variant">Schedule Availability</span>
-                <span className="font-label-md text-label-md font-bold text-primary mt-0.5">{selectedRoom.statusText}</span>
-                <span className="font-caption text-caption text-on-surface-variant">Next: {selectedRoom.nextClass}</span>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3.5 rounded-xl bg-slate-50 flex flex-col border border-slate-200">
+                <span className="font-caption text-caption text-slate-500">Current Status</span>
+                <span className="font-label-md text-label-md font-bold text-[#9E153E] mt-0.5">{selectedRoom.statusText}</span>
+                <span className="font-caption text-caption text-slate-500">Next: {selectedRoom.nextClass}</span>
               </div>
 
-              <div className="p-3 rounded-xl bg-surface-container flex flex-col border border-outline-variant/20">
-                <span className="font-caption text-caption text-on-surface-variant">Seating Capacity</span>
-                <span className="font-label-md text-label-md font-bold text-on-surface mt-0.5">
-                  {selectedRoom.capacity} Desks ({Math.round((selectedRoom.currentOccupancy / selectedRoom.capacity) * 100)}% Load)
+              <div className="p-3.5 rounded-xl bg-slate-50 flex flex-col border border-slate-200">
+                <span className="font-caption text-caption text-slate-500">Seating Capacity</span>
+                <span className="font-label-md text-label-md font-bold text-slate-900 mt-0.5">
+                  {selectedRoom.capacity} Total Desks
                 </span>
-                <span className="font-caption text-caption text-on-surface-variant">{selectedRoom.capacity - selectedRoom.currentOccupancy} Open Seats</span>
+                <span className="font-caption text-caption text-emerald-600 font-semibold">{selectedRoom.capacity - selectedRoom.currentOccupancy} Available Now</span>
               </div>
             </div>
 
-            {/* Facility & Hardware Checklist */}
+            {/* Room Amenities & Facilities */}
             <div className="flex flex-col gap-2">
-              <span className="font-caption text-caption text-on-surface-variant uppercase tracking-wider font-semibold">Hardware Telemetry &amp; IoT Controls</span>
-              <div className="grid grid-cols-1 gap-1.5">
-                {selectedRoom.features.map((feat, idx) => (
-                  <div key={idx} className="p-2 px-3 rounded-lg bg-surface-container-lowest flex items-center justify-between border border-outline-variant/20">
-                    <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-primary">check_circle</span>
-                      <span className="font-body-sm text-body-sm text-on-surface">{feat}</span>
-                    </div>
-                    <span className="text-caption text-primary font-medium">Active</span>
+              <span className="font-caption text-caption text-slate-500 uppercase tracking-wider font-semibold">Room Amenities</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {[
+                  { icon: 'wifi', label: 'Campus Wi-Fi' },
+                  { icon: 'videocam', label: 'AV Projector & Screen' },
+                  { icon: 'ac_unit', label: 'Air Conditioned' },
+                  { icon: 'power', label: 'Desk Power Outlets' },
+                  { icon: 'accessible', label: 'Step-Free / Accessible' },
+                  { icon: 'chair', label: 'Ergonomic Seating' }
+                ].map((item, idx) => (
+                  <div key={idx} className="p-2 px-2.5 rounded-lg bg-slate-50 flex items-center gap-2 border border-slate-200">
+                    <span className="material-symbols-outlined text-[16px] text-[#9E153E]">{item.icon}</span>
+                    <span className="font-body-sm text-body-sm text-slate-700 text-xs font-medium">{item.label}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Start Point Override Selector */}
+            {/* Start Point Departure Selector */}
             <div className="flex flex-col gap-1.5">
-              <label className="font-caption text-caption text-on-surface-variant uppercase tracking-wider font-semibold">Change Start Node (Departure)</label>
+              <label className="font-caption text-caption text-slate-500 uppercase tracking-wider font-semibold">Starting From (Departure)</label>
               <div className="relative w-full">
                 <select
                   value={startNode}
                   onChange={(e) => setStartNode(e.target.value)}
-                  className="w-full h-10 pl-3.5 pr-8 rounded-xl bg-surface-container-lowest text-on-surface font-body-sm text-body-sm appearance-none focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer border border-outline-variant/30"
+                  className="w-full h-10 pl-3.5 pr-8 rounded-xl bg-slate-50 text-slate-800 font-body-sm text-body-sm appearance-none focus:outline-none focus:ring-1 focus:ring-[#9E153E] cursor-pointer border border-slate-200"
                 >
-                  <option>Level 2 Skybridge Arrival (Connected to Library)</option>
+                  <option>Level 2 Skybridge Arrival (from Library)</option>
                   <option>West Elevator Bank (Lifts 1-4)</option>
                   <option>East Elevator Bank (Lifts 5-8)</option>
-                  <option>Ground Floor Main Atrium Stairs</option>
-                  <option>Block B Corridor Connection</option>
+                  <option>Ground Floor Main Atrium</option>
                 </select>
-                <span className="material-symbols-outlined absolute right-3 top-2.5 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
+                <span className="material-symbols-outlined absolute right-3 top-2.5 text-slate-400 pointer-events-none text-[18px]">expand_more</span>
               </div>
             </div>
 
-            {/* Turn-by-Turn Indoor Directions Ribbon */}
+            {/* Walking Directions */}
             <div className="flex flex-col gap-2 pt-1">
-              <span className="font-caption text-caption text-on-surface-variant uppercase tracking-wider font-semibold">Step-by-Step Wayfinding Path</span>
-              <div className="flex flex-col gap-2 relative pl-4 border-l-2 border-primary/30 ml-1">
+              <span className="font-caption text-caption text-slate-500 uppercase tracking-wider font-semibold">Walking Route</span>
+              <div className="flex flex-col gap-2 relative pl-4 border-l-2 border-[#9E153E]/30 ml-1">
                 {selectedRoom.routeSteps.map((st, i) => (
                   <div key={i} className="flex flex-col">
-                    <span className={`font-label-sm text-label-sm font-semibold ${i === selectedRoom.routeSteps.length - 1 ? 'text-primary font-bold' : 'text-on-surface'}`}>
+                    <span className={`font-label-sm text-label-sm font-semibold ${i === selectedRoom.routeSteps.length - 1 ? 'text-[#9E153E] font-bold' : 'text-slate-800'}`}>
                       {st.step}
                     </span>
-                    <span className="font-caption text-caption text-on-surface-variant">{st.desc}</span>
+                    <span className="font-caption text-caption text-slate-500">{st.desc}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Direct Wayfinding Action CTA Buttons */}
+            {/* Wayfinding Action CTA */}
             <div className="flex flex-col gap-2 pt-2">
               <button
                 onClick={() => navigate('/campus-map')}
-                className="w-full py-3 px-space-md rounded-xl bg-primary-container text-on-primary-container hover:opacity-95 active:scale-[0.99] font-label-md text-label-md font-bold flex items-center justify-center gap-2 shadow-[0_0_16px_rgba(172,39,79,0.35)] transition-all"
+                className="w-full py-3 px-4 rounded-xl bg-[#9E153E] hover:bg-[#831843] active:scale-[0.99] text-white font-label-md text-label-md font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
               >
                 <span className="material-symbols-outlined text-[18px]">navigation</span>
-                <span>Open Full Navigation Map</span>
+                <span>Open in Campus Map</span>
               </button>
             </div>
           </div>

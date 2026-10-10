@@ -123,10 +123,10 @@ export function AiAssistant() {
       {
         id: `msg-welcome-${Date.now()}`,
         sender: 'ai',
-        text: 'Hello! I am NextCampus AI Assistant. I can assist you with campus navigation, SmartRoom availability, facility complaints, EcoCampus metrics, and SkillCampus student projects. What would you like to explore today?',
-        time: 'Just now • NextCampus LLM',
+        text: 'Hello! I am NextCampus AI Assistant. I can help you with campus navigation, SmartRoom availability, facility maintenance requests, and class schedules. What would you like to explore today?',
+        time: 'Just now • NextCampus AI',
         isLiveModel: false,
-        engineName: engineMode
+        engineName: 'Campus AI Copilot'
       }
     ]);
     setActiveSessionId(`h-new-${Date.now()}`);
@@ -206,52 +206,43 @@ export function AiAssistant() {
 
   return (
     <div className="flex flex-col w-full h-[calc(100vh-5rem)] text-on-surface">
-      {/* Top Assistant Metabar / System Sync Banner */}
-      <div className="flex flex-wrap items-center justify-between gap-space-sm px-space-md py-2.5 rounded-xl bg-surface-container-low shadow-sm mb-space-sm border border-outline-variant/20">
-        <div className="flex items-center gap-space-md">
-          <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-primary-container text-on-primary shadow-sm">
-            <span className="material-symbols-outlined text-[19px]">psychology</span>
-            <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary animate-ping"></span>
-            <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary"></span>
+      {/* Top Assistant Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-white shadow-sm mb-3 border border-slate-200">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#FFE4E6] text-[#9E153E]">
+            <span className="material-symbols-outlined text-[20px]">psychology</span>
           </div>
-          <div className="flex items-center gap-space-sm">
-            <span className="font-title-md text-title-md font-bold text-on-surface tracking-tight">NextCampus AI Assistant</span>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container/50 text-secondary-fixed text-caption font-medium border border-secondary-container/80">
-              <span className="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-pulse"></span>
-              Node: Central Campus Knowledge Graph v4.2
+          <div className="flex items-center gap-2">
+            <span className="font-title-md text-title-md font-bold text-slate-900 tracking-tight">NextCampus AI Assistant</span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-caption font-semibold border border-emerald-200">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              Live Campus Copilot
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-space-sm">
-          <span className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container text-on-surface-variant text-caption font-mono border border-outline-variant/20">
-            <span className="material-symbols-outlined text-[13px] text-tertiary">memory</span>
-            RAG Grounded • Campus Mesh 24ms
-          </span>
-          <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-surface-container-high text-primary-fixed font-mono text-caption font-semibold border border-primary/20">
-            {engineMode}
-          </span>
+        <div className="flex items-center gap-2">
           <button
             onClick={handleStartNewChat}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm transition-all border border-outline-variant/20"
-            title="Reset workspace context"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 text-label-sm font-label-sm font-semibold transition-all border border-slate-200"
+            title="Start new dialogue"
           >
-            <span className="material-symbols-outlined text-[16px]">restart_alt</span>
-            <span className="hidden sm:inline">Reset Context</span>
+            <span className="material-symbols-outlined text-[16px] text-[#9E153E]">add</span>
+            <span>New Chat</span>
           </button>
         </div>
       </div>
 
-      {/* Main 3-Column Integrated Workspace */}
-      <div className="flex flex-1 min-h-0 gap-space-sm overflow-hidden">
+      {/* Main Integrated Workspace */}
+      <div className="flex flex-1 min-h-0 gap-3 overflow-hidden">
         {/* LEFT CONVERSATION RAIL (280px) */}
-        <aside className="hidden lg:flex flex-col w-72 rounded-xl bg-surface-container-low shadow-sm p-space-sm overflow-hidden border border-outline-variant/20">
+        <aside className="hidden lg:flex flex-col w-72 rounded-xl bg-white shadow-sm p-3 overflow-hidden border border-slate-200">
           {/* New Session CTA Button */}
           <button
             onClick={handleStartNewChat}
-            className="w-full flex items-center justify-center gap-space-sm px-space-md py-2.5 rounded-lg bg-gradient-to-r from-primary-container to-secondary-container text-on-primary font-label-md text-label-md font-semibold hover:opacity-95 shadow-md transition-all active:scale-[0.99] mb-space-sm"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-[#9E153E] text-white font-label-md text-label-md font-semibold hover:bg-[#831843] shadow-sm transition-all active:scale-[0.99] mb-3"
           >
-            <span className="material-symbols-outlined text-[20px]">add_comment</span>
+            <span className="material-symbols-outlined text-[18px]">add_comment</span>
             <span>Start New Dialogue</span>
           </button>
 
@@ -309,25 +300,15 @@ export function AiAssistant() {
             ))}
           </div>
 
-          {/* Bottom Model Metainfo Footer */}
-          <div className="pt-space-sm mt-auto bg-surface-container-lowest/80 p-2.5 rounded-lg border border-outline-variant/20">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-caption font-caption font-semibold text-primary">Model Node</span>
-              <span className="text-caption font-caption text-on-surface-variant font-mono">v4.2-Hybrid</span>
-            </div>
-            <p className="text-caption font-caption text-on-surface-variant leading-tight">
-              Spatial GIS, SmartRoom Telemetry &amp; ERP Care Integration
-            </p>
-          </div>
         </aside>
 
-        {/* CENTER CHAT STREAM & INPUT CONTAINER */}
-        <main className="flex-1 flex flex-col min-w-0 rounded-xl bg-surface-container-low shadow-sm overflow-hidden border border-outline-variant/20">
+        {/* MAIN CHAT STREAM & INPUT CONTAINER */}
+        <main className="flex-1 flex flex-col min-w-0 rounded-xl bg-white shadow-sm overflow-hidden border border-slate-200">
           {/* Conversational Message Scroll Stream */}
-          <div className="flex-1 overflow-y-auto p-space-md space-y-space-lg">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
             <div className="flex items-center justify-center my-1">
-              <span className="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant text-caption font-caption border border-outline-variant/20">
-                Spatial Session Active • Synchronized with Central Campus Node 01
+              <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-caption font-caption border border-slate-200">
+                NextCampus AI • Real-time Campus Guidance &amp; Support
               </span>
             </div>
 
@@ -553,19 +534,17 @@ export function AiAssistant() {
               {[
                 'Directions to Turing B-204',
                 'Find quiet study pods in Library',
-                'Report classroom AV projector glitch',
+                'Report classroom AV projector issue',
                 'Prof. Ananya Roy office hours',
                 'My timetable & next class',
-                'EcoCampus solar generation metrics',
                 'Campus EV Shuttle schedule',
                 'Dining Hall & Cafeteria hours',
-                'SkillCampus student projects',
-                'How to edit campus map (Admin)'
+                'Hostel maintenance request'
               ].map((chip, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleChipClick(chip)}
-                  className="prompt-chip shrink-0 px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface text-label-sm font-label-sm transition-all border border-outline-variant/20 whitespace-nowrap"
+                  className="prompt-chip shrink-0 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-label-sm font-label-sm transition-all border border-slate-200 whitespace-nowrap font-medium"
                 >
                   {chip}
                 </button>
@@ -612,116 +591,18 @@ export function AiAssistant() {
                   <button
                     type="submit"
                     disabled={isLoading || !inputValue.trim()}
-                    className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-container hover:bg-secondary-container text-on-primary shadow-md transition-all active:scale-95 disabled:opacity-50"
+                    className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#9E153E] hover:bg-[#831843] text-white shadow-sm transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    <span className="material-symbols-outlined text-[20px]">arrow_upward</span>
+                    <span className="material-symbols-outlined text-[18px]">arrow_upward</span>
                   </button>
                 </div>
               </div>
             </form>
-            <p className="text-caption font-caption text-on-surface-variant/70 text-center mt-2">
-              NextCampus AI synthesizes spatial GIS, timetabling ERP &amp; facility telemetry. {engineMode}.
+            <p className="text-caption font-caption text-slate-400 text-center mt-2">
+              NextCampus AI assists with campus locations, schedules, directories, and facilities.
             </p>
           </div>
         </main>
-
-        {/* RIGHT UTILITY DRAWER / CONTEXTUAL INSPECTOR (320px) */}
-        <aside className="hidden xl:flex flex-col w-80 rounded-xl bg-surface-container-low shadow-sm p-space-md overflow-y-auto space-y-space-md border border-outline-variant/20">
-          <div className="flex items-center justify-between pb-2">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[20px]">hub</span>
-              <h3 className="font-title-md text-title-md font-bold text-on-surface">Spatial Inspector</h3>
-            </div>
-            <span className="px-2 py-0.5 rounded-full bg-surface-container-high text-primary font-mono text-caption font-bold">ACTIVE PIN</span>
-          </div>
-
-          <div className="rounded-xl overflow-hidden bg-surface-container shadow-sm border border-outline-variant/30">
-            <div className="relative h-36 w-full">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDprOS2GfYZiYb5NMRgbJPZupHtc6uc5_186xi1I6PuXdGZP8UCx-rLT6j1YDVcNG0_j-QSUa-hN2ra3TtaMmK-Q9WeAS2FMHIk3BcHvQMzKJb29w-Z-eJLeHftKPl72xK4Cl4UFK7jdJ5cibn6HOIrBU0S-hl-CV397bLN2WDymVh2BhlGyWVSlAIKZk-jlzN4n3rOarsMNNaqFTeVXsDB22UBEXDhJCC1ydi2fNSSuUWIjRfInBlmhA"
-                alt="Alan Turing Hall"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent"></div>
-              <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-surface-container-lowest/80 text-on-surface text-caption font-semibold backdrop-blur-md">
-                Block A-01
-              </span>
-              <span className="absolute bottom-2.5 right-2.5 flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container/90 text-on-secondary-container text-caption font-semibold backdrop-blur-md">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
-                99.8% Core Mesh
-              </span>
-            </div>
-            <div className="p-3 space-y-2">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h4 className="font-headline-sm text-headline-sm font-bold text-on-surface">Alan Turing Hall</h4>
-                  <p className="text-caption font-caption text-on-surface-variant">School of Computing &amp; Cybernetics</p>
-                </div>
-                <span className="material-symbols-outlined text-primary text-[20px]">corporate_fare</span>
-              </div>
-              <div className="space-y-1.5 pt-1 text-caption font-caption">
-                <div className="flex items-center justify-between py-1 bg-surface-container-high px-2 rounded-md">
-                  <span className="text-on-surface-variant">Levels &amp; Labs</span>
-                  <span className="text-on-surface font-semibold">4 Floors • 14 Smart Labs</span>
-                </div>
-                <div className="flex items-center justify-between py-1 bg-surface-container-high px-2 rounded-md">
-                  <span className="text-on-surface-variant">Target Room</span>
-                  <span className="text-primary font-semibold">B-204 (Level 2 West Wing)</span>
-                </div>
-                <div className="flex items-center justify-between py-1 bg-surface-container-high px-2 rounded-md">
-                  <span className="text-on-surface-variant">Access Method</span>
-                  <span className="text-on-surface font-semibold">Smart ID NFC + Skybridge</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <span className="text-caption font-caption text-on-surface-variant uppercase tracking-wider font-semibold">Context Shortcuts</span>
-            <div className="grid grid-cols-1 gap-2">
-              <button
-                onClick={() => navigate('/campus-map')}
-                className="flex items-center justify-between p-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-all w-full text-left"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="material-symbols-outlined text-primary text-[18px]">map</span>
-                  <span className="text-body-sm font-body-sm font-medium">Interactive Floor Plan (L2)</span>
-                </div>
-                <span className="material-symbols-outlined text-on-surface-variant text-[16px]">chevron_right</span>
-              </button>
-              <button
-                onClick={() => navigate('/directory')}
-                className="flex items-center justify-between p-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-all w-full text-left"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="material-symbols-outlined text-secondary text-[18px]">badge</span>
-                  <span className="text-body-sm font-body-sm font-medium">Turing Hall Staff Directory</span>
-                </div>
-                <span className="material-symbols-outlined text-on-surface-variant text-[16px]">chevron_right</span>
-              </button>
-              <button
-                onClick={() => navigate('/complaints')}
-                className="flex items-center justify-between p-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-all w-full text-left"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="material-symbols-outlined text-tertiary text-[18px]">support_agent</span>
-                  <span className="text-body-sm font-body-sm font-medium">NextCampus Care Portal</span>
-                </div>
-                <span className="material-symbols-outlined text-on-surface-variant text-[16px]">chevron_right</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="rounded-xl bg-surface-container p-3 space-y-2.5 shadow-sm border border-outline-variant/30">
-            <div className="flex items-center justify-between">
-              <span className="text-caption font-caption text-on-surface-variant font-semibold uppercase tracking-wider">Engine Status</span>
-              <span className="text-caption font-caption text-primary font-mono font-bold">ACTIVE</span>
-            </div>
-            <p className="text-caption font-caption text-on-surface-variant leading-tight">
-              Backend handles API key isolation, validation, rate limits, and provider fallback to demo mode.
-            </p>
-          </div>
-        </aside>
       </div>
     </div>
   );

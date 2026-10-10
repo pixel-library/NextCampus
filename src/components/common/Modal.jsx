@@ -13,7 +13,7 @@ export const Modal = ({ isOpen, onClose, title, children }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(25, 21, 22, 0.8)',
+        backgroundColor: 'rgba(15, 23, 42, 0.6)',
         backdropFilter: 'blur(12px)',
         padding: '20px',
       }}
@@ -23,7 +23,7 @@ export const Modal = ({ isOpen, onClose, title, children }) => {
           width: '100%',
           maxWidth: '560px',
           backgroundColor: 'var(--bg-surface)',
-          border: '1px solid var(--border-interactive)',
+          border: '1px solid var(--border-subtle)',
           borderRadius: 'var(--radius-lg)',
           boxShadow: 'var(--shadow-lg)',
           overflow: 'hidden',
@@ -40,7 +40,7 @@ export const Modal = ({ isOpen, onClose, title, children }) => {
             borderBottom: '1px solid var(--border-subtle)',
           }}
         >
-          <h3 style={{ margin: 0, fontSize: '18px', color: '#FFFFFF' }}>{title}</h3>
+          <h3 style={{ margin: 0, fontSize: '18px', color: 'var(--text-primary)' }}>{title}</h3>
           <button
             onClick={onClose}
             style={{

@@ -93,7 +93,7 @@ export const StudentDashboard = () => {
                 NextCampus Institute of Technology • Active Node #04
               </span>
             </div>
-            <h1 style={{ fontSize: '1.85rem', fontWeight: 800, margin: 0, color: '#FFFFFF' }}>
+            <h1 style={{ fontSize: '1.85rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
               Good morning, {studentName}! ☀️
             </h1>
             <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{studentDept}</span>
@@ -101,7 +101,7 @@ export const StudentDashboard = () => {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--brand-accent)' }} />
-            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--brand-misty)' }}>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--brand-primary)' }}>
               Central Campus • All Facility Systems Normal
             </span>
           </div>
@@ -116,7 +116,7 @@ export const StudentDashboard = () => {
               <Calendar size={18} style={{ color: 'var(--brand-primary)' }} />
             </div>
             <div style={{ marginTop: '12px' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFFFFF' }}>3 Classes</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>3 Classes</div>
               <div style={{ fontSize: '12px', color: 'var(--brand-accent)', marginTop: '4px', fontWeight: 600 }}>
                 Next: CS-301 in 25 mins
               </div>
@@ -130,10 +130,10 @@ export const StudentDashboard = () => {
               <LifeBuoy size={18} style={{ color: 'var(--brand-accent)' }} />
             </div>
             <div style={{ marginTop: '12px' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFFFFF' }}>1 In Progress</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>1 In Progress</div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px', display: 'flex', justifyContent: 'space-between' }}>
                 <span>Ticket #CMP-1042</span>
-                <span style={{ color: 'var(--brand-misty)', fontWeight: 600 }}>ETA 25m</span>
+                <span style={{ color: 'var(--brand-primary)', fontWeight: 600 }}>ETA 25m</span>
               </div>
             </div>
           </Card>
@@ -142,10 +142,10 @@ export const StudentDashboard = () => {
           <Card interactive style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Reserved SmartRooms</span>
-              <DoorOpen size={18} style={{ color: 'var(--brand-misty)' }} />
+              <DoorOpen size={18} style={{ color: 'var(--brand-primary)' }} />
             </div>
             <div style={{ marginTop: '12px' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFFFFF' }}>2 Bookings</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>2 Bookings</div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
                 Library Pod 4B Confirmed
               </div>
@@ -159,7 +159,7 @@ export const StudentDashboard = () => {
               <Activity size={18} style={{ color: 'var(--brand-primary)' }} />
             </div>
             <div style={{ marginTop: '12px' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#FFFFFF' }}>100% Online</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>100% Online</div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
                 98 telemetry nodes active
               </div>
@@ -180,12 +180,12 @@ export const StudentDashboard = () => {
             backgroundColor: 'var(--bg-surface)',
             border: '1px solid var(--border-interactive)',
             borderRadius: 'var(--radius-md)',
-            color: '#FFFFFF',
+            color: 'var(--text-primary)',
             cursor: 'pointer',
             textAlign: 'left',
           }}
         >
-          <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
             <Compass size={20} />
           </div>
           <div>
@@ -204,12 +204,12 @@ export const StudentDashboard = () => {
             backgroundColor: 'var(--bg-surface)',
             border: '1px solid var(--border-interactive)',
             borderRadius: 'var(--radius-md)',
-            color: '#FFFFFF',
+            color: 'var(--text-primary)',
             cursor: 'pointer',
             textAlign: 'left',
           }}
         >
-          <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'rgba(235, 99, 139, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EB638B' }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#FFE4E6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-primary)' }}>
             <DoorOpen size={20} />
           </div>
           <div>
@@ -228,12 +228,12 @@ export const StudentDashboard = () => {
             backgroundColor: 'var(--bg-surface)',
             border: '1px solid var(--border-interactive)',
             borderRadius: 'var(--radius-md)',
-            color: '#FFFFFF',
+            color: 'var(--text-primary)',
             cursor: 'pointer',
             textAlign: 'left',
           }}
         >
-          <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'rgba(255, 217, 218, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFD9DA' }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--bg-surface-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-primary)' }}>
             <Users size={20} />
           </div>
           <div>
@@ -252,12 +252,12 @@ export const StudentDashboard = () => {
             backgroundColor: 'var(--bg-surface)',
             border: '1px solid var(--border-interactive)',
             borderRadius: 'var(--radius-md)',
-            color: '#FFFFFF',
+            color: 'var(--text-primary)',
             cursor: 'pointer',
             textAlign: 'left',
           }}
         >
-          <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'rgba(147, 0, 10, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFB4AB' }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#FEE2E2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#DC2626' }}>
             <LifeBuoy size={20} />
           </div>
           <div>
@@ -289,11 +289,11 @@ export const StudentDashboard = () => {
                     <Badge status="active">IN 25 MINS • 10:00 AM – 11:30 AM</Badge>
                     <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Lecture Hall #B</span>
                   </div>
-                  <h3 style={{ fontSize: '1.2rem', color: '#FFFFFF', margin: 0 }}>
+                  <h3 style={{ fontSize: '1.2rem', color: 'var(--text-primary)', margin: 0 }}>
                     CS-301: Distributed Systems & Cloud Infrastructure
                   </h3>
                   <div style={{ fontSize: '13px', color: 'var(--text-muted)', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                    <span>Instructor: <strong style={{ color: '#FFFFFF' }}>Prof. Ananya Roy</strong></span>
+                    <span>Instructor: <strong style={{ color: 'var(--text-primary)' }}>Prof. Ananya Roy</strong></span>
                     <span>•</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <MapPin size={14} style={{ color: 'var(--brand-accent)' }} />
@@ -302,8 +302,8 @@ export const StudentDashboard = () => {
                   </div>
                 </div>
 
-                <div style={{ backgroundColor: 'var(--bg-canvas)', padding: '10px 14px', borderRadius: '8px', fontSize: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--brand-misty)' }}>
+                <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px 14px', borderRadius: '8px', fontSize: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--brand-primary)' }}>
                     <Thermometer size={14} />
                     <span>21.8°C Comfort</span>
                   </div>
@@ -326,26 +326,26 @@ export const StudentDashboard = () => {
 
             {/* Later Sessions Timeline */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ backgroundColor: 'var(--bg-surface)', padding: '12px 16px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+              <div style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--brand-misty)', backgroundColor: 'var(--bg-surface-elevated)', padding: '4px 8px', borderRadius: '6px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--brand-primary)', backgroundColor: 'var(--bg-surface-subtle)', padding: '4px 8px', borderRadius: '6px' }}>
                     1:00 PM – 2:30 PM
                   </span>
                   <div>
-                    <div style={{ fontWeight: 600, color: '#FFFFFF', fontSize: '13px' }}>MATH-240: Linear Algebra & Neural Nets</div>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>MATH-240: Linear Algebra & Neural Nets</div>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Ramanujan Science Block, Room S-108 • Prof. K. Venkatesh</div>
                   </div>
                 </div>
                 <Button variant="ghost" size="sm" icon={Compass} onClick={() => navigate('/campus-map')} />
               </div>
 
-              <div style={{ backgroundColor: 'var(--bg-surface)', padding: '12px 16px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+              <div style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', padding: '12px 16px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--brand-accent)', backgroundColor: 'var(--bg-surface-elevated)', padding: '4px 8px', borderRadius: '6px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--brand-accent)', backgroundColor: 'var(--bg-surface-subtle)', padding: '4px 8px', borderRadius: '6px' }}>
                     3:15 PM – 5:00 PM
                   </span>
                   <div>
-                    <div style={{ fontWeight: 600, color: '#FFFFFF', fontSize: '13px' }}>CS-305: Embedded IoT Systems Lab</div>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>CS-305: Embedded IoT Systems Lab</div>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Innovation Hub, Hardware Lab 4 • Bench #14 Reserved</div>
                   </div>
                 </div>
@@ -367,7 +367,7 @@ export const StudentDashboard = () => {
             </div>
 
             <Card style={{ padding: '0', overflow: 'hidden' }}>
-              <div style={{ position: 'relative', height: '240px', width: '100%', backgroundColor: '#161213' }}>
+              <div style={{ position: 'relative', height: '240px', width: '100%', backgroundColor: 'var(--bg-surface-subtle)' }}>
                 <img
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBf9GggO2878hSOBwyC9jOGK_ul92QgPwCrbIO1fCXbZ2hMDBi1yob2ACl2vEyc4wH3L_1QJqZnxheFSBbWxU5K4huTjzXRdbeSfwPDDXt_LH6c_h3FAZzxPexlEOL7OOZ5Dzi9SFHsbPu_scz4L0iG5vXMYZhTDHIRHbwGZle98jLnVmhN_PgyjvPz_ThYGwNvX0_wBgtQG3A_llHoIUOYsW9vJ2v0D3ICSdYKxrWnZnz-dDz2ua60Q"
                   alt="Campus spatial twin"
@@ -402,7 +402,7 @@ export const StudentDashboard = () => {
                   <span>INFRASTRUCTURE</span>
                   <span>4:00 PM Today</span>
                 </div>
-                <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', color: '#FFFFFF' }}>
+                <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', color: 'var(--text-primary)' }}>
                   Central Library 3rd Floor East Wing Network Upgrade
                 </h4>
                 <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>
@@ -415,11 +415,11 @@ export const StudentDashboard = () => {
                   <span>ACADEMIC • HACKATHON</span>
                   <span>Due Oct 18</span>
                 </div>
-                <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', color: '#FFFFFF' }}>
+                <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', color: 'var(--text-primary)' }}>
                   MU Hackathon 2026 Project Milestone Submissions Open
                 </h4>
                 <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Teams registered in AI, Autonomous Robotics, and Smart Grid verticals can submit interim architecture docs via SkillCampus portal.
+                  Teams registered in AI, Autonomous Robotics, and Smart Grid verticals can submit interim architecture docs via the department coordinator desk.
                 </p>
               </Card>
             </div>
@@ -429,23 +429,23 @@ export const StudentDashboard = () => {
         {/* RIGHT SIDEBAR COLUMN */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {/* A. NEXTCAMPUS AI COPILOT CARD */}
-          <Card style={{ background: 'linear-gradient(180deg, var(--bg-surface) 0%, rgba(25, 21, 22, 0.95) 100%)', border: '1px solid var(--border-interactive)' }}>
+          <Card style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
                   <Bot size={18} />
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '14px', color: '#FFFFFF' }}>NextCampus AI</h3>
+                  <h3 style={{ margin: 0, fontSize: '14px', color: 'var(--text-primary)' }}>NextCampus AI</h3>
                   <span style={{ fontSize: '11px', color: 'var(--brand-accent)' }}>Active Campus Copilot</span>
                 </div>
               </div>
-              <span style={{ fontSize: '10px', color: 'var(--text-muted)', backgroundColor: 'var(--bg-canvas)', padding: '2px 6px', borderRadius: '4px' }}>
+              <span style={{ fontSize: '10px', color: 'var(--text-muted)', backgroundColor: 'var(--bg-surface-subtle)', padding: '2px 6px', borderRadius: '4px' }}>
                 GPT-Campus
               </span>
             </div>
 
-            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '12px', backgroundColor: 'var(--bg-canvas)', padding: '10px', borderRadius: '8px' }}>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px', backgroundColor: 'var(--bg-surface-subtle)', padding: '10px', borderRadius: '8px' }}>
               Hi {studentName}! Need a quiet space or walking directions to Turing Hall? Tap a prompt or ask me below:
             </p>
 
@@ -453,21 +453,21 @@ export const StudentDashboard = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
               <button
                 onClick={() => handleChipClick("Where is Prof. Roy's office right now?")}
-                style={{ textAlign: 'left', padding: '8px 10px', backgroundColor: 'var(--bg-surface-elevated)', border: 'none', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '12px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}
+                style={{ textAlign: 'left', padding: '8px 10px', backgroundColor: 'var(--bg-surface-subtle)', border: 'none', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '12px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}
               >
                 <span>“Where is Prof. Roy's office right now?”</span>
                 <ArrowRight size={14} style={{ color: 'var(--brand-accent)' }} />
               </button>
               <button
                 onClick={() => handleChipClick("Book quiet study pod for 4:00 PM")}
-                style={{ textAlign: 'left', padding: '8px 10px', backgroundColor: 'var(--bg-surface-elevated)', border: 'none', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '12px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}
+                style={{ textAlign: 'left', padding: '8px 10px', backgroundColor: 'var(--bg-surface-subtle)', border: 'none', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '12px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}
               >
                 <span>“Book quiet study pod for 4:00 PM”</span>
                 <ArrowRight size={14} style={{ color: 'var(--brand-accent)' }} />
               </button>
               <button
                 onClick={() => handleChipClick("Where is the nearest open color printer?")}
-                style={{ textAlign: 'left', padding: '8px 10px', backgroundColor: 'var(--bg-surface-elevated)', border: 'none', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '12px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}
+                style={{ textAlign: 'left', padding: '8px 10px', backgroundColor: 'var(--bg-surface-subtle)', border: 'none', borderRadius: '6px', color: 'var(--text-secondary)', fontSize: '12px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }}
               >
                 <span>“Where is nearest open color printer?”</span>
                 <ArrowRight size={14} style={{ color: 'var(--brand-accent)' }} />
@@ -476,12 +476,12 @@ export const StudentDashboard = () => {
 
             {/* AI Response Output */}
             {aiResponse && (
-              <div style={{ backgroundColor: 'rgba(172, 39, 79, 0.15)', border: '1px solid var(--border-interactive)', padding: '10px', borderRadius: '8px', fontSize: '12px', color: '#FFFFFF', marginBottom: '12px' }}>
+              <div style={{ backgroundColor: '#FFE4E6', border: '1px solid rgba(158, 21, 62, 0.2)', padding: '10px', borderRadius: '8px', fontSize: '12px', color: 'var(--text-primary)', marginBottom: '12px' }}>
                 <div>{aiResponse.reply}</div>
                 {aiResponse.suggestedAction && (
                   <button
                     onClick={() => navigate(aiResponse.suggestedAction)}
-                    style={{ marginTop: '8px', background: 'none', border: 'none', color: 'var(--brand-accent)', fontWeight: 600, fontSize: '11px', cursor: 'pointer', padding: 0 }}
+                    style={{ marginTop: '8px', background: 'none', border: 'none', color: 'var(--brand-primary)', fontWeight: 600, fontSize: '11px', cursor: 'pointer', padding: 0 }}
                   >
                     Open Feature →
                   </button>
@@ -496,7 +496,7 @@ export const StudentDashboard = () => {
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
                 placeholder="Ask anything about timetable or labs..."
-                style={{ flex: 1, padding: '8px 12px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', borderRadius: '6px', color: '#FFF', fontSize: '12px', outline: 'none' }}
+                style={{ flex: 1, padding: '8px 12px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-subtle)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '12px', outline: 'none' }}
               />
               <Button type="submit" variant="primary" size="sm" disabled={aiLoading}>
                 <Send size={14} />
@@ -506,20 +506,20 @@ export const StudentDashboard = () => {
 
           {/* B. UPCOMING DEADLINES WIDGET */}
           <Card>
-            <h3 style={{ fontSize: '14px', margin: '0 0 12px 0', color: '#FFFFFF', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <h3 style={{ fontSize: '14px', margin: '0 0 12px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Calendar size={16} style={{ color: 'var(--brand-accent)' }} />
               Upcoming Deadlines
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px' }}>
-              <div style={{ backgroundColor: 'var(--bg-canvas)', padding: '10px', borderRadius: '8px' }}>
+              <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px', borderRadius: '8px' }}>
                 <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--brand-accent)' }}>TODAY • 11:59 PM</span>
-                <div style={{ fontWeight: 600, color: '#FFFFFF', marginTop: '2px' }}>Distributed Systems Lab 3</div>
+                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '2px' }}>Distributed Systems Lab 3</div>
                 <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>CS-301 Git Tag: v0.3.1</div>
               </div>
 
-              <div style={{ backgroundColor: 'var(--bg-canvas)', padding: '10px', borderRadius: '8px' }}>
-                <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--brand-misty)' }}>TOMORROW • 2:00 PM</span>
-                <div style={{ fontWeight: 600, color: '#FFFFFF', marginTop: '2px' }}>Robotics Club Project Review</div>
+              <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px', borderRadius: '8px' }}>
+                <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--brand-primary)' }}>TOMORROW • 2:00 PM</span>
+                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '2px' }}>Robotics Club Project Review</div>
                 <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Room C-102 Milestone</div>
               </div>
             </div>
@@ -527,26 +527,26 @@ export const StudentDashboard = () => {
 
           {/* C. MY ACTIVE REQUESTS & RESERVATIONS WIDGET */}
           <Card>
-            <h3 style={{ fontSize: '14px', margin: '0 0 12px 0', color: '#FFFFFF', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <h3 style={{ fontSize: '14px', margin: '0 0 12px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <CheckCircle2 size={16} style={{ color: 'var(--brand-accent)' }} />
               My Active Requests
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px' }}>
-              <div style={{ backgroundColor: 'var(--bg-canvas)', padding: '10px', borderRadius: '8px' }}>
+              <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px', borderRadius: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--brand-accent)', fontSize: '11px', fontWeight: 600 }}>
                   <span>#CMP-1042</span>
                   <span>In Progress</span>
                 </div>
-                <div style={{ fontWeight: 600, color: '#FFFFFF', marginTop: '4px' }}>CS Lab B Projector Glitch</div>
+                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px' }}>CS Lab B Projector Glitch</div>
                 <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>ETA: 25 mins</div>
               </div>
 
-              <div style={{ backgroundColor: 'var(--bg-canvas)', padding: '10px', borderRadius: '8px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--brand-misty)', fontSize: '11px', fontWeight: 600 }}>
+              <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px', borderRadius: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--brand-primary)', fontSize: '11px', fontWeight: 600 }}>
                   <span>#RS-882</span>
                   <span>Confirmed</span>
                 </div>
-                <div style={{ fontWeight: 600, color: '#FFFFFF', marginTop: '4px' }}>Group Study Room C-102</div>
+                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px' }}>Group Study Room C-102</div>
                 <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Today: 4:00 PM – 6:00 PM • PIN: 4920</div>
               </div>
             </div>

@@ -588,7 +588,7 @@ export const CampusMap = () => {
       {/* TOP FLOATING WAYFINDING CONTROL BAR & FILTER CHIPS */}
       <div style={{ position: 'absolute', top: '16px', left: '16px', right: '16px', zIndex: 40, display: 'flex', flexDirection: 'column', gap: '10px', pointerEvents: 'none' }}>
         {/* Main Route Calculation Bar */}
-        <div style={{ pointerEvents: 'auto', backgroundColor: 'rgba(35, 30, 31, 0.95)', backdropFilter: 'blur(16px)', padding: '12px 16px', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-lg)', border: '1px solid var(--border-interactive)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px' }}>
+        <div style={{ pointerEvents: 'auto', backgroundColor: 'rgba(255, 255, 255, 0.96)', backdropFilter: 'blur(16px)', padding: '12px 16px', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-lg)', border: '1px solid var(--border-subtle)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px' }}>
           {/* Starting Point Input */}
           <div style={{ flex: 1, minWidth: '220px', display: 'flex', alignItems: 'center', backgroundColor: 'var(--bg-surface-subtle)', padding: '6px 12px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
             <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--brand-accent)', marginRight: '10px' }} />
@@ -598,10 +598,10 @@ export const CampusMap = () => {
                 type="text"
                 value={startPoint}
                 onChange={(e) => setStartPoint(e.target.value)}
-                style={{ background: 'none', border: 'none', color: '#FFFFFF', fontSize: '13px', fontWeight: 600, outline: 'none' }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-primary)', fontSize: '13px', fontWeight: 600, outline: 'none' }}
               />
             </div>
-            <button style={{ background: 'none', border: 'none', color: 'var(--brand-accent)', cursor: 'pointer', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }} title="Locate via GPS">
+            <button style={{ background: 'none', border: 'none', color: 'var(--brand-primary)', cursor: 'pointer', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }} title="Locate via GPS">
               <Compass size={14} />
               <span>GPS</span>
             </button>
@@ -610,7 +610,7 @@ export const CampusMap = () => {
           {/* Swap Button */}
           <button
             onClick={handleSwapRoute}
-            style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--brand-misty)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-subtle)', color: 'var(--brand-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             title="Swap Origin and Destination"
           >
             <RotateCcw size={16} />
@@ -620,19 +620,19 @@ export const CampusMap = () => {
           <div style={{ flex: 1, minWidth: '220px', display: 'flex', alignItems: 'center', backgroundColor: 'var(--bg-surface-subtle)', padding: '6px 12px', borderRadius: '10px', border: '1px solid var(--border-interactive)' }}>
             <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--brand-primary)', marginRight: '10px' }} />
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--brand-accent)', textTransform: 'uppercase' }}>Destination</span>
+              <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--brand-primary)', textTransform: 'uppercase' }}>Destination</span>
               <input
                 type="text"
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
-                style={{ background: 'none', border: 'none', color: '#FFFFFF', fontSize: '13px', fontWeight: 600, outline: 'none' }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-primary)', fontSize: '13px', fontWeight: 600, outline: 'none' }}
               />
             </div>
             <MapPin size={16} style={{ color: 'var(--brand-primary)' }} />
           </div>
 
           {/* Mobility Mode Selectors */}
-          <div style={{ display: 'flex', gap: '4px', backgroundColor: 'var(--bg-surface-subtle)', padding: '4px', borderRadius: '10px' }}>
+          <div style={{ display: 'flex', gap: '4px', backgroundColor: 'var(--bg-surface-subtle)', padding: '4px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
             <button
               onClick={() => setMobilityMode('walk')}
               style={{
@@ -643,7 +643,7 @@ export const CampusMap = () => {
                 fontSize: '12px',
                 fontWeight: 600,
                 backgroundColor: mobilityMode === 'walk' ? 'var(--brand-primary)' : 'transparent',
-                color: '#FFFFFF',
+                color: mobilityMode === 'walk' ? '#FFFFFF' : 'var(--text-secondary)',
               }}
             >
               Walk (4m)
@@ -658,7 +658,7 @@ export const CampusMap = () => {
                 fontSize: '12px',
                 fontWeight: 600,
                 backgroundColor: mobilityMode === 'wheelchair' ? 'var(--brand-primary)' : 'transparent',
-                color: '#FFFFFF',
+                color: mobilityMode === 'wheelchair' ? '#FFFFFF' : 'var(--text-secondary)',
               }}
             >
               Step-Free (5m)
@@ -673,7 +673,7 @@ export const CampusMap = () => {
                 fontSize: '12px',
                 fontWeight: 600,
                 backgroundColor: mobilityMode === 'shuttle' ? 'var(--brand-primary)' : 'transparent',
-                color: '#FFFFFF',
+                color: mobilityMode === 'shuttle' ? '#FFFFFF' : 'var(--text-secondary)',
               }}
             >
               EV Shuttle (2m)
@@ -696,8 +696,9 @@ export const CampusMap = () => {
                 fontSize: '12px',
                 fontWeight: 600,
                 backgroundColor: categoryFilter === 'all' ? 'var(--brand-primary)' : 'var(--bg-surface)',
-                color: '#FFFFFF',
+                color: categoryFilter === 'all' ? '#FFFFFF' : 'var(--text-secondary)',
                 border: '1px solid var(--border-subtle)',
+                boxShadow: 'var(--shadow-sm)',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
               }}
@@ -712,8 +713,9 @@ export const CampusMap = () => {
                 fontSize: '12px',
                 fontWeight: 600,
                 backgroundColor: categoryFilter === 'academic' ? 'var(--brand-primary)' : 'var(--bg-surface)',
-                color: '#FFFFFF',
+                color: categoryFilter === 'academic' ? '#FFFFFF' : 'var(--text-secondary)',
                 border: '1px solid var(--border-subtle)',
+                boxShadow: 'var(--shadow-sm)',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
               }}
@@ -728,8 +730,9 @@ export const CampusMap = () => {
                 fontSize: '12px',
                 fontWeight: 600,
                 backgroundColor: categoryFilter === 'laboratories' ? 'var(--brand-primary)' : 'var(--bg-surface)',
-                color: '#FFFFFF',
+                color: categoryFilter === 'laboratories' ? '#FFFFFF' : 'var(--text-secondary)',
                 border: '1px solid var(--border-subtle)',
+                boxShadow: 'var(--shadow-sm)',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
               }}
@@ -744,8 +747,9 @@ export const CampusMap = () => {
                 fontSize: '12px',
                 fontWeight: 600,
                 backgroundColor: categoryFilter === 'libraries' ? 'var(--brand-primary)' : 'var(--bg-surface)',
-                color: '#FFFFFF',
+                color: categoryFilter === 'libraries' ? '#FFFFFF' : 'var(--text-secondary)',
                 border: '1px solid var(--border-subtle)',
+                boxShadow: 'var(--shadow-sm)',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
               }}
@@ -899,7 +903,7 @@ export const CampusMap = () => {
       </div>
 
       {/* MAP SVG CANVAS */}
-      <div style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: '#141011', cursor: isClickToPlace ? 'crosshair' : 'default' }}>
+      <div style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: 'var(--bg-canvas)', cursor: isClickToPlace ? 'crosshair' : 'default' }}>
         <svg
           width="100%"
           height="100%"
@@ -909,32 +913,32 @@ export const CampusMap = () => {
         >
           <defs>
             <pattern id="campusGridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 217, 218, 0.04)" strokeWidth="1" />
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(15, 23, 42, 0.05)" strokeWidth="1" />
             </pattern>
           </defs>
-          <rect width="1600" height="1000" fill="#141011" />
+          <rect width="1600" height="1000" fill="#F8FAFC" />
           <rect width="1600" height="1000" fill="url(#campusGridPattern)" />
 
           {/* Green Lawns */}
-          <path d="M 50,40 L 450,20 L 520,240 L 80,300 Z" fill="#161c18" opacity="0.8" />
-          <path d="M 550,280 L 1050,260 L 1080,560 L 520,580 Z" fill="#161c18" opacity="0.9" />
+          <path d="M 50,40 L 450,20 L 520,240 L 80,300 Z" fill="#DCFCE7" stroke="#BBF7D0" strokeWidth="1.5" opacity="0.9" />
+          <path d="M 550,280 L 1050,260 L 1080,560 L 520,580 Z" fill="#DCFCE7" stroke="#BBF7D0" strokeWidth="1.5" opacity="0.9" />
 
           {/* Reflection Pond */}
-          <ellipse cx="800" cy="420" rx="90" ry="45" fill="#1c2530" />
-          <circle cx="800" cy="420" r="4" fill="#EB638B" />
+          <ellipse cx="800" cy="420" rx="90" ry="45" fill="#E0F2FE" stroke="#BAE6FD" strokeWidth="2" />
+          <circle cx="800" cy="420" r="4" fill="#0284C7" />
 
           {/* Roadways */}
-          <path d="M -20,180 L 480,180 L 820,120 L 1620,130" stroke="#262022" strokeWidth="26" strokeLinecap="round" />
-          <path d="M 480,180 L 480,820 L 1620,840" stroke="#262022" strokeWidth="26" strokeLinecap="round" />
+          <path d="M -20,180 L 480,180 L 820,120 L 1620,130" stroke="#E2E8F0" strokeWidth="24" strokeLinecap="round" />
+          <path d="M 480,180 L 480,820 L 1620,840" stroke="#E2E8F0" strokeWidth="24" strokeLinecap="round" />
 
           {/* Walkways */}
-          <path d="M 280,340 L 520,340 L 710,420 L 890,420 L 1050,340 L 1240,340" stroke="#383335" strokeWidth="10" strokeLinecap="round" />
+          <path d="M 280,340 L 520,340 L 710,420 L 890,420 L 1050,340 L 1240,340" stroke="#CBD5E1" strokeWidth="8" strokeLinecap="round" />
 
           {/* Skybridge Path */}
-          <line x1="390" y1="460" x2="680" y2="340" stroke="#AC274F" strokeWidth="6" strokeDasharray="6 6" />
+          <line x1="390" y1="460" x2="680" y2="340" stroke="var(--brand-primary)" strokeWidth="6" strokeDasharray="6 6" />
 
           {/* ANIMATED WAYFINDING ROUTE PATH */}
-          <path d="M 380,480 L 520,480 L 610,420 L 710,420 L 750,340" stroke="#EB638B" strokeWidth="6" fill="none" strokeDasharray="8 6" />
+          <path d="M 380,480 L 520,480 L 610,420 L 710,420 L 750,340" stroke="var(--brand-accent)" strokeWidth="6" fill="none" strokeDasharray="8 6" />
 
           {/* DYNAMICALLY RENDERED INTERACTIVE BUILDINGS */}
           {filteredBuildingList.map((bldg) => {
@@ -963,10 +967,10 @@ export const CampusMap = () => {
                     height={h + 12}
                     rx="14"
                     fill="none"
-                    stroke="#EB638B"
+                    stroke="var(--brand-accent)"
                     strokeWidth="3"
                     strokeDasharray="6 4"
-                    opacity="0.8"
+                    opacity="0.9"
                   />
                 )}
 
@@ -977,16 +981,16 @@ export const CampusMap = () => {
                   width={w}
                   height={h}
                   rx="10"
-                  fill={isSelected ? '#AC274F' : '#383335'}
-                  stroke={isSelected ? '#EB638B' : 'rgba(255, 217, 218, 0.12)'}
-                  strokeWidth={isSelected ? '2' : '1'}
+                  fill={isSelected ? 'var(--brand-primary)' : '#FFFFFF'}
+                  stroke={isSelected ? 'var(--brand-accent)' : 'var(--border-interactive)'}
+                  strokeWidth={isSelected ? '2.5' : '1.5'}
                 />
 
                 {/* Building Title */}
                 <text
                   x={cx}
                   y={cy - 10}
-                  fill="#FFFFFF"
+                  fill={isSelected ? '#FFFFFF' : 'var(--text-primary)'}
                   fontSize="14"
                   textAnchor="middle"
                   fontWeight="bold"
@@ -999,7 +1003,7 @@ export const CampusMap = () => {
                 <text
                   x={cx}
                   y={cy + 12}
-                  fill={isSelected ? '#FFD9DA' : '#D6C4C8'}
+                  fill={isSelected ? 'var(--brand-soft-bg)' : 'var(--text-secondary)'}
                   fontSize="11"
                   textAnchor="middle"
                 >
@@ -1010,11 +1014,11 @@ export const CampusMap = () => {
                 <text
                   x={cx}
                   y={cy + 28}
-                  fill={isSelected ? '#FFD9DA' : 'rgba(255, 255, 255, 0.5)'}
+                  fill={isSelected ? '#FFFFFF' : 'var(--brand-primary)'}
                   fontSize="9.5"
                   textAnchor="middle"
                   textTransform="uppercase"
-                  fontWeight="600"
+                  fontWeight="700"
                 >
                   {bldg.category}
                 </text>
@@ -1022,7 +1026,7 @@ export const CampusMap = () => {
                 {/* Admin Mode Badge on marker */}
                 {isAdmin && adminMapMode && (
                   <g transform={`translate(${bldg.x + w - 16}, ${bldg.y + 16})`}>
-                    <circle cx="0" cy="0" r="9" fill="#EB638B" />
+                    <circle cx="0" cy="0" r="9" fill="var(--brand-accent)" />
                     <text x="0" y="3" fill="#FFFFFF" fontSize="8" fontWeight="bold" textAnchor="middle">
                       GIS
                     </text>
@@ -1035,9 +1039,9 @@ export const CampusMap = () => {
           {/* Destination Pin Marker on Selected Building */}
           {currentBldg && (
             <g transform={`translate(${currentBldg.x + (currentBldg.width || 210) / 2}, ${currentBldg.y})`}>
-              <circle cx="0" cy="-14" r="14" fill="rgba(235, 99, 139, 0.4)" />
-              <circle cx="0" cy="-14" r="7" fill="#EB638B" />
-              <path d="M -4,-14 L 0,0 L 4,-14 Z" fill="#EB638B" />
+              <circle cx="0" cy="-14" r="14" fill="rgba(225, 29, 72, 0.25)" />
+              <circle cx="0" cy="-14" r="7" fill="var(--brand-accent)" />
+              <path d="M -4,-14 L 0,0 L 4,-14 Z" fill="var(--brand-accent)" />
             </g>
           )}
         </svg>
@@ -1047,13 +1051,13 @@ export const CampusMap = () => {
           {/* 2D/3D Mode Toggle */}
           <button
             onClick={() => setIs3DMode(!is3DMode)}
-            style={{ padding: '8px 14px', borderRadius: '10px', backgroundColor: 'rgba(30, 25, 26, 0.9)', color: '#FFF', border: '1px solid var(--border-interactive)', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}
+            style={{ padding: '8px 14px', borderRadius: '10px', backgroundColor: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-interactive)', cursor: 'pointer', fontSize: '12px', fontWeight: 600, boxShadow: 'var(--shadow-sm)' }}
           >
             {is3DMode ? '3D Isometric' : '2D Tactical'}
           </button>
 
           {/* Level Floor Switcher */}
-          <div style={{ backgroundColor: 'rgba(30, 25, 26, 0.9)', padding: '6px', borderRadius: '10px', display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'center', border: '1px solid var(--border-subtle)' }}>
+          <div style={{ backgroundColor: 'var(--bg-surface)', padding: '6px', borderRadius: '10px', display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'center', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-sm)' }}>
             <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>LVL</span>
             {['R', 'F3', 'F2', 'F1', 'G'].map((fl) => (
               <button
@@ -1081,21 +1085,21 @@ export const CampusMap = () => {
         <div style={{ position: 'absolute', bottom: '24px', right: '16px', zIndex: 30, display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <button
             onClick={() => setZoomLevel((z) => Math.min(z + 0.2, 1.8))}
-            style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFF', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)' }}
             title="Zoom In"
           >
             <Plus size={18} />
           </button>
           <button
             onClick={() => setZoomLevel((z) => Math.max(z - 0.2, 0.8))}
-            style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFF', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)' }}
             title="Zoom Out"
           >
             <Minus size={18} />
           </button>
           <button
             onClick={() => setZoomLevel(1)}
-            style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: 'var(--brand-accent)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-interactive)', color: 'var(--brand-accent)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)' }}
             title="Reset Zoom"
           >
             <RotateCcw size={18} />
@@ -1110,12 +1114,12 @@ export const CampusMap = () => {
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 30,
-            backgroundColor: 'rgba(30, 25, 26, 0.95)',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(12px)',
             padding: '10px 20px',
             borderRadius: '9999px',
             boxShadow: 'var(--shadow-lg)',
-            border: '1px solid var(--border-interactive)',
+            border: '1px solid var(--border-subtle)',
             display: 'flex',
             alignItems: 'center',
             gap: '14px',
@@ -1126,14 +1130,14 @@ export const CampusMap = () => {
             <Navigation size={18} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
               In 120m, cross Central Quad colonnade towards {currentBldg?.name}
             </span>
             <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
               Approaching {currentBldg?.name} • Coordinates: ({currentBldg?.x}, {currentBldg?.y})
             </span>
           </div>
-          <div style={{ borderLeft: '1px solid var(--border-subtle)', paddingLeft: '12px', fontSize: '14px', fontWeight: 800, color: 'var(--brand-accent)' }}>
+          <div style={{ borderLeft: '1px solid var(--border-subtle)', paddingLeft: '12px', fontSize: '14px', fontWeight: 800, color: 'var(--brand-primary)' }}>
             4 min
           </div>
         </div>
@@ -1149,11 +1153,10 @@ export const CampusMap = () => {
             right: '16px',
             width: '380px',
             maxWidth: 'calc(100vw - 32px)',
-            backgroundColor: 'rgba(35, 30, 31, 0.98)',
-            backdropFilter: 'blur(16px)',
+            backgroundColor: 'var(--bg-surface)',
             borderRadius: 'var(--radius-lg)',
-            boxShadow: 'var(--shadow-lg)',
-            border: '1px solid var(--border-interactive)',
+            boxShadow: 'var(--shadow-xl)',
+            border: '1px solid var(--border-subtle)',
             zIndex: 50,
             display: 'flex',
             flexDirection: 'column',
@@ -1167,14 +1170,14 @@ export const CampusMap = () => {
 
             <button
               onClick={() => setDrawerOpen(false)}
-              style={{ position: 'absolute', top: '12px', right: '12px', width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.6)', border: 'none', color: '#FFF', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ position: 'absolute', top: '12px', right: '12px', width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.5)', border: 'none', color: '#FFF', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <X size={16} />
             </button>
 
             <div style={{ position: 'absolute', bottom: '12px', left: '16px', display: 'flex', gap: '8px' }}>
               <Badge status="active">{currentBldg.hours}</Badge>
-              {isAdmin && <span style={{ fontSize: '10px', background: 'rgba(235,99,139,0.3)', border: '1px solid #EB638B', padding: '2px 8px', borderRadius: '4px', color: '#FFF', fontWeight: 700 }}>X:{currentBldg.x} Y:{currentBldg.y}</span>}
+              {isAdmin && <span style={{ fontSize: '10px', background: 'var(--brand-soft-bg)', border: '1px solid #FECDD3', padding: '2px 8px', borderRadius: '4px', color: 'var(--brand-primary)', fontWeight: 700 }}>X:{currentBldg.x} Y:{currentBldg.y}</span>}
             </div>
           </div>
 
@@ -1182,61 +1185,61 @@ export const CampusMap = () => {
           <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--brand-accent)', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--brand-primary)', textTransform: 'uppercase' }}>
                   {currentBldg.dept}
                 </span>
                 {isAdmin && (
                   <button
                     onClick={handleOpenEditModal}
-                    style={{ background: 'none', border: 'none', color: 'var(--brand-accent)', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}
+                    style={{ background: 'none', border: 'none', color: 'var(--brand-primary)', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}
                   >
                     <Edit3 size={13} />
                     <span>Edit</span>
                   </button>
                 )}
               </div>
-              <h2 style={{ fontSize: '1.4rem', color: '#FFFFFF', margin: '4px 0 6px 0' }}>{currentBldg.name}</h2>
-              <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>{currentBldg.description}</p>
+              <h2 style={{ fontSize: '1.4rem', color: 'var(--text-primary)', margin: '4px 0 6px 0' }}>{currentBldg.name}</h2>
+              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{currentBldg.description}</p>
             </div>
 
             {/* Quick Metrics */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
-              <div style={{ backgroundColor: 'var(--bg-canvas)', padding: '8px', borderRadius: '8px' }}>
+              <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '8px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
                 <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Density</span>
                 <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--brand-accent)' }}>{currentBldg.occupancy}</div>
                 <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>{currentBldg.seats}</span>
               </div>
-              <div style={{ backgroundColor: 'var(--bg-canvas)', padding: '8px', borderRadius: '8px' }}>
+              <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '8px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
                 <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>HVAC</span>
-                <div style={{ fontSize: '14px', fontWeight: 700, color: '#FFFFFF' }}>{currentBldg.temp}</div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>{currentBldg.temp}</div>
                 <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>{currentBldg.air}</span>
               </div>
-              <div style={{ backgroundColor: 'var(--bg-canvas)', padding: '8px', borderRadius: '8px' }}>
+              <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '8px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
                 <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>ADA</span>
-                <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--brand-misty)' }}>Pass</div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--brand-primary)' }}>Pass</div>
                 <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>Ramps & Lifts</span>
               </div>
             </div>
 
             {/* Target Room Banner */}
-            <div style={{ backgroundColor: 'var(--bg-surface-elevated)', padding: '12px', borderRadius: '10px' }}>
-              <div style={{ fontSize: '12px', fontWeight: 700, color: '#FFFFFF' }}>Target: {currentBldg.targetRoom}</div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{currentBldg.targetDesc}</div>
+            <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '12px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>Target: {currentBldg.targetRoom}</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>{currentBldg.targetDesc}</div>
             </div>
 
             {/* Turn-by-Turn Steps */}
             <div>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--brand-misty)', textTransform: 'uppercase' }}>Turn-by-Turn Steps</span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--brand-primary)', textTransform: 'uppercase' }}>Turn-by-Turn Steps</span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
                 {currentBldg.steps && currentBldg.steps.map((st) => (
                   <div key={st.num} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'var(--brand-primary)', color: '#FFF', fontSize: '11px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', shrink: 0 }}>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'var(--brand-primary)', color: '#FFF', fontSize: '11px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       {st.num}
                     </div>
                     <div>
-                      <div style={{ fontSize: '12px', fontWeight: 600, color: '#FFFFFF' }}>{st.text}</div>
-                      <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{st.sub}</div>
-                      <span style={{ fontSize: '10px', color: 'var(--brand-accent)' }}>{st.dist}</span>
+                      <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>{st.text}</div>
+                      <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{st.sub}</div>
+                      <span style={{ fontSize: '10px', color: 'var(--brand-accent)', fontWeight: 600 }}>{st.dist}</span>
                     </div>
                   </div>
                 ))}
@@ -1267,7 +1270,7 @@ export const CampusMap = () => {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.75)',
+            backgroundColor: 'rgba(15, 23, 42, 0.5)',
             backdropFilter: 'blur(8px)',
             zIndex: 200,
             display: 'flex',
@@ -1280,52 +1283,52 @@ export const CampusMap = () => {
             style={{
               width: '100%',
               maxWidth: '560px',
-              backgroundColor: '#1E191A',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
-              border: '1px solid var(--border-interactive)',
+              border: '1px solid var(--border-subtle)',
               boxShadow: 'var(--shadow-xl)',
               overflow: 'hidden',
             }}
           >
             <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Edit3 size={18} style={{ color: 'var(--brand-accent)' }} />
-                <h3 style={{ margin: 0, fontSize: '16px', color: '#FFFFFF' }}>Edit Campus Facility &amp; Map Coordinates</h3>
+                <Edit3 size={18} style={{ color: 'var(--brand-primary)' }} />
+                <h3 style={{ margin: 0, fontSize: '16px', color: 'var(--text-primary)' }}>Edit Campus Facility &amp; Map Coordinates</h3>
               </div>
-              <button onClick={() => setShowEditModal(false)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer' }}>
+              <button onClick={() => setShowEditModal(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                 <X size={18} />
               </button>
             </div>
 
             <form onSubmit={handleSaveBuildingEdits} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '75vh', overflowY: 'auto' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Building Name</label>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Building Name</label>
                 <input
                   type="text"
                   required
                   value={editFormData.name}
                   onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Facility Code</label>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Facility Code</label>
                   <input
                     type="text"
                     required
                     value={editFormData.code}
                     onChange={(e) => setEditFormData({ ...editFormData, code: e.target.value })}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '13px' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Category</label>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Category</label>
                   <select
                     value={editFormData.category}
                     onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '13px' }}
                   >
                     <option value="academic">Academic Block</option>
                     <option value="laboratories">Laboratories</option>
@@ -1336,28 +1339,28 @@ export const CampusMap = () => {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Department / Precinct</label>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Department / Precinct</label>
                 <input
                   type="text"
                   value={editFormData.dept}
                   onChange={(e) => setEditFormData({ ...editFormData, dept: e.target.value })}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '13px' }}
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Description</label>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Description</label>
                 <textarea
                   rows="2"
                   value={editFormData.description}
                   onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px', resize: 'vertical' }}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '13px', resize: 'vertical' }}
                 />
               </div>
 
               {/* Coordinates & Map Placement */}
-              <div style={{ backgroundColor: 'var(--bg-canvas)', padding: '14px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
-                <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--brand-accent)', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
+              <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '14px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
                   Map SVG Coordinates &amp; Box Size
                 </span>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '8px' }}>
@@ -1367,7 +1370,7 @@ export const CampusMap = () => {
                       type="number"
                       value={editFormData.x}
                       onChange={(e) => setEditFormData({ ...editFormData, x: e.target.value })}
-                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFF', fontSize: '12px' }}
+                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '12px' }}
                     />
                   </div>
                   <div>
@@ -1376,7 +1379,7 @@ export const CampusMap = () => {
                       type="number"
                       value={editFormData.y}
                       onChange={(e) => setEditFormData({ ...editFormData, y: e.target.value })}
-                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFF', fontSize: '12px' }}
+                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '12px' }}
                     />
                   </div>
                   <div>
@@ -1385,7 +1388,7 @@ export const CampusMap = () => {
                       type="number"
                       value={editFormData.width}
                       onChange={(e) => setEditFormData({ ...editFormData, width: e.target.value })}
-                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFF', fontSize: '12px' }}
+                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '12px' }}
                     />
                   </div>
                   <div>
@@ -1394,7 +1397,7 @@ export const CampusMap = () => {
                       type="number"
                       value={editFormData.height}
                       onChange={(e) => setEditFormData({ ...editFormData, height: e.target.value })}
-                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFF', fontSize: '12px' }}
+                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '12px' }}
                     />
                   </div>
                 </div>
@@ -1402,21 +1405,21 @@ export const CampusMap = () => {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Operating Hours</label>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Operating Hours</label>
                   <input
                     type="text"
                     value={editFormData.hours}
                     onChange={(e) => setEditFormData({ ...editFormData, hours: e.target.value })}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '13px' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Target Room</label>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Target Room</label>
                   <input
                     type="text"
                     value={editFormData.targetRoom}
                     onChange={(e) => setEditFormData({ ...editFormData, targetRoom: e.target.value })}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '13px' }}
                   />
                 </div>
               </div>
@@ -1425,7 +1428,7 @@ export const CampusMap = () => {
                 <button
                   type="button"
                   onClick={handleDeleteBuilding}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', color: '#ff5c5c', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', color: '#DC2626', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}
                 >
                   <Trash2 size={15} />
                   <span>Remove Facility</span>
@@ -1451,7 +1454,7 @@ export const CampusMap = () => {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.75)',
+            backgroundColor: 'rgba(15, 23, 42, 0.5)',
             backdropFilter: 'blur(8px)',
             zIndex: 200,
             display: 'flex',
@@ -1464,54 +1467,54 @@ export const CampusMap = () => {
             style={{
               width: '100%',
               maxWidth: '520px',
-              backgroundColor: '#1E191A',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
-              border: '1px solid var(--border-interactive)',
+              border: '1px solid var(--border-subtle)',
               boxShadow: 'var(--shadow-xl)',
               overflow: 'hidden',
             }}
           >
             <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Plus size={18} style={{ color: '#4CAF50' }} />
-                <h3 style={{ margin: 0, fontSize: '16px', color: '#FFFFFF' }}>Register New Facility on Campus Map</h3>
+                <Plus size={18} style={{ color: '#16A34A' }} />
+                <h3 style={{ margin: 0, fontSize: '16px', color: 'var(--text-primary)' }}>Register New Facility on Campus Map</h3>
               </div>
-              <button onClick={() => setShowAddModal(false)} style={{ background: 'none', border: 'none', color: '#FFF', cursor: 'pointer' }}>
+              <button onClick={() => setShowAddModal(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                 <X size={18} />
               </button>
             </div>
 
             <form onSubmit={handleCreateNewBuilding} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Facility Name</label>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Facility Name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Bio-Tech Research Complex"
                   value={newBldgForm.name}
                   onChange={(e) => setNewBldgForm({ ...newBldgForm, name: e.target.value })}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '13px' }}
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Building Code</label>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Building Code</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. E-05"
                     value={newBldgForm.code}
                     onChange={(e) => setNewBldgForm({ ...newBldgForm, code: e.target.value })}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '13px' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Category</label>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Category</label>
                   <select
                     value={newBldgForm.category}
                     onChange={(e) => setNewBldgForm({ ...newBldgForm, category: e.target.value })}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '13px' }}
                   >
                     <option value="academic">Academic Block</option>
                     <option value="laboratories">Laboratories</option>
@@ -1523,33 +1526,33 @@ export const CampusMap = () => {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Map X Position</label>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Map X Position</label>
                   <input
                     type="number"
                     value={newBldgForm.x}
                     onChange={(e) => setNewBldgForm({ ...newBldgForm, x: e.target.value })}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '13px' }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Map Y Position</label>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Map Y Position</label>
                   <input
                     type="number"
                     value={newBldgForm.y}
                     onChange={(e) => setNewBldgForm({ ...newBldgForm, y: e.target.value })}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '13px' }}
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Department</label>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase' }}>Department</label>
                 <input
                   type="text"
                   placeholder="e.g. School of Biological & Chemical Sciences"
                   value={newBldgForm.dept}
                   onChange={(e) => setNewBldgForm({ ...newBldgForm, dept: e.target.value })}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: '#FFFFFF', fontSize: '13px' }}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subtle)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)', fontSize: '13px' }}
                 />
               </div>
 

@@ -7,8 +7,6 @@ import {
   DoorOpen,
   LifeBuoy,
   Bot,
-  Leaf,
-  FolderGit2,
   ShieldAlert,
   Settings,
   Sliders,
@@ -36,7 +34,6 @@ export const Sidebar = () => {
             { label: 'Interactive Campus Map', path: '/campus-map', icon: MapPin },
             { label: 'SmartRooms & Space', path: '/smartroom', icon: DoorOpen },
             { label: 'Campus Directory', path: '/directory', icon: Users },
-            { label: 'Sustainability Ops', path: '/ecocampus', icon: Leaf },
             { label: 'AI Assistant', path: '/ai-assistant', icon: Bot },
           ],
         },
@@ -55,8 +52,6 @@ export const Sidebar = () => {
             { label: 'SmartRooms IoT', path: '/smartroom', icon: DoorOpen },
             { label: 'NextCampus Care', path: '/complaints', icon: LifeBuoy },
             { label: 'AI Assistant', path: '/ai-assistant', icon: Bot },
-            { label: 'EcoCampus', path: '/ecocampus', icon: Leaf },
-            { label: 'SkillCampus', path: '/skillcampus', icon: FolderGit2 },
           ],
         },
         {
@@ -69,7 +64,7 @@ export const Sidebar = () => {
     <aside
       style={{
         width: 'var(--sidebar-width-expanded)',
-        backgroundColor: '#1E191A',
+        backgroundColor: 'var(--bg-surface)',
         borderRight: '1px solid var(--border-subtle)',
         display: 'flex',
         flexDirection: 'column',
@@ -80,9 +75,9 @@ export const Sidebar = () => {
       }}
     >
       <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-subtle)' }}>
-        <NavLink to="/">
-          <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '18px', color: '#FFFFFF' }}>
-            Next<span style={{ color: '#EB638B' }}>Campus</span>
+        <NavLink to="/" style={{ textDecoration: 'none' }}>
+          <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '18px', color: 'var(--text-primary)' }}>
+            Next<span style={{ color: 'var(--brand-primary)' }}>Campus</span>
           </div>
         </NavLink>
       </div>
@@ -115,11 +110,11 @@ export const Sidebar = () => {
                     padding: '10px 14px',
                     borderRadius: 'var(--radius-sm)',
                     fontSize: '13px',
-                    fontWeight: 500,
+                    fontWeight: isActive ? 600 : 500,
                     marginBottom: '4px',
-                    color: isActive ? '#FFFFFF' : 'var(--text-muted)',
-                    backgroundColor: isActive ? 'rgba(172, 39, 79, 0.2)' : 'transparent',
-                    borderLeft: isActive ? '3px solid #EB638B' : '3px solid transparent',
+                    color: isActive ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                    backgroundColor: isActive ? 'rgba(158, 21, 62, 0.08)' : 'transparent',
+                    borderLeft: isActive ? '3px solid var(--brand-primary)' : '3px solid transparent',
                     textDecoration: 'none',
                     transition: 'all 0.2s ease',
                   })}
@@ -160,7 +155,7 @@ export const Sidebar = () => {
               {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>{user.name}</span>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{user.name}</span>
               <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{user.role}</span>
             </div>
           </div>

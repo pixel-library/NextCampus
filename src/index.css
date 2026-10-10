@@ -1,39 +1,40 @@
-/* NextCampus Master Design System Tokens & Global Base Styles */
+/* NextCampus Master Design System Tokens & Global Base Styles (Light/White Campus Theme) */
 
 :root {
-  /* Canvas & Surface Tokens */
-  --bg-canvas: #191516;             /* Licorice - Global viewport canvas */
-  --bg-surface: #382E31;            /* Raisin Black - Cards, Header, Sidebar */
-  --bg-surface-elevated: #44383B;   /* Overlay surface - Modals, Dropdowns */
-  --bg-surface-subtle: #241E20;     /* Inputs, Data table headers */
+  /* Canvas & Surface Tokens (Clean, crisp White & Light Slate Theme) */
+  --bg-canvas: #F8FAFC;             /* Slate 50 - Global viewport canvas */
+  --bg-surface: #FFFFFF;            /* Pure White - Cards, Header, Sidebar */
+  --bg-surface-elevated: #FFFFFF;   /* Overlay surface - Modals, Dropdowns */
+  --bg-surface-subtle: #F1F5F9;     /* Slate 100 - Inputs, Secondary tags, Table headers */
   
-  /* Brand Palette Tokens */
-  --brand-primary: #AC274F;         /* Amaranth Purple - Primary CTA, active state */
-  --brand-accent: #EB638B;          /* Blush - Interactive hover, focus ring, glows */
-  --brand-misty: #FFD9DA;           /* Misty Rose - Soft tags, secondary text accents */
+  /* Brand Palette Tokens (Academic Crimson / Rose Amaranth) */
+  --brand-primary: #9E153E;         /* Rich Amaranth Ruby - Primary CTA, active state */
+  --brand-accent: #E11D48;          /* Vibrant Rose - Interactive hover, focus ring, glows */
+  --brand-misty: #831843;           /* Deep Rose - Secondary text accents on light bg */
+  --brand-soft-bg: #FFE4E6;         /* Rose 100 - Soft badge background */
   
   /* Text & Content Tokens */
-  --text-primary: #FFFFFF;          /* Headings, primary text */
-  --text-secondary: #F5EFF1;        /* Body text, table rows */
-  --text-muted: #D6C4C8;            /* Labels, metadata, timestamps */
-  --text-placeholder: #8C7B80;      /* Form placeholders */
+  --text-primary: #0F172A;          /* Slate 900 - Headings, high-contrast primary text */
+  --text-secondary: #334155;        /* Slate 700 - Body text, table rows */
+  --text-muted: #64748B;            /* Slate 500 - Labels, metadata, timestamps */
+  --text-placeholder: #94A3B8;      /* Slate 400 - Form placeholders */
 
   /* Border Tokens */
-  --border-subtle: rgba(255, 217, 218, 0.08);
-  --border-interactive: rgba(235, 99, 139, 0.18);
-  --border-focus: rgba(235, 99, 139, 0.60);
-  --border-brand: #AC274F;
+  --border-subtle: #E2E8F0;         /* Slate 200 - Clean 1px card/divider borders */
+  --border-interactive: #CBD5E1;    /* Slate 300 - Input & button borders */
+  --border-focus: #9E153E;          /* Primary focus ring */
+  --border-brand: #9E153E;
 
   /* Gradients */
-  --grad-brand: linear-gradient(135deg, #EB638B 0%, #AC274F 100%);
-  --grad-surface: linear-gradient(180deg, rgba(56, 46, 49, 0.7) 0%, rgba(25, 21, 22, 0.95) 100%);
-  --grad-glow: radial-gradient(circle at center, rgba(172, 39, 79, 0.25) 0%, rgba(25, 21, 22, 0) 70%);
+  --grad-brand: linear-gradient(135deg, #E11D48 0%, #9E153E 100%);
+  --grad-surface: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  --grad-glow: radial-gradient(circle at center, rgba(158, 21, 62, 0.08) 0%, rgba(248, 250, 252, 0) 70%);
 
   /* Shadow & Elevation Tokens */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
-  --shadow-brand-glow: 0 0 24px rgba(172, 39, 79, 0.35);
+  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.07), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.10), 0 4px 12px -4px rgba(15, 23, 42, 0.04);
+  --shadow-brand-glow: 0 4px 16px rgba(158, 21, 62, 0.20);
 
   /* Typography Fonts */
   --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
@@ -75,6 +76,7 @@ html, body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--bg-canvas);
 }
 
 /* Headings typography */
@@ -87,17 +89,17 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 { font-size: 2rem; line-height: 1.25; }
 h2 { font-size: 1.5rem; line-height: 1.3; }
-h3 { font-size: 1.25rem; line-height: 1.35; color: var(--brand-misty); }
-h4 { font-size: 1.1rem; line-height: 1.4; }
+h3 { font-size: 1.25rem; line-height: 1.35; color: var(--text-primary); }
+h4 { font-size: 1.1rem; line-height: 1.4; color: var(--text-primary); }
 
 /* Links */
 a {
-  color: var(--brand-accent);
+  color: var(--brand-primary);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 a:hover {
-  color: var(--brand-misty);
+  color: var(--brand-accent);
 }
 
 /* Scrollbars */
@@ -109,7 +111,7 @@ a:hover {
   background: var(--bg-canvas);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(235, 99, 139, 0.2);
+  background: rgba(158, 21, 62, 0.18);
   border-radius: var(--radius-pill);
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -121,20 +123,20 @@ a:hover {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .glass-panel-interactive {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
 }
 .glass-panel-interactive:hover {
   border-color: var(--border-interactive);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-brand-glow);
+  box-shadow: var(--shadow-md);
 }
 
 .brand-gradient-text {
@@ -151,33 +153,44 @@ a:hover {
   border-radius: var(--radius-pill);
   font-size: 12px;
   font-weight: 600;
-  border: 1px solid var(--border-interactive);
-  background: rgba(172, 39, 79, 0.15);
-  color: var(--brand-misty);
+  border: 1px solid rgba(158, 21, 62, 0.2);
+  background: #FFE4E6;
+  color: var(--brand-primary);
 }
 
-/* Stitch Design System Theme Classes & Offline Fallback Utilities */
-.bg-background, .bg-surface-dim, .bg-surface { background-color: #161213; }
-.bg-surface-container-lowest { background-color: #110d0e; }
-.bg-surface-container-low { background-color: #1f1a1b; }
-.bg-surface-container { background-color: #231e1f; }
-.bg-surface-container-high { background-color: #2d292a; }
-.bg-surface-container-highest, .bg-surface-variant { background-color: #383335; }
-.bg-surface-bright { background-color: #3d3839; }
-.bg-primary-container { background-color: #ac274f; }
-.bg-secondary-container { background-color: #8c1844; }
-.bg-error-container { background-color: #93000a; }
+/* Stitch Design System Theme Classes & Utilities for Light Theme */
+.bg-background, .bg-surface-dim, .bg-surface { background-color: #F8FAFC !important; }
+.bg-surface-container-lowest { background-color: #FFFFFF !important; }
+.bg-surface-container-low { background-color: #F8FAFC !important; }
+.bg-surface-container { background-color: #F1F5F9 !important; }
+.bg-surface-container-high { background-color: #E2E8F0 !important; }
+.bg-surface-container-highest, .bg-surface-variant { background-color: #CBD5E1 !important; }
+.bg-surface-bright { background-color: #FFFFFF !important; }
+.bg-primary-container { background-color: #FFE4E6 !important; }
+.bg-secondary-container { background-color: #FCE7F3 !important; }
+.bg-error-container { background-color: #FEE2E2 !important; }
 
-.text-on-surface { color: #eae0e1; }
-.text-on-surface-variant { color: #dfbfc3; }
-.text-on-primary { color: #660027; }
-.text-on-primary-container { color: #ffc7d0; }
-.text-primary { color: #ffb2bf; }
-.text-secondary { color: #ffb1c2; }
-.text-tertiary { color: #e2bebf; }
-.text-outline { color: #a68a8d; }
-.text-outline-variant { color: #584144; }
-.text-error { color: #ffb4ab; }
+.text-on-surface { color: #0F172A !important; }
+.text-on-surface-variant { color: #475569 !important; }
+.text-on-primary { color: #FFFFFF !important; }
+.text-on-primary-container { color: #9E153E !important; }
+.text-primary { color: #9E153E !important; }
+.text-secondary { color: #BE123C !important; }
+.text-tertiary { color: #64748B !important; }
+.text-outline { color: #94A3B8 !important; }
+.text-outline-variant { color: #CBD5E1 !important; }
+.text-error { color: #DC2626 !important; }
+
+/* Care & Portal Color Compatibility for Light Theme */
+.bg-surface-elevated { background-color: #FFFFFF !important; }
+.bg-brand-raisin { background-color: #F8FAFC !important; }
+.bg-brand-licorice { background-color: #F8FAFC !important; }
+.border-surface-border { border-color: #E2E8F0 !important; }
+.text-brand-misty { color: #475569 !important; }
+.text-brand-blush { color: #9E153E !important; }
+.bg-brand-amaranth { background-color: #9E153E !important; }
+.text-brand-amaranth { color: #9E153E !important; }
+.border-brand-blush { border-color: rgba(158, 21, 62, 0.25) !important; }
 
 .p-space-xs { padding: 0.25rem; }
 .p-space-sm { padding: 0.5rem; }

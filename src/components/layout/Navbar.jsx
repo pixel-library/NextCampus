@@ -106,10 +106,10 @@ export const Navbar = () => {
             style={{
               width: '100%',
               padding: '8px 14px 8px 38px',
-              backgroundColor: 'var(--bg-canvas)',
+              backgroundColor: 'var(--bg-surface-subtle)',
               border: '1px solid var(--border-subtle)',
               borderRadius: '9999px',
-              color: '#FFFFFF',
+              color: 'var(--text-primary)',
               fontSize: '13px',
               outline: 'none',
               transition: 'border-color 0.2s ease',
@@ -131,7 +131,7 @@ export const Navbar = () => {
               position: 'relative',
               background: 'none',
               border: 'none',
-              color: showNotifications ? '#FFFFFF' : 'var(--text-muted)',
+              color: showNotifications ? 'var(--brand-primary)' : 'var(--text-muted)',
               cursor: 'pointer',
               padding: '6px',
               display: 'flex',
@@ -162,10 +162,10 @@ export const Navbar = () => {
                 top: '40px',
                 right: 0,
                 width: '340px',
-                backgroundColor: '#231E1F',
-                border: '1px solid rgba(255, 217, 218, 0.15)',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
                 borderRadius: '14px',
-                boxShadow: '0 16px 36px rgba(0, 0, 0, 0.5)',
+                boxShadow: 'var(--shadow-lg)',
                 zIndex: 100,
                 padding: '16px',
                 display: 'flex',
@@ -176,14 +176,14 @@ export const Navbar = () => {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: '#FFFFFF' }}>Campus Notifications</span>
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>Campus Notifications</span>
                   {unreadCount > 0 && (
                     <span
                       style={{
                         fontSize: '10px',
                         padding: '2px 6px',
                         borderRadius: '9999px',
-                        backgroundColor: '#AC274F',
+                        backgroundColor: 'var(--brand-primary)',
                         color: '#FFFFFF',
                         fontWeight: 700,
                       }}
@@ -199,7 +199,7 @@ export const Navbar = () => {
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: '#FFB2BF',
+                      color: 'var(--brand-primary)',
                       fontSize: '11px',
                       cursor: 'pointer',
                       textDecoration: 'underline',
@@ -219,8 +219,8 @@ export const Navbar = () => {
                       style={{
                         padding: '10px',
                         borderRadius: '8px',
-                        backgroundColor: n.unread ? '#2D292A' : '#1F1A1B',
-                        border: '1px solid rgba(255, 217, 218, 0.06)',
+                        backgroundColor: n.unread ? 'rgba(158, 21, 62, 0.06)' : 'var(--bg-surface-subtle)',
+                        border: '1px solid var(--border-subtle)',
                         display: 'flex',
                         gap: '10px',
                       }}
@@ -230,11 +230,11 @@ export const Navbar = () => {
                           width: '28px',
                           height: '28px',
                           borderRadius: '6px',
-                          backgroundColor: 'rgba(172, 39, 79, 0.25)',
+                          backgroundColor: 'rgba(158, 21, 62, 0.12)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          color: '#FFB2BF',
+                          color: 'var(--brand-primary)',
                           flexShrink: 0,
                           marginTop: '2px',
                         }}
@@ -243,10 +243,10 @@ export const Navbar = () => {
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                          <span style={{ fontSize: '12px', fontWeight: 600, color: '#FFFFFF' }}>{n.title}</span>
-                          <span style={{ fontSize: '10px', color: '#A68A8D' }}>{n.time}</span>
+                          <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>{n.title}</span>
+                          <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{n.time}</span>
                         </div>
-                        <p style={{ margin: '3px 0 0 0', fontSize: '11px', color: '#DFBFC3', lineHeight: 1.4 }}>
+                        <p style={{ margin: '3px 0 0 0', fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
                           {n.desc}
                         </p>
                       </div>
@@ -260,7 +260,7 @@ export const Navbar = () => {
                   display: 'flex',
                   justifyContent: 'center',
                   paddingTop: '6px',
-                  borderTop: '1px solid rgba(255, 217, 218, 0.08)',
+                  borderTop: '1px solid var(--border-subtle)',
                 }}
               >
                 <NavLink
@@ -268,7 +268,7 @@ export const Navbar = () => {
                   onClick={() => setShowNotifications(false)}
                   style={{
                     fontSize: '11px',
-                    color: '#FFB1C2',
+                    color: 'var(--brand-primary)',
                     textDecoration: 'none',
                     fontWeight: 600,
                   }}
@@ -287,15 +287,15 @@ export const Navbar = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '4px 12px',
-              backgroundColor: 'rgba(255, 217, 218, 0.06)',
+              padding: '6px 14px',
+              backgroundColor: 'var(--bg-surface-subtle)',
               border: '1px solid var(--border-subtle)',
               borderRadius: '9999px',
               textDecoration: 'none',
-              color: '#FFFFFF',
+              color: 'var(--text-primary)',
             }}
           >
-            <UserIcon size={16} style={{ color: '#EB638B' }} />
+            <UserIcon size={16} style={{ color: 'var(--brand-primary)' }} />
             <span style={{ fontSize: '13px', fontWeight: 600 }}>{user.name}</span>
           </NavLink>
         ) : (

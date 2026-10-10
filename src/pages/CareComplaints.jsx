@@ -220,120 +220,97 @@ export function CareComplaints() {
   });
 
   return (
-    <div className="flex flex-col w-full text-white space-y-6">
-      {/* Header & Spatial Context Strip */}
-      <div className="space-y-2 pb-4 border-b border-surface-border">
-        <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-brand-misty/70">
-          <span className="w-2 h-2 rounded-full bg-brand-blush"></span>
-          <span>Campus Services &amp; Facility Dispatch</span>
+    <div className="flex flex-col w-full text-slate-800 space-y-6">
+      {/* Header */}
+      <div className="space-y-2 pb-4 border-b border-slate-200">
+        <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
+          <span className="w-2 h-2 rounded-full bg-[#9E153E]"></span>
+          <span>NextCampus Support</span>
           <span>/</span>
-          <span className="text-white font-medium">Oxford Brookes University • NextCampus Care</span>
-          <span>/</span>
-          <span className="px-1.5 py-0.5 rounded bg-brand-raisin text-brand-blush text-[10px]">TICKET-STREAM v4.2</span>
+          <span className="text-slate-800 font-semibold">Campus Care &amp; Maintenance</span>
         </div>
 
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
           <div>
-            <h1 className="font-display font-extrabold text-3xl tracking-tight text-white flex items-center gap-3">
-              NextCampus Care <span className="text-brand-blush font-light">—</span> Incident &amp; Issue Resolution
+            <h1 className="font-display font-extrabold text-3xl tracking-tight text-slate-900 flex items-center gap-3">
+              Campus Care <span className="text-[#9E153E] font-light">—</span> Issue &amp; Support Requests
             </h1>
-            <p className="text-sm text-brand-misty/80 mt-1 max-w-3xl">
-              Report campus infrastructure defects, track live dispatch SLAs in real time, and audit resolution telemetries across campus facility nodes.
+            <p className="text-sm text-slate-600 mt-1 max-w-2xl">
+              Report classroom equipment, hostel facilities, or campus maintenance issues and monitor resolution updates.
             </p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={fetchComplaints}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-card border border-surface-border hover:border-brand-blush/40 text-brand-misty text-xs font-semibold transition-all"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-slate-700 text-xs font-semibold shadow-sm transition-all"
             >
               <span className="material-symbols-outlined text-[18px]">refresh</span>
-              <span>Sync Tickets</span>
+              <span>Refresh</span>
             </button>
             <a
               href="#submitForm"
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-amaranth to-brand-blush text-white text-xs font-bold shadow-[0_0_16px_rgba(172,39,79,0.4)] hover:brightness-110 transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#9E153E] hover:bg-[#831843] text-white text-xs font-bold shadow-sm transition-all"
             >
               <span className="material-symbols-outlined text-[18px]">add_circle</span>
-              <span>New Dispatch</span>
+              <span>Report Issue</span>
             </a>
           </div>
         </div>
       </div>
 
       {/* TOP METRIC STATUS TILES */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-surface-card border border-surface-border rounded-2xl p-4 relative overflow-hidden flex flex-col justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-mono uppercase tracking-wider text-brand-misty/70">Active Tickets</span>
-              <div className="text-3xl font-display font-extrabold text-white mt-1">
+              <span className="text-xs uppercase tracking-wider text-slate-500 font-medium">Active Requests</span>
+              <div className="text-3xl font-display font-extrabold text-slate-900 mt-1">
                 {complaints.filter((c) => c.status !== 'resolved').length || 1}
               </div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-brand-raisin border border-brand-blush/30 flex items-center justify-center text-brand-blush">
+            <div className="w-10 h-10 rounded-xl bg-[#FFE4E6] flex items-center justify-center text-[#9E153E]">
               <span className="material-symbols-outlined text-[22px]">pending_actions</span>
             </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-surface-border flex items-center justify-between text-xs">
-            <span className="px-2 py-0.5 rounded-full bg-brand-amaranth/20 border border-brand-amaranth/40 text-brand-misty font-mono font-medium flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-blush animate-pulse"></span>
-              ETA 25 mins
+          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span className="flex items-center gap-1.5 font-medium text-[#9E153E]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E11D48] animate-pulse"></span>
+              Under Review / Assigned
             </span>
-            <span className="text-brand-misty/60 font-mono">{selectedTicket?.ticketId || '#CMP-1042'}</span>
+            <span className="font-mono text-slate-400">{selectedTicket?.ticketId || '#CMP-1042'}</span>
           </div>
         </div>
 
-        <div className="bg-surface-card border border-surface-border rounded-2xl p-4 relative overflow-hidden flex flex-col justify-between">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-mono uppercase tracking-wider text-brand-misty/70">Resolved This Term</span>
-              <div className="text-3xl font-display font-extrabold text-white mt-1">04</div>
+              <span className="text-xs uppercase tracking-wider text-slate-500 font-medium">Resolved This Term</span>
+              <div className="text-3xl font-display font-extrabold text-slate-900 mt-1">04</div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-surface-elevated border border-surface-border flex items-center justify-center text-green-400">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
               <span className="material-symbols-outlined text-[22px]">task_alt</span>
             </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-surface-border flex items-center justify-between text-xs">
-            <span className="text-brand-misty/80 font-mono">Avg. 4.2 hrs triage</span>
-            <span className="text-brand-misty/60">100% Student Verified</span>
+          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span className="text-slate-600 font-medium">Fixed &amp; Verified</span>
+            <span className="text-emerald-600 font-semibold">100% Student Confirmed</span>
           </div>
         </div>
 
-        <div className="bg-surface-card border border-surface-border rounded-2xl p-4 relative overflow-hidden flex flex-col justify-between">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
           <div className="flex items-start justify-between">
             <div>
-              <span className="text-xs font-mono uppercase tracking-wider text-brand-misty/70">Facility Health</span>
-              <div className="text-3xl font-display font-extrabold text-white mt-1">99.4%</div>
+              <span className="text-xs uppercase tracking-wider text-slate-500 font-medium">Expected Resolution</span>
+              <div className="text-3xl font-display font-extrabold text-slate-900 mt-1">24-48h</div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-surface-elevated border border-surface-border flex items-center justify-center text-brand-blush">
-              <span className="material-symbols-outlined text-[22px]">domain_verification</span>
-            </div>
-          </div>
-          <div className="mt-4 pt-3 border-t border-surface-border flex items-center justify-between text-xs">
-            <span className="text-brand-misty/80 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span>
-              Block A-01 Nominal
-            </span>
-            <span className="text-brand-misty/60">14 Bldgs Active</span>
-          </div>
-        </div>
-
-        <div className="bg-surface-card border border-surface-border rounded-2xl p-4 relative overflow-hidden flex flex-col justify-between">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="text-xs font-mono uppercase tracking-wider text-brand-misty/70">Fast-Track Response</span>
-              <div className="text-3xl font-display font-extrabold text-brand-blush mt-1">24/7</div>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-red-950/60 border border-red-500/30 flex items-center justify-center text-red-400">
-              <span className="material-symbols-outlined text-[22px]">bolt</span>
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+              <span className="material-symbols-outlined text-[22px]">schedule</span>
             </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-surface-border flex items-center justify-between text-xs">
-            <span className="px-2 py-0.5 rounded-full bg-red-950/80 border border-red-500/30 text-red-300 font-mono font-medium">
-              Tier 1 Rapid SLA
-            </span>
-            <span className="text-brand-misty/60">&lt;45 min Classroom</span>
+          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span className="text-slate-600 font-medium">Classrooms &amp; Labs</span>
+            <span className="text-blue-600 font-semibold">Rapid Priority</span>
           </div>
         </div>
       </div>
@@ -342,26 +319,23 @@ export function CareComplaints() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* LEFT COLUMN: REPORT AN ISSUE FORM (5 COLS) */}
         <div id="submitForm" className="lg:col-span-5 space-y-4">
-          <div className="bg-surface-card border border-surface-border rounded-2xl p-6 relative overflow-hidden shadow-xl">
-            {/* Ambient Glow */}
-            <div className="absolute -top-16 -left-16 w-36 h-36 rounded-full bg-brand-amaranth/15 blur-3xl pointer-events-none"></div>
-
-            <div className="flex items-start justify-between pb-4 border-b border-surface-border mb-5">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 relative overflow-hidden shadow-sm">
+            <div className="flex items-start justify-between pb-4 border-b border-slate-200 mb-5">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded bg-brand-amaranth text-white text-[10px] font-mono font-bold uppercase tracking-wider">
-                    New Intake
+                  <span className="px-2 py-0.5 rounded bg-[#FFE4E6] text-[#9E153E] text-[11px] font-bold uppercase tracking-wider">
+                    New Ticket
                   </span>
-                  <span className="text-[11px] font-mono text-brand-misty/60">
-                    {isAuthenticated ? `USER: ${user?.name || user?.email}` : 'STUDENT INGESTION'}
+                  <span className="text-xs text-slate-500">
+                    {isAuthenticated ? `Student: ${user?.name || user?.email}` : 'Student Request'}
                   </span>
                 </div>
-                <h2 className="font-display font-bold text-lg text-white mt-1.5">Submit Campus Issue</h2>
-                <p className="text-xs text-brand-misty/70 mt-0.5">
-                  Submissions feed directly into the central CAFM facility queue. For direct safety hazards, use SOS Beacon.
+                <h2 className="font-display font-bold text-lg text-slate-900 mt-1.5">Submit an Issue</h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Your ticket will be routed to campus facility staff and tracked until resolved.
                 </p>
               </div>
-              <div className="w-9 h-9 rounded-xl bg-surface-elevated border border-surface-border flex items-center justify-center text-brand-blush">
+              <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-[#9E153E]">
                 <span className="material-symbols-outlined text-[20px]">assignment_add</span>
               </div>
             </div>
@@ -384,7 +358,7 @@ export function CareComplaints() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. HDMI Projector Flickering & Audio Distortion"
-                  className="w-full h-10 px-3.5 rounded-xl bg-surface-elevated border border-surface-border text-sm text-white focus:outline-none focus:border-brand-blush focus:ring-1 focus:ring-brand-blush transition-all"
+                  className="w-full h-10 px-3.5 rounded-xl bg-surface-elevated border border-surface-border text-sm text-slate-900 focus:outline-none focus:border-brand-blush focus:ring-1 focus:ring-brand-blush transition-all"
                   required
                 />
               </div>
@@ -438,7 +412,7 @@ export function CareComplaints() {
                     <select
                       value={building}
                       onChange={(e) => setBuilding(e.target.value)}
-                      className="w-full h-10 pl-3 pr-8 rounded-xl bg-surface-elevated border border-surface-border text-xs text-white focus:outline-none focus:border-brand-blush appearance-none cursor-pointer"
+                      className="w-full h-10 pl-3 pr-8 rounded-xl bg-surface-elevated border border-surface-border text-xs text-slate-900 focus:outline-none focus:border-brand-blush appearance-none cursor-pointer"
                     >
                       <option>Alan Turing Hall (Block A-01)</option>
                       <option>Central Learning Resources Hub</option>
@@ -461,7 +435,7 @@ export function CareComplaints() {
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="e.g. Room B-204 (Level 2)"
-                    className="w-full h-10 px-3 rounded-xl bg-surface-elevated border border-surface-border text-xs text-white focus:outline-none focus:border-brand-blush transition-all"
+                    className="w-full h-10 px-3 rounded-xl bg-surface-elevated border border-surface-border text-xs text-slate-900 focus:outline-none focus:border-brand-blush transition-all"
                     required
                   />
                 </div>
@@ -517,7 +491,7 @@ export function CareComplaints() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Describe the issue in detail, equipment condition, error codes..."
-                  className="w-full p-3 rounded-xl bg-surface-elevated border border-surface-border text-xs text-white placeholder-brand-misty/40 focus:outline-none focus:border-brand-blush transition-all resize-none leading-relaxed"
+                  className="w-full p-3 rounded-xl bg-surface-elevated border border-surface-border text-xs text-slate-900 placeholder-brand-misty/40 focus:outline-none focus:border-brand-blush transition-all resize-none leading-relaxed"
                   required
                 ></textarea>
               </div>
@@ -626,7 +600,7 @@ export function CareComplaints() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search my tickets..."
-                className="w-full h-8 pl-8 pr-3 rounded-lg bg-surface-elevated border border-surface-border text-xs text-white placeholder-brand-misty/40 focus:outline-none focus:border-brand-blush"
+                className="w-full h-8 pl-8 pr-3 rounded-lg bg-surface-elevated border border-surface-border text-xs text-slate-900 placeholder-brand-misty/40 focus:outline-none focus:border-brand-blush"
               />
             </div>
           </div>
@@ -639,7 +613,7 @@ export function CareComplaints() {
                   <span className="px-2.5 py-1 rounded-md bg-brand-raisin text-brand-blush font-mono text-xs font-bold border border-brand-blush/30">
                     {selectedTicket.ticketId}
                   </span>
-                  <span className="px-2.5 py-1 rounded-md bg-amber-950/60 text-amber-300 font-mono text-[11px] font-semibold border border-amber-500/30 uppercase">
+                  <span className="px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 font-mono text-[11px] font-semibold border border-amber-300 uppercase">
                     {selectedTicket.priority} PRIORITY
                   </span>
                   <span className="text-xs text-brand-misty/60 flex items-center gap-1 font-mono">
@@ -658,10 +632,10 @@ export function CareComplaints() {
                   <span className="material-symbols-outlined text-[16px]">videocam</span>
                   <span>{selectedTicket.categoryName || selectedTicket.category}</span>
                 </div>
-                <h3 className="font-display font-bold text-xl text-white mt-1">{selectedTicket.title}</h3>
+                <h3 className="font-display font-bold text-xl text-slate-900 mt-1">{selectedTicket.title}</h3>
                 <div className="flex items-center gap-2 text-xs text-brand-misty/80 mt-1.5">
                   <span className="material-symbols-outlined text-[16px] text-brand-blush">pin_drop</span>
-                  <span className="font-medium text-white">{selectedTicket.building || 'Campus Node'}</span>
+                  <span className="font-medium text-slate-900">{selectedTicket.building || 'Campus Node'}</span>
                   <span>•</span>
                   <span className="text-brand-misty">{selectedTicket.location}</span>
                 </div>
@@ -677,11 +651,11 @@ export function CareComplaints() {
                     MV
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-white">Assigned: {selectedTicket.assignedTo || 'Dispatch Team'}</div>
+                    <div className="text-xs font-semibold text-slate-900">Assigned: {selectedTicket.assignedTo || 'Dispatch Team'}</div>
                     <div className="text-[11px] text-brand-misty/70">{selectedTicket.assignedRole || 'Facility Ops'}</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 font-mono text-xs text-brand-blush font-bold bg-[#191516] px-3 py-1.5 rounded-lg border border-brand-blush/20 shrink-0">
+                <div className="flex items-center gap-2 font-mono text-xs text-brand-blush font-bold bg-slate-100 px-3 py-1.5 rounded-lg border border-brand-blush/20 shrink-0">
                   <span className="material-symbols-outlined text-[16px]">timer</span>
                   <span>ETA: {selectedTicket.eta || '30 mins'}</span>
                 </div>
@@ -702,7 +676,7 @@ export function CareComplaints() {
                           <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
                         </div>
                         <div className="flex items-baseline justify-between text-xs">
-                          <span className="font-semibold text-white">{upd.updatedBy || 'System Update'}</span>
+                          <span className="font-semibold text-slate-900">{upd.updatedBy || 'System Update'}</span>
                           <span className="font-mono text-[11px] text-brand-misty/60">{upd.createdAt || ''}</span>
                         </div>
                         <p className="text-[11px] text-brand-misty/70 mt-0.5">{upd.message}</p>
@@ -714,7 +688,7 @@ export function CareComplaints() {
                         <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
                       </div>
                       <div className="flex items-baseline justify-between text-xs">
-                        <span className="font-semibold text-white">Ticket Submitted & Logged</span>
+                        <span className="font-semibold text-slate-900">Ticket Submitted & Logged</span>
                         <span className="font-mono text-[11px] text-brand-misty/60">Just Now</span>
                       </div>
                       <p className="text-[11px] text-brand-misty/70 mt-0.5">Automated CAFM ingest created node record.</p>
@@ -777,7 +751,7 @@ export function CareComplaints() {
                       </span>
                       <span className="text-[11px] text-brand-misty/50 font-mono">{c.createdAt}</span>
                     </div>
-                    <div className="text-sm font-semibold text-white">{c.title}</div>
+                    <div className="text-sm font-semibold text-slate-900">{c.title}</div>
                     <div className="text-xs text-brand-misty/70 flex items-center gap-1.5">
                       <span className="material-symbols-outlined text-[14px] text-brand-blush">pin_drop</span>
                       <span>{c.location}</span>

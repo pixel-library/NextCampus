@@ -19,7 +19,7 @@ import {
   FileText,
   DoorOpen,
   Zap,
-  Leaf,
+  Bot,
   Info,
   X,
 } from 'lucide-react';
@@ -163,6 +163,19 @@ export const AuthPage = () => {
     setErrorMessage('');
   };
 
+  // Quick filler for testing confirmed student registration verification
+  const fillSampleRegistration = (name, enrollment, email, dept, cohort) => {
+    setActiveTab('register');
+    setRegName(name);
+    setRegRollId(enrollment);
+    setRegEmail(email);
+    setRegDept(dept || 'Artificial Intelligence & Data');
+    setRegCohort(cohort || 'Class of 2028 (Undergrad)');
+    setRegPassword('SecurePass123!');
+    setAgreeTerms(true);
+    setErrorMessage('');
+  };
+
   // Handle forgot password submission
   const handleForgotSubmit = (e) => {
     e.preventDefault();
@@ -185,8 +198,8 @@ export const AuthPage = () => {
     <div
       style={{
         minHeight: 'calc(100vh - var(--topbar-height))',
-        backgroundColor: '#161213',
-        color: '#EAE0E1',
+        backgroundColor: 'var(--bg-canvas)',
+        color: 'var(--text-primary)',
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -213,11 +226,11 @@ export const AuthPage = () => {
             justifyContent: 'space-between',
             padding: '48px',
             overflow: 'hidden',
-            backgroundColor: '#110D0E',
-            borderRight: '1px solid rgba(255, 217, 218, 0.08)',
+            backgroundColor: '#F8FAFC',
+            borderRight: '1px solid var(--border-subtle)',
           }}
         >
-          {/* Architectural Dusk Campus Scrim Background */}
+          {/* Architectural Campus Scrim Background */}
           <div
             style={{
               position: 'absolute',
@@ -226,18 +239,17 @@ export const AuthPage = () => {
                 "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCVLAga3FEcE4kzeDoyHVmwUjHiX_lz5t8xqgB8BWxNotaWChIMo040VNlih6uz5hH2ohWhdBOLAe3okZOIxXIYPLyHNC9aZ-UrYdPOucq-Fbq_mboZeacDS4vN0t1DUfs1bULxF2C5Jou4HeJ7M1gbIqzl2hkdyXK-4ts7h3PWbYF4ZfsucvLyORvg-3vgHz4b-FLofw5n2Mja51IOqCkvgWBDom9Ae-feOZhjQyFwAbGfN37c1Wk5sg')",
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              opacity: 0.22,
-              filter: 'blur(1px)',
+              opacity: 0.08,
             }}
           />
 
-          {/* Deep Raisin Gradient Overlay */}
+          {/* Crisp Soft Tint Overlay */}
           <div
             style={{
               position: 'absolute',
               inset: 0,
               background:
-                'linear-gradient(135deg, rgba(22, 18, 19, 0.96) 0%, rgba(35, 30, 31, 0.90) 50%, rgba(172, 39, 79, 0.25) 100%)',
+                'linear-gradient(135deg, rgba(255, 241, 242, 0.75) 0%, rgba(248, 250, 252, 0.95) 55%, rgba(241, 245, 249, 0.9) 100%)',
             }}
           />
 
@@ -256,19 +268,19 @@ export const AuthPage = () => {
                   fontWeight: 900,
                   fontSize: '18px',
                   color: '#FFFFFF',
-                  boxShadow: '0 4px 12px rgba(172, 39, 79, 0.4)',
+                  boxShadow: '0 4px 12px rgba(158, 21, 62, 0.25)',
                 }}
               >
                 NC
               </div>
-              <div style={{ width: '1px', height: '24px', backgroundColor: 'rgba(255, 217, 218, 0.2)' }} />
+              <div style={{ width: '1px', height: '24px', backgroundColor: 'var(--border-subtle)' }} />
               <span
                 style={{
                   fontSize: '11px',
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
-                  color: '#E2BEBF',
-                  fontWeight: 600,
+                  color: 'var(--text-muted)',
+                  fontWeight: 700,
                 }}
               >
                 Institutional Node
@@ -283,11 +295,11 @@ export const AuthPage = () => {
                   gap: '8px',
                   padding: '4px 12px',
                   borderRadius: '9999px',
-                  backgroundColor: 'rgba(255, 178, 191, 0.1)',
-                  border: '1px solid rgba(255, 178, 191, 0.2)',
-                  color: '#FFB2BF',
+                  backgroundColor: 'var(--brand-soft-bg)',
+                  border: '1px solid #FECDD3',
+                  color: 'var(--brand-primary)',
                   fontSize: '11px',
-                  fontWeight: 600,
+                  fontWeight: 700,
                   textTransform: 'uppercase',
                   letterSpacing: '0.06em',
                   marginBottom: '14px',
@@ -298,7 +310,7 @@ export const AuthPage = () => {
                     width: '6px',
                     height: '6px',
                     borderRadius: '50%',
-                    backgroundColor: '#FFB2BF',
+                    backgroundColor: 'var(--brand-primary)',
                     animation: 'pulse 2s infinite',
                   }}
                 />
@@ -310,19 +322,19 @@ export const AuthPage = () => {
                   fontSize: 'clamp(28px, 3.2vw, 40px)',
                   lineHeight: 1.15,
                   fontWeight: 800,
-                  color: '#FFFFFF',
+                  color: 'var(--text-primary)',
                   letterSpacing: '-0.02em',
                   margin: '0 0 12px 0',
                 }}
               >
                 One Campus.
                 <br />
-                <span style={{ color: '#FFD9DE' }}>One Account.</span>
+                <span style={{ color: 'var(--brand-primary)' }}>One Account.</span>
                 <br />
                 Smarter Future.
               </h1>
 
-              <p style={{ fontSize: '14px', lineHeight: 1.6, color: '#DFBFC3', margin: 0, maxWidth: '420px' }}>
+              <p style={{ fontSize: '14px', lineHeight: 1.6, color: 'var(--text-secondary)', margin: 0, maxWidth: '420px' }}>
                 Seamless federated access to automated research facilities, instant ticket triage, dynamic spatial
                 telemetry, and community learning networks.
               </p>
@@ -344,12 +356,12 @@ export const AuthPage = () => {
               style={{
                 padding: '14px 16px',
                 borderRadius: '12px',
-                backgroundColor: 'rgba(31, 26, 27, 0.85)',
-                border: '1px solid rgba(255, 217, 218, 0.1)',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--border-subtle)',
+                boxShadow: 'var(--shadow-sm)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '14px',
-                backdropFilter: 'blur(8px)',
               }}
             >
               <div
@@ -357,27 +369,27 @@ export const AuthPage = () => {
                   width: '38px',
                   height: '38px',
                   borderRadius: '10px',
-                  backgroundColor: 'rgba(172, 39, 79, 0.3)',
+                  backgroundColor: 'var(--brand-soft-bg)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#FFB2BF',
+                  color: 'var(--brand-primary)',
                   flexShrink: 0,
                 }}
               >
                 <DoorOpen size={20} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>SmartRoom & Facility Booking</div>
-                <div style={{ fontSize: '11px', color: '#A68A8D' }}>Intelligent occupancy sync across 64 academic halls</div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>SmartRoom & Facility Booking</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Intelligent occupancy sync across 64 academic halls</div>
               </div>
               <span
                 style={{
                   fontSize: '11px',
                   padding: '2px 8px',
                   borderRadius: '9999px',
-                  backgroundColor: 'rgba(255, 178, 191, 0.15)',
-                  color: '#FFB2BF',
+                  backgroundColor: 'var(--brand-soft-bg)',
+                  color: 'var(--brand-primary)',
                   fontWeight: 600,
                 }}
               >
@@ -389,12 +401,12 @@ export const AuthPage = () => {
               style={{
                 padding: '14px 16px',
                 borderRadius: '12px',
-                backgroundColor: 'rgba(31, 26, 27, 0.85)',
-                border: '1px solid rgba(255, 217, 218, 0.1)',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--border-subtle)',
+                boxShadow: 'var(--shadow-sm)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '14px',
-                backdropFilter: 'blur(8px)',
               }}
             >
               <div
@@ -402,27 +414,27 @@ export const AuthPage = () => {
                   width: '38px',
                   height: '38px',
                   borderRadius: '10px',
-                  backgroundColor: 'rgba(140, 24, 68, 0.3)',
+                  backgroundColor: '#FEF3C7',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#FFB1C2',
+                  color: '#B45309',
                   flexShrink: 0,
                 }}
               >
                 <Zap size={20} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>NextCampus Care Rapid Triage</div>
-                <div style={{ fontSize: '11px', color: '#A68A8D' }}>Automated campus operations & resolver routing</div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>NextCampus Care Rapid Triage</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Automated campus operations & resolver routing</div>
               </div>
               <span
                 style={{
                   fontSize: '11px',
                   padding: '2px 8px',
                   borderRadius: '9999px',
-                  backgroundColor: 'rgba(255, 177, 194, 0.15)',
-                  color: '#FFB1C2',
+                  backgroundColor: '#FEF3C7',
+                  color: '#B45309',
                   fontWeight: 600,
                 }}
               >
@@ -434,12 +446,12 @@ export const AuthPage = () => {
               style={{
                 padding: '14px 16px',
                 borderRadius: '12px',
-                backgroundColor: 'rgba(31, 26, 27, 0.85)',
-                border: '1px solid rgba(255, 217, 218, 0.1)',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--border-subtle)',
+                boxShadow: 'var(--shadow-sm)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '14px',
-                backdropFilter: 'blur(8px)',
               }}
             >
               <div
@@ -447,31 +459,31 @@ export const AuthPage = () => {
                   width: '38px',
                   height: '38px',
                   borderRadius: '10px',
-                  backgroundColor: 'rgba(113, 85, 86, 0.3)',
+                  backgroundColor: '#F3E8FF',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#E2BEBF',
+                  color: '#7E22CE',
                   flexShrink: 0,
                 }}
               >
-                <Leaf size={20} />
+                <Bot size={20} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>EcoCampus Sustainability Pulse</div>
-                <div style={{ fontSize: '11px', color: '#A68A8D' }}>Live microgrid energy & carbon offset analytics</div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>NextCampus AI Assistant</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Context-aware campus copilot & instant inquiry resolver</div>
               </div>
               <span
                 style={{
                   fontSize: '11px',
                   padding: '2px 8px',
                   borderRadius: '9999px',
-                  backgroundColor: 'rgba(226, 190, 191, 0.15)',
-                  color: '#E2BEBF',
+                  backgroundColor: '#F3E8FF',
+                  color: '#7E22CE',
                   fontWeight: 600,
                 }}
               >
-                Telemetry
+                AI Copilot
               </span>
             </div>
           </div>
@@ -486,16 +498,17 @@ export const AuthPage = () => {
               justifyContent: 'space-between',
               padding: '12px 16px',
               borderRadius: '12px',
-              backgroundColor: 'rgba(17, 13, 14, 0.7)',
-              border: '1px solid rgba(255, 217, 218, 0.08)',
+              backgroundColor: '#FFFFFF',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#DFBFC3', fontSize: '11px' }}>
-              <ShieldCheck size={16} style={{ color: '#FFB2BF' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)', fontSize: '11px' }}>
+              <ShieldCheck size={16} style={{ color: 'var(--brand-primary)' }} />
               <span>Enterprise SAML 2.0 / Shibboleth Ready</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#E2BEBF', fontSize: '11px' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#22c55e' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', fontSize: '11px' }}>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#16A34A' }} />
               <span>99.98% Systems Up</span>
             </div>
           </div>
@@ -511,7 +524,7 @@ export const AuthPage = () => {
             alignItems: 'center',
             justifyContent: 'center',
             padding: '36px 24px',
-            backgroundColor: '#161213',
+            backgroundColor: 'var(--bg-canvas)',
           }}
         >
           <div
@@ -520,22 +533,22 @@ export const AuthPage = () => {
               maxWidth: '560px',
               display: 'flex',
               flexDirection: 'column',
-              backgroundColor: '#231E1F',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '20px',
               padding: '36px',
-              border: '1px solid rgba(255, 217, 218, 0.12)',
-              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.45)',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
             {/* Segmented Tab Bar (Sign In vs Register) */}
             <div
               style={{
                 display: 'flex',
-                backgroundColor: '#110D0E',
+                backgroundColor: 'var(--bg-surface-subtle)',
                 padding: '6px',
                 borderRadius: '12px',
                 marginBottom: '28px',
-                border: '1px solid rgba(255, 217, 218, 0.06)',
+                border: '1px solid var(--border-subtle)',
               }}
             >
               <button
@@ -551,8 +564,8 @@ export const AuthPage = () => {
                   borderRadius: '8px',
                   fontSize: '13px',
                   fontWeight: activeTab === 'signin' ? 700 : 500,
-                  color: activeTab === 'signin' ? '#FFC7D0' : '#A68A8D',
-                  backgroundColor: activeTab === 'signin' ? '#AC274F' : 'transparent',
+                  color: activeTab === 'signin' ? 'var(--brand-primary)' : 'var(--text-muted)',
+                  backgroundColor: activeTab === 'signin' ? 'var(--bg-surface)' : 'transparent',
                   border: 'none',
                   cursor: 'pointer',
                   display: 'flex',
@@ -560,7 +573,7 @@ export const AuthPage = () => {
                   justifyContent: 'center',
                   gap: '8px',
                   transition: 'all 0.2s ease',
-                  boxShadow: activeTab === 'signin' ? '0 2px 8px rgba(172, 39, 79, 0.35)' : 'none',
+                  boxShadow: activeTab === 'signin' ? '0 2px 6px rgba(0, 0, 0, 0.08)' : 'none',
                 }}
               >
                 <KeyRound size={16} />
@@ -580,8 +593,8 @@ export const AuthPage = () => {
                   borderRadius: '8px',
                   fontSize: '13px',
                   fontWeight: activeTab === 'register' ? 700 : 500,
-                  color: activeTab === 'register' ? '#FFC7D0' : '#A68A8D',
-                  backgroundColor: activeTab === 'register' ? '#AC274F' : 'transparent',
+                  color: activeTab === 'register' ? 'var(--brand-primary)' : 'var(--text-muted)',
+                  backgroundColor: activeTab === 'register' ? 'var(--bg-surface)' : 'transparent',
                   border: 'none',
                   cursor: 'pointer',
                   display: 'flex',
@@ -589,7 +602,7 @@ export const AuthPage = () => {
                   justifyContent: 'center',
                   gap: '8px',
                   transition: 'all 0.2s ease',
-                  boxShadow: activeTab === 'register' ? '0 2px 8px rgba(172, 39, 79, 0.35)' : 'none',
+                  boxShadow: activeTab === 'register' ? '0 2px 6px rgba(0, 0, 0, 0.08)' : 'none',
                 }}
               >
                 <School size={16} />
@@ -606,19 +619,19 @@ export const AuthPage = () => {
                   gap: '12px',
                   padding: '12px 16px',
                   borderRadius: '10px',
-                  backgroundColor: 'rgba(147, 0, 10, 0.35)',
-                  border: '1px solid #FFB4AB',
-                  color: '#FFDAD6',
+                  backgroundColor: '#FEF2F2',
+                  border: '1px solid #FECACA',
+                  color: '#991B1B',
                   fontSize: '13px',
                   marginBottom: '20px',
                 }}
               >
-                <AlertCircle size={18} style={{ color: '#FFB4AB', flexShrink: 0, marginTop: '2px' }} />
+                <AlertCircle size={18} style={{ color: '#DC2626', flexShrink: 0, marginTop: '2px' }} />
                 <div style={{ flex: 1 }}>{errorMessage}</div>
                 <button
                   type="button"
                   onClick={() => setErrorMessage('')}
-                  style={{ background: 'none', border: 'none', color: '#FFDAD6', cursor: 'pointer', padding: 0 }}
+                  style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', padding: 0 }}
                 >
                   <X size={16} />
                 </button>
@@ -634,14 +647,14 @@ export const AuthPage = () => {
                   gap: '12px',
                   padding: '12px 16px',
                   borderRadius: '10px',
-                  backgroundColor: 'rgba(34, 197, 94, 0.15)',
-                  border: '1px solid #22c55e',
-                  color: '#86efac',
+                  backgroundColor: '#F0FDF4',
+                  border: '1px solid #BBF7D0',
+                  color: '#166534',
                   fontSize: '13px',
                   marginBottom: '20px',
                 }}
               >
-                <CheckCircle2 size={18} style={{ color: '#22c55e', flexShrink: 0, marginTop: '2px' }} />
+                <CheckCircle2 size={18} style={{ color: '#16A34A', flexShrink: 0, marginTop: '2px' }} />
                 <div style={{ flex: 1 }}>{successMessage}</div>
               </div>
             )}
@@ -652,10 +665,10 @@ export const AuthPage = () => {
             {activeTab === 'signin' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div>
-                  <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#FFFFFF', margin: '0 0 6px 0' }}>
+                  <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 6px 0' }}>
                     Welcome Back
                   </h2>
-                  <p style={{ fontSize: '13px', color: '#DFBFC3', margin: 0 }}>
+                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
                     Enter your verified college email or student roll credentials.
                   </p>
                 </div>
@@ -665,8 +678,8 @@ export const AuthPage = () => {
                   style={{
                     padding: '12px 14px',
                     borderRadius: '10px',
-                    backgroundColor: '#2D292A',
-                    border: '1px solid rgba(255, 217, 218, 0.08)',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    border: '1px solid var(--border-subtle)',
                     display: 'flex',
                     alignItems: 'flex-start',
                     gap: '10px',
@@ -674,9 +687,9 @@ export const AuthPage = () => {
                     lineHeight: 1.5,
                   }}
                 >
-                  <Building size={18} style={{ color: '#FFB2BF', flexShrink: 0, marginTop: '1px' }} />
+                  <Building size={18} style={{ color: 'var(--brand-primary)', flexShrink: 0, marginTop: '1px' }} />
                   <div>
-                    <span style={{ fontWeight: 600, color: '#FFB2BF' }}>Routing Notice:</span> Active directory
+                    <span style={{ fontWeight: 600, color: 'var(--brand-primary)' }}>Routing Notice:</span> Active directory
                     authentication routes automatically through State University's Central Keycloak Gateway.
                   </div>
                 </div>
@@ -685,13 +698,13 @@ export const AuthPage = () => {
                 <form onSubmit={handleSignInSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   {/* Identifier Input */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#EAE0E1' }}>
+                    <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
                       Institutional Email or Student Roll ID
                     </label>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                       <Mail
                         size={18}
-                        style={{ position: 'absolute', left: '12px', color: '#A68A8D', pointerEvents: 'none' }}
+                        style={{ position: 'absolute', left: '12px', color: 'var(--text-placeholder)', pointerEvents: 'none' }}
                       />
                       <input
                         type="text"
@@ -702,16 +715,16 @@ export const AuthPage = () => {
                         style={{
                           width: '100%',
                           padding: '11px 14px 11px 40px',
-                          backgroundColor: '#110D0E',
-                          border: '1px solid #584144',
+                          backgroundColor: 'var(--bg-surface-subtle)',
+                          border: '1px solid var(--border-interactive)',
                           borderRadius: '10px',
-                          color: '#FFFFFF',
+                          color: 'var(--text-primary)',
                           fontSize: '13px',
                           outline: 'none',
                           transition: 'border-color 0.2s ease',
                         }}
-                        onFocus={(e) => (e.target.style.borderColor = '#FFB2BF')}
-                        onBlur={(e) => (e.target.style.borderColor = '#584144')}
+                        onFocus={(e) => (e.target.style.borderColor = 'var(--brand-primary)')}
+                        onBlur={(e) => (e.target.style.borderColor = 'var(--border-interactive)')}
                       />
                     </div>
                   </div>
@@ -719,15 +732,16 @@ export const AuthPage = () => {
                   {/* Password Input */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <label style={{ fontSize: '12px', fontWeight: 600, color: '#EAE0E1' }}>Password</label>
+                      <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Password</label>
                       <button
                         type="button"
                         onClick={() => setShowForgotModal(true)}
                         style={{
                           background: 'none',
                           border: 'none',
-                          color: '#FFB1C2',
+                          color: 'var(--brand-primary)',
                           fontSize: '12px',
+                          fontWeight: 600,
                           cursor: 'pointer',
                           padding: 0,
                           textDecoration: 'underline',
@@ -739,7 +753,7 @@ export const AuthPage = () => {
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                       <Lock
                         size={18}
-                        style={{ position: 'absolute', left: '12px', color: '#A68A8D', pointerEvents: 'none' }}
+                        style={{ position: 'absolute', left: '12px', color: 'var(--text-placeholder)', pointerEvents: 'none' }}
                       />
                       <input
                         type={showSignInPassword ? 'text' : 'password'}
@@ -750,16 +764,16 @@ export const AuthPage = () => {
                         style={{
                           width: '100%',
                           padding: '11px 40px 11px 40px',
-                          backgroundColor: '#110D0E',
-                          border: '1px solid #584144',
+                          backgroundColor: 'var(--bg-surface-subtle)',
+                          border: '1px solid var(--border-interactive)',
                           borderRadius: '10px',
-                          color: '#FFFFFF',
+                          color: 'var(--text-primary)',
                           fontSize: '13px',
                           outline: 'none',
                           transition: 'border-color 0.2s ease',
                         }}
-                        onFocus={(e) => (e.target.style.borderColor = '#FFB2BF')}
-                        onBlur={(e) => (e.target.style.borderColor = '#584144')}
+                        onFocus={(e) => (e.target.style.borderColor = 'var(--brand-primary)')}
+                        onBlur={(e) => (e.target.style.borderColor = 'var(--border-interactive)')}
                       />
                       <button
                         type="button"
@@ -769,7 +783,7 @@ export const AuthPage = () => {
                           right: '12px',
                           background: 'none',
                           border: 'none',
-                          color: '#A68A8D',
+                          color: 'var(--text-muted)',
                           cursor: 'pointer',
                           padding: '2px',
                           display: 'flex',
@@ -790,14 +804,14 @@ export const AuthPage = () => {
                         gap: '8px',
                         cursor: 'pointer',
                         fontSize: '12px',
-                        color: '#DFBFC3',
+                        color: 'var(--text-secondary)',
                       }}
                     >
                       <input
                         type="checkbox"
                         checked={rememberDevice}
                         onChange={(e) => setRememberDevice(e.target.checked)}
-                        style={{ accentColor: '#AC274F', width: '15px', height: '15px' }}
+                        style={{ accentColor: 'var(--brand-primary)', width: '15px', height: '15px' }}
                       />
                       <span>Remember device for 30 days</span>
                     </label>
@@ -807,10 +821,10 @@ export const AuthPage = () => {
                         alignItems: 'center',
                         gap: '4px',
                         fontSize: '11px',
-                        color: '#E2BEBF',
+                        color: 'var(--text-muted)',
                       }}
                     >
-                      <ShieldCheck size={14} />
+                      <ShieldCheck size={14} style={{ color: 'var(--brand-primary)' }} />
                       <span>FIPS 140-3</span>
                     </div>
                   </div>
@@ -822,7 +836,7 @@ export const AuthPage = () => {
                     style={{
                       width: '100%',
                       padding: '13px 20px',
-                      backgroundColor: '#AC274F',
+                      backgroundColor: 'var(--brand-primary)',
                       color: '#FFFFFF',
                       border: 'none',
                       borderRadius: '10px',
@@ -833,7 +847,7 @@ export const AuthPage = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
-                      boxShadow: '0 4px 16px rgba(172, 39, 79, 0.4)',
+                      boxShadow: '0 4px 14px rgba(158, 21, 62, 0.25)',
                       transition: 'all 0.2s ease',
                       marginTop: '6px',
                       opacity: loading ? 0.7 : 1,
@@ -847,17 +861,17 @@ export const AuthPage = () => {
                 {/* Demonstration Quick Fill Credentials */}
                 <div
                   style={{
-                    backgroundColor: '#1F1A1B',
+                    backgroundColor: 'var(--bg-surface-subtle)',
                     borderRadius: '10px',
                     padding: '12px 14px',
-                    border: '1px solid rgba(255, 217, 218, 0.08)',
+                    border: '1px solid var(--border-subtle)',
                   }}
                 >
                   <div
                     style={{
                       fontSize: '11px',
                       fontWeight: 600,
-                      color: '#E2BEBF',
+                      color: 'var(--text-muted)',
                       textTransform: 'uppercase',
                       letterSpacing: '0.06em',
                       marginBottom: '8px',
@@ -866,7 +880,7 @@ export const AuthPage = () => {
                       gap: '6px',
                     }}
                   >
-                    <Sparkles size={14} style={{ color: '#FFB2BF' }} />
+                    <Sparkles size={14} style={{ color: 'var(--brand-primary)' }} />
                     <span>Quick Demo Credentials</span>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
@@ -874,35 +888,37 @@ export const AuthPage = () => {
                       type="button"
                       onClick={() => fillCredentials('rudra@nextcampus.edu', 'password123')}
                       style={{
-                        padding: '6px 10px',
-                        borderRadius: '6px',
-                        backgroundColor: '#2D292A',
-                        border: '1px solid rgba(255, 217, 218, 0.1)',
-                        color: '#FFFFFF',
+                        padding: '8px 10px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--bg-surface)',
+                        border: '1px solid var(--border-interactive)',
+                        color: 'var(--text-primary)',
                         fontSize: '11px',
                         cursor: 'pointer',
                         textAlign: 'left',
+                        boxShadow: 'var(--shadow-sm)',
                       }}
                     >
-                      <div style={{ fontWeight: 600, color: '#FFB2BF' }}>Student Node</div>
-                      <div style={{ color: '#A68A8D', fontSize: '10px' }}>rudra@nextcampus.edu</div>
+                      <div style={{ fontWeight: 700, color: 'var(--brand-primary)' }}>Student Node</div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '10px' }}>rudra@nextcampus.edu</div>
                     </button>
                     <button
                       type="button"
                       onClick={() => fillCredentials('admin@nextcampus.edu', 'adminpassword123')}
                       style={{
-                        padding: '6px 10px',
-                        borderRadius: '6px',
-                        backgroundColor: '#2D292A',
-                        border: '1px solid rgba(255, 217, 218, 0.1)',
-                        color: '#FFFFFF',
+                        padding: '8px 10px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--bg-surface)',
+                        border: '1px solid var(--border-interactive)',
+                        color: 'var(--text-primary)',
                         fontSize: '11px',
                         cursor: 'pointer',
                         textAlign: 'left',
+                        boxShadow: 'var(--shadow-sm)',
                       }}
                     >
-                      <div style={{ fontWeight: 600, color: '#FFB1C2' }}>Campus Admin</div>
-                      <div style={{ color: '#A68A8D', fontSize: '10px' }}>admin@nextcampus.edu</div>
+                      <div style={{ fontWeight: 700, color: 'var(--brand-accent)' }}>Campus Admin</div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '10px' }}>admin@nextcampus.edu</div>
                     </button>
                   </div>
                 </div>
@@ -917,14 +933,14 @@ export const AuthPage = () => {
                     margin: '6px 0',
                   }}
                 >
-                  <div style={{ width: '100%', height: '1px', backgroundColor: 'rgba(255, 217, 218, 0.1)' }} />
+                  <div style={{ width: '100%', height: '1px', backgroundColor: 'var(--border-subtle)' }} />
                   <span
                     style={{
                       position: 'absolute',
-                      backgroundColor: '#231E1F',
+                      backgroundColor: 'var(--bg-surface)',
                       padding: '0 12px',
                       fontSize: '10px',
-                      color: '#A68A8D',
+                      color: 'var(--text-muted)',
                       textTransform: 'uppercase',
                       letterSpacing: '0.08em',
                     }}
@@ -941,9 +957,9 @@ export const AuthPage = () => {
                     style={{
                       padding: '10px 14px',
                       borderRadius: '10px',
-                      backgroundColor: '#1F1A1B',
-                      border: '1px solid rgba(255, 217, 218, 0.1)',
-                      color: '#FFFFFF',
+                      backgroundColor: 'var(--bg-surface)',
+                      border: '1px solid var(--border-interactive)',
+                      color: 'var(--text-primary)',
                       fontSize: '12px',
                       fontWeight: 600,
                       cursor: 'pointer',
@@ -951,10 +967,11 @@ export const AuthPage = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
-                      transition: 'background-color 0.2s',
+                      boxShadow: 'var(--shadow-sm)',
+                      transition: 'border-color 0.2s',
                     }}
                   >
-                    <School size={16} style={{ color: '#FFB2BF' }} />
+                    <School size={16} style={{ color: 'var(--brand-primary)' }} />
                     <span>Campus Portal SSO</span>
                   </button>
 
@@ -964,9 +981,9 @@ export const AuthPage = () => {
                     style={{
                       padding: '10px 14px',
                       borderRadius: '10px',
-                      backgroundColor: '#1F1A1B',
-                      border: '1px solid rgba(255, 217, 218, 0.1)',
-                      color: '#FFFFFF',
+                      backgroundColor: 'var(--bg-surface)',
+                      border: '1px solid var(--border-interactive)',
+                      color: 'var(--text-primary)',
                       fontSize: '12px',
                       fontWeight: 600,
                       cursor: 'pointer',
@@ -974,10 +991,11 @@ export const AuthPage = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
-                      transition: 'background-color 0.2s',
+                      boxShadow: 'var(--shadow-sm)',
+                      transition: 'border-color 0.2s',
                     }}
                   >
-                    <Sparkles size={16} style={{ color: '#FFB1C2' }} />
+                    <Sparkles size={16} style={{ color: 'var(--brand-accent)' }} />
                     <span>Google Workspace Edu</span>
                   </button>
                 </div>
@@ -990,23 +1008,61 @@ export const AuthPage = () => {
             {activeTab === 'register' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                 <div>
-                  <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#FFFFFF', margin: '0 0 6px 0' }}>
+                  <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 6px 0' }}>
                     Join NextCampus
                   </h2>
-                  <p style={{ fontSize: '13px', color: '#DFBFC3', margin: 0 }}>
+                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
                     Set up your student profile to sync campus telemetry, dining, labs, and records.
                   </p>
+                </div>
+
+                {/* Pre-verified Admission Roster Quick Test Pill */}
+                <div
+                  style={{
+                    padding: '10px 14px',
+                    borderRadius: '10px',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    border: '1px solid var(--border-subtle)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '8px',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
+                    <ShieldCheck size={16} style={{ color: 'var(--brand-primary)', flexShrink: 0 }} />
+                    <span style={{ color: 'var(--text-secondary)' }}>
+                      Test Admission Verification: <strong style={{ color: 'var(--text-primary)' }}>Priya Patel (MUR2501045)</strong>
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => fillSampleRegistration('Priya Patel', 'MUR2501045', 'priya.p@nextcampus.edu', 'Artificial Intelligence & Data', 'Class of 2028 (Undergrad)')}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      backgroundColor: 'var(--bg-surface)',
+                      border: '1px solid var(--border-interactive)',
+                      color: 'var(--brand-primary)',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Quick-Fill Test
+                  </button>
                 </div>
 
                 <form onSubmit={handleRegisterSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {/* Name and Student ID row */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <label style={{ fontSize: '12px', fontWeight: 600, color: '#EAE0E1' }}>Full Legal Name</label>
+                      <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Full Legal Name</label>
                       <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                         <User
                           size={18}
-                          style={{ position: 'absolute', left: '12px', color: '#A68A8D', pointerEvents: 'none' }}
+                          style={{ position: 'absolute', left: '12px', color: 'var(--text-placeholder)', pointerEvents: 'none' }}
                         />
                         <input
                           type="text"
@@ -1017,10 +1073,10 @@ export const AuthPage = () => {
                           style={{
                             width: '100%',
                             padding: '10px 12px 10px 38px',
-                            backgroundColor: '#110D0E',
-                            border: '1px solid #584144',
+                            backgroundColor: 'var(--bg-surface-subtle)',
+                            border: '1px solid var(--border-interactive)',
                             borderRadius: '10px',
-                            color: '#FFFFFF',
+                            color: 'var(--text-primary)',
                             fontSize: '13px',
                             outline: 'none',
                           }}
@@ -1029,8 +1085,8 @@ export const AuthPage = () => {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <label style={{ fontSize: '12px', fontWeight: 600, color: '#EAE0E1' }}>
-                        Confirmed Enrollment Number <span style={{ color: '#EB638B' }}>*</span>
+                      <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                        Confirmed Enrollment Number <span style={{ color: 'var(--brand-accent)' }}>*</span>
                       </label>
                       <input
                         type="text"
@@ -1041,16 +1097,16 @@ export const AuthPage = () => {
                         style={{
                           width: '100%',
                           padding: '10px 14px',
-                          backgroundColor: '#110D0E',
-                          border: '1px solid #584144',
+                          backgroundColor: 'var(--bg-surface-subtle)',
+                          border: '1px solid var(--border-interactive)',
                           borderRadius: '10px',
-                          color: '#FFFFFF',
+                          color: 'var(--text-primary)',
                           fontSize: '13px',
                           outline: 'none',
                           letterSpacing: '0.5px',
                         }}
                       />
-                      <span style={{ fontSize: '11px', color: '#B39E9F' }}>
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
                         Must match your confirmed university admission letter (e.g. Mur2502162).
                       </span>
                     </div>
@@ -1058,13 +1114,13 @@ export const AuthPage = () => {
 
                   {/* College Email */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#EAE0E1' }}>
+                    <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
                       Institutional Email Address
                     </label>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                       <Mail
                         size={18}
-                        style={{ position: 'absolute', left: '12px', color: '#A68A8D', pointerEvents: 'none' }}
+                        style={{ position: 'absolute', left: '12px', color: 'var(--text-placeholder)', pointerEvents: 'none' }}
                       />
                       <input
                         type="email"
@@ -1075,16 +1131,16 @@ export const AuthPage = () => {
                         style={{
                           width: '100%',
                           padding: '10px 12px 10px 38px',
-                          backgroundColor: '#110D0E',
-                          border: '1px solid #584144',
+                          backgroundColor: 'var(--bg-surface-subtle)',
+                          border: '1px solid var(--border-interactive)',
                           borderRadius: '10px',
-                          color: '#FFFFFF',
+                          color: 'var(--text-primary)',
                           fontSize: '13px',
                           outline: 'none',
                         }}
                       />
                     </div>
-                    <span style={{ fontSize: '11px', color: '#FFB1C2' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--brand-primary)', fontWeight: 500 }}>
                       Must end with @campus.edu for automated department assignment.
                     </span>
                   </div>
@@ -1092,17 +1148,17 @@ export const AuthPage = () => {
                   {/* Department & Graduating Cohort */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <label style={{ fontSize: '12px', fontWeight: 600, color: '#EAE0E1' }}>Academic Department</label>
+                      <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Academic Department</label>
                       <select
                         value={regDept}
                         onChange={(e) => setRegDept(e.target.value)}
                         style={{
                           width: '100%',
                           padding: '10px 12px',
-                          backgroundColor: '#110D0E',
-                          border: '1px solid #584144',
+                          backgroundColor: 'var(--bg-surface-subtle)',
+                          border: '1px solid var(--border-interactive)',
                           borderRadius: '10px',
-                          color: '#FFFFFF',
+                          color: 'var(--text-primary)',
                           fontSize: '12px',
                           outline: 'none',
                         }}
@@ -1116,17 +1172,17 @@ export const AuthPage = () => {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <label style={{ fontSize: '12px', fontWeight: 600, color: '#EAE0E1' }}>Graduating Cohort</label>
+                      <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Graduating Cohort</label>
                       <select
                         value={regCohort}
                         onChange={(e) => setRegCohort(e.target.value)}
                         style={{
                           width: '100%',
                           padding: '10px 12px',
-                          backgroundColor: '#110D0E',
-                          border: '1px solid #584144',
+                          backgroundColor: 'var(--bg-surface-subtle)',
+                          border: '1px solid var(--border-interactive)',
                           borderRadius: '10px',
-                          color: '#FFFFFF',
+                          color: 'var(--text-primary)',
                           fontSize: '12px',
                           outline: 'none',
                         }}
@@ -1141,11 +1197,11 @@ export const AuthPage = () => {
 
                   {/* Password with Strength Indicator */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#EAE0E1' }}>Create Master Password</label>
+                    <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Create Master Password</label>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                       <Lock
                         size={18}
-                        style={{ position: 'absolute', left: '12px', color: '#A68A8D', pointerEvents: 'none' }}
+                        style={{ position: 'absolute', left: '12px', color: 'var(--text-placeholder)', pointerEvents: 'none' }}
                       />
                       <input
                         type={showRegPassword ? 'text' : 'password'}
@@ -1156,10 +1212,10 @@ export const AuthPage = () => {
                         style={{
                           width: '100%',
                           padding: '10px 40px 10px 38px',
-                          backgroundColor: '#110D0E',
-                          border: '1px solid #584144',
+                          backgroundColor: 'var(--bg-surface-subtle)',
+                          border: '1px solid var(--border-interactive)',
                           borderRadius: '10px',
-                          color: '#FFFFFF',
+                          color: 'var(--text-primary)',
                           fontSize: '13px',
                           outline: 'none',
                         }}
@@ -1172,7 +1228,7 @@ export const AuthPage = () => {
                           right: '12px',
                           background: 'none',
                           border: 'none',
-                          color: '#A68A8D',
+                          color: 'var(--text-muted)',
                           cursor: 'pointer',
                         }}
                       >
@@ -1183,14 +1239,14 @@ export const AuthPage = () => {
                     {/* Interactive Strength Meter */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
-                        <span style={{ color: '#DFBFC3' }}>Complexity Assessment:</span>
+                        <span style={{ color: 'var(--text-secondary)' }}>Complexity Assessment:</span>
                         <span style={{ color: passwordStrength.color, fontWeight: 600 }}>{passwordStrength.label}</span>
                       </div>
                       <div
                         style={{
                           width: '100%',
                           height: '4px',
-                          backgroundColor: '#110D0E',
+                          backgroundColor: 'var(--border-subtle)',
                           borderRadius: '9999px',
                           display: 'flex',
                           gap: '4px',
@@ -1199,7 +1255,7 @@ export const AuthPage = () => {
                         <div
                           style={{
                             flex: 1,
-                            backgroundColor: passwordStrength.score >= 1 ? passwordStrength.color : '#383335',
+                            backgroundColor: passwordStrength.score >= 1 ? passwordStrength.color : '#E2E8F0',
                             borderRadius: '9999px',
                             transition: 'all 0.3s ease',
                           }}
@@ -1207,7 +1263,7 @@ export const AuthPage = () => {
                         <div
                           style={{
                             flex: 1,
-                            backgroundColor: passwordStrength.score >= 2 ? passwordStrength.color : '#383335',
+                            backgroundColor: passwordStrength.score >= 2 ? passwordStrength.color : '#E2E8F0',
                             borderRadius: '9999px',
                             transition: 'all 0.3s ease',
                           }}
@@ -1215,7 +1271,7 @@ export const AuthPage = () => {
                         <div
                           style={{
                             flex: 1,
-                            backgroundColor: passwordStrength.score >= 3 ? passwordStrength.color : '#383335',
+                            backgroundColor: passwordStrength.score >= 3 ? passwordStrength.color : '#E2E8F0',
                             borderRadius: '9999px',
                             transition: 'all 0.3s ease',
                           }}
@@ -1231,7 +1287,7 @@ export const AuthPage = () => {
                       alignItems: 'flex-start',
                       gap: '8px',
                       fontSize: '12px',
-                      color: '#DFBFC3',
+                      color: 'var(--text-secondary)',
                       lineHeight: 1.4,
                       cursor: 'pointer',
                       marginTop: '4px',
@@ -1242,10 +1298,10 @@ export const AuthPage = () => {
                       checked={agreeTerms}
                       onChange={(e) => setAgreeTerms(e.target.checked)}
                       required
-                      style={{ accentColor: '#AC274F', width: '16px', height: '16px', marginTop: '2px' }}
+                      style={{ accentColor: 'var(--brand-primary)', width: '16px', height: '16px', marginTop: '2px' }}
                     />
                     <span>
-                      I agree to the <strong style={{ color: '#FFB1C2' }}>Acceptable Use Policy</strong>, FERPA student
+                      I agree to the <strong style={{ color: 'var(--brand-primary)' }}>Acceptable Use Policy</strong>, FERPA student
                       confidentiality protocols, and automated campus IoT access terms.
                     </span>
                   </label>
@@ -1257,7 +1313,7 @@ export const AuthPage = () => {
                     style={{
                       width: '100%',
                       padding: '13px 20px',
-                      backgroundColor: '#AC274F',
+                      backgroundColor: 'var(--brand-primary)',
                       color: '#FFFFFF',
                       border: 'none',
                       borderRadius: '10px',
@@ -1268,7 +1324,7 @@ export const AuthPage = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
-                      boxShadow: '0 4px 16px rgba(172, 39, 79, 0.4)',
+                      boxShadow: '0 4px 14px rgba(158, 21, 62, 0.25)',
                       transition: 'all 0.2s ease',
                       marginTop: '8px',
                       opacity: loading ? 0.7 : 1,
@@ -1286,19 +1342,19 @@ export const AuthPage = () => {
               style={{
                 marginTop: '28px',
                 paddingTop: '16px',
-                borderTop: '1px solid rgba(255, 217, 218, 0.08)',
+                borderTop: '1px solid var(--border-subtle)',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 fontSize: '11px',
-                color: '#A68A8D',
+                color: 'var(--text-muted)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <HelpCircle size={14} />
                 <span>Academic Registrar Helpdesk</span>
               </div>
-              <span style={{ color: '#FFB1C2' }}>Campus Kiosk 24/7 Available</span>
+              <span style={{ color: 'var(--brand-primary)', fontWeight: 600 }}>Campus Kiosk 24/7 Available</span>
             </div>
           </div>
         </div>
@@ -1313,7 +1369,7 @@ export const AuthPage = () => {
             position: 'fixed',
             inset: 0,
             zIndex: 100,
-            backgroundColor: 'rgba(17, 13, 14, 0.85)',
+            backgroundColor: 'rgba(15, 23, 42, 0.5)',
             backdropFilter: 'blur(8px)',
             display: 'flex',
             alignItems: 'center',
@@ -1323,13 +1379,13 @@ export const AuthPage = () => {
         >
           <div
             style={{
-              backgroundColor: '#231E1F',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
               padding: '28px',
               width: '100%',
               maxWidth: '480px',
-              border: '1px solid rgba(255, 217, 218, 0.15)',
-              boxShadow: '0 24px 48px rgba(0, 0, 0, 0.5)',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: 'var(--shadow-xl)',
               display: 'flex',
               flexDirection: 'column',
               gap: '16px',
@@ -1342,16 +1398,16 @@ export const AuthPage = () => {
                     width: '36px',
                     height: '36px',
                     borderRadius: '8px',
-                    backgroundColor: 'rgba(172, 39, 79, 0.25)',
+                    backgroundColor: 'var(--brand-soft-bg)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#FFB2BF',
+                    color: 'var(--brand-primary)',
                   }}
                 >
                   <KeyRound size={20} />
                 </div>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#FFFFFF', margin: 0 }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                   Institutional Account Recovery
                 </h3>
               </div>
@@ -1361,13 +1417,13 @@ export const AuthPage = () => {
                   setShowForgotModal(false);
                   setForgotFeedback(null);
                 }}
-                style={{ background: 'none', border: 'none', color: '#A68A8D', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
               >
                 <X size={20} />
               </button>
             </div>
 
-            <p style={{ fontSize: '13px', color: '#DFBFC3', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
               Institutional passwords are encrypted through State University Keycloak Federated SSO. Enter your
               institutional email below to route an account lookup ticket.
             </p>
@@ -1378,9 +1434,9 @@ export const AuthPage = () => {
                   padding: '12px 14px',
                   borderRadius: '8px',
                   backgroundColor:
-                    forgotFeedback.type === 'error' ? 'rgba(147, 0, 10, 0.35)' : 'rgba(172, 39, 79, 0.25)',
-                  border: `1px solid ${forgotFeedback.type === 'error' ? '#FFB4AB' : '#FFB2BF'}`,
-                  color: forgotFeedback.type === 'error' ? '#FFDAD6' : '#FFD9DE',
+                    forgotFeedback.type === 'error' ? '#FEF2F2' : 'var(--brand-soft-bg)',
+                  border: `1px solid ${forgotFeedback.type === 'error' ? '#FECACA' : '#FECDD3'}`,
+                  color: forgotFeedback.type === 'error' ? '#991B1B' : 'var(--brand-misty)',
                   fontSize: '12px',
                   lineHeight: 1.5,
                 }}
@@ -1391,7 +1447,7 @@ export const AuthPage = () => {
 
             <form onSubmit={handleForgotSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: '#EAE0E1' }}>Institutional Email Address</label>
+                <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Institutional Email Address</label>
                 <input
                   type="email"
                   value={forgotEmail}
@@ -1400,10 +1456,10 @@ export const AuthPage = () => {
                   style={{
                     width: '100%',
                     padding: '10px 14px',
-                    backgroundColor: '#110D0E',
-                    border: '1px solid #584144',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    border: '1px solid var(--border-interactive)',
                     borderRadius: '8px',
-                    color: '#FFFFFF',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                   }}
@@ -1420,9 +1476,9 @@ export const AuthPage = () => {
                   style={{
                     padding: '9px 16px',
                     borderRadius: '8px',
-                    backgroundColor: '#2D292A',
-                    color: '#EAE0E1',
-                    border: 'none',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    color: 'var(--text-secondary)',
+                    border: '1px solid var(--border-subtle)',
                     fontSize: '13px',
                     cursor: 'pointer',
                   }}
@@ -1434,7 +1490,7 @@ export const AuthPage = () => {
                   style={{
                     padding: '9px 16px',
                     borderRadius: '8px',
-                    backgroundColor: '#AC274F',
+                    backgroundColor: 'var(--brand-primary)',
                     color: '#FFFFFF',
                     border: 'none',
                     fontSize: '13px',

@@ -35,12 +35,12 @@ export const Button = ({
     primary: {
       background: 'var(--brand-primary)',
       color: '#FFFFFF',
-      boxShadow: '0 4px 12px rgba(172, 39, 79, 0.3)',
+      boxShadow: '0 4px 12px rgba(158, 21, 62, 0.25)',
     },
     secondary: {
       background: 'var(--bg-surface)',
       border: '1px solid var(--border-interactive)',
-      color: 'var(--brand-misty)',
+      color: 'var(--brand-primary)',
     },
     ghost: {
       background: 'transparent',

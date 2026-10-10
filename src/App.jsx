@@ -11,8 +11,6 @@ import CampusDirectory from './pages/CampusDirectory';
 import SmartRooms from './pages/SmartRooms';
 import CareComplaints from './pages/CareComplaints';
 import AiAssistant from './pages/AiAssistant';
-import EcoCampus from './pages/EcoCampus';
-import SkillCampus from './pages/SkillCampus';
 import AdminDashboard from './pages/AdminDashboard';
 import CampusManagement from './pages/CampusManagement';
 import ComplaintAdmin from './pages/ComplaintAdmin';
@@ -38,8 +36,6 @@ export function App() {
             <Route path="smartroom" element={<SmartRooms />} />
             <Route path="complaints" element={<CareComplaints />} />
             <Route path="ai-assistant" element={<AiAssistant />} />
-            <Route path="ecocampus" element={<EcoCampus />} />
-            <Route path="skillcampus" element={<SkillCampus />} />
             <Route path="profile" element={<ProfileSettings />} />
 
             {/* Admin Exclusive Features */}

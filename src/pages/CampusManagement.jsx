@@ -1068,14 +1068,14 @@ export function CampusManagement() {
                   <div className="relative w-full h-32 bg-surface-container-high/40 rounded flex items-center justify-center p-2 overflow-hidden">
                     <svg className="w-full h-full text-outline-variant" fill="none" stroke="currentColor" viewBox="0 0 400 160">
                       {/* Building Perimeter */}
-                      <rect className="stroke-outline" fill="#231e1f" height="120" rx="8" strokeWidth="1.5" width="360" x="20" y="20"></rect>
+                      <rect className="stroke-slate-300" fill="#F8FAFC" height="120" rx="8" strokeWidth="1.5" width="360" x="20" y="20"></rect>
                       {/* Corridor Wayfinding */}
-                      <path className="stroke-secondary/60" d="M 60 80 L 340 80" strokeDasharray="4 4" strokeWidth="2"></path>
-                      <path className="stroke-secondary/40" d="M 190 20 L 190 140" strokeDasharray="4 4" strokeWidth="2"></path>
+                      <path className="stroke-slate-300" d="M 60 80 L 340 80" strokeDasharray="4 4" strokeWidth="2"></path>
+                      <path className="stroke-slate-300" d="M 190 20 L 190 140" strokeDasharray="4 4" strokeWidth="2"></path>
 
                       {/* Room B-204 Highlight (Occupied) */}
                       <rect
-                        className="fill-primary-container/40 stroke-primary cursor-pointer hover:fill-primary-container/70"
+                        className="fill-rose-50 stroke-rose-600 cursor-pointer hover:fill-rose-100"
                         height="42"
                         rx="4"
                         strokeWidth="1.5"
@@ -1093,14 +1093,14 @@ export function CampusManagement() {
                           })
                         }
                       ></rect>
-                      <text fill="#ffb2bf" fontFamily="Inter" fontSize="10" fontWeight="600" textAnchor="middle" x="65" y="55">
+                      <text fill="#9E153E" fontFamily="Inter" fontSize="10" fontWeight="600" textAnchor="middle" x="65" y="55">
                         B-204
                       </text>
                       <circle className="fill-primary" cx="90" cy="40" r="3"></circle>
 
                       {/* Room B-208 (Robotics Lab) */}
                       <rect
-                        className="fill-surface-variant stroke-secondary cursor-pointer hover:fill-surface-container-high"
+                        className="fill-slate-100 stroke-slate-300 cursor-pointer hover:fill-slate-200"
                         height="42"
                         rx="4"
                         strokeWidth="1"
@@ -1118,13 +1118,13 @@ export function CampusManagement() {
                           })
                         }
                       ></rect>
-                      <text fill="#ffdadb" fontFamily="Inter" fontSize="10" fontWeight="600" textAnchor="middle" x="145" y="55">
+                      <text fill="#0F172A" fontFamily="Inter" fontSize="10" fontWeight="600" textAnchor="middle" x="145" y="55">
                         B-208
                       </text>
 
                       {/* Room B-212 (Quiet Pod - Open) */}
                       <rect
-                        className="fill-surface-variant stroke-secondary/80 cursor-pointer hover:fill-surface-container-high"
+                        className="fill-slate-100 stroke-slate-300 cursor-pointer hover:fill-slate-200"
                         height="42"
                         rx="4"
                         strokeWidth="1.5"
@@ -1142,23 +1142,23 @@ export function CampusManagement() {
                           })
                         }
                       ></rect>
-                      <text fill="#ffffff" fontFamily="Inter" fontSize="10" fontWeight="600" textAnchor="middle" x="230" y="55">
+                      <text fill="#0F172A" fontFamily="Inter" fontSize="10" fontWeight="600" textAnchor="middle" x="230" y="55">
                         B-212
                       </text>
                       <circle className="fill-secondary" cx="250" cy="40" r="3"></circle>
 
                       {/* Additional schematic units */}
-                      <rect className="fill-surface-container-high stroke-outline-variant" height="42" rx="4" strokeWidth="0.8" width="100" x="270" y="30"></rect>
-                      <text fill="#a68a8d" fontFamily="Inter" fontSize="9" textAnchor="middle" x="320" y="55">Server Annex</text>
+                      <rect className="fill-slate-50 stroke-slate-200" height="42" rx="4" strokeWidth="0.8" width="100" x="270" y="30"></rect>
+                      <text fill="#64748B" fontFamily="Inter" fontSize="9" textAnchor="middle" x="320" y="55">Server Annex</text>
 
-                      <rect className="fill-surface-container-high stroke-outline-variant" height="42" rx="4" strokeWidth="0.8" width="100" x="30" y="90"></rect>
-                      <text fill="#a68a8d" fontFamily="Inter" fontSize="9" textAnchor="middle" x="80" y="115">Staff Lounge</text>
+                      <rect className="fill-slate-50 stroke-slate-200" height="42" rx="4" strokeWidth="0.8" width="100" x="30" y="90"></rect>
+                      <text fill="#64748B" fontFamily="Inter" fontSize="9" textAnchor="middle" x="80" y="115">Staff Lounge</text>
 
-                      <rect className="fill-surface-container-high stroke-outline-variant" height="42" rx="4" strokeWidth="0.8" width="80" x="200" y="90"></rect>
-                      <text fill="#a68a8d" fontFamily="Inter" fontSize="9" textAnchor="middle" x="240" y="115">Seminar Pod</text>
+                      <rect className="fill-slate-50 stroke-slate-200" height="42" rx="4" strokeWidth="0.8" width="80" x="200" y="90"></rect>
+                      <text fill="#64748B" fontFamily="Inter" fontSize="9" textAnchor="middle" x="240" y="115">Seminar Pod</text>
 
-                      <rect className="fill-surface-container-high stroke-outline-variant" height="42" rx="4" strokeWidth="0.8" width="80" x="290" y="90"></rect>
-                      <text fill="#a68a8d" fontFamily="Inter" fontSize="9" textAnchor="middle" x="330" y="115">Restrooms • Lift</text>
+                      <rect className="fill-slate-50 stroke-slate-200" height="42" rx="4" strokeWidth="0.8" width="80" x="290" y="90"></rect>
+                      <text fill="#64748B" fontFamily="Inter" fontSize="9" textAnchor="middle" x="330" y="115">Restrooms • Lift</text>
                     </svg>
 
                     <div className="absolute bottom-2 right-2">

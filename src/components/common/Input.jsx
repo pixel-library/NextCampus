@@ -44,14 +44,14 @@ export const Input = ({
             backgroundColor: 'var(--bg-surface-subtle)',
             border: error ? '1px solid #93000A' : '1px solid var(--border-interactive)',
             borderRadius: '10px',
-            color: '#FFFFFF',
+            color: 'var(--text-primary)',
             fontSize: '14px',
             outline: 'none',
             transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
           }}
         />
       </div>
-      {error && <span style={{ fontSize: '12px', color: '#FFB4AB' }}>{error}</span>}
+      {error && <span style={{ fontSize: '12px', color: '#DC2626' }}>{error}</span>}
     </div>
   );
 };
