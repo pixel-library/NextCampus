@@ -12,7 +12,7 @@ const INITIAL_COMPLAINTS = [
     priority: 'medium',
     status: 'in_progress',
     statusText: 'In Progress (Dispatch Active)',
-    building: 'Alan Turing Hall (Block A-01)',
+    building: 'Faculty of Engineering & Technology (ENG-02)',
     location: 'Level 2 Multi-Media Theatre (Room B-204)',
     description: 'During CS-301 Lecture, the ceiling dual 4K laser projector exhibits severe green frame flickering and lost optical sync when switching inputs from the Lectern 4 Thunderbolt interface.',
     assignedTo: 'Tech Team #2 (Lead: Marcus Vance)',
@@ -78,7 +78,7 @@ export function CareComplaints() {
   // Form State
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('academic');
-  const [building, setBuilding] = useState('Alan Turing Hall (Block A-01)');
+  const [building, setBuilding] = useState('Faculty of Engineering & Technology (ENG-02)');
   const [location, setLocation] = useState('');
   const [priority, setPriority] = useState('medium');
   const [description, setDescription] = useState('');
@@ -414,11 +414,16 @@ export function CareComplaints() {
                       onChange={(e) => setBuilding(e.target.value)}
                       className="w-full h-10 pl-3 pr-8 rounded-xl bg-surface-elevated border border-surface-border text-xs text-slate-900 focus:outline-none focus:border-brand-blush appearance-none cursor-pointer"
                     >
-                      <option>Alan Turing Hall (Block A-01)</option>
-                      <option>Central Learning Resources Hub</option>
-                      <option>Ramanujan Science Complex</option>
-                      <option>Dorothy Hodgkin Pavilion</option>
-                      <option>Fountain Quad &amp; Amenities</option>
+                      <option>Faculty of Engineering &amp; Technology (ENG-02)</option>
+                      <option>Maharana Pratap Main Academic Block (ADM-01)</option>
+                      <option>Swami Vivekananda Central Library (LIB-03)</option>
+                      <option>Mewar University Central Auditorium (AUD-04)</option>
+                      <option>University Cafeteria &amp; Food Court (CAF-05)</option>
+                      <option>Aravalli Boys Residential Hostel (HST-06)</option>
+                      <option>Meera Bai Girls Residential Hostel (HST-07)</option>
+                      <option>Mewar Sports Arena &amp; Cricket Ground (SPT-08)</option>
+                      <option>Mewar University Hospital &amp; Health Centre (MED-09)</option>
+                      <option>Main Campus Gate (NH-48, Gangrar) (GATE-10)</option>
                     </select>
                     <span className="material-symbols-outlined absolute right-2.5 top-2.5 pointer-events-none text-brand-misty/50 text-[18px]">
                       expand_more
@@ -511,7 +516,7 @@ export function CareComplaints() {
                   <span className="material-symbols-outlined text-[22px] text-brand-blush mb-1 group-hover:scale-110 transition-transform">
                     add_a_photo
                   </span>
-                  <span className="text-xs font-medium text-white">
+                  <span className="text-xs font-medium text-slate-700">
                     {fileAttachment ? fileAttachment.name : 'Click or drag photo / document here'}
                   </span>
                   <span className="text-[10px] text-brand-misty/60 mt-0.5">JPG, PNG, WEBP, SVG, PDF up to 10MB</span>
@@ -542,15 +547,16 @@ export function CareComplaints() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 h-11 rounded-xl bg-gradient-to-r from-brand-amaranth to-brand-blush text-white text-xs font-bold shadow-[0_0_18px_rgba(172,39,79,0.4)] hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  style={{ backgroundColor: '#9E153E', color: '#FFFFFF' }}
+                  className="flex-1 h-11 rounded-xl hover:brightness-110 active:scale-[0.98] text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <span className="material-symbols-outlined text-[18px]">send</span>
                   <span>{isSubmitting ? 'Submitting & Dispatching...' : 'Submit Complaint & Dispatch'}</span>
                 </button>
               </div>
 
-              <p className="text-[11px] text-brand-misty/50 text-center leading-relaxed pt-1">
-                Institutional Notice: Tickets integrate into Oxford Brookes CAFM facilities protocol.
+              <p className="text-[11px] text-brand-misty/70 text-center leading-relaxed pt-1">
+                Institutional Notice: Tickets are registered directly into Mewar University Central Administrative Council &amp; Facility Operations Node.
               </p>
             </form>
           </div>
@@ -561,10 +567,10 @@ export function CareComplaints() {
               <span className="material-symbols-outlined text-[18px]">emergency_home</span>
             </div>
             <div className="space-y-0.5">
-              <div className="text-xs font-bold text-white">Emergency Facility Response</div>
+              <div className="text-xs font-bold text-slate-900">Emergency Facility Response</div>
               <p className="text-[11px] text-brand-misty/70 leading-normal">
                 For major gas leaks, burst pipes, elevator malfunctions, or power emergencies, dial Campus Security instantly at{' '}
-                <span className="font-mono text-brand-blush font-bold">x4444</span> or trigger immediate emergency dispatch.
+                <span className="font-mono text-brand-blush font-bold">+91 1471-291148 / Ext. 108</span> or trigger immediate emergency dispatch.
               </p>
             </div>
           </div>

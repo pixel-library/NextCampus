@@ -33,7 +33,7 @@ export function ComplaintAdmin() {
     title: '',
     category: 'av',
     priority: 'high',
-    location: 'Alan Turing Hall, Room B-204',
+    location: 'Faculty of Engineering & Technology, Room B-204',
     description: '',
     reporterName: 'Facilities Maintenance Dispatch',
   });
@@ -92,7 +92,7 @@ export function ComplaintAdmin() {
       status: 'in_progress',
       description:
         'Intermittent black screening and magenta artifacts during lecture streaming. System restarts do not resolve. Wall jack warm to touch.',
-      location: 'Alan Turing Hall, Room B-204',
+      location: 'Faculty of Engineering & Technology, Room B-204',
       studentId: {
         name: 'Rudra Sharma',
         rollNumber: 'MU2026001',
@@ -105,7 +105,7 @@ export function ComplaintAdmin() {
       ],
       updates: [
         {
-          message: 'Technician Marcus Vance has been dispatched to Alan Turing Hall Room B-204 with replacement 4K optical HDMI transceiver.',
+          message: 'Technician Marcus Vance has been dispatched to Faculty of Engineering & Technology Room B-204 with replacement 4K optical HDMI transceiver.',
           updatedBy: 'Auto-Broadcast • Dispatch System',
           createdAt: new Date().toISOString(),
         },
@@ -315,7 +315,7 @@ export function ComplaintAdmin() {
           title: '',
           category: 'av',
           priority: 'high',
-          location: 'Alan Turing Hall, Room B-204',
+          location: 'Faculty of Engineering & Technology, Room B-204',
           description: '',
           reporterName: 'Facilities Maintenance Dispatch',
         });
@@ -754,7 +754,7 @@ export function ComplaintAdmin() {
                         <td className="py-3 px-3 hidden sm:table-cell">
                           <div className="flex flex-col">
                             <span className="text-on-surface font-medium truncate max-w-[140px]">
-                              {c.buildingName || c.location?.split(',')[0] || 'Alan Turing Hall'}
+                              {c.buildingName || c.location?.split(',')[0] || 'Faculty of Engineering'}
                             </span>
                             <span className="font-caption text-caption text-outline truncate max-w-[140px]">
                               {c.roomNumber || c.location?.split(',')[1] || c.location}
@@ -1335,7 +1335,7 @@ export function ComplaintAdmin() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Alan Turing Hall, Room B-204"
+                  placeholder="e.g. Faculty of Engineering & Technology, Room B-204"
                   value={newTicketForm.location}
                   onChange={(e) => setNewTicketForm({ ...newTicketForm, location: e.target.value })}
                   className="w-full bg-surface-container-low px-3 py-2 rounded-lg text-on-surface border border-outline-variant/30 focus:outline-none focus:ring-1 focus:ring-primary"

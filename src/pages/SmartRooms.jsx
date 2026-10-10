@@ -7,7 +7,7 @@ const SAMPLE_ROOMS = [
     roomNumber: 'B-204',
     name: 'Multi-Media Lecture Theatre',
     type: 'Lecture Theatres',
-    building: 'Alan Turing Hall (Block A-01)',
+    building: 'Faculty of Engineering & Technology (Block ENG-02)',
     floor: 'Level 2',
     capacity: 60,
     currentOccupancy: 18,
@@ -36,7 +36,7 @@ const SAMPLE_ROOMS = [
     roomNumber: 'B-203',
     name: 'Distributed Systems Lab',
     type: 'Computer Labs',
-    building: 'Alan Turing Hall (Block A-01)',
+    building: 'Faculty of Engineering & Technology (Block ENG-02)',
     floor: 'Level 2',
     capacity: 40,
     currentOccupancy: 10,
@@ -64,7 +64,7 @@ const SAMPLE_ROOMS = [
     roomNumber: 'B-201',
     name: 'Large Amphitheatre',
     type: 'Lecture Theatres',
-    building: 'Alan Turing Hall (Block A-01)',
+    building: 'Faculty of Engineering & Technology (Block ENG-02)',
     floor: 'Level 2',
     capacity: 120,
     currentOccupancy: 120,
@@ -91,7 +91,7 @@ const SAMPLE_ROOMS = [
     roomNumber: 'B-202',
     name: 'Faculty Seminar Suite',
     type: 'Smart Classrooms',
-    building: 'Alan Turing Hall (Block A-01)',
+    building: 'Faculty of Engineering & Technology (Block ENG-02)',
     floor: 'Level 2',
     capacity: 35,
     currentOccupancy: 35,
@@ -118,7 +118,7 @@ const SAMPLE_ROOMS = [
     roomNumber: 'B-205',
     name: 'AI & Robotics Lab',
     type: 'Computer Labs',
-    building: 'Alan Turing Hall (Block A-01)',
+    building: 'Faculty of Engineering & Technology (Block ENG-02)',
     floor: 'Level 2',
     capacity: 28,
     currentOccupancy: 28,
@@ -145,7 +145,7 @@ const SAMPLE_ROOMS = [
     roomNumber: 'B-206',
     name: 'Silent Acoustic Study Pods',
     type: 'Study Pods',
-    building: 'Alan Turing Hall (Block A-01)',
+    building: 'Faculty of Engineering & Technology (Block ENG-02)',
     floor: 'Level 2',
     capacity: 16,
     currentOccupancy: 12,
@@ -173,7 +173,7 @@ export function SmartRooms() {
   const navigate = useNavigate();
 
   const [rooms, setRooms] = useState(SAMPLE_ROOMS);
-  const [selectedBuilding, setSelectedBuilding] = useState('Alan Turing Hall (Block A-01)');
+  const [selectedBuilding, setSelectedBuilding] = useState('Faculty of Engineering & Technology (Block ENG-02)');
   const [selectedFloor, setSelectedFloor] = useState('Level 2');
   const [selectedType, setSelectedType] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -231,7 +231,7 @@ export function SmartRooms() {
         <div className="flex flex-wrap items-center justify-between gap-space-sm">
           <div className="flex items-center gap-space-xs text-caption font-caption tracking-wider uppercase text-on-surface-variant">
             <span className="px-space-xs py-0.5 rounded bg-surface-container-high text-primary font-semibold">CAD / BIM Mesh</span>
-            <span>Oxford Brookes University • {selectedBuilding}</span>
+            <span>Mewar University • Gangrar, Chittorgarh • {selectedBuilding}</span>
             <span className="text-outline">/</span>
             <span className="text-primary font-medium">{selectedFloor} Blueprint</span>
           </div>
@@ -249,7 +249,7 @@ export function SmartRooms() {
               SmartRooms &amp; Indoor Wayfinding
             </h1>
             <p className="font-body-md text-body-md text-on-surface-variant max-w-3xl mt-1">
-              Real-time room availability, equipment telemetry, environmental sensors, and turn-by-turn vector navigation across academic blocks.
+              Real-time room availability, equipment telemetry, environmental sensors, and turn-by-turn vector navigation across Mewar University academic blocks.
             </p>
           </div>
 
@@ -260,7 +260,7 @@ export function SmartRooms() {
               <span className="font-headline-sm text-headline-sm text-on-surface font-bold">42</span>
             </div>
             <div className="px-3.5 py-2 rounded-xl bg-surface-container-high flex flex-col min-w-[100px] border border-primary/30">
-              <span class="font-caption text-caption text-primary uppercase tracking-wider">Available</span>
+              <span className="font-caption text-caption text-primary uppercase tracking-wider">Available</span>
               <span className="font-headline-sm text-headline-sm text-primary font-bold">18</span>
             </div>
             <div className="px-3.5 py-2 rounded-xl bg-surface-container-high flex flex-col min-w-[100px] border border-outline-variant/30">
@@ -297,10 +297,10 @@ export function SmartRooms() {
                 onChange={(e) => setSelectedBuilding(e.target.value)}
                 className="w-full h-11 pl-3.5 pr-8 rounded-xl bg-surface-container-lowest text-on-surface font-label-md text-label-md appearance-none focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer border border-outline-variant/30"
               >
-                <option>Alan Turing Hall (Block A-01)</option>
-                <option>Central Library &amp; Commons</option>
-                <option>Ramanujan Science Complex</option>
-                <option>Innovation &amp; Engineering Hub</option>
+                <option>Faculty of Engineering &amp; Technology (Block ENG-02)</option>
+                <option>Maharana Pratap Main Academic Block (Block ADM-01)</option>
+                <option>Swami Vivekananda Central Library (Block LIB-03)</option>
+                <option>Mewar University Central Auditorium (Block AUD-04)</option>
               </select>
               <span className="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
             </div>
@@ -863,7 +863,7 @@ export function SmartRooms() {
             {/* Wayfinding Action CTA */}
             <div className="flex flex-col gap-2 pt-2">
               <button
-                onClick={() => navigate('/campus-map')}
+                onClick={() => navigate('/campus-map?bldg=eng')}
                 className="w-full py-3 px-4 rounded-xl bg-[#9E153E] hover:bg-[#831843] active:scale-[0.99] text-white font-label-md text-label-md font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
               >
                 <span className="material-symbols-outlined text-[18px]">navigation</span>

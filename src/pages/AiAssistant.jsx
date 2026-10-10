@@ -6,21 +6,21 @@ const DEFAULT_HISTORY_GROUPS = [
   {
     groupTitle: 'Today',
     items: [
-      { id: 'h-1', title: 'Directions to Turing Hall B-204', category: 'Spatial Query • Live', active: true },
-      { id: 'h-2', title: 'Quiet Study Pod 4 (Library)', category: '10:14 AM • Confirmed', active: false }
+      { id: 'h-1', title: 'Directions to Engineering Block B-204', category: 'Spatial Query • Live', active: true },
+      { id: 'h-2', title: 'Quiet Study Pod 4 (Central Library)', category: '10:14 AM • Confirmed', active: false }
     ]
   },
   {
     groupTitle: 'Yesterday',
     items: [
-      { id: 'h-3', title: 'Reporting CS Lab Projector Glitch', category: 'Care Dispatch #NC-8921', active: false },
+      { id: 'h-3', title: 'Reporting Engineering Lab Projector Glitch', category: 'Care Dispatch #NC-8921', active: false },
       { id: 'h-4', title: "Prof. Roy's Office Hours & Mail", category: 'Faculty Directory Node', active: false }
     ]
   },
   {
     groupTitle: 'Previous 7 Days',
     items: [
-      { id: 'h-5', title: 'Campus EV Shuttle Timetable & Stops', category: 'Transport Sync', active: false },
+      { id: 'h-5', title: 'Mewar Campus EV Shuttle Timetable & Stops', category: 'Transport Sync', active: false },
       { id: 'h-6', title: 'Library 24/7 Smart Access Rules', category: 'Security Policy', active: false }
     ]
   }
@@ -30,32 +30,32 @@ const INITIAL_MESSAGES = [
   {
     id: 'msg-1-user',
     sender: 'user',
-    text: 'How do I reach the computer laboratory in Alan Turing Hall from the Central Library, and is Room B-204 open right now?',
+    text: 'How do I reach the AI & Computer Laboratory in Faculty of Engineering from the Main Campus Gate (NH-48), and is Room B-204 open right now?',
     time: '10:42 AM • Student Self-Service'
   },
   {
     id: 'msg-1-ai',
     sender: 'ai',
-    text: 'To reach the Distributed Systems & Multimedia Computer Laboratory (Room B-204) in Alan Turing Hall (Block A-01) from the Central Library:\n\nThe fastest and most comfortable route is via the 2nd Floor Covered Skybridge. It provides step-free ADA accessibility, sheltered transit against weather, and directly connects into Turing Hall Level 2. Total walking time is approx. 4 minutes (320 meters).',
+    text: 'To reach the AI & Machine Learning Lab (Room B-204) in the Faculty of Engineering & Technology (Block ENG-02) from the Main Campus Gate (NH-48, Gangrar):\n\nEnter through the main gate archway and walk north along Central Avenue for 150 meters past the Maharana Pratap Academic Block, then follow the Engineering Promenade into the Tech Wing and take the lift or stairs to Floor 2. Total walking time is ~3.5 minutes (280 meters).',
     time: '10:42 AM • NextCampus LLM v4.2',
     isLiveModel: false,
-    engineName: 'Simulated Copilot Engine (Demo Service)',
+    engineName: 'Simulated Copilot Engine (Mewar University AI)',
     thought: [
-      '⚡ Graph retrieved: Central Library East Gate ➔ 2nd Floor Covered Skybridge ➔ Turing Hall A-01 ➔ Lab Corridor Level 2.',
-      '⚡ Telemetry queried: SmartRoom sensor B-204 confirms 18/60 occupants (30% density). Ambient temp: 21.8°C.',
+      '⚡ Graph retrieved: Main Campus Gate (NH-48) ➔ Central Avenue ➔ Maharana Pratap Block ➔ Faculty of Engineering ENG-02 ➔ Lab Corridor Level 2.',
+      '⚡ Telemetry queried: SmartRoom sensor B-204 confirms 18/60 occupants (30% density). Ambient temp: 21.5°C.',
       '⚡ Timetable check: Next scheduled lecture is CS-301 at 11:30 AM. Room open window: 48 minutes remaining.'
     ],
     cards: [
       {
         type: 'route',
-        title: 'Campus Transit Route',
+        title: 'Mewar Campus Transit Route',
         tag: 'Step-Free / ADA',
-        from: 'Central Library — East Portal Gate',
-        via: 'Level 2 Climate-Controlled Skybridge (190m)',
-        to: 'Alan Turing Hall — Wing B, Room B-204',
-        metric: '320m • ~4 mins walk',
+        from: 'Main Campus Gate (NH-48, Gangrar)',
+        via: 'Central Avenue & Engineering Promenade (140m)',
+        to: 'Faculty of Engineering & Technology — Room B-204',
+        metric: '280m • ~3.5 mins walk',
         actionLabel: 'Open in Campus Map',
-        actionRoute: '/campus-map'
+        actionRoute: '/campus-map?bldg=eng'
       },
       {
         type: 'room_telemetry',

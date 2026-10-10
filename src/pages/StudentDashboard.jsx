@@ -70,11 +70,11 @@ export const StudentDashboard = () => {
       }
     } catch (err) {
       if (text.includes('Prof. Roy')) {
-        setAiResponse({ reply: "Prof. Ananya Roy is in Turing Hall Room A-302. Office hours: Mon & Wed 2:00 PM – 4:00 PM.", suggestedAction: "/directory" });
+        setAiResponse({ reply: "Prof. Ananya Roy is in Faculty of Engineering Room B-204. Office hours: Mon & Wed 2:00 PM – 4:00 PM.", suggestedAction: "/directory" });
       } else if (text.includes('study pod')) {
-        setAiResponse({ reply: "Library Pod 4B is open for immediate reservations on Level 2.", suggestedAction: "/smartroom" });
+        setAiResponse({ reply: "Swami Vivekananda Library Pod 4B is open for immediate reservations on Level 2.", suggestedAction: "/smartrooms" });
       } else {
-        setAiResponse({ reply: "Turing Hall Room B-204 Distributed Systems Lab is open with 18/60 desk capacity.", suggestedAction: "/campus-map" });
+        setAiResponse({ reply: "Faculty of Engineering Room B-204 AI & Systems Lab is open with 18/60 desk capacity.", suggestedAction: "/campus-map?bldg=eng" });
       }
     } finally {
       setAiLoading(false);
@@ -90,7 +90,7 @@ export const StudentDashboard = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
               <Badge status="active">Fall Semester 2026 • Week 7</Badge>
               <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                NextCampus Institute of Technology • Active Node #04
+                Mewar University • Gangrar, Chittorgarh (Rajasthan)
               </span>
             </div>
             <h1 style={{ fontSize: '1.85rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
@@ -297,7 +297,7 @@ export const StudentDashboard = () => {
                     <span>•</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <MapPin size={14} style={{ color: 'var(--brand-accent)' }} />
-                      Turing Hall, Room B-204
+                      Faculty of Engineering (Block ENG-02), Room B-204
                     </span>
                   </div>
                 </div>
@@ -446,7 +446,7 @@ export const StudentDashboard = () => {
             </div>
 
             <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px', backgroundColor: 'var(--bg-surface-subtle)', padding: '10px', borderRadius: '8px' }}>
-              Hi {studentName}! Need a quiet space or walking directions to Turing Hall? Tap a prompt or ask me below:
+              Hi {studentName}! Need a quiet space or walking directions across Mewar University? Tap a prompt or ask me below:
             </p>
 
             {/* Quick Prompt Chips */}

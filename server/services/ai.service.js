@@ -6,21 +6,21 @@
 
 const CAMPUS_GRAPH = {
   buildings: [
-    { code: 'A-01', name: 'Alan Turing Hall', dept: 'School of Computing & Cybernetics', rooms: ['B-201', 'B-204', 'B-208'], target: 'B-204 (Distributed Systems Lab)', walkTime: '4 mins (320m)', accessible: 'Skybridge ADA Ramp' },
-    { code: 'B-02', name: 'Central Campus Library', dept: 'Digital Reference & Commons', rooms: ['Pod 1', 'Pod 4B', 'Level 2 Quiet'], target: 'Quiet Pod 4B', walkTime: '0 mins (Origin)', accessible: 'Elevator & Tactile Paving' },
-    { code: 'C-03', name: 'Ramanujan Science Complex', dept: 'Mathematics & Applied Physics', rooms: ['S-104', 'S-108', 'Lab 3'], target: 'Room S-108', walkTime: '5 mins (410m)', accessible: 'Elevators & Ramps' },
-    { code: 'D-04', name: 'Student Activity Center (SAC)', dept: 'Student Union, Dining & Clubs', rooms: ['Dining Hall', 'Amphitheater', 'Council Office'], target: 'Central Dining Arcade', walkTime: '3 mins (220m)', accessible: 'Full Wheelchair Ramp' },
-    { code: 'INN-HUB-01', name: 'Robotics & AI Innovation Hub', dept: 'Autonomous Systems & Mechatronics', rooms: ['Hardware Lab 1', 'Hardware Lab 4'], target: 'Hardware Lab 4', walkTime: '6 mins (520m)', accessible: 'Ground Floor Direct Access' }
+    { code: 'ENG-02', name: 'Faculty of Engineering & Technology', dept: 'School of Engineering, Computing & AI', rooms: ['B-201', 'B-204', 'B-208'], target: 'B-204 (Distributed Systems Lab)', walkTime: '3 mins (240m)', accessible: 'Skybridge ADA Ramp' },
+    { code: 'ADM-01', name: 'Maharana Pratap Main Academic & Admin Block', dept: 'University Registrar, Admissions & Vice-Chancellor Office', rooms: ['Admin 101', 'Conf Hall A', 'Dean Office'], target: 'Registrar Directorate', walkTime: '2 mins (150m)', accessible: 'Elevators & Ramps' },
+    { code: 'LIB-03', name: 'Swami Vivekananda Central Library', dept: 'Digital Archives & Central Reading Commons', rooms: ['Reading Hall 1', 'Digital Reference Lab', 'Level 2 Quiet'], target: 'Digital Reference Lab', walkTime: '2 mins (180m)', accessible: 'Tactile Paving & Ground Ramp' },
+    { code: 'AUD-04', name: 'Mewar University Central Auditorium', dept: 'Cultural Affairs, Convocations & Guest Lectures', rooms: ['Main Auditorium', 'Backstage VIP', 'Seminar Hall'], target: 'Main Auditorium Plenary', walkTime: '4 mins (310m)', accessible: 'Full Wheelchair Ramp' },
+    { code: 'CAF-05', name: 'University Central Cafeteria & Food Court', dept: 'Campus Dining Services & Student Plaza', rooms: ['Central Dining Hall', 'Outdoor Terrace', 'Juice Bar'], target: 'Main Dining Hall', walkTime: '3 mins (210m)', accessible: 'Ground Floor Direct Access' }
   ],
   faculty: [
-    { name: 'Prof. Ananya Roy', dept: 'School of Computing', role: 'Chair of Distributed Systems', email: 'a.roy@nextcampus.edu', office: 'Turing Hall A-302', officeHours: 'Mon & Wed 2:00 PM – 4:00 PM' },
-    { name: 'Dr. K. Venkatesh', dept: 'Robotics & AI', role: 'Lead Researcher, Autonomous Systems', email: 'k.venkatesh@nextcampus.edu', office: 'Innovation Hub IH-204', officeHours: 'Tue & Thu 10:00 AM – 12:00 PM' },
-    { name: 'Dr. Sarah Chen', dept: 'Department of Physics', role: 'Quantum Materials Fellow', email: 's.chen@nextcampus.edu', office: 'Ramanujan Complex S-214', officeHours: 'Fridays 1:00 PM – 3:30 PM' }
+    { name: 'Prof. Ananya Roy', dept: 'Faculty of Engineering', role: 'Chair of Distributed Systems & Cloud', email: 'a.roy@mewaruniversity.ac.in', office: 'Engineering Block ENG-302', officeHours: 'Mon & Wed 2:00 PM – 4:00 PM' },
+    { name: 'Dr. K. Venkatesh', dept: 'Robotics & AI', role: 'Lead Researcher, Autonomous Systems', email: 'k.venkatesh@mewaruniversity.ac.in', office: 'Engineering Block ENG-204', officeHours: 'Tue & Thu 10:00 AM – 12:00 PM' },
+    { name: 'Dr. Sarah Chen', dept: 'Department of Applied Sciences', role: 'Advanced Materials Fellow', email: 's.chen@mewaruniversity.ac.in', office: 'Admin Block ADM-214', officeHours: 'Fridays 1:00 PM – 3:30 PM' }
   ],
   shuttle: {
-    routeA: 'Central Library ➔ Turing Hall ➔ Ramanujan Complex ➔ SAC (Every 12 mins)',
-    routeB: 'East Residential Village ➔ Sports Complex ➔ Innovation Hub (Every 15 mins)',
-    status: 'Running On-Time (3 Active EV Shuttles)'
+    routeA: 'NH-48 Main Gate ➔ Maharana Pratap Admin Block ➔ Central Library ➔ Engineering Block (Every 10 mins)',
+    routeB: 'Hostel Village (Aravalli & Meera Bai) ➔ Sports Complex ➔ University Hospital (Every 15 mins)',
+    status: 'Running On-Time (3 Active Campus EV Shuttles)'
   }
 };
 
@@ -36,8 +36,8 @@ export const processAiQuery = async (prompt, userContext = {}) => {
   // 1. LIVE GEMINI PROVIDER (if API key is supplied)
   if (apiKey && process.env.GEMINI_API_KEY) {
     try {
-      const systemInstruction = `You are NextCampus AI, the intelligent spatial and institutional copilot for NextCampus (Oxford Brookes University).
-Campus landmarks: Alan Turing Hall (A-01, Computing & Robotics), Central Library (B-02, 24/7 quiet study), Ramanujan Science Complex (C-03, Physics & Math), Student Activity Center (SAC, Dining & Student Union), Robotics & AI Innovation Hub (INN-HUB-01).
+      const systemInstruction = `You are NextCampus AI, the intelligent spatial and institutional copilot for NextCampus (Mewar University, Gangrar, Chittorgarh).
+Campus landmarks: Faculty of Engineering & Technology (ENG-02, Computing & AI Labs), Maharana Pratap Main Academic & Admin Block (ADM-01), Swami Vivekananda Central Library (LIB-03), Mewar University Central Auditorium (AUD-04), University Cafeteria (CAF-05), Aravalli Boys Hostel (HST-06), Meera Bai Girls Hostel (HST-07), Mewar Sports Arena & Cricket Oval (SPT-08), Mewar University Hospital (MED-09), Main Campus Gate NH-48 (GATE-10).
 Provide concise, helpful, friendly and accurate guidance with directions, room telemetries, and campus services.`;
 
       const fetchRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
