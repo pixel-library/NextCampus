@@ -43,15 +43,21 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/campus', campusRoutes);
-app.use('/api/v1/smartrooms', roomRoutes);
-app.use('/api/v1/rooms', roomRoutes);
-app.use('/api/v1/care', careRoutes);
-app.use('/api/v1/skillcampus', skillRoutes);
-app.use('/api/v1/sustainability', sustainabilityRoutes);
-app.use('/api/v1/ai', aiRoutes);
-app.use('/api/v1/admin', adminRoutes);
+// Mount REST API endpoints supporting both /api/v1 and /api paths seamlessly
+const mountApiEndpoints = (prefix) => {
+  app.use(`${prefix}/auth`, authRoutes);
+  app.use(`${prefix}/campus`, campusRoutes);
+  app.use(`${prefix}/smartrooms`, roomRoutes);
+  app.use(`${prefix}/rooms`, roomRoutes);
+  app.use(`${prefix}/care`, careRoutes);
+  app.use(`${prefix}/skillcampus`, skillRoutes);
+  app.use(`${prefix}/sustainability`, sustainabilityRoutes);
+  app.use(`${prefix}/ai`, aiRoutes);
+  app.use(`${prefix}/admin`, adminRoutes);
+};
+
+mountApiEndpoints('/api/v1');
+mountApiEndpoints('/api');
 
 // Global Error Handler
 app.use(errorHandler);
