@@ -46,3 +46,7 @@ export const getAdminStats = async () => {
     ]
   };
 };
+
+export const getAdminDashboardMetrics = getAdminStats;
+export default { getAdminStats, getAdminDashboardMetrics };
+

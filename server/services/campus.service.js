@@ -309,6 +309,7 @@ export const deleteLocation = async (idOrCode, cascade = false) => {
 
   return {
     success: true,
+    deleted: true,
     message: `Building "${building.name}" and ${cascade ? dependentRoomsCount : 0} dependent records successfully removed.`,
     deletedRooms: cascade ? dependentRoomsCount : 0,
   };

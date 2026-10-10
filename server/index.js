@@ -43,10 +43,10 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Versioned REST API Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/campus', campusRoutes);
 app.use('/api/v1/smartrooms', roomRoutes);
+app.use('/api/v1/rooms', roomRoutes);
 app.use('/api/v1/care', careRoutes);
 app.use('/api/v1/skillcampus', skillRoutes);
 app.use('/api/v1/sustainability', sustainabilityRoutes);
