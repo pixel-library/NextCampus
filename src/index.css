@@ -155,3 +155,63 @@ a:hover {
   background: rgba(172, 39, 79, 0.15);
   color: var(--brand-misty);
 }
+
+/* Stitch Design System Theme Classes & Offline Fallback Utilities */
+.bg-background, .bg-surface-dim, .bg-surface { background-color: #161213; }
+.bg-surface-container-lowest { background-color: #110d0e; }
+.bg-surface-container-low { background-color: #1f1a1b; }
+.bg-surface-container { background-color: #231e1f; }
+.bg-surface-container-high { background-color: #2d292a; }
+.bg-surface-container-highest, .bg-surface-variant { background-color: #383335; }
+.bg-surface-bright { background-color: #3d3839; }
+.bg-primary-container { background-color: #ac274f; }
+.bg-secondary-container { background-color: #8c1844; }
+.bg-error-container { background-color: #93000a; }
+
+.text-on-surface { color: #eae0e1; }
+.text-on-surface-variant { color: #dfbfc3; }
+.text-on-primary { color: #660027; }
+.text-on-primary-container { color: #ffc7d0; }
+.text-primary { color: #ffb2bf; }
+.text-secondary { color: #ffb1c2; }
+.text-tertiary { color: #e2bebf; }
+.text-outline { color: #a68a8d; }
+.text-outline-variant { color: #584144; }
+.text-error { color: #ffb4ab; }
+
+.p-space-xs { padding: 0.25rem; }
+.p-space-sm { padding: 0.5rem; }
+.p-space-md { padding: 1rem; }
+.p-space-lg { padding: 1.5rem; }
+.p-space-xl { padding: 2rem; }
+
+.px-gutter { padding-left: 1.5rem; padding-right: 1.5rem; }
+.px-space-md { padding-left: 1rem; padding-right: 1rem; }
+.px-space-sm { padding-left: 0.5rem; padding-right: 0.5rem; }
+.px-space-xs { padding-left: 0.25rem; padding-right: 0.25rem; }
+.py-space-md { padding-top: 1rem; padding-bottom: 1rem; }
+.py-space-sm { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-space-xs { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+
+.gap-space-xs { gap: 0.25rem; }
+.gap-space-sm { gap: 0.5rem; }
+.gap-space-md { gap: 1rem; }
+.gap-space-lg { gap: 1.5rem; }
+.gap-space-xl { gap: 2rem; }
+
+.mb-space-sm { margin-bottom: 0.5rem; }
+.mb-space-md { margin-bottom: 1rem; }
+.mb-space-lg { margin-bottom: 1.5rem; }
+.mb-space-xl { margin-bottom: 2rem; }
+
+.font-headline-lg { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 32px; line-height: 40px; font-weight: 700; }
+.font-headline-md { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; line-height: 32px; font-weight: 600; }
+.font-headline-sm { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; line-height: 28px; font-weight: 600; }
+.font-title-md { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; line-height: 24px; font-weight: 600; }
+.font-display-hero { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 40px; line-height: 48px; font-weight: 800; }
+.font-body-md { font-family: 'Inter', sans-serif; font-size: 14px; line-height: 22.4px; }
+.font-body-sm { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 20px; }
+.font-body-lg { font-family: 'Inter', sans-serif; font-size: 15px; line-height: 24px; }
+.font-label-md { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 18px; font-weight: 500; }
+.font-label-sm { font-family: 'Inter', sans-serif; font-size: 12px; line-height: 16px; font-weight: 500; }
+.font-caption { font-family: 'Inter', sans-serif; font-size: 11px; line-height: 14px; font-weight: 500; }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -12,7 +12,116 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
+    <!-- Tailwind CDN for Stitch Design System UI Components -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#161213",
+              "secondary-fixed-dim": "#ffb1c2",
+              "on-surface-variant": "#dfbfc3",
+              "tertiary-fixed-dim": "#e2bebf",
+              "surface-container-highest": "#383335",
+              "inverse-surface": "#eae0e1",
+              "tertiary-fixed": "#ffdadb",
+              "on-tertiary-fixed": "#2a1617",
+              "on-primary-container": "#ffc7d0",
+              "error": "#ffb4ab",
+              "on-error": "#690005",
+              "on-secondary": "#66002c",
+              "on-tertiary-container": "#f1cccd",
+              "outline": "#a68a8d",
+              "surface-variant": "#383335",
+              "on-secondary-fixed-variant": "#891541",
+              "on-background": "#eae0e1",
+              "inverse-primary": "#af2951",
+              "on-tertiary-fixed-variant": "#5a4041",
+              "primary-container": "#ac274f",
+              "error-container": "#93000a",
+              "inverse-on-surface": "#342f30",
+              "secondary-container": "#8c1844",
+              "on-tertiary": "#422a2b",
+              "primary-fixed-dim": "#ffb2bf",
+              "secondary": "#ffb1c2",
+              "primary": "#ffb2bf",
+              "on-secondary-fixed": "#3f0019",
+              "surface-tint": "#ffb2bf",
+              "surface-container-lowest": "#110d0e",
+              "background": "#161213",
+              "secondary-fixed": "#ffd9e0",
+              "tertiary-container": "#715556",
+              "on-primary-fixed-variant": "#8e0a3a",
+              "tertiary": "#e2bebf",
+              "on-primary-fixed": "#3f0015",
+              "outline-variant": "#584144",
+              "surface": "#161213",
+              "surface-container": "#231e1f",
+              "surface-container-high": "#2d292a",
+              "primary-fixed": "#ffd9de",
+              "surface-bright": "#3d3839",
+              "on-secondary-container": "#ff9bb3",
+              "on-error-container": "#ffdad6",
+              "on-primary": "#660027",
+              "surface-container-low": "#1f1a1b",
+              "on-surface": "#eae0e1"
+            },
+            borderRadius: {
+              "DEFAULT": "0.25rem",
+              "lg": "0.5rem",
+              "xl": "0.75rem",
+              "full": "9999px"
+            },
+            spacing: {
+              "space-xl": "2rem",
+              "space-md": "1rem",
+              "margin": "2rem",
+              "gutter-mobile": "1rem",
+              "space-lg": "1.5rem",
+              "space-xs": "0.25rem",
+              "gutter": "1.5rem",
+              "space-2xl": "3rem",
+              "space-sm": "0.5rem",
+              "margin-mobile": "1rem"
+            },
+            fontFamily: {
+              "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+              "body-sm": ["Inter", "sans-serif"],
+              "display-hero-mobile": ["Plus Jakarta Sans", "sans-serif"],
+              "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+              "label-md": ["Inter", "sans-serif"],
+              "label-sm": ["Inter", "sans-serif"],
+              "caption": ["Inter", "sans-serif"],
+              "body-md": ["Inter", "sans-serif"],
+              "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+              "title-md": ["Plus Jakarta Sans", "sans-serif"],
+              "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+              "body-lg": ["Inter", "sans-serif"],
+              "display-hero": ["Plus Jakarta Sans", "sans-serif"]
+            },
+            fontSize: {
+              "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              "body-sm": ["13px", { lineHeight: "20px", fontWeight: "400" }],
+              "display-hero-mobile": ["32px", { lineHeight: "40px", fontWeight: "800" }],
+              "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+              "label-md": ["13px", { lineHeight: "18px", fontWeight: "500" }],
+              "label-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+              "caption": ["11px", { lineHeight: "14px", fontWeight: "500" }],
+              "body-md": ["14px", { lineHeight: "22.4px", fontWeight: "400" }],
+              "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+              "title-md": ["16px", { lineHeight: "24px", fontWeight: "600" }],
+              "headline-lg-mobile": ["26px", { lineHeight: "32px", fontWeight: "700" }],
+              "body-lg": ["15px", { lineHeight: "24px", fontWeight: "400" }],
+              "display-hero": ["40px", { lineHeight: "48px", fontWeight: "800" }]
+            }
+          }
+        }
+      };
+    </script>
   </head>
   <body>
     <div id="root"></div>

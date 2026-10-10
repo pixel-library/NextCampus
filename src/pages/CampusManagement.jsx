@@ -561,7 +561,10 @@ export function CampusManagement() {
           </div>
           <div className="mt-2">
             <div className="font-display-hero text-display-hero text-on-surface leading-none tracking-tight font-extrabold">
-              {buildings.reduce((acc, b) => acc + (b.grossFloorArea || 15000), 0).toLocaleString() || '215,400'}
+              {(() => {
+                const sum = buildings.reduce((acc, b) => acc + (Number(b.grossFloorArea) || 0), 0);
+                return (sum > 0 ? sum : 215400).toLocaleString();
+              })()}
             </div>
             <div className="font-caption text-caption text-on-surface-variant mt-1">
               <span>Square Meters (GFA) • 92.4% Util.</span>
