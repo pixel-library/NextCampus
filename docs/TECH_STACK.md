@@ -20,18 +20,18 @@ graph LR
         CSS[Vanilla CSS Tokens]
     end
 
-    subgraph Backend
-        Node[Node.js 20+ LTS]
-        Express[Express 4.19]
-        JWT[JSONWebToken 9.0]
-        Bcrypt[Bcryptjs 2.4]
-        Multer[Multer 1.4]
-        CORS[CORS 2.8]
+    subgraph Backend [Backend Services]
+        FastAPI[FastAPI / Python 3.11+ ASGI]
+        Uvicorn[Uvicorn Server]
+        Pydantic[Pydantic v2 Schemas]
+        Motor[Motor Async MongoDB]
+        PyJWT[PyJWT / Passlib Bcrypt]
+        Node[Node.js 20+ / Express 4.19 (Legacy/Alt)]
     end
 
     subgraph Database
         Mongo[MongoDB 7.0+]
-        Mongoose[Mongoose 8.3]
+        Mongoose[Mongoose 8.3 / Motor]
     end
 
     subgraph External
@@ -56,7 +56,20 @@ graph LR
 | `react-router-dom` | `^6.23.0` | Client-side routing, nested routes (`<Outlet />`), route guards, and query parameters. |
 | `lucide-react` | `^0.378.0` | Lightweight, scalable SVG icon system consistent with modern SaaS interfaces. |
 
-### Backend Dependencies (`package.json`)
+### Backend Dependencies (Python / `backend/requirements.txt`)
+
+| Package | Version | Purpose & Rationale |
+| :--- | :---: | :--- |
+| `fastapi` | `0.115.0+` | High-performance ASGI framework with automatic OpenAPI documentation. |
+| `uvicorn[standard]` | `0.30.0+` | Lightning-fast ASGI production web server. |
+| `pydantic` | `2.8.0+` | Type validation, schema serialization, and automatic response formatting. |
+| `motor` | `3.5.0+` | Official asynchronous MongoDB driver for non-blocking database queries. |
+| `pyjwt` | `2.9.0+` | Stateless JWT token issuance and signature validation. |
+| `passlib[bcrypt]` | `1.7.4+` | Secure bcrypt hashing for campus credentials. |
+| `python-multipart` | `0.0.9+` | Multipart streaming for photo attachment uploads. |
+| `pytest` / `pytest-asyncio` | `8.0.0+` | Asynchronous test framework for automated test workflows. |
+
+### Backend Dependencies (Node.js Alternative / `package.json`)
 
 | Package | Version | Purpose & Rationale |
 | :--- | :---: | :--- |

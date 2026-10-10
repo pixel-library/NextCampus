@@ -6,11 +6,13 @@
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "client": "vite",
-    "server": "nodemon server/index.js",
-    "start": "node server/index.js",
+    "server": "./backend/.venv/bin/uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 5000",
+    "server:legacy": "nodemon server/index.js",
+    "start": "./backend/.venv/bin/uvicorn backend.app.main:app --host 0.0.0.0 --port 5000",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node tests/master_audit.test.js"
+    "test": "PYTHONPATH=. ./backend/.venv/bin/pytest backend/tests -v && node tests/master_audit.test.js",
+    "test:python": "PYTHONPATH=. ./backend/.venv/bin/pytest backend/tests -v"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

@@ -31,12 +31,14 @@ npm run dev
 | Command | Action | Process Description |
 | :--- | :--- | :--- |
 | `npm run dev` | Full-Stack Dev | Executes `concurrently "npm run server" "npm run client"`. |
-| `npm run client` | Frontend Only | Starts Vite development server at `http://localhost:3000`. |
-| `npm run server` | Backend Only | Starts Express backend using `nodemon` at `http://localhost:5000`. |
-| `npm start` | Production API | Starts Express using standard `node server/index.js`. |
+| `npm run client` | Frontend Only | Starts Vite development server at `http://localhost:5173`. |
+| `npm run server` | Backend (FastAPI) | Starts FastAPI backend via `./backend/.venv/bin/uvicorn` at `http://localhost:5000`. |
+| `npm run server:legacy` | Backend (Express) | Starts Node.js Express backend using `nodemon` at `http://localhost:5000`. |
+| `npm start` | Production Backend| Starts production FastAPI backend listening on `0.0.0.0:5000`. |
 | `npm run build` | Production Bundle| Compiles minified React SPA into `dist/` via Vite Rollup. |
 | `npm run preview`| Preview Build | Starts local static server previewing `dist/` bundle. |
-| `npm test` | Automated Tests | Executes `node tests/master_audit.test.js` (10 workflows). |
+| `npm test` | Automated Tests | Executes both PyTest suite (`backend/tests`) and Node master audit (`tests/`). |
+| `npm run test:python` | Python Tests | Runs PyTest test suite directly via `./backend/.venv/bin/pytest`. |
 
 ---
 

@@ -23,7 +23,18 @@ NextCampus/
 │   └── ...                           # Architectural, operational, and module documents
 ├── public/                           # Static assets served at root
 │   └── favicon.svg                   # NextCampus isometric 'N' mark brand favicon
-├── server/                           # Node.js + Express Backend Service
+├── backend/                          # High-Performance Python 3.11+ / FastAPI Backend Service
+│   ├── app/
+│   │   ├── main.py                   # FastAPI bootstrap, CORS, JSON formatting & dual route mounting
+│   │   ├── api/                      # Unified routers & domain endpoints (auth, campus, care, room, skill, ai)
+│   │   ├── core/                     # Config (Pydantic), Security (Bcrypt/JWT) & Logging
+│   │   ├── db/                       # Motor async MongoDB client & seed data fixtures
+│   │   ├── schemas/                  # Pydantic typed request & response validation models
+│   │   ├── services/                 # Domain business services with dual DB/in-memory failover
+│   │   └── utils/                    # Response envelopes & BSON helpers
+│   ├── tests/                        # Comprehensive PyTest test suite (test_all_workflows.py)
+│   └── requirements.txt              # Pinned Python package dependencies
+├── server/                           # Node.js + Express Backend Service (Alternative / Legacy)
 │   ├── index.js                      # Express application entry point & API middleware
 │   ├── config/
 │   │   └── db.js                     # MongoDB Mongoose database connection handler

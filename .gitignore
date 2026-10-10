@@ -47,3 +47,13 @@ Thumbs.db
 # Archive files
 *.zip
 *.tar.gz
+
+# Python virtual environments & bytecode
+backend/.venv/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
