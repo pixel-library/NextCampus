@@ -349,11 +349,12 @@ export const CampusMap = () => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [facilitySearch, setFacilitySearch] = useState('');
+  const [customDestination, setCustomDestination] = useState(null);
 
   // GPS & Live Simulation State
   const [userCoords, setUserCoords] = useState({
-    lat: 25.03080, // Mewar University Main Gate on NH-48
-    lng: 74.63630,
+    lat: 25.031907, // Mewar University Main Gate on NH-48
+    lng: 74.635428,
     accuracy: 6,
     heading: 0,
     speed: 1.2,
@@ -499,10 +500,10 @@ export const CampusMap = () => {
       setIsSimulatingWalk(true);
 
       const dest = CAMPUS_GIS_LOCATIONS[selectedBldg] || CAMPUS_GIS_LOCATIONS.eng;
-      const startLat = 25.03080; // Main Gate
-      const startLng = 74.63630;
-      const endLat = dest.lat;
-      const endLng = dest.lng;
+      const startLat = 25.031907; // NH-48 Main Gate
+      const startLng = 74.635428;
+      const endLat = customDestination ? customDestination.lat : dest.lat;
+      const endLng = customDestination ? customDestination.lng : dest.lng;
 
       let step = 0;
       const totalSteps = 30;
@@ -540,12 +541,13 @@ export const CampusMap = () => {
     setIsSimulatingWalk(false);
     setSimulationProgress(0);
     setUserCoords({
-      lat: 25.03080, // Main Gate
-      lng: 74.63630,
+      lat: 25.031907, // NH-48 Main Gate
+      lng: 74.635428,
       accuracy: 6,
       heading: 0,
       speed: 1.2,
     });
+    setCustomDestination(null);
     setStartPointMode('gate');
     triggerToast('Location reset to Mewar University Main Gate (NH-48)');
   };
@@ -872,37 +874,61 @@ export const CampusMap = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                backgroundColor: 'var(--bg-surface-subtle)',
+                backgroundColor: customDestination ? '#FFF1F2' : 'var(--bg-surface-subtle)',
                 padding: '6px 12px',
                 borderRadius: '10px',
-                border: '1px solid var(--border-interactive)',
+                border: customDestination ? '1.5px solid #E11D48' : '1px solid var(--border-interactive)',
               }}
             >
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--brand-primary)', flexShrink: 0 }} />
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: customDestination ? '#E11D48' : 'var(--brand-primary)', flexShrink: 0 }} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '9px', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase' }}>
-                  Destination
+                <div style={{ fontSize: '9px', fontWeight: 800, color: customDestination ? '#E11D48' : 'var(--brand-primary)', textTransform: 'uppercase' }}>
+                  {customDestination ? '📍 Marked Destination' : 'Destination'}
                 </div>
-                <select
-                  value={selectedBldg}
-                  onChange={(e) => handleSelectBuilding(e.target.value)}
-                  style={{
-                    width: '100%',
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '12.5px',
-                    fontWeight: 700,
-                    color: 'var(--text-primary)',
-                    outline: 'none',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {Object.entries(buildings).map(([key, bldg]) => (
-                    <option key={key} value={key}>
-                      {bldg.name} ({bldg.code})
-                    </option>
-                  ))}
-                </select>
+                {customDestination ? (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {customDestination.name}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCustomDestination(null)}
+                      style={{
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        backgroundColor: '#FFFFFF',
+                        border: '1px solid #FECDD3',
+                        color: '#E11D48',
+                        fontSize: '10.5px',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Clear ✕
+                    </button>
+                  </div>
+                ) : (
+                  <select
+                    value={selectedBldg}
+                    onChange={(e) => handleSelectBuilding(e.target.value)}
+                    style={{
+                      width: '100%',
+                      background: 'none',
+                      border: 'none',
+                      fontSize: '12.5px',
+                      fontWeight: 700,
+                      color: 'var(--text-primary)',
+                      outline: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {Object.entries(buildings).map(([key, bldg]) => (
+                      <option key={key} value={key}>
+                        {bldg.name} ({bldg.code})
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
             </div>
 
@@ -1202,6 +1228,12 @@ export const CampusMap = () => {
             <CampusGisMap
               selectedBuildingKey={selectedBldg}
               onSelectBuilding={handleSelectBuilding}
+              customDestination={customDestination}
+              onSetCustomDestination={(dest) => {
+                setCustomDestination(dest);
+                triggerToast(`Marked destination on map: (${dest.lat.toFixed(4)}, ${dest.lng.toFixed(4)})`);
+              }}
+              onClearCustomDestination={() => setCustomDestination(null)}
               mobilityMode={mobilityMode}
               userCoords={userCoords}
               setUserCoords={setUserCoords}
