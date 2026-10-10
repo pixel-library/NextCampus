@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
         } catch (err) {
           console.warn('[NextCampus Auth] Session expired or invalid token');
           localStorage.removeItem('nextcampus_token');
+          setUser(null);
         }
       }
       setLoading(false);
@@ -27,8 +28,8 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, []);
 
-  const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
+  const login = async (emailOrId, password) => {
+    const res = await api.post('/auth/login', { identifier: emailOrId, email: emailOrId, password });
     if (res.success && res.data?.token) {
       localStorage.setItem('nextcampus_token', res.data.token);
       setUser(res.data.user);
@@ -45,14 +46,40 @@ export const AuthProvider = ({ children }) => {
     return res;
   };
 
+  const updateProfile = async (profileData) => {
+    const res = await api.put('/auth/profile', profileData);
+    if (res.success && res.data?.user) {
+      setUser(res.data.user);
+    }
+    return res;
+  };
+
+  const changePassword = async (currentPassword, newPassword) => {
+    const res = await api.put('/auth/change-password', { currentPassword, newPassword });
+    return res;
+  };
+
   const logout = () => {
     localStorage.removeItem('nextcampus_token');
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        updateProfile,
+        changePassword,
+        logout,
+        isAuthenticated: !!user,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
+
+export default AuthProvider;
