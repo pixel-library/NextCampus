@@ -5,6 +5,7 @@ from backend.app.core.config import settings
 from backend.app.core.logging import logger
 from backend.app.db.seed_data import (
     SEED_USERS,
+    SEED_ENROLLMENTS,
     SEED_LOCATIONS,
     SEED_ROOMS,
     SEED_COMPLAINTS,
@@ -20,6 +21,7 @@ _is_connected: bool = False
 
 # Resilient in-memory stores for decoupled / offline fallback
 IN_MEMORY_USERS = copy.deepcopy(SEED_USERS)
+IN_MEMORY_ENROLLMENTS = copy.deepcopy(SEED_ENROLLMENTS)
 IN_MEMORY_LOCATIONS = copy.deepcopy(SEED_LOCATIONS)
 IN_MEMORY_ROOMS = copy.deepcopy(SEED_ROOMS)
 IN_MEMORY_COMPLAINTS = copy.deepcopy(SEED_COMPLAINTS)
@@ -59,6 +61,10 @@ async def _seed_collections_if_empty():
         if await db.rooms.count_documents({}) == 0:
             await db.rooms.insert_many(copy.deepcopy(SEED_ROOMS))
             logger.info(f"[NextCampus DB] Seeded {len(SEED_ROOMS)} rooms")
+
+        if await db.enrollments.count_documents({}) == 0:
+            await db.enrollments.insert_many(copy.deepcopy(SEED_ENROLLMENTS))
+            logger.info(f"[NextCampus DB] Seeded {len(SEED_ENROLLMENTS)} student enrollments")
 
         if await db.users.count_documents({}) == 0:
             await db.users.insert_many(copy.deepcopy(SEED_USERS))

@@ -15,18 +15,60 @@ def test_health_check(client: TestClient):
 
 def test_auth_workflow(client: TestClient):
     """Test registration, forced student role, password hashing, and login."""
-    test_email = f"audit_py_student_{int(time.time() * 1000)}@nextcampus.edu"
+    test_email = "audit.py@nextcampus.edu"
     test_pass = "SecurePass2026!"
+    test_enrollment = "MUR2599001"
 
-    # 1. Registration with malicious role escalation attempt
+    # Reset audit student if left over from previous test run
+    from backend.app.db.connection import IN_MEMORY_USERS, IN_MEMORY_ENROLLMENTS
+    from backend.app.core.config import settings
+    from pymongo import MongoClient
+
+    try:
+        sync_client = MongoClient(settings.MONGODB_URI, serverSelectionTimeoutMS=2000)
+        sync_db = sync_client[settings.DB_NAME]
+        sync_db.users.delete_one({"email": test_email})
+        sync_db.enrollments.update_one(
+            {"enrollmentNumber": test_enrollment},
+            {"$set": {"isClaimed": False, "claimedAt": None}},
+        )
+        sync_client.close()
+    except Exception:
+        pass
+
+    for u in list(IN_MEMORY_USERS):
+        if u.get("email") == test_email:
+            IN_MEMORY_USERS.remove(u)
+    for e in IN_MEMORY_ENROLLMENTS:
+        if e.get("enrollmentNumber") == test_enrollment:
+            e["isClaimed"] = False
+            e["claimedAt"] = None
+
+    # Test rejection of unconfirmed enrollment number
+    fake_enroll_res = client.post(
+        "/api/v1/auth/register",
+        json={
+            "name": "Random Person",
+            "email": "random@nextcampus.edu",
+            "enrollmentNumber": "FAKE999999",
+            "password": "Password123!",
+        },
+    )
+    assert fake_enroll_res.status_code == 400
+    err_body = fake_enroll_res.json()
+    msg = err_body.get("message") or err_body.get("detail", "")
+    assert "not found in confirmed university records" in msg
+
+    # 1. Registration with malicious role escalation attempt and valid enrollment
     reg_res = client.post(
         "/api/v1/auth/register",
         json={
-            "name": "Audit Student",
+            "name": "Audit Python Student",
             "email": test_email,
+            "enrollmentNumber": test_enrollment,
+            "studentId": test_enrollment,
             "password": test_pass,
             "role": "admin",  # Attempting escalation
-            "studentId": "2026-PY-001",
         },
     )
     assert reg_res.status_code == 201
@@ -180,7 +222,7 @@ def test_care_complaints_dual_note_privacy(client: TestClient):
     # Student login
     stud_login = client.post(
         "/api/v1/auth/login",
-        json={"email": "rudra@nextcampus.edu", "password": "password123"},
+        json={"email": "audit.py@nextcampus.edu", "password": "BrandNewPass2026!"},
     )
     assert stud_login.status_code == 200
     student_token = stud_login.json()["data"]["token"]
@@ -261,7 +303,7 @@ def test_skill_projects_duplicate_join(client: TestClient):
     """Test SkillCampus collaborative projects and duplicate join prevention."""
     stud_login = client.post(
         "/api/v1/auth/login",
-        json={"email": "rudra@nextcampus.edu", "password": "password123"},
+        json={"email": "audit.py@nextcampus.edu", "password": "BrandNewPass2026!"},
     )
     student_token = stud_login.json()["data"]["token"]
 
@@ -300,7 +342,7 @@ def test_admin_stats(client: TestClient):
     # Regular student cannot access
     stud_login = client.post(
         "/api/v1/auth/login",
-        json={"email": "rudra@nextcampus.edu", "password": "password123"},
+        json={"email": "audit.py@nextcampus.edu", "password": "BrandNewPass2026!"},
     )
     student_token = stud_login.json()["data"]["token"]
 

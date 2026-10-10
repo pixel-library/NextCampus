@@ -12,6 +12,8 @@ import * as sustainabilityService from '../server/services/sustainability.servic
 import * as aiService from '../server/services/ai.service.js';
 import * as adminService from '../server/services/admin.service.js';
 import { generateToken, verifyToken } from '../server/utils/helpers.js';
+import User from '../server/models/User.js';
+import Enrollment from '../server/models/Enrollment.js';
 
 // Disable buffering for instant test execution
 mongoose.set('bufferCommands', false);
@@ -41,16 +43,38 @@ async function runMasterAuditTests() {
     // WORKFLOW 2: Authentication & Password Security
     // ------------------------------------------------------------------
     console.log('\n[Workflow 2/10] Verifying Authentication, Bcrypt Hashing & Role Isolation...');
-    const testEmail = `audit_student_${Date.now()}@campus.edu`;
+    const testEnrollment = 'MUR2599002';
+    const testEmail = 'audit.node@nextcampus.edu';
     const plainPass = 'AuditSecurePassword2026!';
 
-    // A. Registration with forced student role
+    if (mongoose.connection.readyState === 1) {
+      await User.deleteOne({ email: testEmail });
+      await Enrollment.updateOne(
+        { enrollmentNumber: testEnrollment },
+        {
+          $set: {
+            enrollmentNumber: testEnrollment,
+            fullName: 'Audit Node Student',
+            email: testEmail,
+            department: 'Computer Science & Engineering',
+            academicYear: 'Class of 2029',
+            admissionYear: 2025,
+            isClaimed: false,
+            claimedAt: null,
+          },
+        },
+        { upsert: true }
+      );
+    }
+
+    // A. Registration with forced student role and confirmed enrollment check
     const regRes = await authService.registerUser({
-      name: 'Aditi Rao',
+      name: 'Audit Node Student',
       email: testEmail,
-      studentId: '2026-AI-104',
-      department: 'Artificial Intelligence & Data',
-      academicYear: 'Class of 2027',
+      enrollmentNumber: testEnrollment,
+      studentId: testEnrollment,
+      department: 'Computer Science & Engineering',
+      academicYear: 'Class of 2029',
       password: plainPass,
       role: 'admin', // Malicious privilege escalation attempt
     });

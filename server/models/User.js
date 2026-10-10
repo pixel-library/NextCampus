@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema(
   {
+    _id: { type: mongoose.Schema.Types.Mixed },
     name: { type: String, required: true, trim: true },
     preferredName: { type: String, trim: true, default: '' },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -12,6 +13,7 @@ const userSchema = new mongoose.Schema(
       default: 'student',
     },
     studentId: { type: String, trim: true, default: '' },
+    enrollmentNumber: { type: String, trim: true, uppercase: true, default: '' },
     department: { type: String, trim: true, default: 'Computer Science & Engineering' },
     academicYear: { type: String, trim: true, default: 'Class of 2026' },
     semester: { type: String, trim: true, default: '3rd Year • Semester 5' },

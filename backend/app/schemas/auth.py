@@ -6,6 +6,7 @@ class RegisterRequest(BaseModel):
     email: str = Field(..., min_length=3)
     password: str = Field(..., min_length=6)
     studentId: Optional[str] = None
+    enrollmentNumber: Optional[str] = None
     department: Optional[str] = None
     academicYear: Optional[str] = None
     preferredName: Optional[str] = None

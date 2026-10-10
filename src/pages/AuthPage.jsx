@@ -114,7 +114,12 @@ export const AuthPage = () => {
     setSuccessMessage('');
 
     if (!regName.trim() || !regEmail.trim() || !regPassword) {
-      setErrorMessage('Full name, institutional email, and password are required.');
+      setErrorMessage('Full name, confirmed enrollment number, institutional email, and password are required.');
+      return;
+    }
+
+    if (!regRollId.trim()) {
+      setErrorMessage('Official confirmed enrollment number is required (e.g. Mur2502162).');
       return;
     }
 
@@ -132,7 +137,8 @@ export const AuthPage = () => {
     try {
       const res = await register({
         name: regName.trim(),
-        studentId: regRollId.trim() || undefined,
+        enrollmentNumber: regRollId.trim().toUpperCase(),
+        studentId: regRollId.trim().toUpperCase(),
         email: regEmail.trim(),
         department: regDept,
         academicYear: regCohort,
@@ -1023,12 +1029,15 @@ export const AuthPage = () => {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <label style={{ fontSize: '12px', fontWeight: 600, color: '#EAE0E1' }}>Roll / Admission Number</label>
+                      <label style={{ fontSize: '12px', fontWeight: 600, color: '#EAE0E1' }}>
+                        Confirmed Enrollment Number <span style={{ color: '#EB638B' }}>*</span>
+                      </label>
                       <input
                         type="text"
                         value={regRollId}
                         onChange={(e) => setRegRollId(e.target.value)}
-                        placeholder="e.g. 2026-CS-4190"
+                        placeholder="e.g. Mur2502162"
+                        required
                         style={{
                           width: '100%',
                           padding: '10px 14px',
@@ -1038,8 +1047,12 @@ export const AuthPage = () => {
                           color: '#FFFFFF',
                           fontSize: '13px',
                           outline: 'none',
+                          letterSpacing: '0.5px',
                         }}
                       />
+                      <span style={{ fontSize: '11px', color: '#B39E9F' }}>
+                        Must match your confirmed university admission letter (e.g. Mur2502162).
+                      </span>
                     </div>
                   </div>
 
