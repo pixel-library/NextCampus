@@ -17,7 +17,8 @@ src/
 ├── index.css                         # Master CSS Design System tokens & utilities
 ├── components/
 │   ├── common/                       # Reusable UI primitives (Badge, Button, Card, Modal, Input, Logo)
-│   └── layout/                       # Structural layouts (AppLayout, Navbar, Sidebar, MobileNav)
+│   ├── layout/                       # Structural layouts (AppLayout, Navbar, Sidebar, MobileNav)
+│   └── map/                          # Interactive GIS Map engine (CampusGisMap.jsx)
 ├── context/
 │   └── AuthContext.jsx               # Global JWT Session & User State Provider
 ├── hooks/
@@ -106,7 +107,20 @@ graph TD
 
 ---
 
-## 5. Related Documentation
+## 5. Spatial GIS & Mapping Architecture (`src/components/map/`)
+
+### `CampusGisMap.jsx`
+- **Engine**: Leaflet.js runtime integrated via React hooks, providing sub-pixel vector rendering, custom HTML marker overlays, and polygon layer bindings.
+- **Center & Bounds**: Calibrated to Mewar University (`[25.0335, 74.6360]`), bound within maximum pan tolerances `[25.025, 74.628]` to `[25.042, 74.644]`.
+- **Multi-Layer Tile Resilience**: Seamlessly falls back between CartoDB Dark Matter, OpenStreetMap standard tiles, and Esri World Imagery upon `tileerror` triggers, preventing grey or missing tiles at high zoom levels (14–20).
+- **Authentic Footprints**: Renders 20 verified campus facility footprints and polygons directly from OpenStreetMap geometry (e.g. OSM Way 549126350 for Main Building, Way 549126358 for Basketball Ground).
+- **Topological Routing**: Computes shortest pedestrian paths through `MEWAR_CAMPUS_ROADS` graph with 17 interconnected junctions and turn-by-turn waypoints.
+
+---
+
+## 6. Related Documentation
 * [ROUTES_AND_PAGES.md](ROUTES_AND_PAGES.md) — Exhaustive routing registry.
-* [COMPONENTS.md](COMPONENTS.md) — Detailed common component documentation.
+* [COMPONENTS.md](COMPONENTS.md) — Detailed common and spatial component documentation.
 * [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) — Master color and typography tokens.
+* [CAMPUS_MAP.md](modules/CAMPUS_MAP.md) — Dedicated GIS module specification.
+

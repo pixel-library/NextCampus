@@ -50,18 +50,17 @@ graph LR
 * **Embedded AI Assistant**: Instant query box and prompt chips with quick navigation links.
 * **Campus Notice Board**: Pinned academic notices and hackathon announcements.
 
-### 3. Interactive Campus Map (`/campus-map`)
-* **Vector GIS Canvas**: Hand-crafted SVG map representing buildings, arterial roadways, pedestrian paths, green lawns, and reflection pond.
-* **Wayfinding Calculation**: Computes origin-to-destination routes with mode switcher:
-  - *Walk*: Standard pedestrian route (4 min).
-  - *Step-Free / ADA*: Tactile paved, elevator-connected wheelchair path (5 min).
-  - *EV Shuttle*: Clean energy transit link (2 min).
+### 3. Interactive Campus Map & GIS Wayfinding (`/campus-map`)
+* **Dual-Engine Spatial Canvas**: Full-bleed Leaflet interactive map with custom dark tiles ([`src/components/map/CampusGisMap.jsx`](file:///run/media/rudra/534a134c-69cb-49e5-9a9c-284e9ad8ee1b/NextCampus/src/components/map/CampusGisMap.jsx)) paired with vector schematic overview ([`src/pages/CampusMap.jsx`](file:///run/media/rudra/534a134c-69cb-49e5-9a9c-284e9ad8ee1b/NextCampus/src/pages/CampusMap.jsx)).
+* **20 Real Mewar University Locations**: Authentic satellite ground-truth coordinates and OSM polygon footprints (Gate 1, Gate 2, Main Building, Engineering Block, Teacher Building, Badal Hostel, Law Faculty, Basketball Court, Football Arena, Mess, Park, Bhamasha, Sanaga, Kumbha, Pratap, Gora & Hospital, Panna & Mira, Guest House, Central Library, Transport Hub).
+* **Multi-Layer Resilient Tile Fallback**: Seamless CartoDB Dark Matter / OSM / Esri fallback eliminating missing tiles during high zoom (zooms 14–20).
+* **Topological Road Routing Graph (`MEWAR_CAMPUS_ROADS`)**: Computes shortest pedestrian paths across 17 arterial walkway junctions with turn-by-turn guidance and walking time estimation.
 * **Building Detail Drawer**: Slide-out drawer with occupancy, HVAC, air quality, target rooms, and turn-by-turn route breakdown.
-* **Admin Map Mode**: Real-time spatial editing toolbar allowing:
-  - Click-to-move marker repositioning.
-  - Coordinate arrow nudgers (`←`, `↑`, `↓`, `→` in 20px steps).
-  - Modal to update facility names, codes, departments, hours, and descriptions.
-  - Modal to register and place new facilities directly on the map.
+* **Admin GIS Editor Mode**: Real-time spatial editing toolbar allowing:
+  - Drag-and-drop marker repositioning with 6-decimal precision.
+  - Coordinate arrow nudgers (`←`, `↑`, `↓`, `→` in `0.0001°` increments).
+  - Facility modal to update names, codes, categories, and coordinates in place.
+
 
 ### 4. Campus Directory (`/directory`)
 * **Facility & Department Directory**: Searchable index of campus buildings, schools, faculties, and dean offices.

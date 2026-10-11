@@ -80,7 +80,33 @@
 
 ---
 
-## 3. Related Documentation
+## 3. Spatial & Mapping Components (`src/components/map/`)
+
+### `CampusGisMap.jsx`
+* **Purpose**: Full-bleed interactive Leaflet map rendering real satellite coordinates, authentic OSM building footprints, topological road route polylines, and administrative GIS markers.
+* **Location**: `src/components/map/CampusGisMap.jsx`
+* **Key Props**:
+  - `selectedBuildingId`: Currently selected landmark ID string (e.g. `'main'`, `'basketball'`).
+  - `onSelectBuilding`: Callback triggered when a user clicks a building pin or polygon footprint.
+  - `showRoute`: Boolean indicating whether to calculate and draw the A* topological road path.
+  - `routeOrigin`: Starting facility ID string.
+  - `routeDest`: Destination facility ID string.
+  - `adminMode`: Boolean enabling drag-and-drop marker relocation and coordinate nudging.
+  - `onUpdateLocation`: Callback passing updated `{ id, lat, lng }` payload to host page.
+  - `userCoords`: Current student GPS or simulated anchor coordinate array `[lat, lng]`.
+  - `searchQuery`: String query filtering markers by building name or code.
+  - `activeCategory`: Category filter slug (`'all'`, `'academic'`, `'residential'`, `'dining'`, `'sports'`, etc.).
+* **Key Features**:
+  - Resilient multi-layer tile engine (CartoDB Dark Matter / Positron base with automatic fallback to OpenStreetMap standard tiles and Esri World Imagery on `tileerror`).
+  - 20 verified real-world Mewar University campus landmarks.
+  - Topological road graph routing across 17 arterial junctions (`MEWAR_CAMPUS_ROADS`).
+  - Backward-compatible alias translation for legacy tests and API payloads.
+
+---
+
+## 4. Related Documentation
 * [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) — Color and typography tokens.
 * [FRONTEND.md](FRONTEND.md) — Frontend architecture.
+* [CAMPUS_MAP.md](modules/CAMPUS_MAP.md) — Interactive Campus Map module specification.
 * [RESPONSIVE_DESIGN.md](RESPONSIVE_DESIGN.md) — Grid breakpoints.
+

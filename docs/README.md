@@ -53,7 +53,7 @@ graph TD
 | :--- | :--- |
 | [FRONTEND.md](FRONTEND.md) | React 18 SPA architecture, routing setup, hooks, and bundle pipeline. |
 | [ROUTES_AND_PAGES.md](ROUTES_AND_PAGES.md) | Complete table of all 14 routes, layouts, role guards, and transitions. |
-| [COMPONENTS.md](COMPONENTS.md) | Catalog of reusable common components (`Badge`, `Button`, `Card`, `Modal`, `Input`, `Logo`). |
+| [COMPONENTS.md](COMPONENTS.md) | Catalog of reusable common components (`Badge`, `Button`, `Card`, `Modal`, `Input`, `Logo`) and spatial GIS engine (`CampusGisMap`). |
 | [STATE_MANAGEMENT.md](STATE_MANAGEMENT.md) | Authentication context, local state, URL synchronization, and caching. |
 | [FORMS_AND_VALIDATION.md](FORMS_AND_VALIDATION.md) | Form architecture, inputs, real-time validations, and submission handlers. |
 | [RESPONSIVE_DESIGN.md](RESPONSIVE_DESIGN.md) | 12-column grid, fluid breakpoints (Mobile, Tablet, Desktop), and touch ergonomics. |
@@ -90,7 +90,7 @@ graph TD
 | [DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md) | Day-to-day developer handbook, concurrency setup (`npm run dev`), and conventions. |
 | [CONFIGURATION.md](CONFIGURATION.md) | Configuration files (`package.json`, `vite.config.js`, `.env`). |
 | [ENVIRONMENT_VARIABLES.md](ENVIRONMENT_VARIABLES.md) | Complete dictionary of environment variables, defaults, and secrets handling. |
-| [TESTING.md](TESTING.md) | Automated testing strategy, master audit suite (`tests/master_audit.test.js`). |
+| [TESTING.md](TESTING.md) | Automated testing strategy, master audit suite, and GIS geometry unit tests. |
 | [DEBUGGING.md](DEBUGGING.md) | Diagnostic runbooks, common runtime failures, and network inspect guides. |
 | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | Solutions to known errors (e.g. Brave Shield cross-origin blocks, port mismatch). |
 | [PERFORMANCE.md](PERFORMANCE.md) | Bundle optimization, gzip sizes, SVG rendering efficiency, and caching. |
@@ -116,7 +116,7 @@ Each planned application page is comprehensively documented in its own dedicated
 | :--- | :--- | :--- | :--- |
 | [LANDING_PAGE.md](modules/LANDING_PAGE.md) | `/` | `LandingPage.jsx` | Public Unauthenticated |
 | [STUDENT_DASHBOARD.md](modules/STUDENT_DASHBOARD.md) | `/dashboard` | `StudentDashboard.jsx` | Student, Admin |
-| [CAMPUS_MAP.md](modules/CAMPUS_MAP.md) | `/campus-map` | `CampusMap.jsx` | Student, Staff, Admin |
+| [CAMPUS_MAP.md](modules/CAMPUS_MAP.md) | `/campus-map` | `CampusGisMap.jsx` / `CampusMap.jsx` | Student, Staff, Admin |
 | [CAMPUS_DIRECTORY.md](modules/CAMPUS_DIRECTORY.md) | `/directory` | `CampusDirectory.jsx` | Student, Staff, Admin |
 | [SMARTROOM.md](modules/SMARTROOM.md) | `/smartroom` | `SmartRooms.jsx` | Student, Staff, Admin |
 | [COMPLAINT_MANAGEMENT.md](modules/COMPLAINT_MANAGEMENT.md) | `/complaints` | `CareComplaints.jsx` | Student, Staff |
@@ -152,9 +152,13 @@ For design details, see [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md).
 Execute the automated test suite to confirm end-to-end integration:
 
 ```bash
-# Execute 10-phase Master Integration & Security Audit
+# 1. Execute GIS geometry unit test
+node tests/unit/campus_locations_update.test.js
+
+# 2. Execute 10-phase Master Integration & Security Audit
 npm test
 
-# Build production bundle
+# 3. Build production bundle
 npm run build
 ```
+

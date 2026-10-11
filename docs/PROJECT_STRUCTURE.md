@@ -93,11 +93,13 @@ NextCampus/
 │   │   │   ├── Input.jsx             # Text, search & form inputs
 │   │   │   ├── Logo.jsx              # NextCampus emblem & wordmark lockup
 │   │   │   └── Modal.jsx             # Backdrop blurred overlay modal dialogs
-│   │   └── layout/                   # Global layout frame
-│   │       ├── AppLayout.jsx         # Outer layout shell with authentication & admin role guards
-│   │       ├── MobileNav.jsx         # Mobile viewport bottom navigation bar
-│   │       ├── Navbar.jsx            # Desktop top navigation header with user avatar
-│   │       └── Sidebar.jsx           # Desktop navigation rail with role-isolated sections
+│   │   ├── layout/                   # Global layout frame
+│   │   │   ├── AppLayout.jsx         # Outer layout shell with authentication & admin role guards
+│   │   │   ├── MobileNav.jsx         # Mobile viewport bottom navigation bar
+│   │   │   ├── Navbar.jsx            # Desktop top navigation header with user avatar
+│   │   │   └── Sidebar.jsx           # Desktop navigation rail with role-isolated sections
+│   │   └── map/                      # Spatial GIS & Mapping engine
+│   │       └── CampusGisMap.jsx      # High-precision Leaflet map, OSM polygons, tile fallback & road routing
 │   ├── context/
 │   │   └── AuthContext.jsx           # Global user authentication state provider
 │   ├── hooks/
@@ -109,7 +111,7 @@ NextCampus/
 │   │   ├── AuthPage.jsx              # Route /auth
 │   │   ├── CampusDirectory.jsx       # Route /directory
 │   │   ├── CampusManagement.jsx      # Route /admin/campus-management
-│   │   ├── CampusMap.jsx             # Route /campus-map (with Admin Map Mode)
+│   │   ├── CampusMap.jsx             # Route /campus-map (with Admin Map Mode & GIS switcher)
 │   │   ├── CareComplaints.jsx        # Route /complaints
 │   │   ├── ComplaintAdmin.jsx        # Route /admin/complaints
 │   │   ├── EcoCampus.jsx             # Route /ecocampus
@@ -124,7 +126,9 @@ NextCampus/
 │   └── utils/                        # Formatting utilities & constants
 ├── stitch_nextcampus_design_system/  # Unzipped Stitch design assets & specs
 └── tests/                            # Automated Testing Suite
-    └── master_audit.test.js          # 10-workflow end-to-end integration audit
+    ├── master_audit.test.js          # 10-workflow end-to-end integration audit
+    └── unit/
+        └── campus_locations_update.test.js # Real 20-location Mewar GIS validation
 ```
 
 ---

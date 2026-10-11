@@ -17,6 +17,8 @@ This document tracks known bugs, architectural limitations, edge cases, and desi
 | **ISS-005** | Real-Time Push (WebSockets) | Low | Planned | Polling / fetch used instead of live WebSocket push for complaints/IoT telemetry. |
 | **ISS-006** | Third-Party Auth (OAuth2) | Low | Planned | Google/GitHub SSO buttons on UI are placeholders; local JWT is active. |
 | **ISS-007** | Automated Email Delivery | Low | Planned | Password reset emails logged to console; SMTP mailer not configured. |
+| **ISS-008** | High-Zoom Map Tile Dropouts | Low | Resolved | Multi-layer fallback chain (CartoDB -> OSM -> Esri) prevents gray tiles at zoom 14-20. |
+| **ISS-009** | Duplicate Student Registration | Low | Resolved | Server returns 409 Conflict with descriptive feedback, prompting user to log in. |
 
 ---
 
@@ -80,6 +82,20 @@ This document tracks known bugs, architectural limitations, edge cases, and desi
 - **Description**: Requesting a password reset generates a secure reset token and writes the reset link to the server terminal log rather than dispatching a physical email.
 - **Impact**: Production deployments requiring email-based password resets will require SMTP/SendGrid configuration.
 - **Planned Resolution**: Integrate Nodemailer with SendGrid or AWS SES.
+
+---
+
+### ISS-008: High-Zoom Map Tile Dropouts
+- **Location**: `src/components/map/CampusGisMap.jsx`
+- **Description**: In previous releases, zooming into high magnification (zoom levels 15–20) on dark-mode tile sets occasionally yielded missing or gray tiles if the CartoDB server failed to respond.
+- **Resolution**: Resolved via an automatic `tileerror` listener that dynamically switches tile source to OpenStreetMap Carto standard and Esri World Imagery fallback, ensuring zero blank tile dropouts.
+
+---
+
+### ISS-009: Duplicate Student Registration Handling
+- **Location**: `server/services/auth.service.js`, `src/pages/AuthPage.jsx`
+- **Description**: When a student attempted to re-register with an already registered student email or ID, generic errors were displayed causing confusion.
+- **Resolution**: Resolved by returning a clean HTTP 409 Conflict with an intuitive notification guiding the student to sign in directly or recover their password.
 
 ---
 

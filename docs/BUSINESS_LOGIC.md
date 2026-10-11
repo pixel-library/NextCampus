@@ -102,7 +102,30 @@ sequenceDiagram
 
 ---
 
-## 6. Related Documentation
+## 6. Campus GIS Spatial Ground-Truth & Backwards-Compatibility Aliasing Rules
+
+### 1. Mewar University Geographic Datum
+* **Campus Center**: Latitude `25.0335`, Longitude `74.6360` (Chittorgarh / Gangrar, Rajasthan).
+* **Bounding Bounding Box Tolerances**: Latitude `[25.0250, 74.6280]` to `[25.0420, 74.6440]`. Any coordinate adjustments via the Admin GIS toolbar outside these boundaries are constrained.
+
+### 2. Backwards-Compatibility Alias Translation
+To prevent breaking existing student records, directory searches, or automated test fixtures referencing legacy building IDs, the spatial engine automatically resolves the following aliasing table:
+* `admin` ➔ maps directly to `main` (Main Academic & Administrative Building)
+* `cafeteria` ➔ maps directly to `mess` (Central Student Dining Mess)
+* `hostel_b` ➔ maps directly to `sanaga` (Sanaga Boys Residential Hostel)
+* `hostel_g` ➔ maps directly to `mira` (Mira Girls Residential Hostel)
+* `sports` ➔ maps directly to `basketball` (Basketball & Outdoor Sports Court)
+* Building codes `A-01` through `E-05` and test IDs like `bld_1791717342244` are preserved in the lookup index.
+
+### 3. Topological Road Graph Traversal (`MEWAR_CAMPUS_ROADS`)
+* Navigation calculations must follow registered walkable edges in the topological graph rather than computing raw Euclidean line segments.
+* Pedestrian travel time is calculated at standard walking speed ($1.4\text{ m/s}$) plus edge turn penalties ($+10\text{ s}$ per junction node transition).
+
+---
+
+## 7. Related Documentation
 * [SECURITY.md](SECURITY.md) — Security mechanisms supporting these rules.
 * [API_REFERENCE.md](API_REFERENCE.md) — Endpoints enforcing these rules.
+* [CAMPUS_MAP.md](modules/CAMPUS_MAP.md) — Interactive Campus Map module specification.
 * [TESTING.md](TESTING.md) — Automated tests validating business logic.
+
