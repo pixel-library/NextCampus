@@ -1,72 +1,115 @@
-/* NextCampus Master Design System Tokens & Global Base Styles (Light/White Campus Theme) */
+/* =========================================================================
+   NEXTCAMPUS MASTER DESIGN SYSTEM TOKENS & FOUNDATIONS
+   University Operating System Architecture (Forest & Intelligent Green)
+   ========================================================================= */
 
 :root {
-  /* Canvas & Surface Tokens (Clean, crisp White & Light Slate Theme) */
-  --bg-canvas: #F8FAFC;             /* Slate 50 - Global viewport canvas */
-  --bg-surface: #FFFFFF;            /* Pure White - Cards, Header, Sidebar */
-  --bg-surface-elevated: #FFFFFF;   /* Overlay surface - Modals, Dropdowns */
-  --bg-surface-subtle: #F1F5F9;     /* Slate 100 - Inputs, Secondary tags, Table headers */
-  
-  /* Brand Palette Tokens (Academic Crimson / Rose Amaranth) */
-  --brand-primary: #9E153E;         /* Rich Amaranth Ruby - Primary CTA, active state */
-  --brand-accent: #E11D48;          /* Vibrant Rose - Interactive hover, focus ring, glows */
-  --brand-misty: #831843;           /* Deep Rose - Secondary text accents on light bg */
-  --brand-soft-bg: #FFE4E6;         /* Rose 100 - Soft badge background */
-  
-  /* Text & Content Tokens */
-  --text-primary: #0F172A;          /* Slate 900 - Headings, high-contrast primary text */
-  --text-secondary: #334155;        /* Slate 700 - Body text, table rows */
-  --text-muted: #64748B;            /* Slate 500 - Labels, metadata, timestamps */
-  --text-placeholder: #94A3B8;      /* Slate 400 - Form placeholders */
+  /* 1. Core Brand Architecture */
+  --brand-forest: #142D28;              /* Forest Green - Institutional Authority & Brand Anchor */
+  --brand-forest-rgb: 20, 45, 40;
+  --brand-primary: #168567;             /* Intelligent Green - Primary Actions, Active States, Key Accents */
+  --brand-primary-rgb: 22, 133, 103;
+  --brand-primary-hover: #0F6B52;       /* Deep Intelligent Green for interactive hover */
+  --brand-soft-bg: #EAF5EF;             /* Soft Green Surface - Active nav pills, subtle chips */
+  --brand-soft-border: #CBE2D4;         /* Soft green border for tags and pills */
+  --brand-accent: #168567;
 
-  /* Border Tokens */
-  --border-subtle: #E2E8F0;         /* Slate 200 - Clean 1px card/divider borders */
-  --border-interactive: #CBD5E1;    /* Slate 300 - Input & button borders */
-  --border-focus: #9E153E;          /* Primary focus ring */
-  --border-brand: #9E153E;
+  /* 2. Canvas & Surface Hierarchy */
+  --bg-canvas: #F6F8F6;                 /* Calm Institutional Canvas */
+  --bg-surface: #FFFFFF;                /* Pure Crisp White - Cards, Headers, Shell Chrome */
+  --bg-surface-elevated: #FFFFFF;       /* Elevated Overlays - Modals, Popovers, Dropdowns */
+  --bg-surface-subtle: #F0F4F1;         /* Subtle Muted Surface - Inputs, Tabs, Table Headers */
+  --bg-surface-muted: #E8EFEA;          /* Inset Containers & Trackers */
+  --bg-surface-hover: #F2F7F4;          /* Soft Row & Card Hover */
 
-  /* Gradients */
-  --grad-brand: linear-gradient(135deg, #E11D48 0%, #9E153E 100%);
-  --grad-surface: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
-  --grad-glow: radial-gradient(circle at center, rgba(158, 21, 62, 0.08) 0%, rgba(248, 250, 252, 0) 70%);
+  /* 3. Typography & Content Hierarchy */
+  --text-primary: #202A27;              /* Deep Pine Slate - Headings, High-Contrast Text */
+  --text-secondary: #65736B;            /* Slate Moss - Body Text, Supporting Descriptions */
+  --text-muted: #87968D;                /* Muted Sage - Labels, Timestamps, Captions */
+  --text-placeholder: #A3B0A8;          /* Form Placeholder Text */
+  --text-inverse: #FFFFFF;              /* High-contrast pure white on dark containers */
+  --text-brand: #168567;                /* Primary green text accent */
 
-  /* Shadow & Elevation Tokens */
-  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.07), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.10), 0 4px 12px -4px rgba(15, 23, 42, 0.04);
-  --shadow-brand-glow: 0 4px 16px rgba(158, 21, 62, 0.20);
+  /* 4. Structural Borders & Outlines */
+  --border-subtle: #E4EAE5;             /* Clean 1px structural container borders */
+  --border-interactive: #D0DAD2;        /* Interactive control & input borders */
+  --border-focus: #168567;              /* Primary accessible focus border */
+  --border-brand: #168567;
+  --border-brand-soft: #CBE2D4;
 
-  /* Typography Fonts */
+  /* 5. Semantic Color States (Strict Purpose-Driven Architecture) */
+  --status-warning: #B7791F;            /* Warm Amber - Cautionary warnings, SLA approaching */
+  --status-warning-bg: #FEF8EC;
+  --status-warning-border: #F6E3B8;
+
+  --status-danger: #C43D4B;             /* Crimson - Critical incidents, errors, destructives */
+  --status-danger-bg: #FDF2F3;
+  --status-danger-border: #FACBD0;
+
+  --status-info: #3478B8;               /* Academic Blue - Telemetry notices, schedule events */
+  --status-info-bg: #EEF5FA;
+  --status-info-border: #C9DFEE;
+
+  --status-success: #168567;            /* Intelligent Green - Operational nodes, resolved */
+  --status-success-bg: #EAF5EF;
+  --status-success-border: #CBE2D4;
+
+  /* 6. Gradients (Restrained & Sophisticated) */
+  --grad-brand: linear-gradient(135deg, #168567 0%, #142D28 100%);
+  --grad-surface: linear-gradient(180deg, #FFFFFF 0%, #F6F8F6 100%);
+  --grad-soft-green: linear-gradient(135deg, #EAF5EF 0%, #FFFFFF 100%);
+  --grad-glow: radial-gradient(circle at center, rgba(22, 133, 103, 0.08) 0%, rgba(246, 248, 246, 0) 70%);
+
+  /* 7. Elevation & Ambient Shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(20, 45, 40, 0.03);
+  --shadow-sm: 0 1px 3px 0 rgba(20, 45, 40, 0.05), 0 1px 2px -1px rgba(20, 45, 40, 0.03);
+  --shadow-md: 0 4px 12px -2px rgba(20, 45, 40, 0.06), 0 2px 4px -2px rgba(20, 45, 40, 0.03);
+  --shadow-lg: 0 12px 28px -4px rgba(20, 45, 40, 0.08), 0 4px 10px -4px rgba(20, 45, 40, 0.03);
+  --shadow-brand-glow: 0 4px 16px rgba(22, 133, 103, 0.16);
+
+  /* 8. Typography Families */
   --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Border Radii */
+  /* 9. Restrained Border Radii (10-14px Enterprise Architecture) */
+  --radius-xs: 6px;
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
   --radius-pill: 9999px;
 
-  /* Layout Dimensions */
+  /* 10. Global Shell Dimensions */
   --sidebar-width-expanded: 260px;
   --sidebar-width-collapsed: 72px;
   --topbar-height: 64px;
 }
 
-/* Reset & Box Sizing */
+/* =========================================================================
+   BASE RESET & GLOBAL VIEWPORT SCROLLING
+   ========================================================================= */
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
-  width: 100%;
+html {
+  font-size: 14px;
+  scroll-behavior: smooth;
   height: 100%;
+}
+
+body {
+  width: 100%;
+  min-height: 100%;
   background-color: var(--bg-canvas);
   color: var(--text-secondary);
   font-family: var(--font-body);
-  font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -79,7 +122,12 @@ html, body {
   background-color: var(--bg-canvas);
 }
 
-/* Headings typography */
+::selection {
+  background-color: #EAF5EF;
+  color: #142D28;
+}
+
+/* Headings Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   color: var(--text-primary);
@@ -87,22 +135,27 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
 }
 
-h1 { font-size: 2rem; line-height: 1.25; }
-h2 { font-size: 1.5rem; line-height: 1.3; }
-h3 { font-size: 1.25rem; line-height: 1.35; color: var(--text-primary); }
-h4 { font-size: 1.1rem; line-height: 1.4; color: var(--text-primary); }
+h1 { font-size: 2rem; line-height: 1.25; font-weight: 800; }
+h2 { font-size: 1.5rem; line-height: 1.3; font-weight: 700; }
+h3 { font-size: 1.25rem; line-height: 1.35; font-weight: 600; }
+h4 { font-size: 1.05rem; line-height: 1.4; font-weight: 600; }
+
+p {
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
 
 /* Links */
 a {
   color: var(--brand-primary);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color 0.15s ease;
 }
 a:hover {
-  color: var(--brand-accent);
+  color: var(--brand-primary-hover);
 }
 
-/* Scrollbars */
+/* Smooth University Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -111,27 +164,30 @@ a:hover {
   background: var(--bg-canvas);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(158, 21, 62, 0.18);
+  background: rgba(20, 45, 40, 0.15);
   border-radius: var(--radius-pill);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--brand-primary);
 }
 
-/* Utility Design Classes */
+/* =========================================================================
+   CORE COMPONENT UTILITY CLASSES
+   ========================================================================= */
+
 .glass-panel {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
 }
 
 .glass-panel-interactive {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .glass-panel-interactive:hover {
   border-color: var(--border-interactive);
@@ -153,45 +209,64 @@ a:hover {
   border-radius: var(--radius-pill);
   font-size: 12px;
   font-weight: 600;
-  border: 1px solid rgba(158, 21, 62, 0.2);
-  background: #FFE4E6;
+  border: 1px solid var(--brand-soft-border);
+  background: var(--brand-soft-bg);
   color: var(--brand-primary);
 }
 
-/* Stitch Design System Theme Classes & Utilities for Light Theme */
-.bg-background, .bg-surface-dim, .bg-surface { background-color: #F8FAFC !important; }
-.bg-surface-container-lowest { background-color: #FFFFFF !important; }
-.bg-surface-container-low { background-color: #F8FAFC !important; }
-.bg-surface-container { background-color: #F1F5F9 !important; }
-.bg-surface-container-high { background-color: #E2E8F0 !important; }
-.bg-surface-container-highest, .bg-surface-variant { background-color: #CBD5E1 !important; }
-.bg-surface-bright { background-color: #FFFFFF !important; }
-.bg-primary-container { background-color: #FFE4E6 !important; }
-.bg-secondary-container { background-color: #FCE7F3 !important; }
-.bg-error-container { background-color: #FEE2E2 !important; }
+/* =========================================================================
+   BACKWARD COMPATIBILITY & HARMONIZATION UTILITIES
+   Harmonizes legacy Stitch/Rose tokens to Forest & Intelligent Green
+   ========================================================================= */
 
-.text-on-surface { color: #0F172A !important; }
-.text-on-surface-variant { color: #475569 !important; }
+.bg-background, .bg-surface-dim { background-color: var(--bg-canvas) !important; }
+.bg-surface { background-color: var(--bg-surface) !important; }
+.bg-surface-container-lowest { background-color: var(--bg-surface) !important; }
+.bg-surface-container-low { background-color: var(--bg-canvas) !important; }
+.bg-surface-container { background-color: var(--bg-surface-subtle) !important; }
+.bg-surface-container-high { background-color: var(--brand-soft-bg) !important; }
+.bg-surface-container-highest, .bg-surface-variant { background-color: var(--border-subtle) !important; }
+.bg-surface-bright { background-color: var(--bg-surface) !important; }
+.bg-primary-container { background-color: var(--brand-soft-bg) !important; }
+.bg-secondary-container { background-color: var(--brand-soft-bg) !important; }
+.bg-error-container { background-color: var(--status-danger-bg) !important; }
+
+.text-on-surface { color: var(--text-primary) !important; }
+.text-on-surface-variant { color: var(--text-secondary) !important; }
 .text-on-primary { color: #FFFFFF !important; }
-.text-on-primary-container { color: #9E153E !important; }
-.text-primary { color: #9E153E !important; }
-.text-secondary { color: #BE123C !important; }
-.text-tertiary { color: #64748B !important; }
-.text-outline { color: #94A3B8 !important; }
-.text-outline-variant { color: #CBD5E1 !important; }
-.text-error { color: #DC2626 !important; }
+.text-on-primary-container { color: var(--brand-forest) !important; }
+.text-primary { color: var(--brand-primary) !important; }
+.text-secondary { color: var(--brand-forest) !important; }
+.text-tertiary { color: var(--text-secondary) !important; }
+.text-outline { color: var(--text-muted) !important; }
+.text-outline-variant { color: var(--border-interactive) !important; }
+.text-error { color: var(--status-danger) !important; }
 
-/* Care & Portal Color Compatibility for Light Theme */
-.bg-surface-elevated { background-color: #FFFFFF !important; }
-.bg-brand-raisin { background-color: #F8FAFC !important; }
-.bg-brand-licorice { background-color: #F8FAFC !important; }
-.border-surface-border { border-color: #E2E8F0 !important; }
-.text-brand-misty { color: #475569 !important; }
-.text-brand-blush { color: #9E153E !important; }
-.bg-brand-amaranth { background-color: #9E153E !important; }
-.text-brand-amaranth { color: #9E153E !important; }
-.border-brand-blush { border-color: rgba(158, 21, 62, 0.25) !important; }
+/* Legacy Amaranth/Blush/Raisin mappings transitioning cleanly */
+.bg-surface-elevated { background-color: var(--bg-surface) !important; }
+.bg-brand-raisin { background-color: var(--bg-canvas) !important; }
+.bg-brand-licorice { background-color: var(--bg-canvas) !important; }
+.border-surface-border { border-color: var(--border-subtle) !important; }
+.text-brand-misty { color: var(--text-secondary) !important; }
+.text-brand-blush { color: var(--brand-primary) !important; }
+.bg-brand-amaranth { background-color: var(--brand-primary) !important; }
+.text-brand-amaranth { color: var(--brand-primary) !important; }
+.border-brand-blush { border-color: var(--brand-soft-border) !important; }
 
+/* Font utilities */
+.font-headline-lg { font-family: var(--font-heading); font-size: 32px; line-height: 40px; font-weight: 700; }
+.font-headline-md { font-family: var(--font-heading); font-size: 24px; line-height: 32px; font-weight: 600; }
+.font-headline-sm { font-family: var(--font-heading); font-size: 20px; line-height: 28px; font-weight: 600; }
+.font-title-md { font-family: var(--font-heading); font-size: 16px; line-height: 24px; font-weight: 600; }
+.font-display-hero { font-family: var(--font-heading); font-size: 40px; line-height: 48px; font-weight: 800; }
+.font-body-md { font-family: var(--font-body); font-size: 14px; line-height: 22.4px; }
+.font-body-sm { font-family: var(--font-body); font-size: 13px; line-height: 20px; }
+.font-body-lg { font-family: var(--font-body); font-size: 15px; line-height: 24px; }
+.font-label-md { font-family: var(--font-body); font-size: 13px; line-height: 18px; font-weight: 500; }
+.font-label-sm { font-family: var(--font-body); font-size: 12px; line-height: 16px; font-weight: 500; }
+.font-caption { font-family: var(--font-body); font-size: 11px; line-height: 14px; font-weight: 500; }
+
+/* Spacing tokens for 4px scale */
 .p-space-xs { padding: 0.25rem; }
 .p-space-sm { padding: 0.5rem; }
 .p-space-md { padding: 1rem; }
@@ -217,30 +292,17 @@ a:hover {
 .mb-space-lg { margin-bottom: 1.5rem; }
 .mb-space-xl { margin-bottom: 2rem; }
 
-.font-headline-lg { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 32px; line-height: 40px; font-weight: 700; }
-.font-headline-md { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; line-height: 32px; font-weight: 600; }
-.font-headline-sm { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; line-height: 28px; font-weight: 600; }
-.font-title-md { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; line-height: 24px; font-weight: 600; }
-.font-display-hero { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 40px; line-height: 48px; font-weight: 800; }
-.font-body-md { font-family: 'Inter', sans-serif; font-size: 14px; line-height: 22.4px; }
-.font-body-sm { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 20px; }
-.font-body-lg { font-family: 'Inter', sans-serif; font-size: 15px; line-height: 24px; }
-.font-label-md { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 18px; font-weight: 500; }
-.font-label-sm { font-family: 'Inter', sans-serif; font-size: 12px; line-height: 16px; font-weight: 500; }
-.font-caption { font-family: 'Inter', sans-serif; font-size: 11px; line-height: 14px; font-weight: 500; }
+/* =========================================================================
+   SPATIAL CAMPUS & GIS MAP COMPATIBILITY TOKENS
+   ========================================================================= */
 
-/* ============================================================
-   NEXTCAMPUS SPATIAL CAMPUS DESIGN SYSTEM TOKENS
-   ============================================================ */
-
-/* Hero Interactive Campus Navigator Card */
 .hero-navigator-card {
-  background: rgba(15, 23, 42, 0.88);
+  background: rgba(20, 45, 40, 0.92);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 18px;
-  box-shadow: 0 24px 50px -12px rgba(0, 0, 0, 0.5);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 24px 50px -12px rgba(20, 45, 40, 0.45);
   color: #FFFFFF;
 }
 
@@ -249,8 +311,8 @@ a:hover {
   padding: 12px 16px;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 10px;
-  color: #0F172A;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
   font-size: 13.5px;
   font-family: var(--font-body);
   outline: none;
@@ -258,9 +320,9 @@ a:hover {
 }
 
 .hero-search-input:focus {
-  border-color: var(--brand-accent);
+  border-color: var(--brand-primary);
   background: #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.25);
+  box-shadow: 0 0 0 3px rgba(22, 133, 103, 0.2);
 }
 
 .hero-quick-tag {
@@ -268,12 +330,12 @@ a:hover {
   align-items: center;
   gap: 6px;
   padding: 5px 12px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-pill);
   font-size: 11.5px;
   font-weight: 600;
-  color: #E2E8F0;
+  color: #FFFFFF;
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
@@ -286,13 +348,12 @@ a:hover {
   transform: translateY(-1px);
 }
 
-/* Metric / Stat Display Cards */
 .metric-card-box {
-  background: #FFFFFF;
+  background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: 14px;
+  border-radius: var(--radius-xl);
   padding: 24px 22px;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  box-shadow: var(--shadow-sm);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
@@ -305,24 +366,23 @@ a:hover {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+  background: linear-gradient(90deg, var(--brand-forest) 0%, var(--brand-primary) 100%);
   opacity: 0;
   transition: opacity 0.25s ease;
 }
 
 .metric-card-box:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-  border-color: rgba(158, 21, 62, 0.25);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-interactive);
 }
 
 .metric-card-box:hover::before {
   opacity: 1;
 }
 
-/* Quick Action Strip */
 .quick-action-strip {
-  background: linear-gradient(90deg, #9E153E 0%, #BE123C 50%, #E11D48 100%);
+  background: linear-gradient(90deg, var(--brand-forest) 0%, #168567 100%);
   padding: 18px 24px;
   display: flex;
   align-items: center;
@@ -333,85 +393,67 @@ a:hover {
 
 .quick-action-btn {
   background: #FFFFFF;
-  color: #9E153E;
+  color: var(--brand-forest);
   padding: 10px 22px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .quick-action-btn:hover {
-  background: #FFF1F2;
-  color: #BE123C;
+  background: var(--brand-soft-bg);
+  color: var(--brand-forest);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-md);
 }
 
-/* ============================================================
-   CAMPUS WAYFINDING & GIS MAP DASHBOARD STYLING
-   ============================================================ */
-
-/* Campus Wayfinding Facility Card in Left Drawer */
 .campus-wayfinding-card {
-  background: #FFFFFF;
+  background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 13px 15px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   gap: 9px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-xs);
 }
 
 .campus-wayfinding-card:hover {
-  border-color: #059669;
-  background: #F8FAFC;
+  border-color: var(--brand-primary);
+  background: var(--bg-canvas);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow-sm);
 }
 
 .campus-wayfinding-card.active {
-  border: 1.5px solid #059669;
-  background: #F0FDF4;
-  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.12);
+  border: 1.5px solid var(--brand-primary);
+  background: var(--brand-soft-bg);
+  box-shadow: 0 4px 14px rgba(22, 133, 103, 0.12);
 }
 
-/* Alias for compatibility */
-.ipc-map-card {
-  composes: campus-wayfinding-card;
-}
-
-/* Floating Destination Card on Map */
 .campus-map-floating-card {
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(16px);
-  border-radius: 14px;
+  border-radius: var(--radius-xl);
   padding: 16px 18px;
-  box-shadow: 0 18px 40px -8px rgba(15, 23, 42, 0.2), 0 0 0 1px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 18px 40px -8px rgba(20, 45, 40, 0.15), 0 0 0 1px var(--border-subtle);
   min-width: 260px;
   max-width: 330px;
   font-family: var(--font-body);
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Alias for compatibility */
-.ipc-floating-tooltip {
-  composes: campus-map-floating-card;
-}
-
-/* Campus Route Connector Graphic */
 .route-stop-line {
   display: flex;
   flex-direction: column;
@@ -423,13 +465,13 @@ a:hover {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #2563EB;
+  background-color: var(--status-info);
 }
 
 .route-stop-line .dot-line {
   width: 2px;
   height: 22px;
-  background-color: #CBD5E1;
+  background-color: var(--border-interactive);
   margin: 3px 0;
 }
 
@@ -437,22 +479,21 @@ a:hover {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #059669;
+  background-color: var(--brand-primary);
 }
 
-/* Custom Tooltip in Leaflet */
 .leaflet-tooltip.mewar-tooltip {
-  background: #0F172A;
+  background: var(--brand-forest);
   color: #FFFFFF;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   padding: 4px 8px;
   font-size: 11px;
   font-weight: 700;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-md);
 }
 .leaflet-tooltip.mewar-tooltip::before {
-  border-top-color: #0F172A;
+  border-top-color: var(--brand-forest);
 }
 
 @keyframes fadeIn {

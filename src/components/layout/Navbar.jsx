@@ -1,22 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Search,
   Bell,
-  User as UserIcon,
   CheckCircle2,
   Calendar,
   DoorOpen,
-  Compass,
-  Sparkles,
-  Command,
+  Menu,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
-export const Navbar = () => {
+export const Navbar = ({ onToggleSidebar }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
@@ -86,31 +82,42 @@ export const Navbar = () => {
   const unreadCount = notifications.filter((n) => n.unread).length;
 
   return (
-    <header className="h-16 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-6 flex items-center justify-between sticky top-0 z-30 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-      {/* Left: Campus Live Status */}
-      <div className="flex items-center gap-3">
-        <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-[11px] font-semibold text-emerald-700">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+    <header className="h-16 bg-white/95 backdrop-blur-md border-b border-[#E4EAE5] px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-[0_1px_3px_rgba(20,45,40,0.02)]">
+      {/* Left: Mobile Toggle + Campus Live Status */}
+      <div className="flex items-center gap-2.5 sm:gap-3">
+        {onToggleSidebar && (
+          <button
+            type="button"
+            onClick={onToggleSidebar}
+            title="Toggle Menu"
+            className="md:hidden p-2 text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1] rounded-xl transition-colors"
+          >
+            <Menu size={18} />
+          </button>
+        )}
+
+        <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#EAF5EF] border border-[#CBE2D4] text-[11px] font-semibold text-[#142D28]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#168567] animate-pulse" />
           <span>Mewar University • Term 2026</span>
         </div>
-        <div className="text-xs text-slate-400 hidden md:inline">|</div>
-        <span className="text-xs text-slate-500 font-medium hidden md:inline">
+        <div className="text-xs text-[#D0DAD2] hidden md:inline">|</div>
+        <span className="text-xs text-[#65736B] font-medium hidden md:inline truncate max-w-[200px] lg:max-w-none">
           Gangrar, Chittorgarh (Rajasthan)
         </span>
       </div>
 
       {/* Global Interactive Search Input */}
-      <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md mx-4 sm:mx-8">
+      <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md mx-2 sm:mx-6">
         <div className="relative flex items-center">
-          <Search size={15} className="absolute left-3.5 text-slate-400 pointer-events-none" />
+          <Search size={15} className="absolute left-3.5 text-[#87968D] pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search rooms, buildings, staff, tickets..."
-            className="w-full text-xs font-medium pl-9 pr-12 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100 transition-all"
+            className="w-full text-xs font-medium pl-9 pr-12 py-2 bg-[#F0F4F1] border border-[#E4EAE5] rounded-xl outline-none text-[#202A27] placeholder:text-[#87968D] focus:bg-white focus:border-[#168567] focus:ring-2 focus:ring-[#168567]/15 transition-all"
           />
-          <div className="absolute right-2.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-slate-200/60 text-slate-500 text-[10px] font-semibold">
+          <div className="absolute right-2.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white border border-[#E4EAE5] text-[#65736B] text-[10px] font-semibold shadow-2xs">
             <span>⌘</span>
             <span>K</span>
           </div>
@@ -118,7 +125,7 @@ export const Navbar = () => {
       </form>
 
       {/* Right Actions: Notifications & Profile */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         {/* Notifications Popover */}
         <div ref={notifRef} className="relative">
           <button
@@ -127,23 +134,23 @@ export const Navbar = () => {
             title="Campus Notifications"
             className={`relative p-2 rounded-xl transition-colors ${
               showNotifications
-                ? 'bg-rose-50 text-[#9E153E]'
-                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                ? 'bg-[#EAF5EF] text-[#168567]'
+                : 'text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1]'
             }`}
           >
             <Bell size={18} />
             {unreadCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#C43D4B] ring-2 ring-white" />
             )}
           </button>
 
           {showNotifications && (
-            <div className="absolute top-12 right-0 w-80 sm:w-96 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 p-4 space-y-3 animate-in fade-in zoom-in-95 duration-150">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div className="absolute top-12 right-0 w-80 sm:w-96 bg-white border border-[#E4EAE5] rounded-2xl shadow-xl z-50 p-4 space-y-3 animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex items-center justify-between pb-2.5 border-b border-[#E4EAE5]">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-slate-900">Campus Alerts</span>
+                  <span className="text-xs font-bold text-[#202A27]">Campus Alerts</span>
                   {unreadCount > 0 && (
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#9E153E] text-white">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#168567] text-white">
                       {unreadCount} New
                     </span>
                   )}
@@ -152,7 +159,7 @@ export const Navbar = () => {
                   <button
                     type="button"
                     onClick={markAllRead}
-                    className="text-[11px] font-semibold text-[#9E153E] hover:underline"
+                    className="text-[11px] font-semibold text-[#168567] hover:underline"
                   >
                     Mark all read
                   </button>
@@ -167,23 +174,23 @@ export const Navbar = () => {
                       key={n.id}
                       className={`p-2.5 rounded-xl border flex gap-3 transition-colors ${
                         n.unread
-                          ? 'bg-rose-50/40 border-rose-100'
-                          : 'bg-slate-50/60 border-slate-100'
+                          ? 'bg-[#EAF5EF]/50 border-[#CBE2D4]'
+                          : 'bg-[#F0F4F1]/60 border-[#E4EAE5]'
                       }`}
                     >
-                      <div className="w-7 h-7 rounded-lg bg-white border border-slate-200/80 text-[#9E153E] flex items-center justify-center shrink-0 shadow-xs mt-0.5">
+                      <div className="w-7 h-7 rounded-lg bg-white border border-[#E4EAE5] text-[#168567] flex items-center justify-center shrink-0 shadow-xs mt-0.5">
                         <Icon size={14} />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-baseline justify-between gap-1">
-                          <span className="text-xs font-bold text-slate-900 truncate">
+                          <span className="text-xs font-bold text-[#202A27] truncate">
                             {n.title}
                           </span>
-                          <span className="text-[10px] text-slate-400 shrink-0">
+                          <span className="text-[10px] text-[#87968D] shrink-0 font-medium">
                             {n.time}
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                        <p className="text-[11px] text-[#65736B] mt-0.5 leading-snug">
                           {n.desc}
                         </p>
                       </div>
@@ -192,11 +199,11 @@ export const Navbar = () => {
                 })}
               </div>
 
-              <div className="pt-2 border-t border-slate-100 text-center">
+              <div className="pt-2 border-t border-[#E4EAE5] text-center">
                 <NavLink
                   to="/profile"
                   onClick={() => setShowNotifications(false)}
-                  className="text-[11px] font-semibold text-[#9E153E] hover:underline inline-flex items-center gap-1"
+                  className="text-[11px] font-semibold text-[#168567] hover:underline inline-flex items-center gap-1"
                 >
                   Notification Preferences →
                 </NavLink>
@@ -209,19 +216,19 @@ export const Navbar = () => {
         {user ? (
           <NavLink
             to="/profile"
-            className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 transition-colors text-decoration-none"
+            className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-[#F0F4F1] hover:bg-[#EAF5EF] border border-[#E4EAE5] hover:border-[#CBE2D4] transition-all text-decoration-none shadow-xs"
           >
-            <div className="w-6 h-6 rounded-lg bg-[#9E153E] text-white flex items-center justify-center text-[11px] font-bold">
+            <div className="w-6 h-6 rounded-lg bg-[#142D28] text-white flex items-center justify-center text-[11px] font-bold">
               {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </div>
-            <span className="text-xs font-semibold text-slate-800 hidden sm:inline truncate max-w-[120px]">
+            <span className="text-xs font-semibold text-[#202A27] hidden sm:inline truncate max-w-[120px]">
               {user.name}
             </span>
           </NavLink>
         ) : (
           <NavLink
             to="/auth"
-            className="px-3.5 py-1.5 rounded-xl bg-[#9E153E] hover:bg-[#881337] text-white text-xs font-semibold shadow-xs transition-colors text-decoration-none"
+            className="px-3.5 py-1.5 rounded-xl bg-[#168567] hover:bg-[#0F6B52] text-white text-xs font-semibold shadow-xs transition-colors text-decoration-none"
           >
             Sign In
           </NavLink>

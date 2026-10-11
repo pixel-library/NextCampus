@@ -12,12 +12,12 @@ import {
   Sliders,
   LogOut,
   ChevronRight,
-  Sparkles,
+  X,
 } from 'lucide-react';
 import Logo from '../common/Logo';
 import { useAuth } from '../../hooks/useAuth';
 
-export const Sidebar = () => {
+export const Sidebar = ({ onClose }) => {
   const { user, logout } = useAuth();
   const isAdmin = user?.role === 'admin' || user?.role === 'care_admin';
 
@@ -63,20 +63,33 @@ export const Sidebar = () => {
         },
       ];
 
+  const handleLinkClick = () => {
+    if (onClose) onClose();
+  };
+
   return (
-    <aside className="w-64 bg-white border-r border-slate-200/90 flex flex-col h-screen sticky top-0 z-40 select-none shrink-0 shadow-[1px_0_4px_rgba(0,0,0,0.02)]">
+    <aside className="w-[260px] bg-white border-r border-[#E4EAE5] flex flex-col h-screen sticky top-0 z-40 select-none shrink-0 shadow-[1px_0_3px_rgba(20,45,40,0.02)]">
       {/* Brand Header */}
-      <div className="h-16 px-6 border-b border-slate-100 flex items-center justify-between">
-        <NavLink to="/" className="flex items-center gap-2 group text-decoration-none">
+      <div className="h-16 px-5 border-b border-[#E4EAE5] flex items-center justify-between">
+        <NavLink to="/" onClick={handleLinkClick} className="flex items-center gap-2 group text-decoration-none">
           <Logo size="sm" showText={true} />
         </NavLink>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="md:hidden p-1.5 text-[#87968D] hover:text-[#202A27] hover:bg-[#F0F4F1] rounded-lg transition-colors"
+            title="Close navigation"
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
       {/* Nav Items List */}
-      <div className="flex-1 overflow-y-auto px-3.5 py-4 space-y-6">
+      <div className="flex-1 overflow-y-auto px-3.5 py-4 space-y-5">
         {navGroups.map((group, gIdx) => (
           <div key={gIdx} className="space-y-1">
-            <div className="px-3 pb-1.5 text-[10.5px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="px-3 pb-1.5 text-[10.5px] font-bold text-[#87968D] uppercase tracking-wider">
               {group.title}
             </div>
             {group.items.map((item, idx) => {
@@ -85,11 +98,12 @@ export const Sidebar = () => {
                 <NavLink
                   key={idx}
                   to={item.path}
+                  onClick={handleLinkClick}
                   className={({ isActive }) =>
-                    `flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 group text-decoration-none ${
+                    `flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all duration-150 group text-decoration-none ${
                       isActive
-                        ? 'bg-rose-50/80 text-[#9E153E] shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                        ? 'bg-[#EAF5EF] text-[#142D28] font-bold shadow-xs'
+                        : 'text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1] font-semibold'
                     }`
                   }
                 >
@@ -100,8 +114,8 @@ export const Sidebar = () => {
                           size={17}
                           className={`shrink-0 transition-colors ${
                             isActive
-                              ? 'text-[#9E153E]'
-                              : 'text-slate-400 group-hover:text-slate-600'
+                              ? 'text-[#168567]'
+                              : 'text-[#87968D] group-hover:text-[#202A27]'
                           }`}
                         />
                         <span>{item.label}</span>
@@ -110,8 +124,8 @@ export const Sidebar = () => {
                         <span
                           className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
                             isActive
-                              ? 'bg-rose-200/60 text-[#9E153E]'
-                              : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
+                              ? 'bg-[#168567] text-white'
+                              : 'bg-[#EAF5EF] text-[#168567] group-hover:bg-[#CBE2D4]'
                           }`}
                         >
                           {item.badge}
@@ -128,17 +142,17 @@ export const Sidebar = () => {
 
       {/* User Account Strip */}
       {user && (
-        <div className="p-3.5 border-t border-slate-100 bg-slate-50/50">
-          <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200/80 shadow-xs">
+        <div className="p-3.5 border-t border-[#E4EAE5] bg-[#F6F8F6]/70">
+          <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-[#E4EAE5] shadow-xs">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#9E153E] to-[#E11D48] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#168567] to-[#142D28] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
                 {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
               <div className="min-w-0">
-                <div className="text-xs font-bold text-slate-900 truncate leading-tight">
+                <div className="text-xs font-bold text-[#202A27] truncate leading-tight">
                   {user.name}
                 </div>
-                <div className="text-[10.5px] text-slate-500 font-medium capitalize truncate mt-0.5">
+                <div className="text-[10.5px] text-[#65736B] font-medium capitalize truncate mt-0.5">
                   {user.role === 'care_admin' ? 'Care Officer' : user.role || 'Student'}
                 </div>
               </div>
@@ -146,7 +160,7 @@ export const Sidebar = () => {
             <button
               onClick={logout}
               title="Sign Out"
-              className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors ml-1 shrink-0"
+              className="p-1.5 text-[#87968D] hover:text-[#C43D4B] hover:bg-[#FDF2F3] rounded-lg transition-colors ml-1 shrink-0"
             >
               <LogOut size={15} />
             </button>
