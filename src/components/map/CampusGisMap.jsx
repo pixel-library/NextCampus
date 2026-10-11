@@ -30,6 +30,37 @@ export const MEWAR_CAMPUS_BOUNDS = [
   [25.0375, 74.6410], // NE corner of campus grounds
 ];
 
+// Tile Layer Configurations with maxNativeZoom protection:
+// Esri World Imagery native satellite resolution ends at z=18 for this region.
+// Without maxNativeZoom: 18, Leaflet requests non-existent z=19 tiles, causing Esri to return
+// gray "Map data not yet available" placeholder tiles.
+// With maxNativeZoom: 18 and maxZoom: 20, Leaflet requests z=18 tiles and upscales them smoothly.
+export const TILE_LAYER_CONFIGS = {
+  satellite: {
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    options: {
+      maxZoom: 20,
+      maxNativeZoom: 18,
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
+    },
+  },
+  streets: {
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    options: {
+      maxZoom: 20,
+      maxNativeZoom: 19,
+      subdomains: 'abcd',
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    },
+  },
+};
+
+export const createTileLayer = (style = 'satellite') => {
+  const config = TILE_LAYER_CONFIGS[style] || TILE_LAYER_CONFIGS.satellite;
+  return L.tileLayer(config.url, config.options);
+};
+
+
 // Official Campus Perimeter Boundary Polygon (OSM Way 549126310)
 export const MEWAR_PERIMETER_POLYGON = [
   [25.029613, 74.636170],
@@ -44,49 +75,63 @@ export const MEWAR_PERIMETER_POLYGON = [
   [25.029613, 74.636170],
 ];
 
-// Authentic Mewar University Internal Walkways (OSM Service Roads & Footways)
+// Authentic Mewar University Internal Walkways & Road Network
 export const MEWAR_CAMPUS_ROADS = [
-  // Engineering Block Road (NH-48 Gate to Engineering & Tech)
+  // West Avenue (Gate 1 past Main Building to Gate 2, Guest House & Mira Hostel)
   [
-    [25.031907, 74.635428],
+    [25.031907, 74.635428], // Gate 1
     [25.032315, 74.635262],
     [25.033008, 74.634981],
-    [25.033523, 74.634772],
-    [25.033644, 74.635116],
-    [25.033829, 74.635641],
-    [25.033868, 74.635752],
-    [25.032217, 74.636426],
+    [25.033500, 74.634280], // Gate 2
+    [25.033780, 74.634550], // Guest House
+    [25.034085, 74.634523], // Mira Hostel
+    [25.034450, 74.634320], // Panna Hostel
   ],
-  // Central Avenue to Admin Block & Central Promenade
+  // Central Promenade (Gate 1 to Main Building, Mess, Law Building & Courts)
   [
-    [25.030927, 74.635826],
-    [25.031907, 74.635428],
+    [25.031907, 74.635428], // Gate 1
     [25.032173, 74.636267],
-    [25.032217, 74.636426],
-    [25.032377, 74.636999],
+    [25.031750, 74.636620], // Mess
+    [25.031866, 74.637113], // Law Building
+    [25.030800, 74.637300], // Basketball Ground
   ],
-  // Canteen Road
+  // Academic Promenade to Engineering & Teacher Building
   [
-    [25.034047, 74.634957],
-    [25.034624, 74.634730],
+    [25.032173, 74.636267],
+    [25.032450, 74.636650], // Engineering Building
+    [25.032600, 74.637300], // Teacher Building
+    [25.032180, 74.637400], // Badal Hostel
   ],
-  // Sanga Boys Hostel Way
+  // Park & Hostels Pathway (Main Building to Park, Kumbha, Pratap, Gora & Hospital)
   [
-    [25.033901, 74.635844],
-    [25.034069, 74.635781],
-    [25.034474, 74.635414],
-    [25.034582, 74.635760],
+    [25.032850, 74.635580], // Main Building
+    [25.033592, 74.636105], // Pratap Hostel
+    [25.033814, 74.636040], // Kumbha Hostel
+    [25.033900, 74.635150], // Campus Park
+    [25.034447, 74.635065], // Gora Hostel
+    [25.034600, 74.634840], // Campus Hospital
+  ],
+  // East Living Quad (Kumbha to Sanaga & Bhamasha)
+  [
+    [25.033814, 74.636040],
+    [25.034250, 74.636180], // Bhamasha Hostel
+    [25.034645, 74.635783], // Sanaga Hostel
+  ],
+  // Athletic Track (Gate 1 to Football Ground)
+  [
+    [25.031907, 74.635428],
+    [25.031150, 74.635900], // Football Ground
   ],
 ];
 
 // Official Real-World Buildings & Footprints of Mewar University, Gangrar
-// Styled with NextCampus Institutional Color Palette
+// Accurate annotations matching campus satellite landmarks and user ground-truth
 export const CAMPUS_GIS_LOCATIONS = {
   gate: {
     id: 'gate',
-    code: 'GATE-10',
-    name: 'Main Campus Gate (NH-48, Gangrar)',
-    shortName: 'Main Campus Gate',
+    code: 'GATE-01',
+    name: 'Main Campus Gate 1 (NH-48)',
+    shortName: 'Gate 1',
     category: 'facility',
     color: '#142D28',
     bgColor: '#EAF5EF',
@@ -101,17 +146,143 @@ export const CAMPUS_GIS_LOCATIONS = {
     ],
     dept: 'NH-48 Campus Entrance & Security Post',
     elevation: 'Ground Level',
-    description: 'Official entrance on NH-48 near Gangrar, automated RFID student verification barrier, and 24/7 security outpost.',
+    description: 'Primary ceremonial entrance on NH-48 near Gangrar, automated RFID student verification barrier, and 24/7 security outpost.',
   },
-  admin: {
-    id: 'admin',
-    code: 'ADM-01',
-    name: 'Maharana Pratap Main Academic & Admin Block',
-    shortName: 'Admin & Academic Block',
+  gate2: {
+    id: 'gate2',
+    code: 'GATE-02',
+    name: 'Campus Gate 2 (West Entry)',
+    shortName: 'Gate 2',
+    category: 'facility',
+    color: '#142D28',
+    bgColor: '#EAF5EF',
+    icon: '🚪',
+    lat: 25.033500,
+    lng: 74.634280,
+    polygon: [
+      [25.03342, 74.63420],
+      [25.03358, 74.63420],
+      [25.03358, 74.63436],
+      [25.03342, 74.63436],
+    ],
+    dept: 'West Perimeter Vehicle & Pedestrian Entrance',
+    elevation: 'Ground Level',
+    description: 'Western entrance portal providing direct access towards Guest House, Mira Hostel, and Campus Park.',
+  },
+  main: {
+    id: 'main',
+    code: 'MAIN-01',
+    name: 'Main Academic & Administrative Building',
+    shortName: 'Main Building',
+    category: 'academic',
+    color: '#168567',
+    bgColor: '#EAF5EF',
+    icon: '🏛️',
+    lat: 25.032850,
+    lng: 74.635580,
+    polygon: [
+      [25.03325, 74.63530],
+      [25.03335, 74.63560],
+      [25.03240, 74.63595],
+      [25.03230, 74.63565],
+    ],
+    dept: 'University Secretariat, Admissions & Administrative Council',
+    elevation: 'Floors 1–4',
+    description: 'Central university flagship building with expansive solar rooftop arrays, registrar office, accounts, and examination branch.',
+  },
+  eng: {
+    id: 'eng',
+    code: 'ENG-02',
+    name: 'Faculty of Engineering & Technology',
+    shortName: 'Engineering Building',
+    category: 'academic',
+    color: '#168567',
+    bgColor: '#EAF5EF',
+    icon: '💻',
+    lat: 25.032450,
+    lng: 74.636650,
+    polygon: [
+      [25.03265, 74.63640],
+      [25.03275, 74.63675],
+      [25.03220, 74.63695],
+      [25.03210, 74.63660],
+    ],
+    dept: 'Department of Computer Science & Engineering, AI Labs & Core Tech',
+    elevation: 'Floors 1–4',
+    description: 'High-performance research computing labs, AI & ML center, IoT workstations, mechanical & civil workshops.',
+  },
+  teacher: {
+    id: 'teacher',
+    code: 'FAC-01',
+    name: 'Teachers & Faculty Academic Building',
+    shortName: 'Teacher Building',
+    category: 'academic',
+    color: '#4338CA',
+    bgColor: '#EEF2FF',
+    icon: '👨‍🏫',
+    lat: 25.032600,
+    lng: 74.637300,
+    polygon: [
+      [25.03272, 74.63715],
+      [25.03278, 74.63745],
+      [25.03248, 74.63752],
+      [25.03242, 74.63722],
+    ],
+    dept: 'Faculty Chambers, Research Scholars & HOD Offices',
+    elevation: 'Floors 1–3',
+    description: 'Academic staff quarters, professors consultation cabins, conference room, and departmental faculties.',
+  },
+  badal: {
+    id: 'badal',
+    code: 'HST-08',
+    name: 'Badal Boys Residential Hostel',
+    shortName: 'Badal Hostel',
+    category: 'facility',
+    color: '#3478B8',
+    bgColor: '#EEF5FA',
+    icon: '🛏️',
+    lat: 25.032180,
+    lng: 74.637400,
+    polygon: [
+      [25.03232, 74.63725],
+      [25.03238, 74.63755],
+      [25.03205, 74.63762],
+      [25.03200, 74.63732],
+    ],
+    dept: 'Male Student Residence (East Campus Wing)',
+    elevation: '3 Floors',
+    description: 'Modern student hostel block situated near faculty wing with furnished study units and high-speed Wi-Fi.',
+  },
+  mess: {
+    id: 'mess',
+    code: 'MSS-01',
+    name: 'Central Student Dining Mess',
+    shortName: 'Mess',
+    category: 'facility',
+    color: '#D97706',
+    bgColor: '#FFF7ED',
+    icon: '🍽️',
+    lat: 25.031750,
+    lng: 74.636620,
+    polygon: [
+      [25.03192, 74.63640],
+      [25.03198, 74.63682],
+      [25.03155, 74.63690],
+      [25.03150, 74.63648],
+    ],
+    dept: 'Central Campus Catering & Dining Services',
+    elevation: 'Ground + Floor 1',
+    description: 'Spacious student dining hall serving breakfast, lunch, snacks, and dinner with multi-counter kitchen.',
+  },
+  law: {
+    id: 'law',
+    code: 'LAW-01',
+    name: 'Faculty of Law & Legal Studies',
+    shortName: 'Law Building',
     category: 'academic',
     color: '#142D28',
     bgColor: '#EAF5EF',
-    icon: '🏛️',
+    icon: '⚖️',
     lat: 25.031866,
     lng: 74.637113,
     polygon: [
@@ -137,43 +308,84 @@ export const CAMPUS_GIS_LOCATIONS = {
       [25.031937, 74.636941],
       [25.032024, 74.636908],
     ],
-    dept: 'University Secretariat & Administrative Council',
-    elevation: 'Floors 1–4',
-    description: 'Central university reception, registrar office, admissions desk, accounts, and examination branch.',
+    dept: 'Department of Law, Moot Court Hall & Legal Aid Clinic',
+    elevation: 'Floors 1–3',
+    description: 'Dedicated law faculty with modern moot court chambers, legal research library, and lecture theatres.',
   },
-  eng: {
-    id: 'eng',
-    code: 'ENG-02',
-    name: 'Faculty of Engineering & Technology',
-    shortName: 'Engineering & AI Labs',
-    category: 'academic',
-    color: '#168567',
-    bgColor: '#EAF5EF',
-    icon: '💻',
-    lat: 25.032130,
-    lng: 74.636623,
+  football: {
+    id: 'football',
+    code: 'SPT-01',
+    name: 'University Football Ground & Arena',
+    shortName: 'Football Ground',
+    category: 'facility',
+    color: '#047857',
+    bgColor: '#ECFDF5',
+    icon: '⚽',
+    lat: 25.031150,
+    lng: 74.635900,
     polygon: [
-      [25.032150, 74.636408],
-      [25.032255, 74.636748],
-      [25.032229, 74.636758],
-      [25.032220, 74.636730],
-      [25.032003, 74.636811],
-      [25.031907, 74.636499],
-      [25.032150, 74.636408],
+      [25.03155, 74.63555],
+      [25.03165, 74.63625],
+      [25.03065, 74.63640],
+      [25.03055, 74.63570],
     ],
-    dept: 'Department of Computer Science & Engineering (AI & ML)',
-    elevation: 'Floors 1–4',
-    description: 'High-performance research computing labs, Artificial Intelligence & ML center, IoT workstations, and smart classrooms.',
+    dept: 'Department of Physical Education & Athletics',
+    elevation: 'Sports Arena',
+    description: 'Full-size natural turf football ground with running track perimeter and spectator pavilions.',
   },
-  library: {
-    id: 'library',
-    code: 'LIB-03',
-    name: 'Swami Vivekananda Central Library',
-    shortName: 'Central Library',
-    category: 'libraries',
-    color: '#B7791F',
-    bgColor: '#FEF8EC',
-    icon: '📚',
+  basketball: {
+    id: 'basketball',
+    code: 'SPT-02',
+    name: 'Basketball & Outdoor Sports Court',
+    shortName: 'Basketball Ground',
+    category: 'facility',
+    color: '#E11D48',
+    bgColor: '#FFF1F2',
+    icon: '🏀',
+    lat: 25.030800,
+    lng: 74.637300,
+    polygon: [
+      [25.030497, 74.637032],
+      [25.030542, 74.637186],
+      [25.030966, 74.637034],
+      [25.030920, 74.636880],
+      [25.030497, 74.637032],
+    ],
+    dept: 'Department of Physical Education & Court Sports',
+    elevation: 'Hard Court Surface',
+    description: 'Floodlit outdoor basketball and volleyball hard courts adjacent to the Law Building.',
+  },
+  kumbha: {
+    id: 'kumbha',
+    code: 'HST-06',
+    name: 'Maharana Kumbha Boys Hostel',
+    shortName: 'Kumbha Hostel',
+    category: 'facility',
+    color: '#0891B2',
+    bgColor: '#ECFEFF',
+    icon: '🛏️',
+    lat: 25.033814,
+    lng: 74.636040,
+    polygon: [
+      [25.033815, 74.635849],
+      [25.033946, 74.636277],
+      [25.033813, 74.636327],
+      [25.033682, 74.635898],
+      [25.033815, 74.635849],
+    ],
+    dept: 'Senior Student Residence Wing',
+    elevation: '3 Floors',
+    description: 'Hostel dormitory units with high-speed campus LAN, study halls, and laundry amenities.',
+  },
+  pratap: {
+    id: 'pratap',
+    code: 'HST-07',
+    name: 'Maharana Pratap Boys Hostel',
+    shortName: 'Pratap Hostel',
+    category: 'facility',
+    color: '#D97706',
+    bgColor: '#FFFBEB',
+    icon: '🛏️',
     lat: 25.033592,
     lng: 74.636105,
     polygon: [
@@ -183,41 +395,127 @@ export const CAMPUS_GIS_LOCATIONS = {
       [25.033459, 74.635963],
       [25.033593, 74.635914],
     ],
-    dept: 'Central Library & Digital Knowledge Commons',
-    elevation: 'Floors 1–3',
-    description: 'Over 50,000 academic volumes, IEEE/Elsevier e-journal division, quiet research pods, and 200+ reading seats.',
+    dept: 'Male Student Living Complex',
+    elevation: '3 Floors',
+    description: 'Residential quarters directly south of Kumbha Hostel with landscaped garden frontage.',
   },
-  auditorium: {
-    id: 'auditorium',
-    code: 'AUD-04',
-    name: 'Mewar University Central Auditorium',
-    shortName: 'Central Auditorium',
+  park: {
+    id: 'park',
+    code: 'PRK-01',
+    name: 'Central Campus Park & Botanical Garden',
+    shortName: 'Campus Park',
+    category: 'facility',
+    color: '#15803D',
+    bgColor: '#F0FDF4',
+    icon: '🌳',
+    lat: 25.033900,
+    lng: 74.635150,
+    polygon: [
+      [25.03415, 74.63485],
+      [25.03420, 74.63550],
+      [25.03365, 74.63555],
+      [25.03360, 74.63490],
+    ],
+    dept: 'Campus Horticultural & Student Recreation Zone',
+    elevation: 'Open Grounds',
+    description: 'Central green parkland, shaded walking tracks, flowering shrubs, and outdoor seating lawns.',
+  },
+  guest_house: {
+    id: 'guest_house',
+    code: 'GST-01',
+    name: 'University Guest House & VIP Suites',
+    shortName: 'Guest House',
+    category: 'facility',
+    color: '#059669',
+    bgColor: '#ECFDF5',
+    icon: '🏨',
+    lat: 25.033780,
+    lng: 74.634550,
+    polygon: [
+      [25.03388, 74.63442],
+      [25.03392, 74.63468],
+      [25.03368, 74.63475],
+      [25.03362, 74.63450],
+    ],
+    dept: 'Campus Hospitality & Visiting Dignitaries Lodge',
+    elevation: 'Ground + Floor 1',
+    description: 'Furnished suites for visiting faculty, academic guest lecturers, delegates, and parent accommodations.',
+  },
+  mira: {
+    id: 'mira',
+    code: 'HST-01',
+    name: 'Mira Girls Residential Hostel',
+    shortName: 'Mira Hostel',
     category: 'facility',
     color: '#7C3AED',
     bgColor: '#F5F3FF',
-    icon: '🎭',
-    lat: 25.030470,
-    lng: 74.636497,
+    icon: '🏠',
+    lat: 25.034085,
+    lng: 74.634523,
     polygon: [
-      [25.031077, 74.636607],
-      [25.030846, 74.635816],
-      [25.029709, 74.636282],
-      [25.029641, 74.637173],
-      [25.031077, 74.636607],
+      [25.034158, 74.634385],
+      [25.034188, 74.634480],
+      [25.034049, 74.634534],
+      [25.034096, 74.634685],
+      [25.034011, 74.634717],
+      [25.033933, 74.634472],
+      [25.034158, 74.634385],
     ],
-    dept: 'Cultural & Academic Convocation Center',
-    elevation: 'Plenary Hall (500 Seats)',
-    description: '500-seat multi-tiered air-conditioned auditorium for convocations, symposiums, and cultural fests.',
+    dept: 'Female Student Residential Precinct (South Wing)',
+    elevation: 'Blocks A & B',
+    description: 'Secure female residence quarters with landscaped courtyard, reading hall, and dedicated warden outpost.',
   },
-  cafeteria: {
-    id: 'cafeteria',
-    code: 'CAF-05',
-    name: 'University Cafeteria & Food Court',
-    shortName: 'Campus Cafeteria',
+  panna: {
+    id: 'panna',
+    code: 'HST-02',
+    name: 'Panna Girls Residential Hostel',
+    shortName: 'Panna Hostel',
     category: 'facility',
-    color: '#D97706',
+    color: '#9333EA',
+    bgColor: '#FAF5FF',
+    icon: '🏠',
+    lat: 25.034450,
+    lng: 74.634320,
+    polygon: [
+      [25.03460, 74.63418],
+      [25.03465, 74.63445],
+      [25.03428, 74.63455],
+      [25.03422, 74.63428],
+    ],
+    dept: 'Female Student Residential Precinct (North Wing)',
+    elevation: 'Blocks 1 & 2',
+    description: 'Secure female student quarters, air-cooled living units, and study rooms.',
+  },
+  hospital: {
+    id: 'hospital',
+    code: 'MED-01',
+    name: 'University Hospital & Health Centre',
+    shortName: 'Campus Hospital',
+    category: 'facility',
+    color: '#DC2626',
+    bgColor: '#FEF2F2',
+    icon: '🏥',
+    lat: 25.034600,
+    lng: 74.634840,
+    polygon: [
+      [25.03472, 74.63475],
+      [25.03476, 74.63492],
+      [25.03448, 74.63500],
+      [25.03444, 74.63482],
+    ],
+    dept: '24/7 Campus Emergency Medical Care & Dispensary',
+    elevation: 'Ground Floor Wing',
+    description: 'Round-the-clock university hospital wing, emergency ambulance desk, resident medical doctors, and pharmacy dispensary.',
+  },
+  gora: {
+    id: 'gora',
+    code: 'HST-03',
+    name: 'Gora Boys Residential Hostel',
+    shortName: 'Gora Hostel',
+    category: 'facility',
+    color: '#EA580C',
     bgColor: '#FFF7ED',
-    icon: '🍽️',
+    icon: '🛏️',
     lat: 25.034447,
     lng: 74.635065,
     polygon: [
@@ -244,18 +542,18 @@ export const CAMPUS_GIS_LOCATIONS = {
       [25.034256, 74.635065],
       [25.034194, 74.635087],
     ],
-    dept: 'Student Dining & Amenities Hub',
-    elevation: 'Ground Level',
-    description: 'Multi-cuisine campus canteen, tea & snack kiosk, indoor student seating, and helpdesk station.',
+    dept: 'Boys Residence Complex & Quadrangle Living',
+    elevation: 'Blocks 1–3',
+    description: 'Major residential hostel block with an open central courtyard, air-cooled rooms, and attached student amenities.',
   },
-  hostel_b: {
-    id: 'hostel_b',
-    code: 'HST-06',
-    name: 'Rana Sanga Boys Residential Hostel',
-    shortName: 'Sanga Boys Hostel',
+  sanaga: {
+    id: 'sanaga',
+    code: 'HST-04',
+    name: 'Sanaga Boys Residential Hostel',
+    shortName: 'Sanaga Hostel',
     category: 'facility',
-    color: '#3478B8',
-    bgColor: '#EEF5FA',
+    color: '#2563EB',
+    bgColor: '#EFF6FF',
     icon: '🛏️',
     lat: 25.034645,
     lng: 74.635783,
@@ -274,101 +572,41 @@ export const CAMPUS_GIS_LOCATIONS = {
       [25.034779, 74.635793],
       [25.034641, 74.635385],
     ],
-    dept: 'Male Student Residence Precinct (Blocks 1–4)',
+    dept: 'Male Student Residence Wing',
     elevation: 'Blocks 1–4',
-    description: 'Air-cooled residential blocks, Wi-Fi connectivity, recreation room, student mess, and 24/7 security outpost.',
+    description: 'Senior boys hostel living quarters with Wi-Fi, common recreation room, and 24/7 security station.',
   },
-  kumbha: {
-    id: 'kumbha',
-    code: 'HST-07',
-    name: 'Maharana Kumbha Boys Hostel',
-    shortName: 'Kumbha Boys Hostel',
+  bhamasha: {
+    id: 'bhamasha',
+    code: 'HST-05',
+    name: 'Bhamasha Boys Residential Hostel',
+    shortName: 'Bhamasha Hostel',
     category: 'facility',
-    color: '#0891B2',
-    bgColor: '#ECFEFF',
-    icon: '🏢',
-    lat: 25.033814,
-    lng: 74.636040,
+    color: '#0284C7',
+    bgColor: '#F0F9FF',
+    icon: '🛏️',
+    lat: 25.034250,
+    lng: 74.636180,
     polygon: [
-      [25.033815, 74.635849],
-      [25.033946, 74.636277],
-      [25.033813, 74.636327],
-      [25.033682, 74.635898],
-      [25.033815, 74.635849],
+      [25.03445, 74.63602],
+      [25.03452, 74.63630],
+      [25.03405, 74.63645],
+      [25.03398, 74.63618],
     ],
-    dept: 'Senior Student Residence Wing',
+    dept: 'East Perimeter Male Student Residence Wing',
     elevation: '3 Floors',
-    description: 'Senior scholar dormitory units with high-speed campus LAN, study halls, and laundry amenities.',
-  },
-  hostel_g: {
-    id: 'hostel_g',
-    code: 'HST-08',
-    name: 'Meera Bai Girls Residential Hostel',
-    shortName: 'Meera Bai Girls Hostel',
-    category: 'facility',
-    color: '#8B5CF6',
-    bgColor: '#FAF5FF',
-    icon: '🏠',
-    lat: 25.034085,
-    lng: 74.634523,
-    polygon: [
-      [25.034158, 74.634385],
-      [25.034188, 74.634480],
-      [25.034049, 74.634534],
-      [25.034096, 74.634685],
-      [25.034011, 74.634717],
-      [25.033933, 74.634472],
-      [25.034158, 74.634385],
-    ],
-    dept: 'Female Student Residence Precinct',
-    elevation: 'Blocks A & B',
-    description: 'Secure female student quarters, landscaped courtyard, study library, and dedicated dining mess.',
-  },
-  sports: {
-    id: 'sports',
-    code: 'SPT-10',
-    name: 'Mewar Sports Arena & Cricket Ground',
-    shortName: 'Cricket & Sports Arena',
-    category: 'facility',
-    color: '#0D9488',
-    bgColor: '#ECFDF5',
-    icon: '🏏',
-    lat: 25.030684,
-    lng: 74.637033,
-    polygon: [
-      [25.030497, 74.637032],
-      [25.030542, 74.637186],
-      [25.030966, 74.637034],
-      [25.030920, 74.636880],
-      [25.030497, 74.637032],
-    ],
-    dept: 'Department of Physical Education & Sports',
-    elevation: 'Athletic Grounds',
-    description: 'Full-size cricket ground, outdoor athletic track, basketball courts, badminton pavilion, and gym.',
-  },
-  hospital: {
-    id: 'hospital',
-    code: 'MED-09',
-    name: 'Mewar University Hospital & Health Centre',
-    shortName: 'University Hospital',
-    category: 'facility',
-    color: '#C43D4B',
-    bgColor: '#FEF2F2',
-    icon: '🏥',
-    lat: 25.031342,
-    lng: 74.637242,
-    polygon: [
-      [25.031203, 74.637207],
-      [25.031265, 74.637405],
-      [25.031551, 74.637295],
-      [25.031489, 74.637097],
-      [25.031203, 74.637207],
-    ],
-    dept: 'Campus Medical & Emergency Care Services',
-    elevation: 'Ground + Floor 1',
-    description: '24/7 on-campus health center, emergency ambulance service, resident doctors, and pharmacy dispensary.',
+    description: 'Spacious student accommodation complex positioned along the eastern perimeter walkway.',
   },
 };
+
+// Aliases for backwards compatibility with legacy routes/bookmarks
+CAMPUS_GIS_LOCATIONS.admin = CAMPUS_GIS_LOCATIONS.main;
+CAMPUS_GIS_LOCATIONS.cafeteria = CAMPUS_GIS_LOCATIONS.mess;
+CAMPUS_GIS_LOCATIONS.hostel_b = CAMPUS_GIS_LOCATIONS.sanaga;
+CAMPUS_GIS_LOCATIONS.hostel_g = CAMPUS_GIS_LOCATIONS.mira;
+CAMPUS_GIS_LOCATIONS.sports = CAMPUS_GIS_LOCATIONS.basketball;
+CAMPUS_GIS_LOCATIONS.library = CAMPUS_GIS_LOCATIONS.pratap;
+CAMPUS_GIS_LOCATIONS.auditorium = CAMPUS_GIS_LOCATIONS.football;
 
 // Haversine geodesic distance in meters
 export function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
@@ -460,7 +698,7 @@ export const CampusGisMap = ({
         center: DEFAULT_CAMPUS_CENTER,
         zoom: 17.5,
         minZoom: 16.2, // STRICT HARD LOCK: User cannot zoom out beyond university campus
-        maxZoom: 19.5, // High-resolution building footprint & pathway zoom
+        maxZoom: 20, // High-resolution building footprint & pathway zoom (upscaled cleanly beyond native zoom)
         maxBounds: MEWAR_CAMPUS_BOUNDS,
         maxBoundsViscosity: 1.0, // 100% HARD LOCK: Bounces back instantly; cannot drag outside
         zoomControl: false,
@@ -472,15 +710,8 @@ export const CampusGisMap = ({
         map.panInsideBounds(MEWAR_CAMPUS_BOUNDS, { animate: false });
       });
 
-      // Esri World Imagery (Satellite) or Esri World Street Map (Clean GIS Streets)
-      const tileUrl =
-        mapLayerStyle === 'satellite'
-          ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-          : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
-
-      tileLayerRef.current = L.tileLayer(tileUrl, {
-        maxZoom: 19.5,
-      }).addTo(map);
+      // Initialize base tile layer with maxNativeZoom protection
+      tileLayerRef.current = createTileLayer(mapLayerStyle).addTo(map);
 
       // Add Zoom Control bottom right
       L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -559,20 +790,13 @@ export const CampusGisMap = ({
     return () => clearTimeout(timer);
   }, [isDrawerOpen, isNavPanelOpen]);
 
-  // Switch Tile Layer (Satellite Aerial vs Esri Street Map)
+  // Switch Tile Layer (Satellite Aerial vs Street Map)
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map || !tileLayerRef.current) return;
 
     map.removeLayer(tileLayerRef.current);
-    const tileUrl =
-      mapLayerStyle === 'satellite'
-        ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-        : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
-
-    tileLayerRef.current = L.tileLayer(tileUrl, {
-      maxZoom: 19,
-    }).addTo(map);
+    tileLayerRef.current = createTileLayer(mapLayerStyle).addTo(map);
   }, [mapLayerStyle]);
 
   // Render Highlighted Building Footprint Polygons & Markers
@@ -587,7 +811,8 @@ export const CampusGisMap = ({
     buildingPolygonsRef.current = {};
 
     Object.entries(CAMPUS_GIS_LOCATIONS).forEach(([key, bldg]) => {
-      const isSelected = !customDestination && key === selectedBuildingKey;
+      if (bldg.id !== key) return; // Avoid rendering duplicate polygons/markers for backwards-compatible aliases
+      const isSelected = !customDestination && (key === selectedBuildingKey || bldg.id === selectedBuildingKey);
 
       // 1. Draw Visible Building Footprint Polygon
       if (bldg.polygon) {

@@ -10,6 +10,37 @@ export const AppLayout = () => {
   const location = useLocation();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
+  // Desktop sidebar collapse state with localStorage persistence
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('nextcampus_sidebar_collapsed') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const handleToggleSidebarCollapse = () => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('nextcampus_sidebar_collapsed', String(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  // Keyboard shortcut: Cmd+B or Ctrl+B to toggle sidebar collapse
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        handleToggleSidebarCollapse();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Close mobile drawer on Escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -55,8 +86,11 @@ export const AppLayout = () => {
   return (
     <div className="flex min-h-screen bg-[#F6F8F6] font-sans text-[#202A27] antialiased selection:bg-[#EAF5EF] selection:text-[#142D28]">
       {/* Desktop Sidebar Navigation */}
-      <div className="hidden md:block">
-        <Sidebar />
+      <div className="hidden md:block shrink-0">
+        <Sidebar
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={handleToggleSidebarCollapse}
+        />
       </div>
 
       {/* Mobile / Tablet Drawer Sidebar */}
@@ -73,14 +107,21 @@ export const AppLayout = () => {
             aria-label="Close navigation overlay"
           />
           <div className="relative z-10 w-[260px] h-full shadow-2xl animate-in slide-in-from-left duration-200">
-            <Sidebar onClose={() => setMobileSidebarOpen(false)} />
+            <Sidebar
+              isCollapsed={false}
+              onClose={() => setMobileSidebarOpen(false)}
+            />
           </div>
         </div>
       )}
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0">
-        <Navbar onToggleSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)} />
+        <Navbar
+          onToggleSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+          isSidebarCollapsed={isSidebarCollapsed}
+          onToggleCollapse={handleToggleSidebarCollapse}
+        />
 
         <main
           className={

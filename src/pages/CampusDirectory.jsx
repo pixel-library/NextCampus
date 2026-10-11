@@ -43,6 +43,20 @@ import api from '../services/api';
 // ============================================================================
 const INITIAL_BUILDINGS = [
   {
+    id: 'main',
+    name: 'Main Academic & Administrative Building',
+    subtitle: 'University Secretariat & Administrative Council',
+    block: 'Block MAIN-01',
+    floors: '4 Floors',
+    description:
+      'Central university flagship building with expansive solar rooftop arrays, registrar office, admissions desk, accounts, and examination branch.',
+    hours: '08:30 AM – 06:00 PM',
+    occupancy: '62% Footfall • Nominal',
+    routeNote: 'Main Campus Boulevard Entrance',
+    image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80',
+    depts: ['Academic Registry', 'Examination Branch', 'Finance & Accounts', 'Student Welfare']
+  },
+  {
     id: 'eng',
     name: 'Faculty of Engineering & Technology',
     subtitle: 'Computer Science, AI & Autonomous Systems',
@@ -52,51 +66,107 @@ const INITIAL_BUILDINGS = [
       'Home to the School of Computing, High-Performance AI Labs, CAD vector nodes, and Multi-media Lecture Theatres B-201 to B-208.',
     hours: '08:00 AM – 08:00 PM',
     occupancy: '74% Footfall • Nominal',
-    routeNote: 'Direct Level 2 Skybridge access to Central Library',
+    routeNote: 'East Academic Promenade Entrance',
     image: 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80',
     depts: ['Computer Science & Eng', 'Robotics & AI', 'Electrical & VLSI', 'Mechanical Eng']
   },
   {
-    id: 'admin',
-    name: 'Maharana Pratap Main Academic & Admin Block',
-    subtitle: 'University Secretariat & Administrative Council',
-    block: 'Block ADM-01',
-    floors: '4 Floors',
-    description:
-      'Central university reception, Vice Chancellor secretariat, registrar office, admissions desk, and examination branch.',
-    hours: '08:30 AM – 06:00 PM',
-    occupancy: '62% Footfall • Nominal',
-    routeNote: 'Main Campus Boulevard Entrance',
-    image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80',
-    depts: ['Academic Registry', 'Examination Branch', 'Finance & Accounts', 'Student Welfare']
-  },
-  {
-    id: 'library',
-    name: 'Swami Vivekananda Central Library',
-    subtitle: 'Digital Reference & Research Knowledge Commons',
-    block: 'Block LIB-03',
+    id: 'law',
+    name: 'Faculty of Law & Legal Studies',
+    subtitle: 'Judicial Studies, Moot Court & Legal Aid',
+    block: 'Block LAW-01',
     floors: '3 Floors',
     description:
-      'Quiet study zones, high-speed digital research terminals, acoustic study pods, e-resource portals, and thesis archives.',
-    hours: '08:00 AM – 10:00 PM',
-    occupancy: '180 Desks Free • Silent Zone',
-    routeNote: 'Level 2 Connected to Engineering Block',
-    image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80',
-    depts: ['Central Lending Stacks', 'Digital Media Archives', 'Acoustic Solo Pods', 'Periodicals Wing']
+      'Dedicated legal education wing with modern simulated moot court halls, law library, and jurisprudence seminar rooms.',
+    hours: '08:30 AM – 05:30 PM',
+    occupancy: '65% Footfall • Nominal',
+    routeNote: 'Southeast Promenade near Mess & Courts',
+    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
+    depts: ['Constitutional Law', 'Criminal Jurisprudence', 'Corporate Law', 'Legal Aid Clinic']
   },
   {
-    id: 'aud',
-    name: 'Mewar University Central Auditorium',
-    subtitle: 'Convocation Arena & Performing Arts',
-    block: 'Block AUD-04',
-    floors: '2 Tiers',
+    id: 'teacher',
+    name: 'Teachers & Faculty Academic Building',
+    subtitle: 'Faculty Chambers, Research & HOD Cabins',
+    block: 'Block FAC-01',
+    floors: '3 Floors',
     description:
-      '1,200-seat multi-tiered acoustic auditorium hall hosting annual tech fests, conferences, hackathons, and cultural assemblies.',
-    hours: '08:00 AM – 09:00 PM',
-    occupancy: 'Open Access for Events',
-    routeNote: 'South Convocation Grounds',
-    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80',
-    depts: ['Cultural Council', 'Performing Arts Guild', 'AV Broadcast Studio']
+      'Academic faculty offices, research scholar stations, consultation cabins, and departmental meeting lounges.',
+    hours: '08:30 AM – 06:30 PM',
+    occupancy: '55% Footfall • Quiet Zone',
+    routeNote: 'East of Engineering Building',
+    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
+    depts: ['Faculty Affairs', 'Research & Development', 'Departmental HODs', 'Doctoral Studies']
+  },
+  {
+    id: 'mess',
+    name: 'Central Student Dining Mess',
+    subtitle: 'Campus Catering & Multi-Counter Dining',
+    block: 'Block MSS-01',
+    floors: '2 Floors',
+    description:
+      'Multi-counter student dining complex providing daily nutritional meal plans, vegetarian mess lines, and evening cafeteria refreshments.',
+    hours: '07:00 AM – 09:30 PM',
+    occupancy: '88% Footfall • Peak Lunch',
+    routeNote: 'Central Dining Walkway South of Engineering',
+    image: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?auto=format&fit=crop&w=800&q=80',
+    depts: ['Dining Services', 'Student Mess Committee', 'Quality & Hygiene Control']
+  },
+  {
+    id: 'gora',
+    name: 'Gora Boys Residential Hostel',
+    subtitle: 'Student Residence & Quadrangle Living',
+    block: 'Block HST-03',
+    floors: '3 Floors',
+    description:
+      'Spacious boys residential hostel block built around an open courtyard with reading rooms, recreation facilities, and Wi-Fi.',
+    hours: 'Open 24/7 (Curfew 09:30 PM)',
+    occupancy: '90% Resident Footfall',
+    routeNote: 'North Central Residential Precinct',
+    image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80',
+    depts: ['Hostel Warden Office', 'Student Living Council', 'Maintenance Outpost']
+  },
+  {
+    id: 'sanaga',
+    name: 'Sanaga Boys Residential Hostel',
+    subtitle: 'Senior Student Residential Wing',
+    block: 'Block HST-04',
+    floors: '4 Floors',
+    description:
+      'Air-cooled boys residential blocks with high-speed campus LAN, study lounges, laundry amenities, and 24/7 security station.',
+    hours: 'Open 24/7 (Curfew 09:30 PM)',
+    occupancy: '91% Resident Footfall',
+    routeNote: 'Northeast Residential Boulevard',
+    image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80',
+    depts: ['Senior Warden Office', 'Student Council', 'Security Post']
+  },
+  {
+    id: 'mira',
+    name: 'Mira Girls Residential Hostel',
+    subtitle: 'Female Student Residential Precinct',
+    block: 'Block HST-01',
+    floors: '3 Floors',
+    description:
+      'Secure female student residence quarters with landscaped garden courtyard, study library, and biometric security entrance.',
+    hours: 'Open 24/7 (Curfew 09:00 PM)',
+    occupancy: '88% Resident Footfall',
+    routeNote: 'West Residential Precinct near Guest House',
+    image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80',
+    depts: ['Chief Warden (Girls)', 'Student Welfare', 'Biometric Security Desk']
+  },
+  {
+    id: 'hospital',
+    name: 'University Hospital & Health Centre',
+    subtitle: '24/7 Emergency Medical & Pharmacy',
+    block: 'Block MED-01',
+    floors: 'Ground Floor Wing',
+    description:
+      '24/7 on-campus medical clinic, emergency triage, resident medical practitioners, ambulance service, and pharmacy dispensary.',
+    hours: 'Open 24/7 Emergency Care',
+    occupancy: '25% Capacity • Normal',
+    routeNote: 'North Medical Wing adjacent to Gora Hostel',
+    image: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=800&q=80',
+    depts: ['Emergency Medicine', 'General OPD', 'Dispensary & Pharmacy', 'Ambulance Bay']
   }
 ];
 

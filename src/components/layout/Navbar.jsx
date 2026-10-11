@@ -7,10 +7,13 @@ import {
   Calendar,
   DoorOpen,
   Menu,
+  Sparkles,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
-export const Navbar = ({ onToggleSidebar }) => {
+export const Navbar = ({ onToggleSidebar, isSidebarCollapsed = false, onToggleCollapse }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -83,7 +86,7 @@ export const Navbar = ({ onToggleSidebar }) => {
 
   return (
     <header className="h-16 bg-white/95 backdrop-blur-md border-b border-[#E4EAE5] px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-[0_1px_3px_rgba(20,45,40,0.02)]">
-      {/* Left: Mobile Toggle + Campus Live Status */}
+      {/* Left: Mobile Toggle + Desktop Sidebar Toggle + Campus Live Status */}
       <div className="flex items-center gap-2 sm:gap-3">
         {onToggleSidebar && (
           <button
@@ -94,6 +97,19 @@ export const Navbar = ({ onToggleSidebar }) => {
             className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center p-2 text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1] rounded-xl transition-colors cursor-pointer"
           >
             <Menu size={20} />
+          </button>
+        )}
+
+        {onToggleCollapse && (
+          <button
+            type="button"
+            onClick={onToggleCollapse}
+            aria-expanded={!isSidebarCollapsed}
+            aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={isSidebarCollapsed ? 'Expand sidebar (⌘B)' : 'Collapse sidebar (⌘B)'}
+            className="hidden md:flex min-w-[38px] min-h-[38px] items-center justify-center text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1] rounded-xl transition-colors cursor-pointer"
+          >
+            {isSidebarCollapsed ? <PanelLeftOpen size={19} /> : <PanelLeftClose size={19} />}
           </button>
         )}
 
@@ -126,8 +142,25 @@ export const Navbar = ({ onToggleSidebar }) => {
         </div>
       </form>
 
-      {/* Right Actions: Notifications & Profile */}
-      <div className="flex items-center gap-1.5 sm:gap-3">
+      {/* Right Actions: AI Assistant, Notifications & Profile */}
+      <div className="flex items-center gap-1.5 sm:gap-2.5">
+        {/* AI Assistant Navbar Icon Button */}
+        <NavLink
+          to="/ai-assistant"
+          aria-label="AI Assistant"
+          title="AI Assistant"
+          className={({ isActive }) =>
+            `relative min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 p-2 flex items-center justify-center rounded-xl transition-all cursor-pointer text-decoration-none group ${
+              isActive
+                ? 'bg-[#EAF5EF] text-[#168567] ring-1 ring-[#CBE2D4]'
+                : 'text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1]'
+            }`
+          }
+        >
+          <Sparkles size={18} className="shrink-0 transition-transform group-hover:scale-110 text-[#168567]" />
+          <span className="sr-only">AI Assistant</span>
+        </NavLink>
+
         {/* Notifications Popover */}
         <div ref={notifRef} className="relative">
           <button

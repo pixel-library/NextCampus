@@ -17,20 +17,20 @@ export const MobileNav = ({ onOpenMore }) => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin' || user?.role === 'care_admin';
 
-  const items = isAdmin
+    const items = isAdmin
     ? [
         { label: 'Admin', path: '/admin', icon: ShieldAlert },
         { label: 'Campus', path: '/admin/campus-management', icon: Sliders },
         { label: 'Map', path: '/campus-map', icon: MapPin },
         { label: 'Care', path: '/admin/complaints', icon: LifeBuoy },
-        { label: 'AI', path: '/ai-assistant', icon: Bot },
+        { label: 'Directory', path: '/directory', icon: Users },
       ]
     : [
         { label: 'Home', path: '/dashboard', icon: LayoutDashboard },
         { label: 'Map', path: '/campus-map', icon: MapPin },
         { label: 'Rooms', path: '/smartroom', icon: DoorOpen },
         { label: 'Care', path: '/complaints', icon: LifeBuoy },
-        { label: 'AI', path: '/ai-assistant', icon: Bot },
+        { label: 'Directory', path: '/directory', icon: Users },
       ];
 
   return (
