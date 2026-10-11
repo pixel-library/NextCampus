@@ -79,48 +79,49 @@ export const MEWAR_PERIMETER_POLYGON = [
 export const MEWAR_CAMPUS_ROADS = [
   // West Avenue (Gate 1 past Main Building to Gate 2, Guest House & Mira Hostel)
   [
-    [25.031907, 74.635428], // Gate 1
+    [25.031920, 74.635280], // Gate 1 (NH-48 entrance portal)
     [25.032315, 74.635262],
     [25.033008, 74.634981],
-    [25.033500, 74.634280], // Gate 2
+    [25.033480, 74.634600], // Gate 2 (West Entry portal)
     [25.033780, 74.634550], // Guest House
     [25.034085, 74.634523], // Mira Hostel
     [25.034450, 74.634320], // Panna Hostel
   ],
   // Central Promenade (Gate 1 to Main Building, Mess, Law Building & Courts)
   [
-    [25.031907, 74.635428], // Gate 1
+    [25.031920, 74.635280], // Gate 1
     [25.032173, 74.636267],
-    [25.031750, 74.636620], // Mess
+    [25.032130, 74.636623], // Mess
     [25.031866, 74.637113], // Law Building
-    [25.030800, 74.637300], // Basketball Ground
+    [25.031342, 74.637242], // Basketball Ground
   ],
-  // Academic Promenade to Engineering & Teacher Building
+  // Academic Promenade to Engineering, Teacher Building & Badal Hostel
   [
     [25.032173, 74.636267],
-    [25.032450, 74.636650], // Engineering Building
-    [25.032600, 74.637300], // Teacher Building
-    [25.032180, 74.637400], // Badal Hostel
+    [25.032631, 74.636545], // Engineering Building
+    [25.032655, 74.636881], // Teacher Building
+    [25.032382, 74.637010], // Badal Hostel
+    [25.031866, 74.637113], // Law Building Link
   ],
   // Park & Hostels Pathway (Main Building to Park, Kumbha, Pratap, Gora & Hospital)
   [
-    [25.032850, 74.635580], // Main Building
+    [25.032981, 74.635483], // Main Building
     [25.033592, 74.636105], // Pratap Hostel
     [25.033814, 74.636040], // Kumbha Hostel
-    [25.033900, 74.635150], // Campus Park
+    [25.033968, 74.635239], // Campus Park
     [25.034447, 74.635065], // Gora Hostel
     [25.034600, 74.634840], // Campus Hospital
   ],
   // East Living Quad (Kumbha to Sanaga & Bhamasha)
   [
     [25.033814, 74.636040],
-    [25.034250, 74.636180], // Bhamasha Hostel
+    [25.034287, 74.635706], // Bhamasha Hostel
     [25.034645, 74.635783], // Sanaga Hostel
   ],
   // Athletic Track (Gate 1 to Football Ground)
   [
-    [25.031907, 74.635428],
-    [25.031150, 74.635900], // Football Ground
+    [25.031920, 74.635280], // Gate 1
+    [25.031526, 74.636104], // Football Ground
   ],
 ];
 
@@ -136,13 +137,14 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#142D28',
     bgColor: '#EAF5EF',
     icon: '🚪',
-    lat: 25.031907,
-    lng: 74.635428,
+    lat: 25.031920,
+    lng: 74.635280,
     polygon: [
-      [25.03182, 74.63535],
-      [25.03200, 74.63535],
-      [25.03200, 74.63552],
-      [25.03182, 74.63552],
+      [25.032000, 74.635200],
+      [25.032040, 74.635320],
+      [25.031860, 74.635360],
+      [25.031820, 74.635240],
+      [25.032000, 74.635200],
     ],
     dept: 'NH-48 Campus Entrance & Security Post',
     elevation: 'Ground Level',
@@ -157,17 +159,18 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#142D28',
     bgColor: '#EAF5EF',
     icon: '🚪',
-    lat: 25.033500,
-    lng: 74.634280,
+    lat: 25.033480,
+    lng: 74.634600,
     polygon: [
-      [25.03342, 74.63420],
-      [25.03358, 74.63420],
-      [25.03358, 74.63436],
-      [25.03342, 74.63436],
+      [25.033560, 74.634520],
+      [25.033590, 74.634660],
+      [25.033400, 74.634700],
+      [25.033370, 74.634560],
+      [25.033560, 74.634520],
     ],
     dept: 'West Perimeter Vehicle & Pedestrian Entrance',
     elevation: 'Ground Level',
-    description: 'Western entrance portal providing direct access towards Guest House, Mira Hostel, and Campus Park.',
+    description: 'Western entrance portal on the perimeter boundary providing direct access towards Guest House, Mira Hostel, and Campus Park.',
   },
   main: {
     id: 'main',
@@ -178,17 +181,42 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#168567',
     bgColor: '#EAF5EF',
     icon: '🏛️',
-    lat: 25.032850,
-    lng: 74.635580,
+    lat: 25.032981,
+    lng: 74.635483,
     polygon: [
-      [25.03325, 74.63530],
-      [25.03335, 74.63560],
-      [25.03240, 74.63595],
-      [25.03230, 74.63565],
+      [25.032106, 74.635761],
+      [25.032289, 74.636310],
+      [25.033596, 74.635780],
+      [25.033582, 74.635744],
+      [25.033633, 74.635720],
+      [25.033585, 74.635569],
+      [25.033532, 74.635595],
+      [25.033518, 74.635557],
+      [25.033564, 74.635537],
+      [25.033499, 74.635359],
+      [25.033556, 74.635335],
+      [25.033512, 74.635205],
+      [25.033455, 74.635231],
+      [25.033425, 74.635140],
+      [25.033319, 74.635185],
+      [25.033330, 74.635216],
+      [25.032948, 74.635358],
+      [25.032906, 74.635234],
+      [25.032798, 74.635271],
+      [25.032770, 74.635160],
+      [25.032661, 74.635208],
+      [25.032697, 74.635314],
+      [25.032599, 74.635356],
+      [25.032641, 74.635486],
+      [25.032265, 74.635633],
+      [25.032251, 74.635602],
+      [25.032138, 74.635646],
+      [25.032173, 74.635739],
+      [25.032106, 74.635761],
     ],
     dept: 'University Secretariat, Admissions & Administrative Council',
     elevation: 'Floors 1–4',
-    description: 'Central university flagship building with expansive solar rooftop arrays, registrar office, accounts, and examination branch.',
+    description: 'Central university flagship administrative and academic complex with expansive solar rooftop arrays, registrar office, accounts, and examination branch.',
   },
   eng: {
     id: 'eng',
@@ -199,17 +227,26 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#168567',
     bgColor: '#EAF5EF',
     icon: '💻',
-    lat: 25.032450,
-    lng: 74.636650,
+    lat: 25.032631,
+    lng: 74.636545,
     polygon: [
-      [25.03265, 74.63640],
-      [25.03275, 74.63675],
-      [25.03220, 74.63695],
-      [25.03210, 74.63660],
+      [25.032309, 74.636451],
+      [25.032871, 74.636231],
+      [25.032939, 74.636443],
+      [25.032755, 74.636515],
+      [25.032761, 74.636535],
+      [25.032837, 74.636505],
+      [25.032885, 74.636655],
+      [25.032540, 74.636790],
+      [25.032492, 74.636641],
+      [25.032569, 74.636611],
+      [25.032562, 74.636589],
+      [25.032377, 74.636662],
+      [25.032309, 74.636451],
     ],
     dept: 'Department of Computer Science & Engineering, AI Labs & Core Tech',
     elevation: 'Floors 1–4',
-    description: 'High-performance research computing labs, AI & ML center, IoT workstations, mechanical & civil workshops.',
+    description: 'High-performance research computing labs, AI & ML center, IoT workstations, mechanical & civil workshops directly east of Main Building.',
   },
   teacher: {
     id: 'teacher',
@@ -220,17 +257,18 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#4338CA',
     bgColor: '#EEF2FF',
     icon: '👨‍🏫',
-    lat: 25.032600,
-    lng: 74.637300,
+    lat: 25.032655,
+    lng: 74.636881,
     polygon: [
-      [25.03272, 74.63715],
-      [25.03278, 74.63745],
-      [25.03248, 74.63752],
-      [25.03242, 74.63722],
+      [25.032732, 74.636672],
+      [25.032849, 74.636961],
+      [25.032577, 74.637090],
+      [25.032460, 74.636801],
+      [25.032732, 74.636672],
     ],
     dept: 'Faculty Chambers, Research Scholars & HOD Offices',
     elevation: 'Floors 1–3',
-    description: 'Academic staff quarters, professors consultation cabins, conference room, and departmental faculties.',
+    description: 'Northern academic staff wing situated east of Engineering Building, housing professors consultation cabins, conference rooms, and faculty offices.',
   },
   badal: {
     id: 'badal',
@@ -241,17 +279,18 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#3478B8',
     bgColor: '#EEF5FA',
     icon: '🛏️',
-    lat: 25.032180,
-    lng: 74.637400,
+    lat: 25.032382,
+    lng: 74.637010,
     polygon: [
-      [25.03232, 74.63725],
-      [25.03238, 74.63755],
-      [25.03205, 74.63762],
-      [25.03200, 74.63732],
+      [25.032460, 74.636801],
+      [25.032577, 74.637090],
+      [25.032305, 74.637219],
+      [25.032188, 74.636929],
+      [25.032460, 74.636801],
     ],
     dept: 'Male Student Residence (East Campus Wing)',
     elevation: '3 Floors',
-    description: 'Modern student hostel block situated near faculty wing with furnished study units and high-speed Wi-Fi.',
+    description: 'Southern residence block situated east of Engineering Building and directly below Teacher Building with furnished study units.',
   },
   mess: {
     id: 'mess',
@@ -262,17 +301,20 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#D97706',
     bgColor: '#FFF7ED',
     icon: '🍽️',
-    lat: 25.031750,
-    lng: 74.636620,
+    lat: 25.032130,
+    lng: 74.636623,
     polygon: [
-      [25.03192, 74.63640],
-      [25.03198, 74.63682],
-      [25.03155, 74.63690],
-      [25.03150, 74.63648],
+      [25.032150, 74.636408],
+      [25.032255, 74.636748],
+      [25.032229, 74.636758],
+      [25.032220, 74.636730],
+      [25.032003, 74.636811],
+      [25.031907, 74.636499],
+      [25.032150, 74.636408],
     ],
     dept: 'Central Campus Catering & Dining Services',
     elevation: 'Ground + Floor 1',
-    description: 'Spacious student dining hall serving breakfast, lunch, snacks, and dinner with multi-counter kitchen.',
+    description: 'Spacious light-roof student dining hall located south of Engineering Building and northwest of Law Building serving breakfast, lunch, and dinner.',
   },
   law: {
     id: 'law',
@@ -310,7 +352,7 @@ export const CAMPUS_GIS_LOCATIONS = {
     ],
     dept: 'Department of Law, Moot Court Hall & Legal Aid Clinic',
     elevation: 'Floors 1–3',
-    description: 'Dedicated law faculty with modern moot court chambers, legal research library, and lecture theatres.',
+    description: 'Dedicated multi-wing law faculty located southeast of the Mess with moot court chambers and legal research library.',
   },
   football: {
     id: 'football',
@@ -321,17 +363,20 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#047857',
     bgColor: '#ECFDF5',
     icon: '⚽',
-    lat: 25.031150,
-    lng: 74.635900,
+    lat: 25.031526,
+    lng: 74.636104,
     polygon: [
-      [25.03155, 74.63555],
-      [25.03165, 74.63625],
-      [25.03065, 74.63640],
-      [25.03055, 74.63570],
+      [25.032118, 74.636237],
+      [25.031880, 74.635493],
+      [25.031024, 74.635826],
+      [25.031115, 74.636112],
+      [25.031164, 74.636255],
+      [25.031262, 74.636571],
+      [25.032118, 74.636237],
     ],
     dept: 'Department of Physical Education & Athletics',
     elevation: 'Sports Arena',
-    description: 'Full-size natural turf football ground with running track perimeter and spectator pavilions.',
+    description: 'Expansive green athletic ground located west of the Mess and south of Main Building with running tracks and spectator lawns.',
   },
   basketball: {
     id: 'basketball',
@@ -342,18 +387,18 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#E11D48',
     bgColor: '#FFF1F2',
     icon: '🏀',
-    lat: 25.030800,
-    lng: 74.637300,
+    lat: 25.031342,
+    lng: 74.637242,
     polygon: [
-      [25.030497, 74.637032],
-      [25.030542, 74.637186],
-      [25.030966, 74.637034],
-      [25.030920, 74.636880],
-      [25.030497, 74.637032],
+      [25.031203, 74.637207],
+      [25.031265, 74.637405],
+      [25.031551, 74.637295],
+      [25.031489, 74.637097],
+      [25.031203, 74.637207],
     ],
     dept: 'Department of Physical Education & Court Sports',
     elevation: 'Hard Court Surface',
-    description: 'Floodlit outdoor basketball and volleyball hard courts adjacent to the Law Building.',
+    description: 'Outdoor red-surface basketball court situated directly south of the Law Building.',
   },
   kumbha: {
     id: 'kumbha',
@@ -408,17 +453,18 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#15803D',
     bgColor: '#F0FDF4',
     icon: '🌳',
-    lat: 25.033900,
-    lng: 74.635150,
+    lat: 25.033968,
+    lng: 74.635239,
     polygon: [
-      [25.03415, 74.63485],
-      [25.03420, 74.63550],
-      [25.03365, 74.63555],
-      [25.03360, 74.63490],
+      [25.034021, 74.635025],
+      [25.034169, 74.635437],
+      [25.033887, 74.635560],
+      [25.033739, 74.635148],
+      [25.034021, 74.635025],
     ],
     dept: 'Campus Horticultural & Student Recreation Zone',
     elevation: 'Open Grounds',
-    description: 'Central green parkland, shaded walking tracks, flowering shrubs, and outdoor seating lawns.',
+    description: 'Central green parkland, shaded walking tracks, flowering shrubs, and outdoor seating lawns directly south of Gora Hostel.',
   },
   guest_house: {
     id: 'guest_house',
@@ -585,17 +631,22 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#0284C7',
     bgColor: '#F0F9FF',
     icon: '🛏️',
-    lat: 25.034250,
-    lng: 74.636180,
+    lat: 25.034287,
+    lng: 74.635706,
     polygon: [
-      [25.03445, 74.63602],
-      [25.03452, 74.63630],
-      [25.03405, 74.63645],
-      [25.03398, 74.63618],
+      [25.034469, 74.635447],
+      [25.034531, 74.635650],
+      [25.034241, 74.635759],
+      [25.034340, 74.636080],
+      [25.034172, 74.636143],
+      [25.034024, 74.635662],
+      [25.034177, 74.635604],
+      [25.034164, 74.635562],
+      [25.034469, 74.635447],
     ],
-    dept: 'East Perimeter Male Student Residence Wing',
+    dept: 'East Living Quad Male Student Residence Wing',
     elevation: '3 Floors',
-    description: 'Spacious student accommodation complex positioned along the eastern perimeter walkway.',
+    description: 'Student accommodation complex positioned directly south of Sanaga Hostel with furnished dormitories and courtyards.',
   },
 };
 

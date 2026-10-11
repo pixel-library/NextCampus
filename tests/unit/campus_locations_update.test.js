@@ -58,5 +58,17 @@ test('Campus Locations Update: All 20 real Mewar University locations exist in C
   assert.ok(gisContent.includes('CAMPUS_GIS_LOCATIONS.hostel_g = CAMPUS_GIS_LOCATIONS.mira;'), 'hostel_g alias must resolve to mira');
   assert.ok(gisContent.includes('CAMPUS_GIS_LOCATIONS.sports = CAMPUS_GIS_LOCATIONS.basketball;'), 'sports alias must resolve to basketball');
 
-  console.log('✅ Campus Locations Update: All 20 locations and backwards-compatible aliases verified.');
+  // Verify authentic ground-truth coordinates
+  assert.ok(gisContent.includes('25.031920'), 'Gate 1 must be at the NH-48 entrance portal (25.031920)');
+  assert.ok(gisContent.includes('25.033480'), 'Gate 2 must be at perimeter boundary portal (25.033480)');
+  assert.ok(gisContent.includes('25.032655'), 'Teacher building center must be 25.032655');
+  assert.ok(gisContent.includes('25.032382'), 'Badal hostel center must be 25.032382');
+  assert.ok(gisContent.includes('25.031342'), 'Basketball ground center must be 25.031342 (Way 549126358)');
+  assert.ok(gisContent.includes('25.032981'), 'Main building center must be 25.032981');
+  assert.ok(gisContent.includes('25.032130'), 'Mess must be located at 25.032130');
+  assert.ok(gisContent.includes('25.031526'), 'Football ground center must be 25.031526');
+  assert.ok(gisContent.includes('25.033968'), 'Park center must be 25.033968');
+  assert.ok(gisContent.includes('25.034287'), 'Bhamasha Hostel center must be 25.034287 (below Sanaga)');
+
+  console.log('✅ Campus Locations Update: All 20 locations, authentic coordinates, and backwards-compatible aliases verified.');
 });
