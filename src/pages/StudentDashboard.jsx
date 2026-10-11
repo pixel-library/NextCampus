@@ -188,11 +188,11 @@ export function StudentDashboard() {
       </section>
 
       {/* =========================================================================
-          2. ACADEMIC OVERVIEW ROW: NEXT CLASS HERO (7 COLS) + METRICS STACK (5 COLS)
+          2. ACADEMIC OVERVIEW ROW: NEXT CLASS HERO (FULL-WIDTH)
           ========================================================================= */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-        {/* HERO LIVE CLASS SPOTLIGHT (7 COLS) */}
-        <div className="lg:col-span-7 bg-white rounded-2xl border border-[#E4EAE5] shadow-xs p-6 flex flex-col justify-between relative overflow-hidden">
+      <section className="w-full">
+        {/* HERO LIVE CLASS SPOTLIGHT */}
+        <div className="w-full bg-white rounded-2xl border border-[#E4EAE5] shadow-xs p-6 flex flex-col justify-between relative overflow-hidden">
           <div>
             <div className="flex items-center justify-between gap-3 mb-3">
               <div className="flex items-center gap-2">
@@ -226,7 +226,7 @@ export function StudentDashboard() {
             </div>
 
             {/* Live Room Telemetry Tiles */}
-            <div className="grid grid-cols-3 gap-2.5 mt-5 p-3 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5]/80">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-5 p-3 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5]/80">
               <div className="flex items-center gap-2.5 text-xs">
                 <div className="w-8 h-8 rounded-lg bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] flex items-center justify-center shrink-0">
                   <Thermometer size={15} />
@@ -273,91 +273,6 @@ export function StudentDashboard() {
             >
               Navigate to Room B-204 (1.2 min walk)
             </Button>
-          </div>
-        </div>
-
-        {/* SECONDARY STUDENT METRICS STACK (5 COLS) */}
-        <div className="lg:col-span-5 flex flex-col gap-3.5">
-          {/* Metric 1: Attendance Safety Gauge */}
-          <div className="bg-white rounded-2xl border border-[#E4EAE5] p-4.5 shadow-xs flex flex-col justify-between">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-[#65736B] uppercase tracking-wider text-[11px]">
-                Semester Attendance
-              </span>
-              <Badge variant="success" size="sm">
-                Safe (&gt;75% Req)
-              </Badge>
-            </div>
-            <div className="mt-2.5">
-              <div className="flex items-baseline justify-between">
-                <span className="text-2xl font-black text-[#202A27]">89.4%</span>
-                <span className="text-xs text-[#65736B]">42 of 47 Lectures Attended</span>
-              </div>
-              <div className="w-full bg-[#F0F4F1] h-2 rounded-full overflow-hidden mt-2">
-                <div
-                  className="bg-[#168567] h-full rounded-full transition-all duration-500"
-                  style={{ width: '89.4%' }}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Metric 2: Active Care Grievance SLA */}
-          <div
-            onClick={() => navigate('/complaints')}
-            className="bg-white rounded-2xl border border-[#E4EAE5] hover:border-[#D0DAD2] hover:shadow-sm p-4.5 shadow-xs flex flex-col justify-between cursor-pointer transition-all hover:-translate-y-0.5 group"
-          >
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-[#65736B] uppercase tracking-wider text-[11px]">
-                Active Helpdesk Ticket
-              </span>
-              <Badge variant="brand" size="xs">
-                ETA 18 mins
-              </Badge>
-            </div>
-            <div className="mt-2 flex items-center justify-between">
-              <div>
-                <div className="text-sm font-bold text-[#202A27] group-hover:text-[#168567] transition-colors">
-                  #CMP-1042 Projector HDMI Glitch
-                </div>
-                <div className="text-xs text-[#65736B] mt-0.5">
-                  Tech Marcus Vance dispatched to Room B-204
-                </div>
-              </div>
-              <ArrowRight
-                size={16}
-                className="text-[#87968D] group-hover:text-[#168567] group-hover:translate-x-1 transition-all"
-              />
-            </div>
-          </div>
-
-          {/* Metric 3: Study Pod Reservation Pass */}
-          <div
-            onClick={() => navigate('/smartroom')}
-            className="bg-white rounded-2xl border border-[#E4EAE5] hover:border-[#D0DAD2] hover:shadow-sm p-4.5 shadow-xs flex flex-col justify-between cursor-pointer transition-all hover:-translate-y-0.5 group"
-          >
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-[#65736B] uppercase tracking-wider text-[11px]">
-                Active Study Space Pass
-              </span>
-              <Badge variant="info" size="sm">
-                Pod 4B Reserved
-              </Badge>
-            </div>
-            <div className="mt-2 flex items-center justify-between">
-              <div>
-                <div className="text-sm font-bold text-[#202A27] group-hover:text-[#3478B8] transition-colors">
-                  Swami Vivekananda Library Level 2
-                </div>
-                <div className="text-xs text-[#65736B] mt-0.5 font-mono">
-                  Today 4:00 PM – 6:00 PM • Access PIN: 4920
-                </div>
-              </div>
-              <ArrowRight
-                size={16}
-                className="text-[#87968D] group-hover:text-[#3478B8] group-hover:translate-x-1 transition-all"
-              />
-            </div>
           </div>
         </div>
       </section>
