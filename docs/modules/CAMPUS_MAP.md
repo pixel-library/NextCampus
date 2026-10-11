@@ -52,24 +52,30 @@ Every facility has been calibrated against high-resolution satellite imagery and
 | :--- | :--- | :--- | :--- | :--- |
 | `gate` | Gate 1 (NH-48 Main Portal) | `[25.031920, 74.635280]` | Transit | Primary arterial entrance portal on National Highway 48 boundary. |
 | `gate2` | Gate 2 (West Perimeter) | `[25.033480, 74.634600]` | Transit | West boundary perimeter entrance portal north of covered parking. |
-| `main` | Main Academic & Admin Building | `[25.032981, 74.635483]` | Academic / Admin | OSM Way 549126350: 29-vertex authentic administrative & academic footprint. |
-| `eng` | Maharana Pratap Engineering Block | `[25.032742, 74.636253]` | Academic / Labs | Major engineering quadrangle directly east of Main Building. |
-| `teacher` | Teacher Building (Faculty Residence) | `[25.032655, 74.636881]` | Residential | North wing of eastern academic complex with 24° axis tilt. |
-| `badal` | Badal Boys Hostel | `[25.032382, 74.637010]` | Residential | South wing of eastern academic complex with 24° axis tilt. |
-| `law` | Faculty of Law & Legal Studies | `[25.031850, 74.637350]` | Academic | Southeast academic block housing moot courts and legal library. |
-| `basketball` | Basketball & Outdoor Sports Court | `[25.031342, 74.637242]` | Sports | OSM Way 549126358: Outlined court immediately south of Law Building. |
-| `football` | University Football Ground & Arena | `[25.032150, 74.638200]` | Sports | Full regulation athletic stadium and grass pitch east of Mess. |
-| `mess` | Central Student Dining Mess | `[25.032580, 74.637850]` | Dining | Central multi-story student cafeteria with light reflective roof. |
-| `park` | Central Campus Park & Green Quad | `[25.033750, 74.635450]` | Recreation | Landscaped central park and lawn quadrangle north of Main Building. |
-| `bhamasha` | Bhamasha Hostel | `[25.034287, 74.635706]` | Residential | OSM Way 549126343: Multi-wing residence situated directly below Sanaga Hostel. |
-| `sanaga` | Sanaga Boys Residential Hostel | `[25.034650, 74.635650]` | Residential | North quad residential hall above Bhamasha. |
-| `kumbha` | Rana Kumbha Hostel | `[25.034200, 74.634950]` | Residential | West residential quadrangle hostel block. |
-| `pratap` | Maharana Pratap Boys Hostel | `[25.033700, 74.634950]` | Residential | Southwest residential quad hostel block. |
-| `gora` | Gora Hostel & University Hospital | `[25.034850, 74.636400]` | Residential / Medical| Northeast healthcare center, 24/7 dispensary, and residential block. |
-| `mira` | Mira Girls Residential Hostel | `[25.034750, 74.637350]` | Residential | East campus residential hall with dedicated perimeter security. |
-| `panna` | Panna Girls Residential Hostel | `[25.034400, 74.637350]` | Residential | East campus girls residential complex alongside Mira Hostel. |
-| `guest_house` | University Guest House & VIP Suites | `[25.033850, 74.634450]` | Hospitality | Executive accommodation on western perimeter. |
-| `library` | Central Knowledge Resource Center | `[25.033050, 74.635950]` | Library | Multi-tier library facility connecting Main and Engineering quads. |
+| `main` | Main Academic & Admin Building | `[25.032981, 74.635483]` | Academic / Admin | Central 29-vertex flagship administrative and academic complex with solar roof. |
+| `temple` | Mewar Campus Temple & Shrine | `[25.033550, 74.635520]` | Spiritual / Culture | Yellow boundary courtyard shrine north of Main Building, south of Park. |
+| `eng` | Faculty of Engineering & Technology | `[25.032631, 74.636545]` | Academic / Labs | Major engineering quadrangle directly east of Main Building. |
+| `teacher` | Teacher Building (Faculty Residence) | `[25.032655, 74.636881]` | Academic / Faculty | North wing of eastern academic complex with faculty consultation rooms. |
+| `badal` | Badal Boys Hostel | `[25.032382, 74.637010]` | Residential | South wing of eastern academic complex directly below Teacher Building. |
+| `mess` | Central Student Dining Mess | `[25.032130, 74.636623]` | Dining | Central multi-story student cafeteria with light reflective roof. |
+| `law` | Faculty of Law & Legal Studies | `[25.031866, 74.637113]` | Academic | Southeast academic block housing moot courts and legal aid clinic. |
+| `football` | University Football Ground & Arena | `[25.031526, 74.636104]` | Sports | Full regulation athletic football ground west of Mess. |
+| `parking` | Main Campus Vehicle Parking Zone | `[25.031260, 74.635600]` | Transit / Parking | Orange boundary covered vehicle bays along western highway perimeter. |
+| `basketball` | Basketball & Outdoor Sports Court | `[25.031342, 74.637242]` | Sports | Outlined hard court surface immediately south of Law Building. |
+| `cricket` | University Cricket Ground & Pavilion | `[25.030150, 74.636500]` | Sports | Red boundary turf cricket pitch, spectator lawns, and practice nets. |
+| `gym` | University Gymnasium & Fitness Centre | `[25.030650, 74.637400]` | Sports / Fitness | Indoor strength training and workout hall between Basketball and Volleyball. |
+| `volleyball` | University Volleyball Arena & Courts | `[25.030680, 74.637850]` | Sports | Purple boundary outdoor regulation volleyball courts. |
+| `agriculture` | Faculty of Agriculture Research Field | `[25.029550, 74.638100]` | Academic / Agri | Green boundary experimental crop plots, nursery, and research station. |
+| `park` | Central Campus Park & Botanical Garden| `[25.033968, 74.635239]` | Recreation | Landscaped botanical gardens and shaded walking quadrangle. |
+| `bhamasha` | Bhamasha Hostel | `[25.034287, 74.635706]` | Residential | Multi-wing residence situated directly below Sanaga Hostel. |
+| `sanaga` | Sanaga Boys Residential Hostel | `[25.034645, 74.635783]` | Residential | North quad residential hall above Bhamasha. |
+| `kumbha` | Maharana Kumbha Boys Hostel | `[25.033814, 74.636040]` | Residential | Central residential quadrangle hostel block. |
+| `pratap` | Maharana Pratap Boys Hostel | `[25.033592, 74.636105]` | Residential | Residential hostel block south of Kumbha Hostel. |
+| `gora` | Gora Boys Residential Hostel | `[25.034447, 74.635065]` | Residential | Central quadrangle hostel block north of Botanical Park. |
+| `hospital` | University Hospital & Health Centre | `[25.034600, 74.634840]` | Medical / 24/7 | Healthcare dispensary and 24/7 emergency medical outpost. |
+| `mira` | Mira Girls Residential Hostel | `[25.034085, 74.634523]` | Residential | Secure female student residence on western avenue. |
+| `panna` | Panna Girls Residential Hostel | `[25.034450, 74.634320]` | Residential | Northwest campus female student residence. |
+| `guest_house` | University Guest House & VIP Suites | `[25.033780, 74.634550]` | Hospitality | Executive suites on western perimeter near Gate 2. |
 
 ### Backwards-Compatibility Alias Table
 To maintain seamless compatibility with legacy backend records and directory queries:
@@ -78,49 +84,67 @@ To maintain seamless compatibility with legacy backend records and directory que
 - `hostel_b` ➔ `sanaga` (Sanaga Boys Residential Hostel)
 - `hostel_g` ➔ `mira` (Mira Girls Residential Hostel)
 - `sports` ➔ `basketball` (Basketball & Outdoor Sports Court)
-- Building codes `A-01` through `E-05` and test IDs like `bld_1791717342244` resolve correctly to their corresponding GIS nodes.
+- `mandir` ➔ `temple` (Mewar Campus Temple & Shrine)
+- `farm` ➔ `agriculture` (Agriculture Research Field)
 
 ---
 
 ## 4. Multi-Layer Tile Fallback Engine
 
-To resolve and eliminate missing or gray tile errors during extreme zoom levels (zoom 14 through 20), `CampusGisMap.jsx` implements a multi-provider fallback hierarchy with event listeners:
+To resolve and eliminate missing or gray tile errors during extreme zoom levels (zoom 14 through 20), `CampusGisMap.jsx` implements a multi-provider fallback hierarchy:
 
-1. **Primary Layer**: CartoDB Dark Matter (`https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png`) tailored to the NextCampus Stitch dark palette.
-2. **Secondary Fallback**: OpenStreetMap Standard Carto (`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`).
-3. **Satellite Ground Truth**: Esri World Imagery (`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}`).
-4. **Tile Resilience Handler**: Attaches a `tileerror` event listener to active TileLayer instances. Upon failure, attempts adjacent tile substitution or falls back gracefully without blank canvas freezes.
+1. **Primary Aerial Layer**: Esri World Imagery (`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}`) with `maxNativeZoom: 18` and `maxZoom: 20` preventing gray tile placeholders and providing high-resolution ground truth.
+2. **Alternative Street Layer**: CartoDB Voyager Streets (`https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png`) with `maxNativeZoom: 19` and clean typography.
+3. **Campus Hard Lock**: Bounded strictly to Mewar University perimeter (`MEWAR_CAMPUS_BOUNDS`) with `maxBoundsViscosity: 1.0` and dynamic drag clamp.
 
 ---
 
-## 5. Topological Road Network Routing (`MEWAR_CAMPUS_ROADS`)
+## 5. Topological Road Network Routing (`MEWAR_CAMPUS_ROADS` & Dijkstra Engine)
 
-Campus wayfinding utilizes a true topological graph rather than simplistic straight-line distance:
+Campus wayfinding utilizes a true topological graph (`MEWAR_CAMPUS_GRAPH`) with Dijkstra shortest-path pathfinding along real university pathways (rendered in Google Maps blue styling):
 
 ```mermaid
 flowchart TD
-    G1[Gate 1: NH-48] --- WP1[West Path 1]
-    WP1 --- G2[Gate 2: West Entry]
-    WP1 --- MB[Main Building]
-    G2 --- GH[Guest House]
-    MB --- CP1[Central Plaza Junction]
-    CP1 --- ENG[Engineering Building]
-    CP1 --- PARK[Central Park]
+    G1[Gate 1: NH-48] --- PRK[Covered Parking Zone]
+    G1 --- WP[West Avenue]
+    WP --- G2[Gate 2: West Entry]
+    WP --- GH[Guest House]
+    GH --- MIRA[Mira Hostel]
+    MIRA --- PANNA[Panna Hostel]
+    PANNA --- HOSP[Campus Hospital]
+    G1 --- MAIN_W[Central Boulevard]
+    MAIN_W --- MAIN[Main Building Portico]
+    MAIN --- TMP[Campus Temple]
+    TMP --- PARK[Botanical Park]
+    PARK --- GORA[Gora Hostel]
+    GORA --- HOSP
+    MAIN_W --- FTB[Football Ground]
+    FTB --- CRK[Cricket Ground]
+    PRK --- CRK
+    MAIN_W --- MESS[Central Dining Mess]
+    MESS --- LAW[Law Building]
+    MAIN_W --- ENG[Engineering Building]
     ENG --- TB[Teacher Building]
     TB --- BADAL[Badal Hostel]
-    BADAL --- LAW[Law Building]
+    BADAL --- LAW
     LAW --- BBALL[Basketball Court]
-    ENG --- MESS[Central Mess]
-    MESS --- FTBALL[Football Ground]
-    PARK --- BHAMASHA[Bhamasha Hostel]
-    BHAMASHA --- SANAGA[Sanaga Hostel]
-    SANAGA --- GORA[Gora & Hospital]
-    GORA --- PANNA[Panna & Mira Hostels]
+    BBALL --- CROSS[Sports Crossing]
+    CROSS --- GYM[Fitness Gymnasium]
+    CROSS --- VBAL[Volleyball Ground]
+    GYM --- VBAL
+    CROSS --- AGR[Agriculture Research Field]
 ```
 
-- **Graph Structure**: 17 arterial junctions and 24 bidirectional walkway edges.
-- **Routing Engine**: Finds the shortest topological path between origin and destination, calculating walking distance (meters) and estimated travel time at 1.4 m/s pedestrian speed.
-- **Visuals**: Animated polyline in Amaranth Purple (`#AC274F`) with glowing halo and pulse markers at junctions.
+- **Graph Structure**: 38 nodes and 50+ bidirectional walkway edges.
+- **Dijkstra Engine (`findShortestCampusRoute`)**:
+  - Finds closest graph nodes to start and destination coordinates.
+  - Computes exact shortest path along campus roads.
+  - Subdivides polyline with `subdividePolyline(points, maxStepMeters = 8)` for fluid animation.
+  - Calculates true road distance in meters and walking ETA at pedestrian pace.
+- **Google Maps Visual Presentation**:
+  - Blue road network layer: Navy casing (`#1E3A8A`) + vibrant royal blue core (`#2563EB`).
+  - Active navigation ribbon: White contrast halo (`#FFFFFF`, 8px) + deep royal navigation core (`#1D4ED8`, 4.8px) + animated directional pulse flow line (`#93C5FD`, `.route-nav-pulse`).
+  - Interactive "Simulate Walk": Blue beacon smoothly walks waypoint-by-waypoint along the campus pathways.
 
 ---
 

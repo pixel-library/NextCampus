@@ -501,6 +501,19 @@ a:hover {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Google Maps Active Navigation Flow Animation */
+@keyframes routeDashFlow {
+  to {
+    stroke-dashoffset: -24px;
+  }
+}
+
+.route-nav-pulse {
+  stroke-dasharray: 8, 12;
+  animation: routeDashFlow 1.2s linear infinite;
+}
+
+
 /* =========================================================================
    ACCESSIBILITY, FOCUS VISIBILITY & MOTION PREFERENCES (WCAG 2.1 AA)
    ========================================================================= */

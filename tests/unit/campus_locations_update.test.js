@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '../..');
 
-test('Campus Locations Update: All 20 real Mewar University locations exist in CampusGisMap and CampusMap', () => {
+test('Campus Locations & Road Routing: All 26 real Mewar University locations and Dijkstra blue path router exist in CampusGisMap and CampusMap', () => {
   const gisMapPath = path.join(projectRoot, 'src/components/map/CampusGisMap.jsx');
   const gisContent = fs.readFileSync(gisMapPath, 'utf8');
 
@@ -36,6 +36,13 @@ test('Campus Locations Update: All 20 real Mewar University locations exist in C
     'gora:',        // Gora Hostel
     'sanaga:',      // Sanaga Hostel
     'bhamasha:',    // Bhamasha Hostel
+    // 6 New Landmarks from User Satellite Markup
+    'temple:',      // Temple (Yellow boundary)
+    'parking:',     // Parking (Orange boundary)
+    'cricket:',     // Cricket Ground (Red boundary)
+    'gym:',         // Fitness Gymnasium
+    'volleyball:',  // Volleyball Ground (Purple boundary)
+    'agriculture:', // Agriculture Research Field (Green boundary)
   ];
 
   for (const id of expectedLocations) {
@@ -43,13 +50,14 @@ test('Campus Locations Update: All 20 real Mewar University locations exist in C
     assert.ok(mapContent.includes(id), `CampusMap.jsx must contain location "${id}"`);
   }
 
-  // Verify updated names
+  // Verify landmark names
   assert.ok(gisContent.includes('Main Academic & Administrative Building'), 'Main Building must be present in CampusGisMap');
-  assert.ok(gisContent.includes('Sanaga Boys Residential Hostel'), 'Sanaga Hostel must be present in CampusGisMap');
-  assert.ok(gisContent.includes('Central Student Dining Mess'), 'Mess must be present in CampusGisMap');
-  assert.ok(gisContent.includes('Faculty of Law & Legal Studies'), 'Law Building must be present in CampusGisMap');
-  assert.ok(gisContent.includes('University Football Ground & Arena'), 'Football Ground must be present in CampusGisMap');
-  assert.ok(gisContent.includes('Basketball & Outdoor Sports Court'), 'Basketball Ground must be present in CampusGisMap');
+  assert.ok(gisContent.includes('Mewar Campus Temple & Meditation Shrine'), 'Temple must be present in CampusGisMap');
+  assert.ok(gisContent.includes('Main Campus Vehicle & Visitor Parking Zone'), 'Parking must be present in CampusGisMap');
+  assert.ok(gisContent.includes('University Cricket Ground & Pavilion'), 'Cricket Ground must be present in CampusGisMap');
+  assert.ok(gisContent.includes('University Fitness Centre & Gymnasium'), 'Gymnasium must be present in CampusGisMap');
+  assert.ok(gisContent.includes('University Volleyball Arena & Courts'), 'Volleyball Ground must be present in CampusGisMap');
+  assert.ok(gisContent.includes('Faculty of Agriculture Research & Experimental Field'), 'Agriculture Field must be present in CampusGisMap');
 
   // Verify backward compatibility aliases
   assert.ok(gisContent.includes('CAMPUS_GIS_LOCATIONS.admin = CAMPUS_GIS_LOCATIONS.main;'), 'admin alias must resolve to main');
@@ -57,18 +65,24 @@ test('Campus Locations Update: All 20 real Mewar University locations exist in C
   assert.ok(gisContent.includes('CAMPUS_GIS_LOCATIONS.hostel_b = CAMPUS_GIS_LOCATIONS.sanaga;'), 'hostel_b alias must resolve to sanaga');
   assert.ok(gisContent.includes('CAMPUS_GIS_LOCATIONS.hostel_g = CAMPUS_GIS_LOCATIONS.mira;'), 'hostel_g alias must resolve to mira');
   assert.ok(gisContent.includes('CAMPUS_GIS_LOCATIONS.sports = CAMPUS_GIS_LOCATIONS.basketball;'), 'sports alias must resolve to basketball');
+  assert.ok(gisContent.includes('CAMPUS_GIS_LOCATIONS.mandir = CAMPUS_GIS_LOCATIONS.temple;'), 'mandir alias must resolve to temple');
+  assert.ok(gisContent.includes('CAMPUS_GIS_LOCATIONS.farm = CAMPUS_GIS_LOCATIONS.agriculture;'), 'farm alias must resolve to agriculture');
 
   // Verify authentic ground-truth coordinates
   assert.ok(gisContent.includes('25.031920'), 'Gate 1 must be at the NH-48 entrance portal (25.031920)');
   assert.ok(gisContent.includes('25.033480'), 'Gate 2 must be at perimeter boundary portal (25.033480)');
-  assert.ok(gisContent.includes('25.032655'), 'Teacher building center must be 25.032655');
-  assert.ok(gisContent.includes('25.032382'), 'Badal hostel center must be 25.032382');
-  assert.ok(gisContent.includes('25.031342'), 'Basketball ground center must be 25.031342 (Way 549126358)');
-  assert.ok(gisContent.includes('25.032981'), 'Main building center must be 25.032981');
-  assert.ok(gisContent.includes('25.032130'), 'Mess must be located at 25.032130');
-  assert.ok(gisContent.includes('25.031526'), 'Football ground center must be 25.031526');
-  assert.ok(gisContent.includes('25.033968'), 'Park center must be 25.033968');
-  assert.ok(gisContent.includes('25.034287'), 'Bhamasha Hostel center must be 25.034287 (below Sanaga)');
+  assert.ok(gisContent.includes('25.033550'), 'Temple center must be 25.033550');
+  assert.ok(gisContent.includes('25.031260'), 'Parking center must be 25.031260');
+  assert.ok(gisContent.includes('25.030150'), 'Cricket Ground center must be 25.030150');
+  assert.ok(gisContent.includes('25.030650'), 'Gymnasium center must be 25.030650');
+  assert.ok(gisContent.includes('25.030680'), 'Volleyball Ground center must be 25.030680');
+  assert.ok(gisContent.includes('25.029550'), 'Agriculture Field center must be 25.029550');
 
-  console.log('✅ Campus Locations Update: All 20 locations, authentic coordinates, and backwards-compatible aliases verified.');
+  // Verify Dijkstra road graph exports
+  assert.ok(gisContent.includes('export const MEWAR_CAMPUS_GRAPH'), 'CampusGisMap must export MEWAR_CAMPUS_GRAPH');
+  assert.ok(gisContent.includes('export function findShortestCampusRoute'), 'CampusGisMap must export findShortestCampusRoute');
+  assert.ok(gisContent.includes('export function subdividePolyline'), 'CampusGisMap must export subdividePolyline');
+  assert.ok(mapContent.includes('findShortestCampusRoute'), 'CampusMap must import and use findShortestCampusRoute');
+
+  console.log('✅ Campus Locations & Road Routing: All 26 locations, authentic coordinates, Dijkstra routing, and backwards-compatible aliases verified.');
 });

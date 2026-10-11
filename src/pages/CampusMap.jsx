@@ -60,6 +60,7 @@ import CampusGisMap, {
   CAMPUS_GIS_LOCATIONS,
   calculateDistanceMeters,
   DEFAULT_CAMPUS_CENTER,
+  findShortestCampusRoute,
 } from '../components/map/CampusGisMap';
 
 const INITIAL_BUILDINGS = {
@@ -609,6 +610,174 @@ const INITIAL_BUILDINGS = {
       { num: 2, text: 'Arrive at Bhamasha Hostel', sub: 'Main hostel entrance', dist: '50 m • 0.7 min' },
     ],
   },
+  temple: {
+    id: 'temple',
+    code: 'TMP-01',
+    name: 'Mewar Campus Temple & Meditation Shrine',
+    shortName: 'Campus Temple',
+    block: 'Temple TMP-01',
+    dept: 'Campus Spiritual Centre & Cultural Forum',
+    category: 'facility',
+    x: 720,
+    y: 310,
+    width: 140,
+    height: 110,
+    description: 'Sacred campus temple and peaceful meditation shrine situated at the northern entrance courtyard of the Main Academic complex, directly south of the Botanical Park.',
+    occupancy: '25%',
+    seats: 'Shrine Courtyard',
+    temp: '23.0°C',
+    air: '375 ppm CO₂',
+    accessibility: 'Step-Free Courtyard',
+    hours: '05:30 AM – 09:30 PM',
+    status: 'open',
+    targetRoom: 'Main Mandir Sanctum & Prayer Hall',
+    targetDesc: 'North Academic Entry Courtyard',
+    image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80',
+    steps: [
+      { num: 1, text: 'Depart Gate 1 / Main Building', sub: 'Walk North along Central Boulevard', dist: '0 m' },
+      { num: 2, text: 'Arrive at Campus Temple Portico', sub: 'North Foyer of Main Academic Building', dist: '180 m • 2.2 min' },
+    ],
+  },
+  parking: {
+    id: 'parking',
+    code: 'PRK-02',
+    name: 'Main Campus Vehicle & Visitor Parking Zone',
+    shortName: 'Campus Parking',
+    block: 'Parking PRK-02',
+    dept: 'Campus Transport & Vehicle Management Outpost',
+    category: 'facility',
+    x: 380,
+    y: 790,
+    width: 190,
+    height: 120,
+    description: 'Spacious covered vehicular parking zone located along the western perimeter fence south of Gate 1 and west of Football Ground, offering EV charging and 2-wheeler/4-wheeler bays.',
+    occupancy: '52%',
+    seats: '220 Bays Available',
+    temp: '26.0°C',
+    air: '390 ppm CO₂',
+    accessibility: 'Step-Free Direct Vehicle Access',
+    hours: 'Open 24/7',
+    status: 'open',
+    targetRoom: 'Covered Vehicle Bay Zone A-F',
+    targetDesc: 'West Highway Perimeter Parking',
+    image: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=800&q=80',
+    steps: [
+      { num: 1, text: 'Depart Gate 1 (NH-48)', sub: 'Turn South along West Perimeter Avenue', dist: '0 m' },
+      { num: 2, text: 'Enter Parking Bays', sub: 'Covered Student & Faculty Parking Zone', dist: '75 m • 1 min' },
+    ],
+  },
+  cricket: {
+    id: 'cricket',
+    code: 'SPT-03',
+    name: 'University Cricket Ground & Pavilion',
+    shortName: 'Cricket Ground',
+    block: 'Sports Arena SPT-03',
+    dept: 'Department of Physical Education & Athletics',
+    category: 'facility',
+    x: 620,
+    y: 920,
+    width: 280,
+    height: 180,
+    description: 'Full-sized university cricket ground located in the south-central campus grounds with turf pitch, pavilion stands, and practice nets.',
+    occupancy: '40%',
+    seats: 'Pavilion & Practice Nets',
+    temp: '25.5°C',
+    air: '380 ppm CO₂',
+    accessibility: 'Perimeter Walkway & Spectator Lawns',
+    hours: '06:00 AM – 07:00 PM',
+    status: 'open',
+    targetRoom: 'Cricket Pavilion & Equipment Room',
+    targetDesc: 'South Athletic Precinct',
+    image: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=800&q=80',
+    steps: [
+      { num: 1, text: 'Depart Gate 1', sub: 'Head South past Football Ground', dist: '0 m' },
+      { num: 2, text: 'Arrive at Cricket Ground Pavilion', sub: 'South Turf Arena & Practice Nets', dist: '220 m • 2.8 min' },
+    ],
+  },
+  gym: {
+    id: 'gym',
+    code: 'SPT-04',
+    name: 'University Fitness Centre & Gymnasium',
+    shortName: 'Campus Gymnasium',
+    block: 'Sports SPT-04',
+    dept: 'Department of Physical Education & Sports Training',
+    category: 'facility',
+    x: 910,
+    y: 880,
+    width: 130,
+    height: 110,
+    description: 'Fully equipped student gymnasium and indoor strength-training center situated south of Basketball Court and adjacent to Volleyball Ground.',
+    occupancy: '58%',
+    seats: '45 Cardio & Weight Stations',
+    temp: '21.0°C',
+    air: '420 ppm CO₂',
+    accessibility: 'Step-Free Ground Floor Entrance',
+    hours: '06:00 AM – 09:30 PM',
+    status: 'open',
+    targetRoom: 'Main Workout Hall & Weights Wing',
+    targetDesc: 'East Sports Court Precinct',
+    image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80',
+    steps: [
+      { num: 1, text: 'Depart Law Building', sub: 'Walk South past Basketball Ground', dist: '0 m' },
+      { num: 2, text: 'Enter Gymnasium Reception', sub: 'Indoor Fitness & Cardio Hall', dist: '90 m • 1.1 min' },
+    ],
+  },
+  volleyball: {
+    id: 'volleyball',
+    code: 'SPT-05',
+    name: 'University Volleyball Arena & Courts',
+    shortName: 'Volleyball Ground',
+    block: 'Sports SPT-05',
+    dept: 'Department of Physical Education & Court Sports',
+    category: 'facility',
+    x: 1060,
+    y: 880,
+    width: 140,
+    height: 110,
+    description: 'Outdoor regulation volleyball courts situated east of the Gymnasium and south of Law Building with spectator seating and tournament lighting.',
+    occupancy: '35%',
+    seats: 'Regulation Courts 1 & 2',
+    temp: '24.5°C',
+    air: '380 ppm CO₂',
+    accessibility: 'Step-Free Court Access',
+    hours: '06:00 AM – 08:30 PM',
+    status: 'open',
+    targetRoom: 'Court 1 (Tournament Arena)',
+    targetDesc: 'East Outdoor Sports Arena',
+    image: 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?auto=format&fit=crop&w=800&q=80',
+    steps: [
+      { num: 1, text: 'Depart Law Building / Basketball Ground', sub: 'Walk South-East along Sports Pathway', dist: '0 m' },
+      { num: 2, text: 'Arrive at Volleyball Court', sub: 'Outdoor Volleyball Arena', dist: '110 m • 1.3 min' },
+    ],
+  },
+  agriculture: {
+    id: 'agriculture',
+    code: 'AGR-01',
+    name: 'Faculty of Agriculture Research & Experimental Field',
+    shortName: 'Agriculture Field',
+    block: 'Agri AGR-01',
+    dept: 'Department of Agriculture Sciences & Horticulture Research',
+    category: 'academic',
+    x: 980,
+    y: 1040,
+    width: 260,
+    height: 200,
+    description: 'Extensive agricultural research farm plots and botanical nursery situated in the southeastern quadrangle for crop trials, soil research, and organic cultivation.',
+    occupancy: '28%',
+    seats: 'Research Polyhouse & Trial Plots',
+    temp: '26.0°C',
+    air: '365 ppm CO₂',
+    accessibility: 'Farm Perimeter Access Path',
+    hours: '07:00 AM – 06:30 PM',
+    status: 'open',
+    targetRoom: 'Agronomy Research Lab & Farm Office',
+    targetDesc: 'South-East Agricultural Station',
+    image: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80',
+    steps: [
+      { num: 1, text: 'Depart East Sports Quad', sub: 'Head South past Volleyball Court & Gym', dist: '0 m' },
+      { num: 2, text: 'Enter Agriculture Research Fields', sub: 'Experimental Crop Plots & Polyhouse', dist: '160 m • 2 min' },
+    ],
+  },
 };
 
 // Aliases for backwards compatibility with legacy routes/bookmarks
@@ -619,6 +788,9 @@ INITIAL_BUILDINGS.hostel_g = INITIAL_BUILDINGS.mira;
 INITIAL_BUILDINGS.sports = INITIAL_BUILDINGS.basketball;
 INITIAL_BUILDINGS.library = INITIAL_BUILDINGS.pratap;
 INITIAL_BUILDINGS.auditorium = INITIAL_BUILDINGS.football;
+INITIAL_BUILDINGS.mandir = INITIAL_BUILDINGS.temple;
+INITIAL_BUILDINGS.farm = INITIAL_BUILDINGS.agriculture;
+
 
 
 // Rich architectural CAD floorplans for campus buildings
@@ -1206,17 +1378,28 @@ export const CampusMap = () => {
       setIsSimulatingWalk(true);
 
       const dest = CAMPUS_GIS_LOCATIONS[selectedBldg] || CAMPUS_GIS_LOCATIONS.eng;
-      const startLat = 25.031907; // NH-48 Main Gate
-      const startLng = 74.635428;
+      const startLat = userCoords?.lat || 25.031907; // NH-48 Main Gate
+      const startLng = userCoords?.lng || 74.635428;
       const endLat = customDestination ? customDestination.lat : dest.lat;
       const endLng = customDestination ? customDestination.lng : dest.lng;
 
-      let step = 0;
-      const totalSteps = 30;
+      // Compute shortest-path waypoints along authentic campus road network
+      const routeResult = findShortestCampusRoute(
+        { lat: startLat, lng: startLng },
+        { lat: endLat, lng: endLng },
+        6
+      );
+      const waypoints =
+        routeResult.coordinates && routeResult.coordinates.length > 0
+          ? routeResult.coordinates
+          : [[startLat, startLng], [endLat, endLng]];
+
+      let waypointIdx = 0;
+      const totalWaypoints = waypoints.length;
 
       simulationTimerRef.current = setInterval(() => {
-        step++;
-        const progress = step / totalSteps;
+        waypointIdx++;
+        const progress = Math.min(1, waypointIdx / (totalWaypoints - 1 || 1));
         setSimulationProgress(Math.round(progress * 100));
 
         // Advance active step index dynamically
@@ -1226,23 +1409,24 @@ export const CampusMap = () => {
           setActiveStepIndex(sIdx);
         }
 
-        const nextLat = startLat + (endLat - startLat) * progress;
-        const nextLng = startLng + (endLng - startLng) * progress;
+        const point = waypoints[Math.min(totalWaypoints - 1, waypointIdx)];
 
         setUserCoords((prev) => ({
           ...prev,
-          lat: nextLat,
-          lng: nextLng,
+          lat: point[0],
+          lng: point[1],
           speed: 1.3,
         }));
 
-        if (step >= totalSteps) {
+        if (waypointIdx >= totalWaypoints - 1) {
           clearInterval(simulationTimerRef.current);
           simulationTimerRef.current = null;
           setIsSimulatingWalk(false);
-          triggerToast(`Arrived at ${dest.name}!`);
+          triggerToast(
+            `Arrived at ${customDestination ? customDestination.shortName || 'Marked Destination' : dest.name}!`
+          );
         }
-      }, 700);
+      }, 400);
     }
   };
 

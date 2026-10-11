@@ -75,9 +75,9 @@ export const MEWAR_PERIMETER_POLYGON = [
   [25.029613, 74.636170],
 ];
 
-// Authentic Mewar University Internal Walkways & Road Network
+// Authentic Mewar University Blue Internal Road & Pathway Network (Google Maps Style)
 export const MEWAR_CAMPUS_ROADS = [
-  // West Avenue (Gate 1 past Main Building to Gate 2, Guest House & Mira Hostel)
+  // 1. West Corridor (Gate 1 past Gate 2, Guest House, Mira, Panna to Hospital)
   [
     [25.031920, 74.635280], // Gate 1 (NH-48 entrance portal)
     [25.032315, 74.635262],
@@ -86,44 +86,97 @@ export const MEWAR_CAMPUS_ROADS = [
     [25.033780, 74.634550], // Guest House
     [25.034085, 74.634523], // Mira Hostel
     [25.034450, 74.634320], // Panna Hostel
+    [25.034600, 74.634650], // West Hospital Spur
+    [25.034600, 74.634840], // Campus Hospital
   ],
-  // Central Promenade (Gate 1 to Main Building, Mess, Law Building & Courts)
+  // 2. West Parking & South-West Boundary Corridor
   [
     [25.031920, 74.635280], // Gate 1
-    [25.032173, 74.636267],
-    [25.032130, 74.636623], // Mess
-    [25.031866, 74.637113], // Law Building
-    [25.031342, 74.637242], // Basketball Ground
+    [25.031750, 74.635380], // Parking North Portico
+    [25.031260, 74.635600], // Parking Center
+    [25.030800, 74.635780], // Parking South
+    [25.029400, 74.636050], // Cricket Ground SW boundary
+    [25.029300, 74.636600], // Cricket Ground South
   ],
-  // Academic Promenade to Engineering, Teacher Building & Badal Hostel
+  // 3. Central Academic Promenade (Gate 1 past Main Building to Mess & Law)
   [
-    [25.032173, 74.636267],
+    [25.031920, 74.635280], // Gate 1
+    [25.032120, 74.635700], // Central Boulevard West
+    [25.032173, 74.636267], // Main Building Front Promenade
+    [25.032130, 74.636623], // Central Mess
+    [25.031866, 74.637113], // Law Building
+  ],
+  // 4. North Academic Loop (Promenade to Engineering, Teacher Building & Badal Hostel)
+  [
+    [25.032173, 74.636267], // Main Building Front
     [25.032631, 74.636545], // Engineering Building
     [25.032655, 74.636881], // Teacher Building
     [25.032382, 74.637010], // Badal Hostel
     [25.031866, 74.637113], // Law Building Link
   ],
-  // Park & Hostels Pathway (Main Building to Park, Kumbha, Pratap, Gora & Hospital)
+  // 5. Main Building Portico, Campus Temple & Botanical Park Pathway
   [
-    [25.032981, 74.635483], // Main Building
-    [25.033592, 74.636105], // Pratap Hostel
-    [25.033814, 74.636040], // Kumbha Hostel
-    [25.033968, 74.635239], // Campus Park
+    [25.032120, 74.635700], // Central Promenade
+    [25.032981, 74.635483], // Main Building Portico
+    [25.033550, 74.635520], // Campus Temple & Meditation Shrine
+    [25.033968, 74.635239], // Botanical Park
     [25.034447, 74.635065], // Gora Hostel
     [25.034600, 74.634840], // Campus Hospital
   ],
-  // East Living Quad (Kumbha to Sanaga & Bhamasha)
+  // 6. North Living Quad (Temple past Pratap, Kumbha, Bhamasha & Sanaga)
   [
-    [25.033814, 74.636040],
+    [25.033550, 74.635520], // Campus Temple
+    [25.033592, 74.636105], // Pratap Hostel
+    [25.033814, 74.636040], // Kumbha Hostel
     [25.034287, 74.635706], // Bhamasha Hostel
     [25.034645, 74.635783], // Sanaga Hostel
+    [25.034447, 74.635065], // Gora Hostel Link
   ],
-  // Athletic Track (Gate 1 to Football Ground)
+  // 7. Kumbha Hostel to Botanical Park Crosswalk
   [
-    [25.031920, 74.635280], // Gate 1
+    [25.033814, 74.636040], // Kumbha Hostel
+    [25.033968, 74.635239], // Botanical Park
+  ],
+  // 8. Engineering to Hostels Promenade
+  [
+    [25.032631, 74.636545], // Engineering Building
+    [25.033592, 74.636105], // Pratap Hostel
+  ],
+  // 9. Central to Football Ground & Cricket Ground Track
+  [
+    [25.032120, 74.635700], // Central Boulevard
+    [25.031800, 74.636150], // Football Ground North
     [25.031526, 74.636104], // Football Ground
+    [25.031150, 74.636150], // Football Ground South
+    [25.031000, 74.636500], // Cricket Ground North Portico
+    [25.030150, 74.636500], // Cricket Ground Center Pitch
+    [25.029300, 74.636600], // Cricket Ground South
+  ],
+  // 10. Parking to Football & Cricket Link
+  [
+    [25.030800, 74.635780], // Parking South
+    [25.031000, 74.636500], // Cricket Ground North
+  ],
+  // 11. South Sports Quad (Law to Basketball, Gym, Volleyball & Agriculture)
+  [
+    [25.031866, 74.637113], // Law Building
+    [25.031342, 74.637242], // Basketball Ground
+    [25.030950, 74.637450], // Sports Crossing
+    [25.030650, 74.637400], // Campus Gymnasium
+    [25.030680, 74.637850], // Volleyball Ground
+    [25.030250, 74.637800], // Agriculture Farm Gate
+    [25.029550, 74.638100], // Agriculture Research Field Center
+    [25.028900, 74.638300], // Agriculture Experimental Plots South
+  ],
+  // 12. Cricket East to Gym & Agriculture Connector
+  [
+    [25.031000, 74.636500], // Cricket North
+    [25.030950, 74.637450], // Sports Crossing
+    [25.030300, 74.637150], // Cricket East Path
+    [25.030250, 74.637800], // Agriculture Farm Gate
   ],
 ];
+
 
 // Official Real-World Buildings & Footprints of Mewar University, Gangrar
 // Accurate annotations matching campus satellite landmarks and user ground-truth
@@ -149,6 +202,28 @@ export const CAMPUS_GIS_LOCATIONS = {
     dept: 'NH-48 Campus Entrance & Security Post',
     elevation: 'Ground Level',
     description: 'Primary ceremonial entrance on NH-48 near Gangrar, automated RFID student verification barrier, and 24/7 security outpost.',
+  },
+  parking: {
+    id: 'parking',
+    code: 'PRK-02',
+    name: 'Main Campus Vehicle & Visitor Parking Zone',
+    shortName: 'Campus Parking',
+    category: 'facility',
+    color: '#F97316',
+    bgColor: '#FFF7ED',
+    icon: '🅿️',
+    lat: 25.031260,
+    lng: 74.635600,
+    polygon: [
+      [25.031750, 74.635350],
+      [25.031780, 74.635480],
+      [25.030800, 74.635850],
+      [25.030750, 74.635720],
+      [25.031750, 74.635350],
+    ],
+    dept: 'Campus Transport & Vehicle Management Outpost',
+    elevation: 'Ground Level Covered Bays',
+    description: 'Spacious covered vehicular parking zone located along the western perimeter fence south of Gate 1 and west of Football Ground, offering EV charging and 2-wheeler/4-wheeler bays.',
   },
   gate2: {
     id: 'gate2',
@@ -217,6 +292,28 @@ export const CAMPUS_GIS_LOCATIONS = {
     dept: 'University Secretariat, Admissions & Administrative Council',
     elevation: 'Floors 1–4',
     description: 'Central university flagship administrative and academic complex with expansive solar rooftop arrays, registrar office, accounts, and examination branch.',
+  },
+  temple: {
+    id: 'temple',
+    code: 'TMP-01',
+    name: 'Mewar Campus Temple & Meditation Shrine',
+    shortName: 'Campus Temple',
+    category: 'facility',
+    color: '#EAB308',
+    bgColor: '#FEFCE8',
+    icon: '🛕',
+    lat: 25.033550,
+    lng: 74.635520,
+    polygon: [
+      [25.033640, 74.635400],
+      [25.033680, 74.635620],
+      [25.033480, 74.635660],
+      [25.033440, 74.635440],
+      [25.033640, 74.635400],
+    ],
+    dept: 'Campus Spiritual Centre & Cultural Forum',
+    elevation: 'Ground Level Portico',
+    description: 'Sacred campus temple and peaceful meditation shrine situated at the northern entrance courtyard of the Main Academic complex, directly south of the Botanical Park.',
   },
   eng: {
     id: 'eng',
@@ -399,6 +496,95 @@ export const CAMPUS_GIS_LOCATIONS = {
     dept: 'Department of Physical Education & Court Sports',
     elevation: 'Hard Court Surface',
     description: 'Outdoor red-surface basketball court situated directly south of the Law Building.',
+  },
+  cricket: {
+    id: 'cricket',
+    code: 'SPT-03',
+    name: 'University Cricket Ground & Pavilion',
+    shortName: 'Cricket Ground',
+    category: 'facility',
+    color: '#DC2626',
+    bgColor: '#FEF2F2',
+    icon: '🏏',
+    lat: 25.030150,
+    lng: 74.636500,
+    polygon: [
+      [25.030950, 74.635700],
+      [25.031100, 74.637000],
+      [25.029400, 74.637350],
+      [25.029300, 74.636050],
+      [25.030950, 74.635700],
+    ],
+    dept: 'Department of Physical Education & Athletics',
+    elevation: 'Turf Ground & Pavilion',
+    description: 'Full-sized university cricket ground located in the south-central campus grounds with turf pitch, pavilion stands, and practice nets.',
+  },
+  gym: {
+    id: 'gym',
+    code: 'SPT-04',
+    name: 'University Fitness Centre & Gymnasium',
+    shortName: 'Campus Gymnasium',
+    category: 'facility',
+    color: '#475569',
+    bgColor: '#F8FAFC',
+    icon: '🏋️',
+    lat: 25.030650,
+    lng: 74.637400,
+    polygon: [
+      [25.030900, 74.637250],
+      [25.030930, 74.637450],
+      [25.030400, 74.637580],
+      [25.030370, 74.637380],
+      [25.030900, 74.637250],
+    ],
+    dept: 'Department of Physical Education & Sports Training',
+    elevation: 'Ground Floor Sports Complex',
+    description: 'Fully equipped student gymnasium and indoor strength-training center situated south of Basketball Court and adjacent to Volleyball Ground.',
+  },
+  volleyball: {
+    id: 'volleyball',
+    code: 'SPT-05',
+    name: 'University Volleyball Arena & Courts',
+    shortName: 'Volleyball Ground',
+    category: 'facility',
+    color: '#8B5CF6',
+    bgColor: '#F5F3FF',
+    icon: '🏐',
+    lat: 25.030680,
+    lng: 74.637850,
+    polygon: [
+      [25.030920, 74.637550],
+      [25.030950, 74.637950],
+      [25.030450, 74.638050],
+      [25.030420, 74.637650],
+      [25.030920, 74.637550],
+    ],
+    dept: 'Department of Physical Education & Court Sports',
+    elevation: 'Hard Surface Court',
+    description: 'Outdoor regulation volleyball courts situated east of the Gymnasium and south of Law Building with spectator seating and tournament lighting.',
+  },
+  agriculture: {
+    id: 'agriculture',
+    code: 'AGR-01',
+    name: 'Faculty of Agriculture Research & Experimental Field',
+    shortName: 'Agriculture Field',
+    category: 'academic',
+    color: '#16A34A',
+    bgColor: '#F0FDF4',
+    icon: '🌾',
+    lat: 25.029550,
+    lng: 74.638100,
+    polygon: [
+      [25.030300, 74.637400],
+      [25.030350, 74.638100],
+      [25.030200, 74.638300],
+      [25.028900, 74.638600],
+      [25.028800, 74.637750],
+      [25.030300, 74.637400],
+    ],
+    dept: 'Department of Agriculture Sciences & Horticulture Research',
+    elevation: 'Experimental Farm Plots',
+    description: 'Extensive agricultural research farm plots and botanical nursery situated in the southeastern quadrangle for crop trials, soil research, and organic cultivation.',
   },
   kumbha: {
     id: 'kumbha',
@@ -658,6 +844,8 @@ CAMPUS_GIS_LOCATIONS.hostel_g = CAMPUS_GIS_LOCATIONS.mira;
 CAMPUS_GIS_LOCATIONS.sports = CAMPUS_GIS_LOCATIONS.basketball;
 CAMPUS_GIS_LOCATIONS.library = CAMPUS_GIS_LOCATIONS.pratap;
 CAMPUS_GIS_LOCATIONS.auditorium = CAMPUS_GIS_LOCATIONS.football;
+CAMPUS_GIS_LOCATIONS.mandir = CAMPUS_GIS_LOCATIONS.temple;
+CAMPUS_GIS_LOCATIONS.farm = CAMPUS_GIS_LOCATIONS.agriculture;
 
 // Haversine geodesic distance in meters
 export function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
@@ -675,12 +863,304 @@ export function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
   return Math.round(R * c);
 }
 
-// Generate intermediate waypoint route path
+// Authentic Mewar University Campus Road Graph Topology
+export const MEWAR_CAMPUS_GRAPH = {
+  nodes: {
+    // West Entrance & Highway Corridor
+    n_gate1: [25.031920, 74.635280],
+    n_w_junc1: [25.032315, 74.635262],
+    n_w_junc2: [25.033008, 74.634981],
+    n_gate2: [25.033480, 74.634600],
+    n_guest_house: [25.033780, 74.634550],
+    n_mira: [25.034085, 74.634523],
+    n_panna: [25.034450, 74.634320],
+    n_hospital_w: [25.034600, 74.634650],
+    n_hospital: [25.034600, 74.634840],
+
+    // West Parking & South-West Boundary Corridor
+    n_parking_n: [25.031750, 74.635380],
+    n_parking: [25.031260, 74.635600],
+    n_parking_s: [25.030800, 74.635780],
+    n_cricket_sw: [25.029400, 74.636050],
+    n_cricket_s: [25.029300, 74.636600],
+
+    // Central Boulevard & Main Complex
+    n_central_main_w: [25.032120, 74.635700],
+    n_main_front: [25.032173, 74.636267],
+    n_main_entry: [25.032981, 74.635483],
+    n_temple: [25.033550, 74.635520],
+    n_park: [25.033968, 74.635239],
+    n_gora: [25.034447, 74.635065],
+
+    // East Living Quad
+    n_pratap: [25.033592, 74.636105],
+    n_kumbha: [25.033814, 74.636040],
+    n_bhamasha: [25.034287, 74.635706],
+    n_sanaga: [25.034645, 74.635783],
+
+    // Academic Spine & Central Mess
+    n_mess: [25.032130, 74.636623],
+    n_eng_junc: [25.032631, 74.636545],
+    n_teacher: [25.032655, 74.636881],
+    n_badal: [25.032382, 74.637010],
+    n_law: [25.031866, 74.637113],
+
+    // Athletics & Sports Quad (Football, Cricket, Basketball, Gym, Volleyball, Agriculture)
+    n_football_n: [25.031800, 74.636150],
+    n_football: [25.031526, 74.636104],
+    n_football_s: [25.031150, 74.636150],
+    n_cricket_n: [25.031000, 74.636500],
+    n_cricket: [25.030150, 74.636500],
+    n_cricket_e: [25.030300, 74.637150],
+    n_basketball: [25.031342, 74.637242],
+    n_gym: [25.030650, 74.637400],
+    n_volleyball: [25.030680, 74.637850],
+    n_sports_cross: [25.030950, 74.637450],
+    n_agri_gate: [25.030250, 74.637800],
+    n_agri: [25.029550, 74.638100],
+    n_agri_s: [25.028900, 74.638300],
+  },
+  edges: [
+    // West Avenue
+    ['n_gate1', 'n_w_junc1'],
+    ['n_w_junc1', 'n_w_junc2'],
+    ['n_w_junc2', 'n_gate2'],
+    ['n_gate2', 'n_guest_house'],
+    ['n_guest_house', 'n_mira'],
+    ['n_mira', 'n_panna'],
+    ['n_panna', 'n_hospital_w'],
+    ['n_hospital_w', 'n_hospital'],
+    ['n_hospital', 'n_gora'],
+    ['n_gora', 'n_park'],
+    ['n_park', 'n_temple'],
+    ['n_temple', 'n_main_entry'],
+
+    // Parking & West Highway Corridor
+    ['n_gate1', 'n_parking_n'],
+    ['n_parking_n', 'n_parking'],
+    ['n_parking', 'n_parking_s'],
+    ['n_parking_s', 'n_cricket_sw'],
+    ['n_cricket_sw', 'n_cricket_s'],
+
+    // Gate 1 East towards Central Promenade
+    ['n_gate1', 'n_central_main_w'],
+    ['n_central_main_w', 'n_main_front'],
+    ['n_central_main_w', 'n_main_entry'],
+    ['n_central_main_w', 'n_football_n'],
+    ['n_parking_n', 'n_central_main_w'],
+
+    // Football & Promenade link
+    ['n_football_n', 'n_football'],
+    ['n_football', 'n_football_s'],
+    ['n_football_s', 'n_cricket_n'],
+    ['n_cricket_n', 'n_cricket'],
+    ['n_cricket_n', 'n_parking_s'],
+    ['n_cricket', 'n_cricket_s'],
+    ['n_cricket', 'n_cricket_e'],
+
+    // Central Promenade to Mess & East Academic
+    ['n_main_front', 'n_mess'],
+    ['n_main_front', 'n_eng_junc'],
+    ['n_eng_junc', 'n_teacher'],
+    ['n_teacher', 'n_badal'],
+    ['n_badal', 'n_law'],
+    ['n_mess', 'n_law'],
+
+    // Main to Hostels (Pratap, Kumbha, Bhamasha, Sanaga)
+    ['n_main_entry', 'n_pratap'],
+    ['n_temple', 'n_pratap'],
+    ['n_pratap', 'n_kumbha'],
+    ['n_kumbha', 'n_bhamasha'],
+    ['n_bhamasha', 'n_sanaga'],
+    ['n_sanaga', 'n_gora'],
+    ['n_kumbha', 'n_park'],
+    ['n_eng_junc', 'n_pratap'],
+
+    // Law building south to Basketball, Gym, Volleyball, Sports
+    ['n_law', 'n_basketball'],
+    ['n_basketball', 'n_sports_cross'],
+    ['n_sports_cross', 'n_gym'],
+    ['n_sports_cross', 'n_volleyball'],
+    ['n_gym', 'n_volleyball'],
+    ['n_cricket_n', 'n_sports_cross'],
+    ['n_cricket_e', 'n_gym'],
+    ['n_cricket_e', 'n_agri_gate'],
+
+    // Agriculture Field Road
+    ['n_sports_cross', 'n_agri_gate'],
+    ['n_volleyball', 'n_agri_gate'],
+    ['n_agri_gate', 'n_agri'],
+    ['n_agri', 'n_agri_s'],
+    ['n_cricket_s', 'n_agri_gate'],
+  ],
+};
+
+// Build adjacency lookup map with Haversine weights
+const _graphAdj = {};
+Object.keys(MEWAR_CAMPUS_GRAPH.nodes).forEach((k) => {
+  _graphAdj[k] = [];
+});
+MEWAR_CAMPUS_GRAPH.edges.forEach(([u, v]) => {
+  if (MEWAR_CAMPUS_GRAPH.nodes[u] && MEWAR_CAMPUS_GRAPH.nodes[v]) {
+    const pU = MEWAR_CAMPUS_GRAPH.nodes[u];
+    const pV = MEWAR_CAMPUS_GRAPH.nodes[v];
+    const d = calculateDistanceMeters(pU[0], pU[1], pV[0], pV[1]);
+    _graphAdj[u].push({ node: v, dist: d });
+    _graphAdj[v].push({ node: u, dist: d });
+  }
+});
+
+// Find closest graph waypoint to given coordinates
+export function findNearestGraphNode(coords) {
+  const lat = Array.isArray(coords) ? coords[0] : coords?.lat;
+  const lng = Array.isArray(coords) ? coords[1] : coords?.lng;
+  if (lat == null || lng == null) return 'n_gate1';
+
+  let bestNode = 'n_gate1';
+  let minD = Infinity;
+
+  Object.entries(MEWAR_CAMPUS_GRAPH.nodes).forEach(([key, nCoords]) => {
+    const d = calculateDistanceMeters(lat, lng, nCoords[0], nCoords[1]);
+    if (d < minD) {
+      minD = d;
+      bestNode = key;
+    }
+  });
+
+  return bestNode;
+}
+
+// Subdivide polyline into evenly-spaced points for fluid animation
+export function subdividePolyline(points, maxStepMeters = 8) {
+  if (!points || points.length === 0) return [];
+  const result = [points[0]];
+  for (let i = 0; i < points.length - 1; i++) {
+    const p1 = points[i];
+    const p2 = points[i + 1];
+    const d = calculateDistanceMeters(p1[0], p1[1], p2[0], p2[1]);
+    const steps = Math.max(1, Math.ceil(d / maxStepMeters));
+    for (let s = 1; s <= steps; s++) {
+      const frac = s / steps;
+      result.push([
+        p1[0] + (p2[0] - p1[0]) * frac,
+        p1[1] + (p2[1] - p1[1]) * frac,
+      ]);
+    }
+  }
+  return result;
+}
+
+// Full Google Maps-style shortest-path route computation along campus roads
+export function findShortestCampusRoute(startCoords, destCoords, maxStepMeters = 8) {
+  const sLat = Array.isArray(startCoords) ? startCoords[0] : startCoords?.lat;
+  const sLng = Array.isArray(startCoords) ? startCoords[1] : startCoords?.lng;
+  const dLat = Array.isArray(destCoords) ? destCoords[0] : destCoords?.lat;
+  const dLng = Array.isArray(destCoords) ? destCoords[1] : destCoords?.lng;
+
+  if (sLat == null || sLng == null || dLat == null || dLng == null) {
+    return { coordinates: [], distanceMeters: 0, nodes: [] };
+  }
+
+  const startNode = findNearestGraphNode([sLat, sLng]);
+  const destNode = findNearestGraphNode([dLat, dLng]);
+
+  // Dijkstra Shortest Path Search
+  const dist = {};
+  const prev = {};
+  const unvisited = new Set(Object.keys(MEWAR_CAMPUS_GRAPH.nodes));
+
+  Object.keys(MEWAR_CAMPUS_GRAPH.nodes).forEach((n) => {
+    dist[n] = Infinity;
+  });
+  dist[startNode] = 0;
+
+  while (unvisited.size > 0) {
+    let curr = null;
+    let minD = Infinity;
+    for (const n of unvisited) {
+      if (dist[n] < minD) {
+        minD = dist[n];
+        curr = n;
+      }
+    }
+
+    if (!curr || minD === Infinity) break;
+    if (curr === destNode) break;
+
+    unvisited.delete(curr);
+
+    const neighbors = _graphAdj[curr] || [];
+    for (const neighbor of neighbors) {
+      if (unvisited.has(neighbor.node)) {
+        const alt = dist[curr] + neighbor.dist;
+        if (alt < dist[neighbor.node]) {
+          dist[neighbor.node] = alt;
+          prev[neighbor.node] = curr;
+        }
+      }
+    }
+  }
+
+  // Backtrack path
+  const pathKeys = [];
+  let u = destNode;
+  while (u) {
+    pathKeys.unshift(u);
+    u = prev[u];
+  }
+
+  // Assemble full geometric waypoint sequence
+  const rawWaypoints = [];
+  rawWaypoints.push([sLat, sLng]);
+
+  pathKeys.forEach((key) => {
+    const pt = MEWAR_CAMPUS_GRAPH.nodes[key];
+    if (pt) rawWaypoints.push([pt[0], pt[1]]);
+  });
+
+  rawWaypoints.push([dLat, dLng]);
+
+  // De-duplicate consecutive identical coordinates
+  const cleanWaypoints = [];
+  for (let i = 0; i < rawWaypoints.length; i++) {
+    const cur = rawWaypoints[i];
+    if (i === 0) {
+      cleanWaypoints.push(cur);
+    } else {
+      const prevPt = cleanWaypoints[cleanWaypoints.length - 1];
+      const d = calculateDistanceMeters(prevPt[0], prevPt[1], cur[0], cur[1]);
+      if (d > 0.5) {
+        cleanWaypoints.push(cur);
+      }
+    }
+  }
+
+  // Calculate true road distance along waypoints
+  let totalMeters = 0;
+  for (let i = 0; i < cleanWaypoints.length - 1; i++) {
+    totalMeters += calculateDistanceMeters(
+      cleanWaypoints[i][0],
+      cleanWaypoints[i][1],
+      cleanWaypoints[i + 1][0],
+      cleanWaypoints[i + 1][1]
+    );
+  }
+
+  // Subdivide for silky smooth Google Maps navigation / simulated walk
+  const smoothPoints = subdividePolyline(cleanWaypoints, maxStepMeters);
+
+  return {
+    coordinates: smoothPoints,
+    distanceMeters: Math.round(totalMeters),
+    nodes: pathKeys,
+  };
+}
+
+// Fallback intermediate waypoint interpolation
 function interpolateRoute(start, end, numPoints = 18) {
   const points = [];
   for (let i = 0; i <= numPoints; i++) {
     const factor = i / numPoints;
-    // Gentle curve along academic walkways
     const curveOffset = Math.sin(factor * Math.PI) * 0.00008;
     const lat = start.lat + (end.lat - start.lat) * factor + curveOffset;
     const lng = start.lng + (end.lng - start.lng) * factor - curveOffset * 0.2;
@@ -688,6 +1168,7 @@ function interpolateRoute(start, end, numPoints = 18) {
   }
   return points;
 }
+
 
 export const CampusGisMap = ({
   selectedBuildingKey = 'eng',
@@ -716,6 +1197,7 @@ export const CampusGisMap = ({
   const customDestMarkerRef = useRef(null);
   const routeCasingPolylineRef = useRef(null);
   const routePolylineRef = useRef(null);
+  const routePulsePolylineRef = useRef(null);
   const buildingMarkersRef = useRef({});
   const buildingPolygonsRef = useRef({});
   const tileLayerRef = useRef(null);
@@ -797,15 +1279,33 @@ export const CampusGisMap = ({
         })
         .addTo(map);
 
-      // Draw Walkway & Internal Road Network
-      roadsLayerRef.current = MEWAR_CAMPUS_ROADS.map((roadCoords) =>
-        L.polyline(roadCoords, {
-          color: '#10B981',
-          weight: 3,
-          opacity: 0.6,
-          dashArray: '4, 4',
-        }).addTo(map)
-      );
+      // Draw Authentic Blue Road & Pathway Network (Google Maps Aesthetic)
+      const roadLayers = [];
+      MEWAR_CAMPUS_ROADS.forEach((roadCoords) => {
+        // Road Casing (subtle dark navy outline for contrast against satellite/street map)
+        const casing = L.polyline(roadCoords, {
+          color: '#1E3A8A',
+          weight: 5.5,
+          opacity: 0.35,
+          lineCap: 'round',
+          lineJoin: 'round',
+          interactive: false,
+        }).addTo(map);
+
+        // Core Road Lane (Vibrant Google Maps blue pathway)
+        const core = L.polyline(roadCoords, {
+          color: '#2563EB',
+          weight: 3.2,
+          opacity: 0.85,
+          lineCap: 'round',
+          lineJoin: 'round',
+          interactive: false,
+        }).addTo(map);
+
+        roadLayers.push(casing, core);
+      });
+      roadsLayerRef.current = roadLayers;
+
 
       // Click on Map to Mark Destination Anywhere inside Campus!
       map.on('click', (e) => {
@@ -1047,48 +1547,42 @@ export const CampusGisMap = ({
     }
   }, [customDestination]);
 
-  // Update Route Polyline & Live Guidance Stats with Double-Cased Visibility
+  // Update Route Polyline & Live Guidance Stats with Google Maps Pathway Navigation
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map || !activeDestination || !userCoords) return;
 
-    const dist = calculateDistanceMeters(
-      userCoords.lat,
-      userCoords.lng,
-      activeDestination.lat,
-      activeDestination.lng
+    // Google Maps Shortest-Path Route Navigation along Campus Road Network
+    const routeResult = findShortestCampusRoute(
+      { lat: userCoords.lat, lng: userCoords.lng },
+      { lat: activeDestination.lat, lng: activeDestination.lng }
     );
+    const routePoints = routeResult.coordinates;
+    const roadDist = routeResult.distanceMeters;
 
     let speedMps = 1.25;
     if (mobilityMode === 'wheelchair') speedMps = 1.0;
     if (mobilityMode === 'shuttle') speedMps = 4.2;
 
-    const etaMin = Math.max(1, Math.round(dist / speedMps / 60));
+    const etaMin = Math.max(1, Math.round(roadDist / speedMps / 60));
 
     let directive = `Head towards ${activeDestination.shortName}`;
-    if (dist > 180) {
-      directive = `Walk along campus promenade towards ${activeDestination.shortName}`;
-    } else if (dist > 50) {
+    if (roadDist > 180) {
+      directive = `Walk along blue campus pathways towards ${activeDestination.shortName}`;
+    } else if (roadDist > 50) {
       directive = `Approaching destination: ${activeDestination.shortName}`;
-    } else if (dist <= 25) {
+    } else if (roadDist <= 25) {
       directive = `You have arrived at ${activeDestination.shortName}!`;
     }
 
     if (onNavigationUpdate) {
       onNavigationUpdate({
-        distanceMeters: dist,
+        distanceMeters: roadDist,
         etaMinutes: etaMin,
         stepText: directive,
         destinationName: activeDestination.shortName,
       });
     }
-
-    // Dynamic Waypoint Route Polyline
-    const routePoints = interpolateRoute(
-      { lat: userCoords.lat, lng: userCoords.lng },
-      { lat: activeDestination.lat, lng: activeDestination.lng },
-      18
-    );
 
     // 1. Route Casing (White outer halo for maximum GIS contrast against satellite imagery)
     if (routeCasingPolylineRef.current) {
@@ -1096,25 +1590,41 @@ export const CampusGisMap = ({
     } else {
       routeCasingPolylineRef.current = L.polyline(routePoints, {
         color: '#FFFFFF',
-        weight: 7.5,
-        opacity: 0.85,
+        weight: 8,
+        opacity: 0.95,
         lineCap: 'round',
+        lineJoin: 'round',
         interactive: false,
       }).addTo(map);
     }
 
-    // 2. Route Core Polyline (NextCampus Intelligent Green)
+    // 2. Route Core Polyline (Google Maps Signature Royal Blue Ribbon)
     if (routePolylineRef.current) {
       routePolylineRef.current.setLatLngs(routePoints);
       routePolylineRef.current.setStyle({
-        color: '#168567',
+        color: '#1D4ED8',
       });
     } else {
       routePolylineRef.current = L.polyline(routePoints, {
-        color: '#168567',
-        weight: 4.5,
-        opacity: 0.95,
+        color: '#1D4ED8',
+        weight: 4.8,
+        opacity: 0.98,
         lineCap: 'round',
+        lineJoin: 'round',
+      }).addTo(map);
+    }
+
+    // 3. Route Animated Pulse Line (Google Maps Directional Chevron / Dashed stream)
+    if (routePulsePolylineRef.current) {
+      routePulsePolylineRef.current.setLatLngs(routePoints);
+    } else {
+      routePulsePolylineRef.current = L.polyline(routePoints, {
+        color: '#93C5FD',
+        weight: 2.6,
+        opacity: 0.92,
+        dashArray: '8, 12',
+        className: 'route-nav-pulse',
+        interactive: false,
       }).addTo(map);
     }
   }, [userCoords, activeDestination, customDestination, mobilityMode, onNavigationUpdate]);
@@ -1465,13 +1975,16 @@ export const CampusGisMap = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '11px', color: 'var(--text-secondary)' }}>
             {[
               { color: '#168567', label: 'Academic & Tech Wings' },
-              { color: '#B7791F', label: 'Central Library' },
-              { color: '#142D28', label: 'Administrative Secretariat' },
+              { color: '#EAB308', label: 'Campus Temple & Shrine' },
+              { color: '#F97316', label: 'Vehicle Parking Zone' },
+              { color: '#16A34A', label: 'Agriculture Research Field' },
               { color: '#3478B8', label: 'Student Residences (Hostels)' },
-              { color: '#0D9488', label: 'Sports Arena & Grounds' },
+              { color: '#DC2626', label: 'Cricket & Sports Arena' },
+              { color: '#8B5CF6', label: 'Volleyball & Courts' },
+              { color: '#475569', label: 'Gymnasium & Fitness' },
               { color: '#C43D4B', label: 'Health Centre & Hospital' },
-              { color: '#D97706', label: 'Dining & Cafeteria' },
-              { color: '#7C3AED', label: 'Auditorium & Convocation' },
+              { color: '#D97706', label: 'Dining Mess & Cafeteria' },
+              { color: '#2563EB', label: 'Blue Campus Road Network' },
             ].map((item, idx) => (
               <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ width: '9px', height: '9px', borderRadius: '50%', backgroundColor: item.color, flexShrink: 0 }} />
