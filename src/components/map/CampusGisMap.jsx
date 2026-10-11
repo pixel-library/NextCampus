@@ -89,14 +89,16 @@ export const MEWAR_CAMPUS_ROADS = [
     [25.034600, 74.634650], // West Hospital Spur
     [25.034600, 74.634840], // Campus Hospital
   ],
-  // 2. West Parking & South-West Boundary Corridor
+  // 2. West Driveway Loop in Front of Main Academic Complex (Satellite Ground-Truth)
   [
-    [25.031920, 74.635280], // Gate 1
-    [25.031750, 74.635380], // Parking North Portico
-    [25.031260, 74.635600], // Parking Center
-    [25.030800, 74.635780], // Parking South
-    [25.029400, 74.636050], // Cricket Ground SW boundary
-    [25.029300, 74.636600], // Cricket Ground South
+    [25.033008, 74.634981], // West Corridor Junction
+    [25.032787, 74.634989], // Driveway Loop North Entry
+    [25.032837, 74.635133], // Driveway Inward Turn
+    [25.032538, 74.635204], // Main Building West Lawn Curve
+    [25.032404, 74.635347], // Main Building Portico Drop-Off Loop
+    [25.032211, 74.635263], // Driveway Return Branch
+    [25.032041, 74.635244], // Driveway South Merge
+    [25.031920, 74.635280], // Reconnects to Gate 1 Portal
   ],
   // 3. Central Academic Promenade (Gate 1 past Main Building to Mess & Law)
   [
@@ -104,76 +106,102 @@ export const MEWAR_CAMPUS_ROADS = [
     [25.032120, 74.635700], // Central Boulevard West
     [25.032173, 74.636267], // Main Building Front Promenade
     [25.032130, 74.636623], // Central Mess
-    [25.031866, 74.637113], // Law Building
+    [25.031920, 74.636644], // Law Courtyard North-West
   ],
-  // 4. North Academic Loop (Promenade to Engineering, Teacher Building & Badal Hostel)
+  // 4. Law Building Courtyard Garden Loop (Satellite Blue Path Outline)
+  [
+    [25.031920, 74.636644], // Law Loop North-West
+    [25.031981, 74.637021], // Law Loop North-East
+    [25.031866, 74.637113], // Law Building Main Entrance Spur
+    [25.031708, 74.637011], // Law Loop South-East
+    [25.031660, 74.636640], // Law Loop South-West
+    [25.031920, 74.636644], // Loop Close
+  ],
+  // 5. North Academic Loop (Promenade to Engineering, Teacher Building & Badal Hostel)
   [
     [25.032173, 74.636267], // Main Building Front
     [25.032631, 74.636545], // Engineering Building
     [25.032655, 74.636881], // Teacher Building
     [25.032382, 74.637010], // Badal Hostel
-    [25.031866, 74.637113], // Law Building Link
+    [25.031981, 74.637021], // Law Building North Link
   ],
-  // 5. Main Building Portico, Campus Temple & Botanical Park Pathway
+  // 6. Main Building Portico, Campus Temple & Botanical Park Pathway
   [
     [25.032120, 74.635700], // Central Promenade
-    [25.032981, 74.635483], // Main Building Portico
-    [25.033550, 74.635520], // Campus Temple & Meditation Shrine
+    [25.032404, 74.635347], // Main Building Portico Loop
+    [25.032981, 74.635483], // Main Building Flagship Portal
+    [25.033720, 74.635539], // Campus Temple & Meditation Shrine
     [25.033968, 74.635239], // Botanical Park
     [25.034447, 74.635065], // Gora Hostel
     [25.034600, 74.634840], // Campus Hospital
   ],
-  // 6. North Living Quad (Temple past Pratap, Kumbha, Bhamasha & Sanaga)
+  // 7. North Living Quad (Temple past Pratap, Kumbha, Bhamasha & Sanaga)
   [
-    [25.033550, 74.635520], // Campus Temple
+    [25.033720, 74.635539], // Campus Temple
     [25.033592, 74.636105], // Pratap Hostel
     [25.033814, 74.636040], // Kumbha Hostel
     [25.034287, 74.635706], // Bhamasha Hostel
     [25.034645, 74.635783], // Sanaga Hostel
     [25.034447, 74.635065], // Gora Hostel Link
   ],
-  // 7. Kumbha Hostel to Botanical Park Crosswalk
+  // 8. Kumbha Hostel to Botanical Park Crosswalk
   [
     [25.033814, 74.636040], // Kumbha Hostel
     [25.033968, 74.635239], // Botanical Park
   ],
-  // 8. Engineering to Hostels Promenade
+  // 9. Engineering to Hostels Promenade
   [
     [25.032631, 74.636545], // Engineering Building
     [25.033592, 74.636105], // Pratap Hostel
   ],
-  // 9. Central to Football Ground & Cricket Ground Track
+  // 10. Parking East Corridor (Between Parking Canopy & Football Ground)
+  [
+    [25.031920, 74.635280], // Gate 1 Portal
+    [25.031553, 74.635428], // Parking North Portico
+    [25.031519, 74.635547], // Parking East Lane North
+    [25.031185, 74.635633], // Parking Center East
+    [25.030900, 74.635861], // Parking South-East Corner
+    [25.030780, 74.635695], // Parking South Bays
+  ],
+  // 11. Cross Connector between Football & Cricket Grounds
+  [
+    [25.030900, 74.635861], // Parking South-East Corner
+    [25.031073, 74.636155], // Junction Football South / Cricket North
+    [25.031179, 74.636809], // Cricket North-East / Gym Pathway Junction
+  ],
+  // 12. Central Promenade to Football Ground & Southern Arena Link
   [
     [25.032120, 74.635700], // Central Boulevard
     [25.031800, 74.636150], // Football Ground North
-    [25.031526, 74.636104], // Football Ground
+    [25.031526, 74.636104], // Football Ground Center
     [25.031150, 74.636150], // Football Ground South
-    [25.031000, 74.636500], // Cricket Ground North Portico
-    [25.030150, 74.636500], // Cricket Ground Center Pitch
-    [25.029300, 74.636600], // Cricket Ground South
+    [25.031073, 74.636155], // Football-Cricket Separator Lane
   ],
-  // 10. Parking to Football & Cricket Link
+  // 13. Cricket Ground East Road (Between Cricket and Gym / Agriculture)
   [
-    [25.030800, 74.635780], // Parking South
-    [25.031000, 74.636500], // Cricket Ground North
+    [25.031179, 74.636809], // Cricket North-East Road Spur
+    [25.030843, 74.636933], // Path between Cricket Ground and Gym
+    [25.030318, 74.637091], // Path between Cricket Ground and Agriculture
+    [25.029809, 74.637244], // Cricket Ground South-East Corner
+    [25.029652, 74.637059], // Cricket Ground South Boundary
   ],
-  // 11. South Sports Quad (Law to Basketball, Gym, Volleyball & Agriculture)
+  // 14. South Sports Quad (Law to Basketball, Gym, Volleyball & Agriculture)
   [
-    [25.031866, 74.637113], // Law Building
+    [25.031708, 74.637011], // Law Loop South-East
     [25.031342, 74.637242], // Basketball Ground
-    [25.030950, 74.637450], // Sports Crossing
-    [25.030650, 74.637400], // Campus Gymnasium
-    [25.030680, 74.637850], // Volleyball Ground
-    [25.030250, 74.637800], // Agriculture Farm Gate
-    [25.029550, 74.638100], // Agriculture Research Field Center
-    [25.028900, 74.638300], // Agriculture Experimental Plots South
+    [25.031091, 74.637081], // Gymnasium North Portico
+    [25.030950, 74.637450], // Sports Crossing between Gym & Volleyball
+    [25.030931, 74.637794], // Volleyball Ground Arena
+    [25.030511, 74.637128], // Agriculture Farm Gate
+    [25.029973, 74.637670], // Agriculture Research Field Center
+    [25.029366, 74.638042], // Agriculture Experimental Plots South
   ],
-  // 12. Cricket East to Gym & Agriculture Connector
+  // 15. Crossway between Gym and Volleyball to Agriculture Field East
   [
-    [25.031000, 74.636500], // Cricket North
+    [25.030816, 74.637258], // Gymnasium Center
     [25.030950, 74.637450], // Sports Crossing
-    [25.030300, 74.637150], // Cricket East Path
-    [25.030250, 74.637800], // Agriculture Farm Gate
+    [25.030931, 74.637794], // Volleyball Ground
+    [25.030628, 74.638182], // Agriculture Field East Gate
   ],
 ];
 
@@ -212,14 +240,14 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#F97316',
     bgColor: '#FFF7ED',
     icon: '🅿️',
-    lat: 25.031260,
-    lng: 74.635600,
+    lat: 25.031185,
+    lng: 74.635633,
     polygon: [
-      [25.031750, 74.635350],
-      [25.031780, 74.635480],
-      [25.030800, 74.635850],
-      [25.030750, 74.635720],
-      [25.031750, 74.635350],
+      [25.031553, 74.635428],
+      [25.031595, 74.635555],
+      [25.030830, 74.635864],
+      [25.030780, 74.635695],
+      [25.031553, 74.635428],
     ],
     dept: 'Campus Transport & Vehicle Management Outpost',
     elevation: 'Ground Level Covered Bays',
@@ -261,16 +289,16 @@ export const CAMPUS_GIS_LOCATIONS = {
     polygon: [
       [25.032106, 74.635761],
       [25.032289, 74.636310],
-      [25.033596, 74.635780],
-      [25.033582, 74.635744],
-      [25.033633, 74.635720],
-      [25.033585, 74.635569],
-      [25.033532, 74.635595],
-      [25.033518, 74.635557],
-      [25.033564, 74.635537],
-      [25.033499, 74.635359],
-      [25.033556, 74.635335],
-      [25.033512, 74.635205],
+      [25.033470, 74.635780],
+      [25.033470, 74.635744],
+      [25.033470, 74.635720],
+      [25.033460, 74.635569],
+      [25.033450, 74.635595],
+      [25.033450, 74.635557],
+      [25.033460, 74.635537],
+      [25.033470, 74.635359],
+      [25.033470, 74.635335],
+      [25.033470, 74.635205],
       [25.033455, 74.635231],
       [25.033425, 74.635140],
       [25.033319, 74.635185],
@@ -302,14 +330,14 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#EAB308',
     bgColor: '#FEFCE8',
     icon: '🛕',
-    lat: 25.033550,
-    lng: 74.635520,
+    lat: 25.033720,
+    lng: 74.635539,
     polygon: [
-      [25.033640, 74.635400],
-      [25.033680, 74.635620],
-      [25.033480, 74.635660],
-      [25.033440, 74.635440],
-      [25.033640, 74.635400],
+      [25.033678, 74.635321],
+      [25.033961, 74.635696],
+      [25.033764, 74.635770],
+      [25.033495, 74.635392],
+      [25.033678, 74.635321],
     ],
     dept: 'Campus Spiritual Centre & Cultural Forum',
     elevation: 'Ground Level Portico',
@@ -506,14 +534,15 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#DC2626',
     bgColor: '#FEF2F2',
     icon: '🏏',
-    lat: 25.030150,
-    lng: 74.636500,
+    lat: 25.030247,
+    lng: 74.636630,
     polygon: [
-      [25.030950, 74.635700],
-      [25.031100, 74.637000],
-      [25.029400, 74.637350],
-      [25.029300, 74.636050],
-      [25.030950, 74.635700],
+      [25.030968, 74.635906],
+      [25.031113, 74.636851],
+      [25.029818, 74.637155],
+      [25.029652, 74.637059],
+      [25.029747, 74.636287],
+      [25.030968, 74.635906],
     ],
     dept: 'Department of Physical Education & Athletics',
     elevation: 'Turf Ground & Pavilion',
@@ -528,14 +557,14 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#475569',
     bgColor: '#F8FAFC',
     icon: '🏋️',
-    lat: 25.030650,
-    lng: 74.637400,
+    lat: 25.030816,
+    lng: 74.637258,
     polygon: [
-      [25.030900, 74.637250],
-      [25.030930, 74.637450],
-      [25.030400, 74.637580],
-      [25.030370, 74.637380],
-      [25.030900, 74.637250],
+      [25.031091, 74.637081],
+      [25.031126, 74.637336],
+      [25.030540, 74.637436],
+      [25.030523, 74.637184],
+      [25.031091, 74.637081],
     ],
     dept: 'Department of Physical Education & Sports Training',
     elevation: 'Ground Floor Sports Complex',
@@ -550,14 +579,14 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#8B5CF6',
     bgColor: '#F5F3FF',
     icon: '🏐',
-    lat: 25.030680,
-    lng: 74.637850,
+    lat: 25.030931,
+    lng: 74.637794,
     polygon: [
-      [25.030920, 74.637550],
-      [25.030950, 74.637950],
-      [25.030450, 74.638050],
-      [25.030420, 74.637650],
-      [25.030920, 74.637550],
+      [25.031205, 74.637422],
+      [25.031299, 74.638121],
+      [25.030643, 74.638184],
+      [25.030602, 74.637521],
+      [25.031205, 74.637422],
     ],
     dept: 'Department of Physical Education & Court Sports',
     elevation: 'Hard Surface Court',
@@ -572,15 +601,14 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#16A34A',
     bgColor: '#F0FDF4',
     icon: '🌾',
-    lat: 25.029550,
-    lng: 74.638100,
+    lat: 25.029973,
+    lng: 74.637670,
     polygon: [
-      [25.030300, 74.637400],
-      [25.030350, 74.638100],
-      [25.030200, 74.638300],
-      [25.028900, 74.638600],
-      [25.028800, 74.637750],
-      [25.030300, 74.637400],
+      [25.030511, 74.637128],
+      [25.030628, 74.638182],
+      [25.029366, 74.638042],
+      [25.029455, 74.637412],
+      [25.030511, 74.637128],
     ],
     dept: 'Department of Agriculture Sciences & Horticulture Research',
     elevation: 'Experimental Farm Plots',
@@ -866,7 +894,7 @@ export function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
 // Authentic Mewar University Campus Road Graph Topology
 export const MEWAR_CAMPUS_GRAPH = {
   nodes: {
-    // West Entrance & Highway Corridor
+    // 1. West Entrance & Highway Corridor
     n_gate1: [25.031920, 74.635280],
     n_w_junc1: [25.032315, 74.635262],
     n_w_junc2: [25.033008, 74.634981],
@@ -877,48 +905,68 @@ export const MEWAR_CAMPUS_GRAPH = {
     n_hospital_w: [25.034600, 74.634650],
     n_hospital: [25.034600, 74.634840],
 
-    // West Parking & South-West Boundary Corridor
-    n_parking_n: [25.031750, 74.635380],
-    n_parking: [25.031260, 74.635600],
-    n_parking_s: [25.030800, 74.635780],
-    n_cricket_sw: [25.029400, 74.636050],
-    n_cricket_s: [25.029300, 74.636600],
+    // 2. West Driveway Loop (Main Building West Lawn)
+    n_west_loop_north: [25.032787, 74.634989],
+    n_west_loop_entry: [25.032837, 74.635133],
+    n_west_loop_mid: [25.032538, 74.635204],
+    n_west_loop_portico: [25.032404, 74.635347],
+    n_west_loop_return: [25.032211, 74.635263],
+    n_west_loop_south: [25.032041, 74.635244],
 
-    // Central Boulevard & Main Complex
+    // 3. West Parking & South-West Corridor
+    n_parking_n: [25.031553, 74.635428],
+    n_parking_east_n: [25.031519, 74.635547],
+    n_parking: [25.031185, 74.635633],
+    n_parking_east_s: [25.030900, 74.635861],
+    n_parking_s: [25.030780, 74.635695],
+    n_foot_cricket_junc: [25.031073, 74.636155],
+
+    // 4. Central Boulevard & Main Complex
     n_central_main_w: [25.032120, 74.635700],
     n_main_front: [25.032173, 74.636267],
     n_main_entry: [25.032981, 74.635483],
-    n_temple: [25.033550, 74.635520],
+    n_temple: [25.033720, 74.635539],
     n_park: [25.033968, 74.635239],
     n_gora: [25.034447, 74.635065],
 
-    // East Living Quad
+    // 5. East Living Quad
     n_pratap: [25.033592, 74.636105],
     n_kumbha: [25.033814, 74.636040],
     n_bhamasha: [25.034287, 74.635706],
     n_sanaga: [25.034645, 74.635783],
 
-    // Academic Spine & Central Mess
+    // 6. Academic Spine & Central Mess
     n_mess: [25.032130, 74.636623],
     n_eng_junc: [25.032631, 74.636545],
     n_teacher: [25.032655, 74.636881],
     n_badal: [25.032382, 74.637010],
     n_law: [25.031866, 74.637113],
 
-    // Athletics & Sports Quad (Football, Cricket, Basketball, Gym, Volleyball, Agriculture)
+    // 7. Law Building Courtyard Loop
+    n_law_loop_nw: [25.031920, 74.636644],
+    n_law_loop_ne: [25.031981, 74.637021],
+    n_law_loop_se: [25.031708, 74.637011],
+    n_law_loop_sw: [25.031660, 74.636640],
+
+    // 8. Athletics & Sports Quad (Football, Cricket, Basketball, Gym, Volleyball, Agriculture)
     n_football_n: [25.031800, 74.636150],
     n_football: [25.031526, 74.636104],
     n_football_s: [25.031150, 74.636150],
-    n_cricket_n: [25.031000, 74.636500],
-    n_cricket: [25.030150, 74.636500],
-    n_cricket_e: [25.030300, 74.637150],
+    n_cricket_n: [25.030968, 74.635906],
+    n_cricket: [25.030247, 74.636630],
+    n_cricket_gym_path_n: [25.031179, 74.636809],
+    n_cricket_gym_path_mid: [25.030843, 74.636933],
+    n_cricket_gym_path_s: [25.030318, 74.637091],
+    n_cricket_agri_s: [25.029809, 74.637244],
+    n_cricket_s: [25.029652, 74.637059],
     n_basketball: [25.031342, 74.637242],
-    n_gym: [25.030650, 74.637400],
-    n_volleyball: [25.030680, 74.637850],
+    n_gym_n: [25.031091, 74.637081],
+    n_gym: [25.030816, 74.637258],
     n_sports_cross: [25.030950, 74.637450],
-    n_agri_gate: [25.030250, 74.637800],
-    n_agri: [25.029550, 74.638100],
-    n_agri_s: [25.028900, 74.638300],
+    n_volleyball: [25.030931, 74.637794],
+    n_agri_gate: [25.030511, 74.637128],
+    n_agri: [25.029973, 74.637670],
+    n_agri_s: [25.029366, 74.638042],
   },
   edges: [
     // West Avenue
@@ -935,38 +983,58 @@ export const MEWAR_CAMPUS_GRAPH = {
     ['n_park', 'n_temple'],
     ['n_temple', 'n_main_entry'],
 
-    // Parking & West Highway Corridor
-    ['n_gate1', 'n_parking_n'],
-    ['n_parking_n', 'n_parking'],
-    ['n_parking', 'n_parking_s'],
-    ['n_parking_s', 'n_cricket_sw'],
-    ['n_cricket_sw', 'n_cricket_s'],
+    // West Loop in Front of Main Complex
+    ['n_w_junc2', 'n_west_loop_north'],
+    ['n_west_loop_north', 'n_west_loop_entry'],
+    ['n_west_loop_entry', 'n_west_loop_mid'],
+    ['n_west_loop_mid', 'n_west_loop_portico'],
+    ['n_west_loop_portico', 'n_west_loop_return'],
+    ['n_west_loop_return', 'n_west_loop_south'],
+    ['n_west_loop_south', 'n_gate1'],
+    ['n_west_loop_portico', 'n_main_entry'],
 
-    // Gate 1 East towards Central Promenade
+    // Parking East Corridor
+    ['n_gate1', 'n_parking_n'],
+    ['n_parking_n', 'n_parking_east_n'],
+    ['n_parking_east_n', 'n_parking'],
+    ['n_parking', 'n_parking_east_s'],
+    ['n_parking', 'n_parking_s'],
+    ['n_parking_east_s', 'n_parking_s'],
+    ['n_parking_east_s', 'n_foot_cricket_junc'],
+    ['n_foot_cricket_junc', 'n_football_s'],
+    ['n_foot_cricket_junc', 'n_cricket_n'],
+    ['n_cricket_n', 'n_cricket'],
+
+    // Gate 1 East Promenade
     ['n_gate1', 'n_central_main_w'],
     ['n_central_main_w', 'n_main_front'],
     ['n_central_main_w', 'n_main_entry'],
     ['n_central_main_w', 'n_football_n'],
     ['n_parking_n', 'n_central_main_w'],
 
-    // Football & Promenade link
+    // Football Ground & Promenade
     ['n_football_n', 'n_football'],
     ['n_football', 'n_football_s'],
-    ['n_football_s', 'n_cricket_n'],
-    ['n_cricket_n', 'n_cricket'],
-    ['n_cricket_n', 'n_parking_s'],
-    ['n_cricket', 'n_cricket_s'],
-    ['n_cricket', 'n_cricket_e'],
+    ['n_football_s', 'n_cricket_gym_path_n'],
 
-    // Central Promenade to Mess & East Academic
+    // Academic Spine to Mess & East Academic
     ['n_main_front', 'n_mess'],
     ['n_main_front', 'n_eng_junc'],
     ['n_eng_junc', 'n_teacher'],
     ['n_teacher', 'n_badal'],
     ['n_badal', 'n_law'],
-    ['n_mess', 'n_law'],
+    ['n_mess', 'n_law_loop_nw'],
 
-    // Main to Hostels (Pratap, Kumbha, Bhamasha, Sanaga)
+    // Law Courtyard Loop
+    ['n_law_loop_nw', 'n_law_loop_ne'],
+    ['n_law_loop_ne', 'n_law_loop_se'],
+    ['n_law_loop_se', 'n_law_loop_sw'],
+    ['n_law_loop_sw', 'n_law_loop_nw'],
+    ['n_law_loop_ne', 'n_law'],
+    ['n_law_loop_se', 'n_basketball'],
+    ['n_law_loop_sw', 'n_football_s'],
+
+    // Hostels Quad
     ['n_main_entry', 'n_pratap'],
     ['n_temple', 'n_pratap'],
     ['n_pratap', 'n_kumbha'],
@@ -976,22 +1044,31 @@ export const MEWAR_CAMPUS_GRAPH = {
     ['n_kumbha', 'n_park'],
     ['n_eng_junc', 'n_pratap'],
 
-    // Law building south to Basketball, Gym, Volleyball, Sports
+    // Sports Quad: Law / Basketball to Gym, Volleyball, Agri
     ['n_law', 'n_basketball'],
-    ['n_basketball', 'n_sports_cross'],
+    ['n_basketball', 'n_gym_n'],
+    ['n_gym_n', 'n_gym'],
+    ['n_gym_n', 'n_sports_cross'],
     ['n_sports_cross', 'n_gym'],
     ['n_sports_cross', 'n_volleyball'],
     ['n_gym', 'n_volleyball'],
-    ['n_cricket_n', 'n_sports_cross'],
-    ['n_cricket_e', 'n_gym'],
-    ['n_cricket_e', 'n_agri_gate'],
-
-    // Agriculture Field Road
     ['n_sports_cross', 'n_agri_gate'],
-    ['n_volleyball', 'n_agri_gate'],
+    ['n_volleyball', 'n_agri'],
+
+    // Cricket - Gym - Agri Road
+    ['n_cricket_gym_path_n', 'n_gym_n'],
+    ['n_cricket_gym_path_n', 'n_cricket_gym_path_mid'],
+    ['n_cricket_gym_path_mid', 'n_gym'],
+    ['n_cricket_gym_path_mid', 'n_cricket_gym_path_s'],
+    ['n_cricket_gym_path_s', 'n_agri_gate'],
+    ['n_cricket_gym_path_s', 'n_cricket_agri_s'],
+    ['n_cricket_agri_s', 'n_cricket_s'],
+    ['n_cricket', 'n_cricket_s'],
+    ['n_cricket_s', 'n_agri_s'],
+
+    // Agriculture Plots Road
     ['n_agri_gate', 'n_agri'],
     ['n_agri', 'n_agri_s'],
-    ['n_cricket_s', 'n_agri_gate'],
   ],
 };
 

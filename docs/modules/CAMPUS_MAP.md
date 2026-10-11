@@ -52,20 +52,20 @@ Every facility has been calibrated against high-resolution satellite imagery and
 | :--- | :--- | :--- | :--- | :--- |
 | `gate` | Gate 1 (NH-48 Main Portal) | `[25.031920, 74.635280]` | Transit | Primary arterial entrance portal on National Highway 48 boundary. |
 | `gate2` | Gate 2 (West Perimeter) | `[25.033480, 74.634600]` | Transit | West boundary perimeter entrance portal north of covered parking. |
-| `main` | Main Academic & Admin Building | `[25.032981, 74.635483]` | Academic / Admin | Central 29-vertex flagship administrative and academic complex with solar roof. |
-| `temple` | Mewar Campus Temple & Shrine | `[25.033550, 74.635520]` | Spiritual / Culture | Yellow boundary courtyard shrine north of Main Building, south of Park. |
+| `main` | Main Academic & Admin Building | `[25.032981, 74.635483]` | Academic / Admin | Central 29-vertex flagship complex with trimmed north courtyard abutting Temple. |
+| `temple` | Mewar Campus Temple & Shrine | `[25.033720, 74.635539]` | Spiritual / Culture | Yellow boundary courtyard shrine north of Main Building, south of Park. |
 | `eng` | Faculty of Engineering & Technology | `[25.032631, 74.636545]` | Academic / Labs | Major engineering quadrangle directly east of Main Building. |
 | `teacher` | Teacher Building (Faculty Residence) | `[25.032655, 74.636881]` | Academic / Faculty | North wing of eastern academic complex with faculty consultation rooms. |
 | `badal` | Badal Boys Hostel | `[25.032382, 74.637010]` | Residential | South wing of eastern academic complex directly below Teacher Building. |
 | `mess` | Central Student Dining Mess | `[25.032130, 74.636623]` | Dining | Central multi-story student cafeteria with light reflective roof. |
-| `law` | Faculty of Law & Legal Studies | `[25.031866, 74.637113]` | Academic | Southeast academic block housing moot courts and legal aid clinic. |
+| `law` | Faculty of Law & Legal Studies | `[25.031866, 74.637113]` | Academic | Southeast academic block with western courtyard loop. |
 | `football` | University Football Ground & Arena | `[25.031526, 74.636104]` | Sports | Full regulation athletic football ground west of Mess. |
-| `parking` | Main Campus Vehicle Parking Zone | `[25.031260, 74.635600]` | Transit / Parking | Orange boundary covered vehicle bays along western highway perimeter. |
+| `parking` | Main Campus Vehicle Parking Zone | `[25.031185, 74.635633]` | Transit / Parking | Orange boundary covered vehicle canopy bays along western highway perimeter. |
 | `basketball` | Basketball & Outdoor Sports Court | `[25.031342, 74.637242]` | Sports | Outlined hard court surface immediately south of Law Building. |
-| `cricket` | University Cricket Ground & Pavilion | `[25.030150, 74.636500]` | Sports | Red boundary turf cricket pitch, spectator lawns, and practice nets. |
-| `gym` | University Gymnasium & Fitness Centre | `[25.030650, 74.637400]` | Sports / Fitness | Indoor strength training and workout hall between Basketball and Volleyball. |
-| `volleyball` | University Volleyball Arena & Courts | `[25.030680, 74.637850]` | Sports | Purple boundary outdoor regulation volleyball courts. |
-| `agriculture` | Faculty of Agriculture Research Field | `[25.029550, 74.638100]` | Academic / Agri | Green boundary experimental crop plots, nursery, and research station. |
+| `cricket` | University Cricket Ground & Pavilion | `[25.030247, 74.636630]` | Sports | Red boundary turf cricket pitch, spectator lawns, and practice nets. |
+| `gym` | University Gymnasium & Fitness Centre | `[25.030816, 74.637258]` | Sports / Fitness | Indoor strength training and workout hall between Cricket East Road and Volleyball. |
+| `volleyball` | University Volleyball Arena & Courts | `[25.030931, 74.637794]` | Sports | Purple boundary outdoor regulation volleyball arena east of Gym. |
+| `agriculture` | Faculty of Agriculture Research Field | `[25.029973, 74.637670]` | Academic / Agri | Green boundary experimental crop plots south of Gym and Volleyball. |
 | `park` | Central Campus Park & Botanical Garden| `[25.033968, 74.635239]` | Recreation | Landscaped botanical gardens and shaded walking quadrangle. |
 | `bhamasha` | Bhamasha Hostel | `[25.034287, 74.635706]` | Residential | Multi-wing residence situated directly below Sanaga Hostel. |
 | `sanaga` | Sanaga Boys Residential Hostel | `[25.034645, 74.635783]` | Residential | North quad residential hall above Bhamasha. |
@@ -106,6 +106,8 @@ Campus wayfinding utilizes a true topological graph (`MEWAR_CAMPUS_GRAPH`) with 
 ```mermaid
 flowchart TD
     G1[Gate 1: NH-48] --- PRK[Covered Parking Zone]
+    G1 --- W_LOOP[West Driveway Loop]
+    W_LOOP --- MAIN[Main Building Portico]
     G1 --- WP[West Avenue]
     WP --- G2[Gate 2: West Entry]
     WP --- GH[Guest House]
@@ -113,29 +115,33 @@ flowchart TD
     MIRA --- PANNA[Panna Hostel]
     PANNA --- HOSP[Campus Hospital]
     G1 --- MAIN_W[Central Boulevard]
-    MAIN_W --- MAIN[Main Building Portico]
+    MAIN_W --- MAIN
     MAIN --- TMP[Campus Temple]
     TMP --- PARK[Botanical Park]
     PARK --- GORA[Gora Hostel]
     GORA --- HOSP
     MAIN_W --- FTB[Football Ground]
-    FTB --- CRK[Cricket Ground]
-    PRK --- CRK
+    FTB --- CRK_PATH[Football/Cricket Cross Lane]
+    PRK --- CRK_PATH
+    CRK_PATH --- CRK[Cricket Ground]
+    CRK_PATH --- CRK_E[Cricket-Gym-Agri East Road]
     MAIN_W --- MESS[Central Dining Mess]
-    MESS --- LAW[Law Building]
+    MESS --- LAW_LOOP[Law Courtyard Loop]
+    LAW_LOOP --- LAW[Law Building]
     MAIN_W --- ENG[Engineering Building]
     ENG --- TB[Teacher Building]
     TB --- BADAL[Badal Hostel]
     BADAL --- LAW
-    LAW --- BBALL[Basketball Court]
-    BBALL --- CROSS[Sports Crossing]
-    CROSS --- GYM[Fitness Gymnasium]
+    LAW_LOOP --- BBALL[Basketball Court]
+    BBALL --- GYM[Fitness Gymnasium]
+    GYM --- CROSS[Sports Crossing]
     CROSS --- VBAL[Volleyball Ground]
-    GYM --- VBAL
-    CROSS --- AGR[Agriculture Research Field]
+    CRK_E --- GYM
+    CRK_E --- AGR[Agriculture Research Field]
+    CROSS --- AGR
 ```
 
-- **Graph Structure**: 38 nodes and 50+ bidirectional walkway edges.
+- **Graph Structure**: 58 nodes and 60+ bidirectional walkway edges.
 - **Dijkstra Engine (`findShortestCampusRoute`)**:
   - Finds closest graph nodes to start and destination coordinates.
   - Computes exact shortest path along campus roads.
