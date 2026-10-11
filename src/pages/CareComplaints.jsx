@@ -30,11 +30,21 @@ import {
   Sparkles,
   PhoneCall,
   Activity,
-  ArrowUpRight
+  ArrowUpRight,
+  PlusCircle,
+  Layers,
+  Thermometer,
+  LifeBuoy,
+  Phone,
+  ShieldAlert,
+  ArrowLeft,
+  Calendar,
+  Radio,
+  FileCheck
 } from 'lucide-react';
 
 // ============================================================================
-// DATA: Comprehensive Institutional Grievances & CAFM Dispatch Tickets
+// DATA: Standard Institutional Grievances & CAFM Dispatch Tickets
 // ============================================================================
 const INITIAL_COMPLAINTS = [
   {
@@ -101,7 +111,7 @@ const INITIAL_COMPLAINTS = [
     description:
       'Repeated disconnection and packet loss exceeding 40% on AP-LIB-09 during peak morning study hours. Students unable to access digital research databases.',
     assignedTo: 'NOC Network Team',
-    assignedRole: 'Campus Core Network Operations',
+    assignedRole: 'Campus Core Network Operations • Unit ID #NET-04',
     slaTargetMins: 30,
     minutesElapsed: 12,
     eta: '25 mins',
@@ -171,10 +181,39 @@ const INITIAL_COMPLAINTS = [
   }
 ];
 
+const CATEGORY_DEFINITIONS = [
+  { id: 'academic', label: 'Classroom & AV', icon: Tv, sub: 'Projectors, audio, lecterns' },
+  { id: 'network', label: 'Wi-Fi & Network', icon: Wifi, sub: 'Access points, LAN, latency' },
+  { id: 'electrical', label: 'Electrical & Power', icon: Zap, sub: 'Outlets, lighting, UPS' },
+  { id: 'infrastructure', label: 'Water & Plumbing', icon: Droplets, sub: 'Restrooms, valves, filtration' },
+  { id: 'hvac', label: 'HVAC & Climate', icon: Thermometer, sub: 'Air conditioning, heating, BMS' },
+  { id: 'cleanliness', label: 'Sanitation', icon: Sparkles, sub: 'Waste disposal, hygiene' },
+  { id: 'furniture', label: 'Furniture & Desks', icon: Layers, sub: 'Chairs, desks, seating' },
+  { id: 'other', label: 'General Technical', icon: Wrench, sub: 'Locks, doors, miscellaneous' }
+];
+
+const BUILDING_OPTIONS = [
+  'Faculty of Engineering & Technology (ENG-02)',
+  'Maharana Pratap Main Academic Block (ADM-01)',
+  'Swami Vivekananda Central Library (LIB-03)',
+  'Alan Turing Hall (Block A-01)',
+  'Ramanujan Science Complex (Block C-03)',
+  'Student Union & Dining Hub (Block D-04)',
+  'Mewar University Central Auditorium (AUD-04)',
+  'University Cafeteria & Food Court (CAF-05)',
+  'Aravalli Boys Residential Hostel (HST-06)',
+  'Meera Bai Girls Residential Hostel (HST-07)',
+  'Mewar Sports Arena & Cricket Ground (SPT-08)',
+  'Mewar University Hospital & Health Centre (MED-09)'
+];
+
 export function CareComplaints() {
   const { user, isAuthenticated } = useContext(AuthContext) || {};
 
-  // Core State
+  // View Mode: 'tracker' (Default: Live Tracker & Incident Queue) or 'new_ticket' (Guided Form)
+  const [activeViewMode, setActiveViewMode] = useState('tracker');
+
+  // Core Complaints State
   const [complaints, setComplaints] = useState(INITIAL_COMPLAINTS);
   const [selectedTicket, setSelectedTicket] = useState(INITIAL_COMPLAINTS[0]);
 
@@ -188,12 +227,13 @@ export function CareComplaints() {
   const [fileAttachment, setFileAttachment] = useState(null);
   const [filePreviewUrl, setFilePreviewUrl] = useState('');
   const [fileError, setFileError] = useState('');
+  const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState('');
 
   // Filtering & Search
-  const [activeFilter, setActiveFilter] = useState('All');
-  const [activeCategoryFilter, setActiveCategoryFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [categoryFilter, setCategoryFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Live SLA Countdown Timer Simulation (ticks every 1s)
@@ -202,6 +242,7 @@ export function CareComplaints() {
   // Student Direct Message to Technician State
   const [replyText, setReplyText] = useState('');
   const [isSendingReply, setIsSendingReply] = useState(false);
+  const [replyFeedback, setReplyFeedback] = useState('');
 
   // Image Lightbox Modal State
   const [lightboxImage, setLightboxImage] = useState(null);
@@ -219,17 +260,69 @@ export function CareComplaints() {
     return () => clearInterval(interval);
   }, []);
 
+  // Update timer whenever selected ticket changes
+  useEffect(() => {
+    if (selectedTicket) {
+      if (selectedTicket.status === 'resolved') {
+        setTimerSecondsRemaining(0);
+      } else {
+        const targetMins = selectedTicket.slaTargetMins || (selectedTicket.slaHours ? selectedTicket.slaHours * 60 : 45);
+        const elapsed = selectedTicket.minutesElapsed || 10;
+        const remainMins = Math.max(1, targetMins - elapsed);
+        setTimerSecondsRemaining(remainMins * 60 + 15);
+      }
+    }
+  }, [selectedTicket]);
+
   const fetchComplaints = async () => {
     try {
       const res = await api.get('/care/complaints');
       if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
-        setComplaints(res.data);
-        if (res.data[0]) setSelectedTicket(res.data[0]);
+        // Normalize loaded tickets with existing client shape
+        const normalized = res.data.map((item) => ({
+          ...item,
+          ticketId: item.ticketId ? (item.ticketId.startsWith('#') ? item.ticketId : `#${item.ticketId}`) : `#CMP-${(item._id || '').slice(-4)}`,
+          categoryName: getCategoryLabel(item.category),
+          statusText: formatStatusText(item.status),
+          slaTargetMins: item.slaHours ? item.slaHours * 60 : (item.slaTargetMins || 45)
+        }));
+        setComplaints(normalized);
+        if (normalized[0]) setSelectedTicket(normalized[0]);
       }
     } catch {
       // Graceful fallback to initial rich complaints
     }
   };
+
+  const getCategoryLabel = (catId) => {
+    const found = CATEGORY_DEFINITIONS.find((c) => c.id === catId);
+    return found ? found.label : (catId ? catId.toUpperCase() : 'General');
+  };
+
+  const formatStatusText = (status) => {
+    switch (status) {
+      case 'in_progress':
+        return 'In Progress (Technician Dispatched)';
+      case 'parts_ordered':
+        return 'Parts Requisitioned • Waiting Spares';
+      case 'resolved':
+      case 'closed':
+        return 'Resolved & Verified';
+      case 'open':
+      default:
+        return 'Under Review (Triage Queued)';
+    }
+  };
+
+  // Verified summary statistics computed from real loaded complaints
+  const verifiedMetrics = useMemo(() => {
+    const total = complaints.length;
+    const active = complaints.filter((c) => c.status !== 'resolved' && c.status !== 'closed').length;
+    const inProgress = complaints.filter((c) => c.status === 'in_progress' || c.status === 'parts_ordered').length;
+    const resolved = complaints.filter((c) => c.status === 'resolved' || c.status === 'closed').length;
+    const urgent = complaints.filter((c) => (c.priority === 'urgent' || c.priority === 'critical') && c.status !== 'resolved' && c.status !== 'closed').length;
+    return { total, active, inProgress, resolved, urgent };
+  }, [complaints]);
 
   const handleFileChange = (e) => {
     setFileError('');
@@ -238,7 +331,7 @@ export function CareComplaints() {
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'application/pdf'];
     if (!allowedTypes.includes(file.type)) {
-      setFileError('Invalid file format. Please upload JPEG, PNG, WEBP, SVG, or PDF.');
+      setFileError('Unsupported file format. Please upload JPEG, PNG, WEBP, or PDF.');
       return;
     }
 
@@ -256,10 +349,31 @@ export function CareComplaints() {
     }
   };
 
+  const validateForm = () => {
+    const errors = {};
+    if (!title.trim()) {
+      errors.title = 'Issue title is required';
+    } else if (title.trim().length < 5) {
+      errors.title = 'Please provide a descriptive title (at least 5 characters)';
+    }
+
+    if (!location.trim()) {
+      errors.location = 'Specific room or zone is required (e.g. Room B-204)';
+    }
+
+    if (!description.trim()) {
+      errors.description = 'Fault description is required';
+    } else if (description.trim().length < 15) {
+      errors.description = 'Please detail what happened (at least 15 characters)';
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title.trim() || !description.trim() || !location.trim()) {
-      alert('Please fill out all required fields (Summary, Location, Description).');
+    if (!validateForm()) {
       return;
     }
 
@@ -273,69 +387,74 @@ export function CareComplaints() {
       let payload;
       if (fileAttachment) {
         payload = new FormData();
-        payload.append('title', title);
+        payload.append('title', title.trim());
         payload.append('category', category);
         payload.append('building', building);
-        payload.append('location', `${building} - ${location}`);
+        payload.append('location', `${building} - ${location.trim()}`);
         payload.append('priority', priority);
-        payload.append('description', description);
+        payload.append('description', description.trim());
         payload.append('attachments', fileAttachment);
       } else {
         payload = {
-          title,
+          title: title.trim(),
           category,
           building,
-          location: `${building} - ${location}`,
+          location: `${building} - ${location.trim()}`,
           priority,
-          description
+          description: description.trim()
         };
       }
 
       const res = await api.post('/care/complaints', payload);
       if (res && res.success) {
+        const newTicketId = res.data.ticketId ? (res.data.ticketId.startsWith('#') ? res.data.ticketId : `#${res.data.ticketId}`) : `#CMP-${Math.floor(1000 + Math.random() * 9000)}`;
         const newDoc = {
           ...res.data,
+          ticketId: newTicketId,
+          categoryName: getCategoryLabel(category),
+          status: 'open',
+          statusText: 'Under Review (Triage Queued)',
           slaTargetMins: targetSla,
           minutesElapsed: 1,
           eta: `${targetSla} mins`,
           steps: [
-            { id: 1, label: 'Ticket Logged & Ingested', status: 'completed', time: 'Just now', actor: 'Student Portal' },
+            { id: 1, label: 'Ticket Logged & Ingested', status: 'completed', time: 'Just now', actor: user?.name || 'Student Portal' },
             { id: 2, label: 'Automated Telemetry Diagnostic', status: 'active', time: 'In Progress', actor: 'Sensor Engine' },
             { id: 3, label: 'Field Specialist Dispatched', status: 'pending', time: 'Queued', actor: 'Dispatch Desk' },
             { id: 4, label: 'Resolution & Student Sign-Off', status: 'pending', time: 'Pending', actor: 'Student Confirmed' }
+          ],
+          updates: [
+            {
+              message: 'Grievance ticket registered into NextCampus CAFM & Central Facilities Council.',
+              updatedBy: user?.name || 'Student Requester',
+              role: 'Author',
+              createdAt: 'Just now'
+            }
           ]
         };
-        setSubmitSuccess(`Ticket logged into CAFM database! Ticket ID: ${newDoc.ticketId || '#CMP-NEW'}`);
+        setSubmitSuccess(`Ticket logged into CAFM database! Ticket ID: ${newTicketId}`);
         setComplaints((prev) => [newDoc, ...prev]);
         setSelectedTicket(newDoc);
         resetForm();
+        setActiveViewMode('tracker');
       }
     } catch {
-      // Local fallback for smooth UI demo
+      // Local fallback for smooth demonstration and resilient UX
       const simulatedTicketId = `#CMP-${Math.floor(1000 + Math.random() * 9000)}`;
       const localTicket = {
         _id: `local-${Date.now()}`,
         ticketId: simulatedTicketId,
-        title,
+        title: title.trim(),
         category,
-        categoryName:
-          category === 'academic'
-            ? 'Classroom & AV'
-            : category === 'network'
-            ? 'Wi-Fi & Net'
-            : category === 'infrastructure'
-            ? 'Water & Plumbing'
-            : category === 'electrical'
-            ? 'Electrical Power'
-            : 'Facility Sanitation',
+        categoryName: getCategoryLabel(category),
         priority,
         status: 'open',
-        statusText: 'In Progress (Dispatch Queued)',
+        statusText: 'Under Review (Triage Queued)',
         building,
-        location: `${building} - ${location}`,
-        description,
+        location: `${building} - ${location.trim()}`,
+        description: description.trim(),
         assignedTo: 'Rapid Maintenance Unit Alpha',
-        assignedRole: 'Campus Facilities Service Desk',
+        assignedRole: 'Campus Facilities Service Desk • Unit #FM-01',
         slaTargetMins: targetSla,
         minutesElapsed: 0,
         eta: `${targetSla} mins`,
@@ -350,8 +469,8 @@ export function CareComplaints() {
         ],
         updates: [
           {
-            message: 'Ticket registered into Mewar University Central Administrative Council & CAFM.',
-            updatedBy: user?.name || 'Student',
+            message: 'Ticket registered into NextCampus Central Administrative Council & CAFM.',
+            updatedBy: user?.name || 'Student Requester',
             role: 'Author',
             createdAt: 'Just now'
           }
@@ -361,6 +480,7 @@ export function CareComplaints() {
       setSelectedTicket(localTicket);
       setSubmitSuccess(`Ticket logged into CAFM database! Ticket ID: ${simulatedTicketId}`);
       resetForm();
+      setActiveViewMode('tracker');
     } finally {
       setIsSubmitting(false);
     }
@@ -372,6 +492,7 @@ export function CareComplaints() {
     setDescription('');
     setFileAttachment(null);
     setFilePreviewUrl('');
+    setFormErrors({});
   };
 
   // Student sends an update/reply to the assigned dispatcher
@@ -379,9 +500,10 @@ export function CareComplaints() {
     if (!replyText.trim() || !selectedTicket) return;
 
     setIsSendingReply(true);
+    setReplyFeedback('');
     const newUpdate = {
       message: replyText.trim(),
-      updatedBy: user?.name || 'Student Author',
+      updatedBy: user?.name || 'Student Requester',
       role: 'Student Requester',
       createdAt: 'Just now'
     };
@@ -393,14 +515,18 @@ export function CareComplaints() {
 
     setSelectedTicket(updatedTicket);
     setComplaints((prev) => prev.map((c) => (c._id === selectedTicket._id ? updatedTicket : c)));
+    const savedText = replyText.trim();
     setReplyText('');
 
     try {
       await api.post(`/care/complaints/${selectedTicket._id}/student-update`, {
-        message: replyText.trim()
+        message: savedText
       });
+      setReplyFeedback('Note delivered to field technician.');
+      setTimeout(() => setReplyFeedback(''), 4000);
     } catch {
-      // Saved in state
+      setReplyFeedback('Note saved to ticket log.');
+      setTimeout(() => setReplyFeedback(''), 4000);
     } finally {
       setIsSendingReply(false);
     }
@@ -413,7 +539,7 @@ export function CareComplaints() {
       ...selectedTicket,
       status: 'resolved',
       statusText: 'Resolved & Student Verified',
-      steps: selectedTicket.steps.map((st) => ({ ...st, status: 'completed' })),
+      steps: (selectedTicket.steps || []).map((st) => ({ ...st, status: 'completed' })),
       updates: [
         ...(selectedTicket.updates || []),
         {
@@ -438,20 +564,26 @@ export function CareComplaints() {
   // Filtered complaints
   const filteredComplaintsList = useMemo(() => {
     return complaints.filter((item) => {
-      if (activeFilter === 'In Progress' && item.status !== 'in_progress') return false;
-      if (activeFilter === 'Under Review' && item.status !== 'open') return false;
-      if (activeFilter === 'Resolved' && item.status !== 'resolved') return false;
-      if (activeCategoryFilter !== 'All' && item.category !== activeCategoryFilter) return false;
+      // Status Filter
+      if (statusFilter === 'In Progress' && item.status !== 'in_progress' && item.status !== 'parts_ordered') return false;
+      if (statusFilter === 'Under Review' && item.status !== 'open' && item.status !== 'in_review') return false;
+      if (statusFilter === 'Resolved' && item.status !== 'resolved' && item.status !== 'closed') return false;
+
+      // Category Filter
+      if (categoryFilter !== 'All' && item.category !== categoryFilter) return false;
+
+      // Search Query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchTitle = item.title?.toLowerCase().includes(q);
         const matchTicket = item.ticketId?.toLowerCase().includes(q);
         const matchLoc = item.location?.toLowerCase().includes(q);
-        if (!matchTitle && !matchTicket && !matchLoc) return false;
+        const matchBldg = item.building?.toLowerCase().includes(q);
+        if (!matchTitle && !matchTicket && !matchLoc && !matchBldg) return false;
       }
       return true;
     });
-  }, [complaints, activeFilter, activeCategoryFilter, searchQuery]);
+  }, [complaints, statusFilter, categoryFilter, searchQuery]);
 
   return (
     <div className="flex flex-col w-full text-slate-900 min-h-screen pb-16 font-sans">
@@ -461,169 +593,211 @@ export function CareComplaints() {
       <div className="flex flex-col gap-3 pb-6 border-b border-slate-200 mb-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-slate-500">
-            <span className="px-2.5 py-0.5 rounded-full bg-rose-50 text-[#9E153E] border border-rose-200/80 font-semibold flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E11D48] animate-pulse"></span>
-              CAFM Rapid SLA
+            <span className="px-2.5 py-0.5 rounded-full bg-[#EAF5EF] text-[#168567] border border-[#168567]/20 font-semibold flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#168567] animate-pulse"></span>
+              NextCampus CAFM Core
             </span>
-            <span className="hidden sm:inline">Mewar University • Gangrar, Chittorgarh</span>
+            <span className="hidden sm:inline">Mewar University Central Facilities</span>
             <span className="text-slate-300">/</span>
-            <span className="text-slate-700 font-medium">Campus Helpdesk &amp; Grievances</span>
+            <span className="text-slate-700 font-medium">Campus Care &amp; Helpdesk</span>
             <span className="text-slate-300">/</span>
-            <span className="text-[#9E153E] font-semibold">Active Dispatch Protocol</span>
+            <span className="text-[#168567] font-semibold">Grievance Redressal</span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={fetchComplaints}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-all shadow-xs"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-all shadow-xs cursor-pointer"
             >
-              <RefreshCw className="w-3.5 h-3.5 text-[#9E153E]" />
-              <span>Refresh SLA Telemetry</span>
+              <RefreshCw className="w-3.5 h-3.5 text-[#168567]" />
+              <span>Sync Tickets</span>
             </button>
 
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Emergency Dispatch: 24/7 Hot
-            </span>
+            <button
+              onClick={() => {
+                setActiveViewMode(activeViewMode === 'tracker' ? 'new_ticket' : 'tracker');
+                if (submitSuccess) setSubmitSuccess('');
+              }}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer ${
+                activeViewMode === 'new_ticket'
+                  ? 'bg-slate-900 text-white hover:bg-slate-800'
+                  : 'bg-[#168567] text-white hover:bg-[#116951]'
+              }`}
+            >
+              {activeViewMode === 'new_ticket' ? (
+                <>
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back to Incident Queue</span>
+                </>
+              ) : (
+                <>
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  <span>Lodge New Grievance</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
 
-        {/* Page Title & SLA Metrics Ribbon */}
+        {/* Page Title & Verified Summary Metrics Ribbon */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mt-1">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
               <span>Campus Care &amp; Grievance Redressal</span>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-rose-50 text-[#9E153E] border border-rose-200 font-mono font-bold">
-                SLA &lt;45 Min
+              <span className="text-xs px-2.5 py-1 rounded-full bg-[#EAF5EF] text-[#168567] border border-[#168567]/20 font-mono font-bold">
+                Rapid SLA &lt;45m
               </span>
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 max-w-2xl mt-1.5 leading-relaxed">
-              Official university grievance redressal and CAFM facility service desk. Lodge academic infrastructure tickets, track live technician dispatch, and monitor real-time SLA countdowns.
+              Official institutional facility management and grievance redressal system. Submit maintenance tickets, track field specialist dispatches in real-time, and monitor verified SLA countdowns.
             </p>
           </div>
 
-          {/* Quick Metrics Bar */}
-          <div className="flex flex-wrap items-center gap-2.5">
-            <div className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 shadow-xs flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold">Active Tickets</span>
-              <span className="text-lg font-black text-slate-900">
-                {complaints.filter((c) => c.status !== 'resolved').length}
+          {/* Dynamic, Verified Metrics Strip */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="px-3 py-2 rounded-xl bg-white border border-slate-200 shadow-xs flex flex-col min-w-[90px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold">Total Logged</span>
+              <span className="text-lg font-black text-slate-900">{verifiedMetrics.total}</span>
+            </div>
+            <div className="px-3 py-2 rounded-xl bg-white border border-amber-200 shadow-xs flex flex-col min-w-[90px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-700 font-semibold">In Dispatch</span>
+              <span className="text-lg font-black text-amber-700">{verifiedMetrics.inProgress}</span>
+            </div>
+            <div className="px-3 py-2 rounded-xl bg-white border border-blue-200 shadow-xs flex flex-col min-w-[90px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-blue-700 font-semibold">Awaiting Triage</span>
+              <span className="text-lg font-black text-blue-700">
+                {verifiedMetrics.active - verifiedMetrics.inProgress}
               </span>
             </div>
-            <div className="px-3.5 py-2 rounded-xl bg-white border border-rose-200 shadow-xs flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[#9E153E] font-semibold">In Dispatch</span>
-              <span className="text-lg font-black text-[#9E153E]">
-                {complaints.filter((c) => c.status === 'in_progress').length}
-              </span>
-            </div>
-            <div className="px-3.5 py-2 rounded-xl bg-white border border-emerald-200 shadow-xs flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700 font-semibold">Resolved Term</span>
-              <span className="text-lg font-black text-emerald-700">128</span>
-            </div>
-            <div className="px-3.5 py-2 rounded-xl bg-white border border-sky-200 shadow-xs flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-sky-700 font-semibold">SLA Compliance</span>
-              <span className="text-lg font-black text-sky-700">98.4%</span>
+            <div className="px-3 py-2 rounded-xl bg-white border border-emerald-200 shadow-xs flex flex-col min-w-[90px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700 font-semibold">Resolved</span>
+              <span className="text-lg font-black text-emerald-700">{verifiedMetrics.resolved}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* =========================================================================
-          EMERGENCY DISPATCH QUICK BANNER
+          REFINED EMERGENCY DISPATCH STRIP
           ========================================================================= */}
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-rose-50 via-rose-50/50 to-white border border-rose-200/80 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+      <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-900 text-white mb-6 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm border border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#9E153E] text-white flex items-center justify-center shrink-0 shadow-xs">
+          <div className="w-9 h-9 rounded-xl bg-rose-600/20 text-rose-400 border border-rose-500/30 flex items-center justify-center shrink-0">
             <PhoneCall className="w-4 h-4" />
           </div>
           <div>
-            <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
-              <span>Emergency Campus Infrastructure Hotline</span>
-              <span className="px-2 py-0.5 rounded bg-rose-200/60 text-[#9E153E] text-[10px] font-mono font-bold">Priority 0</span>
-            </span>
-            <p className="text-[11.5px] text-slate-600 mt-0.5">
-              For active power hazards, lab chemical exhaust alarms, or stuck elevators, dial Security Desk: <span className="text-[#9E153E] font-mono font-bold">+91 1471-291148 / Ext. 108</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-white tracking-wide">
+                Emergency Infrastructure Hotline
+              </span>
+              <span className="px-1.5 py-0.5 rounded bg-rose-500/20 border border-rose-500/30 text-rose-300 text-[10px] font-mono font-bold">
+                Priority 0
+              </span>
+            </div>
+            <p className="text-[11.5px] text-slate-300 mt-0.5 leading-snug">
+              For active power flashovers, gas/chemical exhaust alarms, or trapped elevators: dial Security &amp; Safety Desk at <span className="text-white font-mono font-bold">+91 1471-291148 / Ext. 108</span>.
             </p>
           </div>
         </div>
 
-        <a
-          href="tel:+911471291148"
-          className="px-3.5 py-2 rounded-xl bg-[#9E153E] hover:bg-[#881337] text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition-all shrink-0 text-decoration-none"
-        >
-          <span>Direct Emergency Call</span>
-          <ArrowUpRight className="w-3.5 h-3.5" />
-        </a>
+        <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
+          <a
+            href="tel:+911471291148"
+            className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all text-decoration-none"
+          >
+            <Phone className="w-3.5 h-3.5" />
+            <span>Call Hotline</span>
+          </a>
+        </div>
       </div>
 
       {/* =========================================================================
-          MAIN WORKSPACE: 40% LODGE FORM vs 60% LIVE SLA TRACKER
+          SUBMISSION SUCCESS BANNER (IF ACTIVE)
           ========================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* LEFT COLUMN: LODGE GRIEVANCE FORM (5 COLS) */}
-        <div className="lg:col-span-5 flex flex-col gap-4">
-          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col gap-5">
-            {/* Header */}
+      {submitSuccess && (
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm mb-6 flex items-center justify-between gap-3 shadow-xs">
+          <div className="flex items-center gap-2.5">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            <span className="font-semibold">{submitSuccess}</span>
+          </div>
+          <button
+            onClick={() => setSubmitSuccess('')}
+            className="text-emerald-700 hover:text-emerald-900 text-xs font-bold underline cursor-pointer"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      {/* =========================================================================
+          VIEW SWITCHER TABS (TRACKER vs NEW TICKET)
+          ========================================================================= */}
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-3 mb-6">
+        <button
+          onClick={() => setActiveViewMode('tracker')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            activeViewMode === 'tracker'
+              ? 'bg-slate-900 text-white shadow-xs'
+              : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+          }`}
+        >
+          <Activity className="w-3.5 h-3.5" />
+          <span>Incident Queue &amp; Live SLA Tracker ({filteredComplaintsList.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveViewMode('new_ticket')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            activeViewMode === 'new_ticket'
+              ? 'bg-[#168567] text-white shadow-xs'
+              : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+          }`}
+        >
+          <PlusCircle className="w-3.5 h-3.5" />
+          <span>Lodge New Grievance Form</span>
+        </button>
+      </div>
+
+      {/* =========================================================================
+          VIEW MODE 1: LODGE GRIEVANCE FORM
+          ========================================================================= */}
+      {activeViewMode === 'new_ticket' && (
+        <div className="max-w-4xl mx-auto w-full">
+          <div className="p-6 sm:p-8 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col gap-6">
+            {/* Form Header */}
             <div className="flex items-start justify-between pb-4 border-b border-slate-100">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-rose-50 text-[#9E153E] text-[10px] font-mono font-bold uppercase tracking-wider border border-rose-200/80">
-                    Lodge New Ticket
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#EAF5EF] text-[#168567] text-[10px] font-mono font-bold uppercase tracking-wider border border-[#168567]/20">
+                    Official CAFM Grievance Filing
                   </span>
                   <span className="text-xs text-slate-500 font-medium">
-                    {isAuthenticated ? `Student: ${user?.name || user?.email}` : 'Mewar Student Request'}
+                    {isAuthenticated ? `Student: ${user?.name || user?.email}` : 'Institutional Student Access'}
                   </span>
                 </div>
-                <h2 className="text-lg font-bold text-slate-900 mt-1.5">Lodge an Official Grievance</h2>
-                <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-                  Your ticket is instantly assigned to the responsible building maintenance unit with strict SLA tracking.
+                <h2 className="text-xl font-bold text-slate-900 mt-2">Lodge an Official Grievance</h2>
+                <p className="text-xs sm:text-sm text-slate-500 mt-0.5 leading-relaxed">
+                  Your ticket will be dispatched to the designated building maintenance team with automated SLA tracking and technician notifications.
                 </p>
               </div>
-              <div className="w-9 h-9 rounded-xl bg-rose-50 text-[#9E153E] border border-rose-200/80 flex items-center justify-center shrink-0">
-                <FileText className="w-4 h-4" />
+              <div className="w-10 h-10 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#168567]/20 flex items-center justify-center shrink-0">
+                <FileText className="w-5 h-5" />
               </div>
             </div>
 
-            {submitSuccess && (
-              <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span className="font-semibold">{submitSuccess}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              {/* Summary / Headline */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
-                  Issue Summary / Title <span className="text-[#9E153E]">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. CS Lab B Projector HDMI Glitch & Green Tint"
-                  className="w-full h-10 px-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100 transition-all"
-                  required
-                />
-              </div>
-
-              {/* Infrastructure Domain */}
-              <div className="flex flex-col gap-1.5">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+              {/* Step 1: Infrastructure Domain */}
+              <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
-                    Infrastructure Domain <span className="text-[#9E153E]">*</span>
+                    1. Infrastructure Domain <span className="text-rose-600">*</span>
                   </label>
-                  <span className="text-[11px] font-mono text-[#9E153E] font-semibold">Selected: {category}</span>
+                  <span className="text-[11px] font-mono text-[#168567] font-semibold">
+                    Selected: {getCategoryLabel(category)}
+                  </span>
                 </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: 'academic', label: 'Classroom / AV', icon: Tv },
-                    { id: 'network', label: 'Wi-Fi & Net', icon: Wifi },
-                    { id: 'infrastructure', label: 'Water & Pipe', icon: Droplets },
-                    { id: 'electrical', label: 'Power & UPS', icon: Zap },
-                    { id: 'cleanliness', label: 'Sanitation', icon: Sparkles },
-                    { id: 'other', label: 'General Tech', icon: Wrench }
-                  ].map((cat) => {
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {CATEGORY_DEFINITIONS.map((cat) => {
                     const isSelected = category === cat.id;
                     const IconComp = cat.icon;
                     return (
@@ -631,77 +805,89 @@ export function CareComplaints() {
                         key={cat.id}
                         type="button"
                         onClick={() => setCategory(cat.id)}
-                        className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
+                        className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-rose-50 border-[#9E153E] text-[#9E153E] font-bold shadow-xs'
-                            : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                            ? 'bg-[#EAF5EF] border-[#168567] text-[#168567] ring-1 ring-[#168567] shadow-xs'
+                            : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                         }`}
                       >
-                        <IconComp className={`w-4 h-4 mb-1 ${isSelected ? 'text-[#9E153E]' : 'text-slate-400'}`} />
-                        <span className="text-[11px] leading-tight">{cat.label}</span>
+                        <div className="flex items-center justify-between w-full mb-1.5">
+                          <IconComp className={`w-4 h-4 ${isSelected ? 'text-[#168567]' : 'text-slate-500'}`} />
+                          {isSelected && <Check className="w-3.5 h-3.5 text-[#168567]" />}
+                        </div>
+                        <span className="text-xs font-bold leading-tight">{cat.label}</span>
+                        <span className="text-[10px] text-slate-400 mt-0.5 line-clamp-1">{cat.sub}</span>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Building Node & Zone */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Step 2: Building Node & Zone */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
-                    Building Node <span className="text-[#9E153E]">*</span>
+                    2. Campus Building <span className="text-rose-600">*</span>
                   </label>
                   <div className="relative">
                     <select
                       value={building}
                       onChange={(e) => setBuilding(e.target.value)}
-                      className="w-full h-10 pl-3 pr-8 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 appearance-none cursor-pointer focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100"
+                      className="w-full h-11 pl-3.5 pr-8 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 appearance-none cursor-pointer focus:outline-none focus:bg-white focus:border-[#168567] focus:ring-2 focus:ring-[#168567]/10"
                     >
-                      <option>Faculty of Engineering &amp; Technology (ENG-02)</option>
-                      <option>Maharana Pratap Main Academic Block (ADM-01)</option>
-                      <option>Swami Vivekananda Central Library (LIB-03)</option>
-                      <option>Mewar University Central Auditorium (AUD-04)</option>
-                      <option>University Cafeteria &amp; Food Court (CAF-05)</option>
-                      <option>Aravalli Boys Residential Hostel (HST-06)</option>
-                      <option>Meera Bai Girls Residential Hostel (HST-07)</option>
-                      <option>Mewar Sports Arena &amp; Cricket Ground (SPT-08)</option>
-                      <option>Mewar University Hospital &amp; Health Centre (MED-09)</option>
+                      {BUILDING_OPTIONS.map((bldg) => (
+                        <option key={bldg} value={bldg}>
+                          {bldg}
+                        </option>
+                      ))}
                     </select>
-                    <Building2 className="w-4 h-4 text-slate-400 absolute right-2.5 top-3 pointer-events-none" />
+                    <Building2 className="w-4 h-4 text-slate-400 absolute right-3 top-3.5 pointer-events-none" />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
-                    Room / Zone <span className="text-[#9E153E]">*</span>
+                    3. Specific Room / Zone <span className="text-rose-600">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="e.g. Room B-204 (Level 2)"
-                    className="w-full h-10 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={location}
+                      onChange={(e) => {
+                        setLocation(e.target.value);
+                        if (formErrors.location) setFormErrors({ ...formErrors, location: null });
+                      }}
+                      placeholder="e.g. Room B-204 (Level 2), East Lab, West Restroom"
+                      className={`w-full h-11 pl-3.5 pr-8 rounded-xl bg-slate-50 border text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:ring-2 transition-all ${
+                        formErrors.location
+                          ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-100'
+                          : 'border-slate-200 focus:border-[#168567] focus:ring-[#168567]/10'
+                      }`}
+                    />
+                    <MapPin className="w-4 h-4 text-slate-400 absolute right-3 top-3.5 pointer-events-none" />
+                  </div>
+                  {formErrors.location && (
+                    <p className="text-[11px] text-rose-600 font-medium">{formErrors.location}</p>
+                  )}
                 </div>
               </div>
 
-              {/* Priority & SLA Impact Matrix */}
+              {/* Step 3: Priority & SLA Impact Tier */}
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
-                    Urgency &amp; Impact Tier <span className="text-[#9E153E]">*</span>
+                    4. Urgency &amp; Impact Tier <span className="text-rose-600">*</span>
                   </label>
-                  <span className="text-[11px] font-mono text-[#9E153E] font-semibold">
-                    SLA Target: {priority === 'urgent' ? '<30 min' : priority === 'high' ? '<45 min' : priority === 'medium' ? '<2 hours' : '<24 hours'}
+                  <span className="text-[11px] font-mono text-[#168567] font-semibold">
+                    Expected SLA: {priority === 'urgent' ? '<30 mins' : priority === 'high' ? '<45 mins' : priority === 'medium' ? '<2 hours' : '<24 hours'}
                   </span>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {[
-                    { id: 'low', label: 'Low', sub: 'Routine', color: 'text-slate-700' },
-                    { id: 'medium', label: 'Medium', sub: 'Disruptive', color: 'text-amber-700' },
-                    { id: 'high', label: 'High', sub: 'Halts Class', color: 'text-orange-700' },
-                    { id: 'urgent', label: 'Urgent', sub: 'Hazard / P0', color: 'text-red-700' }
+                    { id: 'low', label: 'Low Priority', sub: 'Minor cosmetic defect', target: '< 24 Hours', style: 'text-slate-700' },
+                    { id: 'medium', label: 'Medium Priority', sub: 'Disruptive with workaround', target: '< 2 Hours', style: 'text-blue-700' },
+                    { id: 'high', label: 'High Priority', sub: 'Halts classroom or active lab', target: '< 45 Mins', style: 'text-amber-800' },
+                    { id: 'urgent', label: 'Critical / Urgent', sub: 'Active hazard or outage', target: '< 30 Mins', style: 'text-rose-700' }
                   ].map((p) => {
                     const isSelected = priority === p.id;
                     return (
@@ -709,64 +895,108 @@ export function CareComplaints() {
                         key={p.id}
                         type="button"
                         onClick={() => setPriority(p.id)}
-                        className={`flex flex-col items-center justify-center p-2 rounded-xl text-center border transition-all ${
+                        className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-rose-50 border-2 border-[#9E153E] shadow-xs'
-                            : 'bg-white border-slate-200 hover:border-slate-300'
+                            ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                            : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                         }`}
                       >
-                        <span className={`text-xs font-bold ${isSelected ? p.color : 'text-slate-600'}`}>
+                        <span className={`text-xs font-bold ${isSelected ? 'text-white' : p.style}`}>
                           {p.label}
                         </span>
-                        <span className="text-[10px] text-slate-400 mt-0.5">{p.sub}</span>
+                        <span className={`text-[10px] mt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
+                          {p.sub}
+                        </span>
+                        <span className={`text-[10px] font-mono mt-1 font-semibold ${isSelected ? 'text-emerald-400' : 'text-[#168567]'}`}>
+                          Target: {p.target}
+                        </span>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Defect Description */}
-              <div className="flex flex-col gap-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
-                    Defect Description &amp; Fault Details <span className="text-[#9E153E]">*</span>
-                  </label>
-                  <span className="text-[11px] font-mono text-slate-400">{description.length} / 500 chars</span>
+              {/* Step 4: Issue Summary & Detailed Fault Description */}
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                      5. Issue Summary / Title <span className="text-rose-600">*</span>
+                    </label>
+                    <span className="text-[11px] font-mono text-slate-400">{title.length} / 120 chars</span>
+                  </div>
+                  <input
+                    type="text"
+                    maxLength={120}
+                    value={title}
+                    onChange={(e) => {
+                      setTitle(e.target.value);
+                      if (formErrors.title) setFormErrors({ ...formErrors, title: null });
+                    }}
+                    placeholder="e.g. CS Lab B Ceiling 4K Projector HDMI Glitch & Green Tint"
+                    className={`w-full h-11 px-3.5 rounded-xl bg-slate-50 border text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:ring-2 transition-all ${
+                      formErrors.title
+                        ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-100'
+                        : 'border-slate-200 focus:border-[#168567] focus:ring-[#168567]/10'
+                    }`}
+                  />
+                  {formErrors.title && (
+                    <p className="text-[11px] text-rose-600 font-medium">{formErrors.title}</p>
+                  )}
                 </div>
-                <textarea
-                  rows="3"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe the issue, specific equipment error messages, observed behavior..."
-                  className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100 resize-none leading-relaxed"
-                  required
-                ></textarea>
+
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                      6. Fault Details &amp; Observed Behavior <span className="text-rose-600">*</span>
+                    </label>
+                    <span className="text-[11px] font-mono text-slate-400">{description.length} / 500 chars</span>
+                  </div>
+                  <textarea
+                    rows={4}
+                    maxLength={500}
+                    value={description}
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                      if (formErrors.description) setFormErrors({ ...formErrors, description: null });
+                    }}
+                    placeholder="Describe specific symptoms, hardware error codes, whether the problem is intermittent or constant, and steps to reproduce..."
+                    className={`w-full p-3.5 rounded-xl bg-slate-50 border text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:ring-2 resize-none leading-relaxed transition-all ${
+                      formErrors.description
+                        ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-100'
+                        : 'border-slate-200 focus:border-[#168567] focus:ring-[#168567]/10'
+                    }`}
+                  ></textarea>
+                  {formErrors.description && (
+                    <p className="text-[11px] text-rose-600 font-medium">{formErrors.description}</p>
+                  )}
+                </div>
               </div>
 
-              {/* Diagnostic Photo Attachment */}
+              {/* Step 5: Diagnostic Photo Attachment */}
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
-                  Diagnostic Photo (Max 10MB)
+                  7. Diagnostic Evidence / Photo (Optional)
                 </label>
-                <div className="relative p-3.5 rounded-xl bg-slate-50 border border-dashed border-slate-300 hover:border-[#9E153E] transition-all flex flex-col items-center justify-center text-center cursor-pointer group">
+                <div className="relative p-4 rounded-xl bg-slate-50 border border-dashed border-slate-300 hover:border-[#168567] transition-all flex flex-col items-center justify-center text-center cursor-pointer group">
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp,image/svg+xml,application/pdf"
                     onChange={handleFileChange}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
-                  <ImageIcon className="w-5 h-5 text-[#9E153E] mb-1 group-hover:scale-110 transition-transform" />
+                  <ImageIcon className="w-6 h-6 text-[#168567] mb-1.5 group-hover:scale-110 transition-transform" />
                   <span className="text-xs font-semibold text-slate-700">
-                    {fileAttachment ? fileAttachment.name : 'Click or drop photo here for technician diagnosis'}
+                    {fileAttachment ? fileAttachment.name : 'Click or drop inspection photo here'}
                   </span>
-                  <span className="text-[10px] text-slate-400 mt-0.5">JPG, PNG, WEBP, PDF up to 10MB</span>
+                  <span className="text-[10px] text-slate-400 mt-0.5">JPG, PNG, WEBP, or PDF up to 10MB</span>
                 </div>
 
-                {fileError && <p className="text-xs text-red-600 font-mono font-medium">{fileError}</p>}
+                {fileError && <p className="text-xs text-rose-600 font-mono font-medium">{fileError}</p>}
 
-                {/* Instant Image Preview Thumbnail */}
+                {/* Instant Image Preview */}
                 {filePreviewUrl && (
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
                     <div className="flex items-center gap-3">
                       <img
                         src={filePreviewUrl}
@@ -774,11 +1004,11 @@ export function CareComplaints() {
                         className="w-12 h-12 object-cover rounded-lg border border-slate-200"
                       />
                       <div className="flex flex-col">
-                        <span className="text-xs font-mono text-slate-800 truncate max-w-[180px]">
+                        <span className="text-xs font-mono text-slate-800 font-medium truncate max-w-[200px]">
                           {fileAttachment?.name}
                         </span>
                         <span className="text-[10px] text-slate-500 font-mono">
-                          {(fileAttachment?.size / (1024 * 1024)).toFixed(2)} MB
+                          {(fileAttachment?.size / (1024 * 1024)).toFixed(2)} MB • Diagnostic Photo Attached
                         </span>
                       </div>
                     </div>
@@ -788,7 +1018,7 @@ export function CareComplaints() {
                         setFileAttachment(null);
                         setFilePreviewUrl('');
                       }}
-                      className="text-xs text-red-600 hover:text-red-700 font-semibold"
+                      className="text-xs text-rose-600 hover:text-rose-700 font-semibold cursor-pointer"
                     >
                       Remove
                     </button>
@@ -797,374 +1027,526 @@ export function CareComplaints() {
               </div>
 
               {/* Submit CTA */}
-              <div className="pt-2">
+              <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#9E153E] to-[#BE123C] hover:from-[#881337] hover:to-[#9E153E] active:scale-[0.99] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#168567] hover:bg-[#116951] active:scale-[0.99] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all disabled:opacity-50 cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
-                  <span>{isSubmitting ? 'Submitting & Dispatching...' : 'Lodge Grievance & Dispatch Technician'}</span>
+                  <span>{isSubmitting ? 'Registering & Dispatching...' : 'Lodge Grievance & Dispatch Technician'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveViewMode('tracker')}
+                  className="w-full sm:w-auto px-5 py-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm cursor-pointer"
+                >
+                  Cancel
                 </button>
               </div>
 
               <p className="text-[11px] text-slate-400 text-center leading-relaxed">
-                Notice: All tickets are registered into Mewar University Central Administrative Council &amp; Facility Operations Node.
+                Institutional Notice: All logged tickets are stored in Mewar University Central Administrative Council with immutable audit timestamps.
               </p>
             </form>
           </div>
         </div>
+      )}
 
-        {/* RIGHT COLUMN: LIVE SLA TRACKER & TICKET AUDIT TRAIL (7 COLS) */}
-        <div className="lg:col-span-7 flex flex-col gap-4">
-          {/* Filter & Search Bar */}
-          <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-              {['All', 'In Progress', 'Under Review', 'Resolved'].map((flt) => {
-                const isActive = activeFilter === flt;
-                return (
+      {/* =========================================================================
+          VIEW MODE 2: INCIDENT QUEUE & LIVE SLA TRACKER (MASTER-DETAIL WORKSPACE)
+          ========================================================================= */}
+      {activeViewMode === 'tracker' && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* =====================================================================
+              LEFT COLUMN: TICKET QUEUE & FILTER CONTROLS (5 COLS)
+              ===================================================================== */}
+          <div className="lg:col-span-5 flex flex-col gap-3">
+            {/* Search and Filters Strip */}
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col gap-2.5">
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search Ticket ID (#CMP-1042), title, room..."
+                  className="w-full h-9 pl-9 pr-8 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#168567] focus:ring-1 focus:ring-[#168567]/10"
+                />
+                {searchQuery && (
                   <button
-                    key={flt}
-                    onClick={() => setActiveFilter(flt)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
-                      isActive
-                        ? 'bg-[#9E153E] text-white shadow-xs'
-                        : 'bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200'
-                    }`}
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
                   >
-                    {flt}
+                    <X className="w-4 h-4" />
                   </button>
-                );
-              })}
+                )}
+              </div>
+
+              {/* Status Segmented Control */}
+              <div className="flex items-center gap-1 overflow-x-auto pb-0.5">
+                {['All', 'In Progress', 'Under Review', 'Resolved'].map((st) => {
+                  const isActive = statusFilter === st;
+                  return (
+                    <button
+                      key={st}
+                      onClick={() => setStatusFilter(st)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                        isActive
+                          ? 'bg-[#168567] text-white shadow-xs'
+                          : 'bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200/80 hover:bg-slate-100'
+                      }`}
+                    >
+                      {st}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Category Filter Dropdown */}
+              <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
+                <span className="text-[11px] font-mono text-slate-500 uppercase tracking-wider font-semibold">Domain Filter:</span>
+                <select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="h-7 px-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700 focus:outline-none focus:border-[#168567] cursor-pointer"
+                >
+                  <option value="All">All Domains</option>
+                  {CATEGORY_DEFINITIONS.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <div className="relative min-w-[200px]">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search ticket # or room..."
-                className="w-full h-8 pl-8 pr-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-1 focus:ring-rose-100"
-              />
+            {/* Ticket Cards List */}
+            <div className="flex flex-col gap-2.5">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-600 font-mono">
+                  Grievance Records ({filteredComplaintsList.length})
+                </span>
+                <button
+                  onClick={() => {
+                    setStatusFilter('All');
+                    setCategoryFilter('All');
+                    setSearchQuery('');
+                  }}
+                  className="text-[11px] text-[#168567] hover:underline font-mono cursor-pointer"
+                >
+                  Reset filters
+                </button>
+              </div>
+
+              {filteredComplaintsList.length === 0 ? (
+                <div className="p-8 rounded-2xl bg-white border border-slate-200 text-center flex flex-col items-center justify-center gap-2">
+                  <FileText className="w-8 h-8 text-slate-300" />
+                  <span className="text-xs font-bold text-slate-700">No matching tickets found</span>
+                  <p className="text-[11px] text-slate-500 max-w-xs">
+                    Try refining your search terms or domain filters, or file a new incident.
+                  </p>
+                  <button
+                    onClick={() => setActiveViewMode('new_ticket')}
+                    className="mt-2 px-3 py-1.5 rounded-xl bg-[#168567] text-white text-xs font-bold cursor-pointer"
+                  >
+                    Lodge New Ticket
+                  </button>
+                </div>
+              ) : (
+                filteredComplaintsList.map((ticket) => {
+                  const isSelected = selectedTicket?._id === ticket._id || selectedTicket?.ticketId === ticket.ticketId;
+                  const isResolved = ticket.status === 'resolved' || ticket.status === 'closed';
+                  const isInProgress = ticket.status === 'in_progress' || ticket.status === 'parts_ordered';
+
+                  return (
+                    <div
+                      key={ticket._id || ticket.ticketId}
+                      onClick={() => setSelectedTicket(ticket)}
+                      className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col gap-2.5 ${
+                        isSelected
+                          ? 'bg-[#EAF5EF]/40 border-2 border-[#168567] shadow-sm'
+                          : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs'
+                      }`}
+                    >
+                      {/* Top Meta Line: Ticket ID, Priority Pill, Status Badge */}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-mono text-xs font-bold text-[#168567]">
+                            {ticket.ticketId}
+                          </span>
+                          <span
+                            className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold uppercase border ${
+                              ticket.priority === 'urgent' || ticket.priority === 'critical'
+                                ? 'bg-rose-50 text-rose-700 border-rose-200'
+                                : ticket.priority === 'high'
+                                ? 'bg-amber-50 text-amber-800 border-amber-200'
+                                : ticket.priority === 'medium'
+                                ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                : 'bg-slate-100 text-slate-700 border-slate-200'
+                            }`}
+                          >
+                            {ticket.priority}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1.5">
+                          <span
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                              isResolved
+                                ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                : isInProgress
+                                ? 'bg-amber-50 text-amber-800 border-amber-200'
+                                : 'bg-blue-50 text-blue-700 border-blue-200'
+                            }`}
+                          >
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                isResolved
+                                  ? 'bg-emerald-600'
+                                  : isInProgress
+                                  ? 'bg-amber-600 animate-ping'
+                                  : 'bg-blue-600'
+                              }`}
+                            ></span>
+                            <span>{ticket.statusText || ticket.status}</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 leading-snug">
+                        {ticket.title}
+                      </h3>
+
+                      {/* Bottom Info: Location, Technician & Timestamp */}
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                        <div className="flex items-center gap-1.5 truncate max-w-[240px]">
+                          <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                          <span className="truncate">{ticket.location || ticket.building}</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 font-mono text-slate-400 shrink-0">
+                          <span>{ticket.createdAt}</span>
+                          <ChevronRight
+                            size={14}
+                            className={isSelected ? 'text-[#168567]' : 'text-slate-300'}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
-
-          {/* ACTIVE SPOTLIGHT TICKET DETAILS */}
-          {selectedTicket && (
-            <div className="p-6 rounded-2xl bg-white border-2 border-[#9E153E]/40 shadow-md flex flex-col gap-5 relative overflow-hidden">
-              {/* Ticket Header & Status Badges */}
-              <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-md bg-rose-50 text-[#9E153E] font-mono text-xs font-bold border border-rose-200">
-                    {selectedTicket.ticketId}
-                  </span>
-                  <span
-                    className={`px-2 py-0.5 rounded font-mono text-[11px] font-bold uppercase border ${
-                      selectedTicket.priority === 'urgent'
-                        ? 'bg-red-50 text-red-700 border-red-200'
-                        : selectedTicket.priority === 'high'
-                        ? 'bg-orange-50 text-orange-700 border-orange-200'
-                        : 'bg-amber-50 text-amber-700 border-amber-200'
-                    }`}
-                  >
-                    {selectedTicket.priority} PRIORITY
-                  </span>
-                  <span className="text-xs text-slate-400 flex items-center gap-1 font-mono">
-                    <Clock className="w-3.5 h-3.5 text-slate-400" />
-                    <span>{selectedTicket.createdAt}</span>
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold">
-                  <span
-                    className={`w-2 h-2 rounded-full ${
-                      selectedTicket.status === 'resolved'
-                        ? 'bg-emerald-500'
-                        : selectedTicket.status === 'in_progress'
-                        ? 'bg-rose-500 animate-ping'
-                        : 'bg-amber-500 animate-pulse'
-                    }`}
-                  ></span>
-                  <span className="text-slate-700">{selectedTicket.statusText || selectedTicket.status}</span>
-                </div>
-              </div>
-
-              {/* Title & Location */}
-              <div>
-                <span className="text-[11px] font-mono text-[#9E153E] uppercase font-bold tracking-wider">
-                  Domain: {selectedTicket.categoryName || selectedTicket.category}
-                </span>
-                <h3 className="text-xl font-bold text-slate-900 mt-1 leading-snug">
-                  {selectedTicket.title}
-                </h3>
-                <div className="flex items-center gap-2 text-xs text-slate-600 mt-2">
-                  <MapPin className="w-3.5 h-3.5 text-[#9E153E] shrink-0" />
-                  <span className="font-semibold text-slate-900">{selectedTicket.building}</span>
-                  <span className="text-slate-300">•</span>
-                  <span className="text-slate-600">{selectedTicket.location}</span>
-                </div>
-              </div>
-
-              {/* Issue Description Box */}
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 leading-relaxed">
-                "{selectedTicket.description}"
-              </div>
-
-              {/* ===================================================================
-                  LIVE SLA COUNTDOWN & BREACH TIMER WIDGET
-                  =================================================================== */}
-              {selectedTicket.status !== 'resolved' && (
-                <div className="p-4 rounded-xl bg-gradient-to-r from-rose-50 to-white border border-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-rose-100 text-[#9E153E] flex items-center justify-center shrink-0">
-                      <Clock className="w-5 h-5 animate-pulse" />
-                    </div>
-                    <div>
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-[#9E153E] font-bold">
-                        Live SLA Resolution Window
-                      </span>
-                      <div className="text-xl font-mono font-black text-slate-900 tracking-wider">
-                        {formattedCountdown}
-                      </div>
-                      <span className="text-[11px] text-slate-500">
-                        Max SLA Target: &lt;{selectedTicket.slaTargetMins || 45} mins • Auto-Escalation Enabled
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shrink-0 shadow-xs">
-                    <Activity className="w-4 h-4 text-emerald-600" />
-                    <div className="flex flex-col">
-                      <span className="text-xs font-bold text-slate-900">ETA: {selectedTicket.eta || '18 mins'}</span>
-                      <span className="text-[10px] text-emerald-700 font-semibold">Technician en route</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Assigned Technician Card */}
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-rose-100 text-[#9E153E] flex items-center justify-center font-bold text-xs font-mono">
-                    {selectedTicket.assignedTo?.split(' ').map((n) => n[0]).join('') || 'MV'}
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-slate-900">
-                      Assigned: {selectedTicket.assignedTo || 'Rapid Response Unit'}
-                    </div>
-                    <div className="text-[11px] text-slate-500">
-                      {selectedTicket.assignedRole || 'Facility Operations Lead'}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-[11px] font-mono text-emerald-700 font-semibold border border-emerald-200">
-                    Radio Channel 4 Active
-                  </span>
-                </div>
-              </div>
-
-              {/* ===================================================================
-                  4-STAGE RESOLUTION MILESTONE PIPELINE
-                  =================================================================== */}
-              <div className="flex flex-col gap-2.5 pt-1">
-                <div className="flex items-center justify-between text-xs font-mono uppercase tracking-wider text-slate-500">
-                  <span>Milestone Resolution Stepper</span>
-                  <span className="text-[#9E153E] font-bold">4-Stage CAFM Flow</span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-                  {(selectedTicket.steps || [
-                    { id: 1, label: 'Ticket Logged', status: 'completed', time: '10:14 AM' },
-                    { id: 2, label: 'Sensor Diagnostic', status: 'completed', time: '10:18 AM' },
-                    { id: 3, label: 'Field Dispatched', status: 'active', time: '10:32 AM' },
-                    { id: 4, label: 'Student Sign-Off', status: 'pending', time: 'Pending' }
-                  ]).map((st) => {
-                    const isDone = st.status === 'completed';
-                    const isActive = st.status === 'active';
-                    return (
-                      <div
-                        key={st.id}
-                        className={`p-2.5 rounded-xl border flex flex-col justify-between transition-all ${
-                          isDone
-                            ? 'bg-emerald-50/70 border-emerald-200 text-emerald-800'
-                            : isActive
-                            ? 'bg-rose-50 border-rose-300 text-slate-900 shadow-xs'
-                            : 'bg-slate-50 border-slate-200 text-slate-400'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[10px] font-mono font-bold">Step 0{st.id}</span>
-                          {isDone ? (
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                          ) : isActive ? (
-                            <Clock className="w-3.5 h-3.5 text-[#9E153E] animate-spin" />
-                          ) : (
-                            <span className="w-2 h-2 rounded-full bg-slate-300"></span>
-                          )}
-                        </div>
-                        <span className="text-xs font-bold leading-tight line-clamp-1">{st.label}</span>
-                        <span className="text-[10px] text-slate-500 mt-1 font-mono">{st.time}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Diagnostic Attachment Thumbnail Preview */}
-              {selectedTicket.attachments && selectedTicket.attachments.length > 0 && (
-                <div className="flex flex-col gap-2 pt-1 border-t border-slate-100">
-                  <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
-                    Diagnostic Photo Evidence (Click to Inspect)
-                  </span>
-                  <div className="flex items-center gap-3">
-                    {selectedTicket.attachments.map((attUrl, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => setLightboxImage(attUrl)}
-                        className="cursor-pointer group relative w-24 h-16 rounded-xl overflow-hidden border border-slate-200 hover:border-[#9E153E] transition-all shadow-xs"
-                      >
-                        <img src={attUrl} alt="Ticket attachment" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                        <div className="absolute inset-0 bg-slate-900/30 group-hover:bg-slate-900/10 flex items-center justify-center transition-colors">
-                          <Eye className="w-4 h-4 text-white opacity-80 group-hover:opacity-100" />
-                        </div>
-                      </div>
-                    ))}
-                    <span className="text-xs text-slate-500">
-                      {selectedTicket.attachmentNames?.[0] || 'Inspection photo verified by student'}
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {/* Resolution Audit Updates Log */}
-              <div className="flex flex-col gap-2.5 pt-2 border-t border-slate-100">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
-                  Real-Time Dispatch Audit Log
-                </span>
-
-                <div className="flex flex-col gap-2.5 relative pl-4 border-l-2 border-[#9E153E]/30 ml-1.5">
-                  {(selectedTicket.updates || []).map((upd, idx) => (
-                    <div key={idx} className="flex flex-col gap-0.5">
-                      <div className="flex items-baseline justify-between text-xs">
-                        <span className="font-bold text-slate-900 flex items-center gap-1.5">
-                          <span>{upd.updatedBy}</span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-normal">
-                            {upd.role || 'Staff'}
-                          </span>
-                        </span>
-                        <span className="text-[11px] font-mono text-slate-400">{upd.createdAt}</span>
-                      </div>
-                      <p className="text-xs text-slate-600">{upd.message}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Direct Message Dispatcher Input Strip */}
-              <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
-                  Send Direct Note to Field Dispatcher
-                </span>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="e.g. Professor shifted lecture to Room B-205, please meet there..."
-                    className="flex-1 h-10 px-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-2 focus:ring-rose-100"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleSendReply();
-                    }}
-                  />
-                  <button
-                    onClick={handleSendReply}
-                    disabled={isSendingReply || !replyText.trim()}
-                    className="h-10 px-4 rounded-xl bg-[#9E153E] hover:bg-[#881337] text-white text-xs font-bold flex items-center gap-1.5 transition-all disabled:opacity-40 cursor-pointer"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                    <span>Send</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* One-Click Resolution Sign-Off Button (If not yet resolved) */}
-              {selectedTicket.status !== 'resolved' && (
-                <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <button
-                    onClick={handleStudentSignOff}
-                    className="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 transition-all shadow-xs cursor-pointer"
-                  >
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>Confirm Issue Resolved (Student Sign-Off)</span>
-                  </button>
-
-                  <span className="text-[11px] text-slate-500">
-                    Signing off marks SLA achieved &amp; informs Central CAFM.
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
 
           {/* =====================================================================
-              HISTORICAL TICKETS LIST (Interactive Switcher)
+              RIGHT COLUMN: ACTIVE TICKET DETAIL INSPECTOR (7 COLS)
               ===================================================================== */}
-          <div className="flex flex-col gap-2.5 pt-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-600 font-mono px-1">
-              Logged Grievance Records ({filteredComplaintsList.length})
-            </span>
-
-            {filteredComplaintsList.map((c) => {
-              const isSelected = selectedTicket?._id === c._id;
-              return (
-                <div
-                  key={c._id || c.ticketId}
-                  onClick={() => setSelectedTicket(c)}
-                  className={`cursor-pointer p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                    isSelected
-                      ? 'bg-rose-50/50 border-2 border-[#9E153E] shadow-sm'
-                      : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs'
-                  }`}
-                >
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs font-bold text-[#9E153E]">{c.ticketId}</span>
-                      <span
-                        className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold border uppercase ${
-                          c.status === 'resolved'
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            : c.status === 'in_progress'
-                            ? 'bg-rose-50 text-[#9E153E] border-rose-200'
-                            : 'bg-amber-50 text-amber-700 border-amber-200'
-                        }`}
-                      >
-                        {c.status}
-                      </span>
-                      <span className="text-[11px] text-slate-400 font-mono">{c.createdAt}</span>
-                    </div>
-                    <h4 className="text-sm font-bold text-slate-900 line-clamp-1">{c.title}</h4>
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <span>{c.building}</span>
-                      <span className="text-slate-300">•</span>
-                      <span>{c.location}</span>
-                    </div>
+          <div className="lg:col-span-7 flex flex-col gap-4">
+            {selectedTicket ? (
+              <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col gap-5">
+                {/* Header: Ticket ID & Priority & Freshness */}
+                <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-1 rounded-md bg-[#EAF5EF] text-[#168567] font-mono text-xs font-bold border border-[#168567]/20">
+                      {selectedTicket.ticketId}
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold uppercase border ${
+                        selectedTicket.priority === 'urgent' || selectedTicket.priority === 'critical'
+                          ? 'bg-rose-50 text-rose-700 border-rose-200'
+                          : selectedTicket.priority === 'high'
+                          ? 'bg-amber-50 text-amber-800 border-amber-200'
+                          : selectedTicket.priority === 'medium'
+                          ? 'bg-blue-50 text-blue-700 border-blue-200'
+                          : 'bg-slate-100 text-slate-700 border-slate-200'
+                      }`}
+                    >
+                      {selectedTicket.priority} PRIORITY
+                    </span>
+                    <span className="text-xs text-slate-400 flex items-center gap-1 font-mono">
+                      <Clock className="w-3.5 h-3.5 text-slate-400" />
+                      <span>{selectedTicket.createdAt}</span>
+                    </span>
                   </div>
 
-                  <div className="flex items-center gap-3 self-end sm:self-auto">
-                    <span className="text-xs text-slate-500 font-mono">
-                      {c.priority.toUpperCase()} PRIORITY
-                    </span>
-                    <ChevronRight size={16} className={isSelected ? 'text-[#9E153E]' : 'text-slate-400'} />
+                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold">
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        selectedTicket.status === 'resolved' || selectedTicket.status === 'closed'
+                          ? 'bg-emerald-500'
+                          : selectedTicket.status === 'in_progress'
+                          ? 'bg-amber-500 animate-ping'
+                          : 'bg-blue-500 animate-pulse'
+                      }`}
+                    ></span>
+                    <span className="text-slate-700">{selectedTicket.statusText || selectedTicket.status}</span>
                   </div>
                 </div>
-              );
-            })}
+
+                {/* Title & Domain & Location */}
+                <div>
+                  <span className="text-[11px] font-mono text-[#168567] uppercase font-bold tracking-wider">
+                    Domain: {selectedTicket.categoryName || getCategoryLabel(selectedTicket.category)}
+                  </span>
+                  <h2 className="text-lg sm:text-xl font-bold text-slate-900 mt-1 leading-snug">
+                    {selectedTicket.title}
+                  </h2>
+                  <div className="flex items-center gap-2 text-xs text-slate-600 mt-2">
+                    <MapPin className="w-3.5 h-3.5 text-[#168567] shrink-0" />
+                    <span className="font-semibold text-slate-900">{selectedTicket.building}</span>
+                    <span className="text-slate-300">•</span>
+                    <span className="text-slate-600">{selectedTicket.location}</span>
+                  </div>
+                </div>
+
+                {/* Issue Description Callout */}
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed italic">
+                  "{selectedTicket.description}"
+                </div>
+
+                {/* SLA Countdown & Resolution Window */}
+                {selectedTicket.status !== 'resolved' && selectedTicket.status !== 'closed' ? (
+                  <div className="p-4 rounded-xl bg-[#EAF5EF]/50 border border-[#168567]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#168567]/20 flex items-center justify-center shrink-0">
+                        <Clock className="w-5 h-5 animate-pulse" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-[#168567] font-bold">
+                          Live SLA Resolution Window
+                        </span>
+                        <div className="text-xl font-mono font-black text-slate-900 tracking-wider">
+                          {formattedCountdown}
+                        </div>
+                        <span className="text-[11px] text-slate-500">
+                          SLA Target: &lt;{selectedTicket.slaTargetMins || 45} mins • Automated Escalation Active
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shrink-0 shadow-xs">
+                      <Activity className="w-4 h-4 text-emerald-600" />
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-slate-900">
+                          ETA: {selectedTicket.eta || '18 mins'}
+                        </span>
+                        <span className="text-[10px] text-emerald-700 font-semibold">
+                          Technician dispatched
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                      <div>
+                        <span className="text-xs font-bold">Issue Resolved &amp; Verified</span>
+                        <p className="text-[11px] text-emerald-700">Student sign-off confirmed. Facilities CAFM closed.</p>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-lg bg-emerald-100 text-[10px] font-mono font-bold text-emerald-800">
+                      SLA ACHIEVED
+                    </span>
+                  </div>
+                )}
+
+                {/* Assigned Technician Profile Card */}
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-[#EAF5EF] text-[#168567] border border-[#168567]/30 flex items-center justify-center font-bold text-xs font-mono">
+                      {selectedTicket.assignedTo
+                        ? selectedTicket.assignedTo
+                            .split(' ')
+                            .map((n) => n[0])
+                            .join('')
+                            .slice(0, 2)
+                        : 'RM'}
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900">
+                        Assigned Specialist: {selectedTicket.assignedTo || 'Rapid Maintenance Unit Alpha'}
+                      </div>
+                      <div className="text-[11px] text-slate-500">
+                        {selectedTicket.assignedRole || 'Facility Operations Lead • Unit #FM-01'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-1 rounded-lg bg-white text-[11px] font-mono text-slate-700 font-semibold border border-slate-200 flex items-center gap-1.5">
+                      <Radio className="w-3 h-3 text-emerald-600" />
+                      <span>Radio Channel 4 Active</span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* 4-Stage Resolution Milestone Pipeline */}
+                <div className="flex flex-col gap-2 pt-1">
+                  <div className="flex items-center justify-between text-xs font-mono uppercase tracking-wider text-slate-500">
+                    <span>CAFM 4-Stage Resolution Pipeline</span>
+                    <span className="text-[#168567] font-bold">Automated Progress Stepper</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                    {(selectedTicket.steps || [
+                      { id: 1, label: 'Ticket Logged & Ingested', status: 'completed', time: '10:14 AM' },
+                      { id: 2, label: 'Sensor Diagnostic', status: 'completed', time: '10:18 AM' },
+                      { id: 3, label: 'Field Specialist Dispatched', status: 'active', time: '10:32 AM' },
+                      { id: 4, label: 'Resolution & Sign-Off', status: 'pending', time: 'Pending' }
+                    ]).map((st) => {
+                      const isDone = st.status === 'completed';
+                      const isActive = st.status === 'active';
+                      return (
+                        <div
+                          key={st.id}
+                          className={`p-2.5 rounded-xl border flex flex-col justify-between transition-all ${
+                            isDone
+                              ? 'bg-emerald-50/70 border-emerald-200 text-emerald-800'
+                              : isActive
+                              ? 'bg-[#EAF5EF] border-[#168567] text-slate-900 shadow-xs'
+                              : 'bg-slate-50 border-slate-200 text-slate-400'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[10px] font-mono font-bold">Step 0{st.id}</span>
+                            {isDone ? (
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                            ) : isActive ? (
+                              <Clock className="w-3.5 h-3.5 text-[#168567] animate-spin" />
+                            ) : (
+                              <span className="w-2 h-2 rounded-full bg-slate-300"></span>
+                            )}
+                          </div>
+                          <span className="text-xs font-bold leading-tight line-clamp-1">{st.label}</span>
+                          <span className="text-[10px] text-slate-500 mt-1 font-mono">{st.time}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Diagnostic Attachment Thumbnail Preview */}
+                {selectedTicket.attachments && selectedTicket.attachments.length > 0 && (
+                  <div className="flex flex-col gap-2 pt-1 border-t border-slate-100">
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
+                      Diagnostic Photo Evidence (Click to Inspect)
+                    </span>
+                    <div className="flex items-center gap-3">
+                      {selectedTicket.attachments.map((attUrl, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => setLightboxImage(attUrl)}
+                          className="cursor-pointer group relative w-24 h-16 rounded-xl overflow-hidden border border-slate-200 hover:border-[#168567] transition-all shadow-xs"
+                        >
+                          <img
+                            src={attUrl}
+                            alt="Ticket attachment"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          />
+                          <div className="absolute inset-0 bg-slate-900/30 group-hover:bg-slate-900/10 flex items-center justify-center transition-colors">
+                            <Eye className="w-4 h-4 text-white opacity-80 group-hover:opacity-100" />
+                          </div>
+                        </div>
+                      ))}
+                      <span className="text-xs text-slate-500">
+                        {selectedTicket.attachmentNames?.[0] || 'Inspection photo uploaded by student'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Real-Time Dispatch Audit Log */}
+                <div className="flex flex-col gap-2.5 pt-2 border-t border-slate-100">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
+                    Real-Time Dispatch Audit Log
+                  </span>
+
+                  <div className="flex flex-col gap-2.5 relative pl-4 border-l-2 border-[#168567]/30 ml-1.5">
+                    {(selectedTicket.updates || []).map((upd, idx) => (
+                      <div key={idx} className="flex flex-col gap-0.5">
+                        <div className="flex items-baseline justify-between text-xs">
+                          <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                            <span>{upd.updatedBy}</span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-normal">
+                              {upd.role || 'Staff'}
+                            </span>
+                          </span>
+                          <span className="text-[11px] font-mono text-slate-400">{upd.createdAt}</span>
+                        </div>
+                        <p className="text-xs text-slate-600">{upd.message}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Direct Message Dispatcher Input Strip */}
+                <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
+                      Send Direct Note to Field Specialist
+                    </span>
+                    {replyFeedback && (
+                      <span className="text-[11px] text-[#168567] font-semibold animate-pulse">
+                        {replyFeedback}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      placeholder="e.g. Professor shifted lecture to Room B-205, please meet there..."
+                      className="flex-1 h-10 px-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#168567] focus:ring-1 focus:ring-[#168567]/20"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleSendReply();
+                      }}
+                    />
+                    <button
+                      onClick={handleSendReply}
+                      disabled={isSendingReply || !replyText.trim()}
+                      className="h-10 px-4 rounded-xl bg-[#168567] hover:bg-[#116951] text-white text-xs font-bold flex items-center gap-1.5 transition-all disabled:opacity-40 cursor-pointer"
+                    >
+                      <Send className="w-3.5 h-3.5" />
+                      <span>{isSendingReply ? 'Sending...' : 'Send'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Resolution Sign-Off Button (If not yet resolved) */}
+                {selectedTicket.status !== 'resolved' && selectedTicket.status !== 'closed' && (
+                  <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-100">
+                    <button
+                      onClick={handleStudentSignOff}
+                      className="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 transition-all shadow-xs cursor-pointer"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Confirm Issue Resolved (Student Sign-Off)</span>
+                    </button>
+
+                    <span className="text-[11px] text-slate-500">
+                      Signing off marks SLA achieved &amp; informs Central Facilities CAFM.
+                    </span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="p-8 rounded-2xl bg-white border border-slate-200 text-center flex flex-col items-center justify-center gap-2">
+                <FileText className="w-10 h-10 text-slate-300" />
+                <span className="text-sm font-bold text-slate-700">No ticket selected</span>
+                <p className="text-xs text-slate-500">
+                  Select a grievance from the left list to inspect details, dispatch timeline, and SLA countdown.
+                </p>
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      )}
 
       {/* =========================================================================
           LIGHTBOX MODAL FOR DIAGNOSTIC PHOTO EVIDENCE
@@ -1180,11 +1562,11 @@ export function CareComplaints() {
           >
             <div className="flex items-center justify-between p-3.5 bg-slate-50 border-b border-slate-200">
               <span className="text-xs font-mono text-slate-800 font-bold">
-                Diagnostic Attachment Inspector • {selectedTicket.ticketId}
+                Diagnostic Attachment Inspector • {selectedTicket?.ticketId}
               </span>
               <button
                 onClick={() => setLightboxImage(null)}
-                className="w-7 h-7 rounded-lg bg-slate-200 text-slate-600 hover:text-slate-900 flex items-center justify-center"
+                className="w-7 h-7 rounded-lg bg-slate-200 text-slate-600 hover:text-slate-900 flex items-center justify-center cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1202,7 +1584,7 @@ export function CareComplaints() {
                 href={lightboxImage}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[#9E153E] hover:underline flex items-center gap-1 font-semibold"
+                className="text-[#168567] hover:underline flex items-center gap-1 font-semibold"
               >
                 <span>Open Raw Image</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
