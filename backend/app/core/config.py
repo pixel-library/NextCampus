@@ -1,5 +1,7 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, List, Optional, Union
+import json
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Base directory for the NextCampus project
@@ -27,8 +29,8 @@ class Settings(BaseSettings):
     JWT_EXPIRES_IN: str = "7d"  # Parsed in security module to timedelta
     JWT_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
     
-    # CORS Origins
-    CORS_ORIGINS: List[str] = [
+    # CORS Origins (Accepts list, json string, wildcard "*", or comma-separated domains)
+    CORS_ORIGINS: Union[List[str], str] = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:5173",
@@ -39,6 +41,23 @@ class Settings(BaseSettings):
         "http://127.0.0.1:8000",
         "*",
     ]
+
+    @field_validator("CORS_ORIGINS")
+    @classmethod
+    def parse_cors_origins(cls, v: Any) -> List[str]:
+        if isinstance(v, str):
+            v = v.strip()
+            if v.startswith("[") and v.endswith("]"):
+                try:
+                    return json.loads(v)
+                except Exception:
+                    pass
+            if "," in v:
+                return [origin.strip() for origin in v.split(",") if origin.strip()]
+            return [v]
+        return list(v)
+
+
     
     # File Storage: Keep using existing server/uploads directory to preserve uploads
     UPLOAD_DIR: Path = ROOT_DIR / "server" / "uploads"
