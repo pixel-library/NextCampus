@@ -52,20 +52,20 @@ Every facility has been calibrated against high-resolution satellite imagery and
 | :--- | :--- | :--- | :--- | :--- |
 | `gate` | Gate 1 (NH-48 Main Portal) | `[25.032009, 74.634483]` | Transit | Primary arterial entrance portal on National Highway 48 boundary. |
 | `gate2` | Gate 2 (West Perimeter) | `[25.034828, 74.633839]` | Transit | West boundary perimeter entrance portal north of covered parking. |
-| `main` | Main Academic & Admin Building | `[25.032600, 74.635200]` | Academic / Admin | Central flagship complex with north courtyard abutting Temple. |
-| `temple` | Mewar Campus Temple & Shrine | `[25.033719, 74.635288]` | Spiritual / Culture | Yellow boundary courtyard shrine north of Main Building, south of Park. |
+| `main` | Main Academic & Admin Building | `[25.032755, 74.635872]` | Academic / Admin | Central flagship complex with north courtyard abutting Temple. |
+| `temple` | Mewar Campus Temple & Shrine | `[25.033669, 74.635822]` | Spiritual / Culture | Yellow boundary courtyard shrine north of Main Building, south of Park. |
 | `eng` | Faculty of Engineering & Technology | `[25.032631, 74.636545]` | Academic / Labs | Major engineering quadrangle directly east of Main Building. |
 | `teacher` | Teacher Building (Faculty Residence) | `[25.032655, 74.636881]` | Academic / Faculty | North wing of eastern academic complex with faculty consultation rooms. |
 | `badal` | Badal Boys Hostel | `[25.032382, 74.637010]` | Residential | South wing of eastern academic complex directly below Teacher Building. |
 | `mess` | Central Student Dining Mess | `[25.032203, 74.636307]` | Dining | Central multi-story student cafeteria with light reflective roof. |
 | `law` | Faculty of Law & Legal Studies | `[25.032106, 74.636843]` | Academic | Southeast academic block with western courtyard loop. |
 | `football` | University Football Ground & Arena | `[25.031522, 74.635609]` | Sports | Full regulation athletic football ground west of Mess. |
-| `parking` | Main Campus Vehicle Parking Zone | `[25.031328, 74.635148]` | Transit / Parking | Orange boundary covered vehicle canopy bays along western highway perimeter. |
+| `parking` | Main Campus Vehicle Parking Zone | `[25.031181, 74.635785]` | Transit / Parking | Orange boundary covered vehicle canopy bays along western highway perimeter. |
 | `basketball` | Basketball & Outdoor Sports Court | `[25.031279, 74.637004]` | Sports | Outlined hard court surface immediately south of Law Building. |
-| `cricket` | University Cricket Ground & Pavilion | `[25.030278, 74.636092]` | Sports | Red boundary turf cricket pitch, spectator lawns, and practice nets. |
-| `gym` | University Gymnasium & Fitness Centre | `[25.030725, 74.636929]` | Sports / Fitness | Indoor strength training and workout hall between Cricket East Road and Volleyball. |
-| `volleyball` | University Volleyball Arena & Courts | `[25.030725, 74.637337]` | Sports | Purple boundary outdoor regulation volleyball arena east of Gym. |
-| `agriculture` | Faculty of Agriculture Research Field | `[25.030016, 74.637326]` | Academic / Agri | Green boundary experimental crop plots south of Gym and Volleyball. |
+| `cricket` | University Cricket Ground & Pavilion | `[25.030293, 74.636703]` | Sports | Red boundary turf cricket pitch, spectator lawns, and practice nets. |
+| `gym` | University Gymnasium & Fitness Centre | `[25.030837, 74.637275]` | Sports / Fitness | Indoor strength training and workout hall between Cricket East Road and Volleyball. |
+| `volleyball` | University Volleyball Arena & Courts | `[25.030757, 74.637623]` | Sports | Purple boundary outdoor regulation volleyball arena east of Gym. |
+| `agriculture` | Faculty of Agriculture Research Field | `[25.030157, 74.637547]` | Academic / Agri | Green boundary experimental crop plots south of Gym and Volleyball. |
 | `park` | Central Campus Park & Botanical Garden| `[25.033968, 74.635239]` | Recreation | Landscaped botanical gardens and shaded walking quadrangle. |
 | `bhamasha` | Bhamasha Hostel | `[25.034287, 74.635706]` | Residential | Multi-wing residence situated directly below Sanaga Hostel. |
 | `sanaga` | Sanaga Boys Residential Hostel | `[25.034645, 74.635783]` | Residential | North quad residential hall above Bhamasha. |
