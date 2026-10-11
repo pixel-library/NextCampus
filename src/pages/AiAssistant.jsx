@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import {
   Bot,
@@ -25,7 +25,15 @@ import {
   Activity,
   Layers,
   Zap,
-  CornerDownLeft
+  CornerDownLeft,
+  AlertCircle,
+  RotateCcw,
+  X,
+  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen,
+  HelpCircle,
+  FileText
 } from 'lucide-react';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
@@ -65,7 +73,7 @@ const INITIAL_MESSAGES = [
     id: 'msg-1-ai',
     sender: 'ai',
     text: 'To reach the AI & Machine Learning Lab (Room B-204) in the Faculty of Engineering & Technology (Block ENG-02) from the Main Campus Gate (NH-48, Gangrar):\n\nEnter through the main gate archway and proceed north along Central Avenue for 150 meters past the Maharana Pratap Academic Block. Enter the Engineering Promenade and take the West Elevators or stairs to Level 2. Total walking time is ~3.5 minutes (280 meters).',
-    time: '10:42 AM • NextCampus Copilot v4.4',
+    time: '10:42 AM • NextCampus Copilot v4.5',
     engineName: 'Mewar Spatial Intelligence Engine',
     thought: [
       '⚡ Spatial Mesh: Main Campus Gate (NH-48) ➔ Central Avenue ➔ Maharana Pratap Block ➔ Faculty of Engineering ENG-02 ➔ Level 2.',
@@ -81,7 +89,7 @@ const INITIAL_MESSAGES = [
         via: 'Central Avenue & Engineering Promenade (140m)',
         to: 'Faculty of Engineering & Technology — Room B-204',
         metric: '280m • ~3.5 mins walk',
-        actionLabel: 'Open in 3D CAD Map',
+        actionLabel: 'Open in Campus Map',
         actionRoute: '/campus-map?bldg=eng&room=B-204'
       },
       {
@@ -93,7 +101,7 @@ const INITIAL_MESSAGES = [
         co2: '410 ppm Pristine',
         nextClass: 'CS-301 at 1:00 PM',
         actionLabel: 'Reserve Pod / Desk',
-        actionRoute: '/smartroom'
+        actionRoute: '/smartrooms?search=B-204'
       }
     ]
   },
@@ -107,7 +115,7 @@ const INITIAL_MESSAGES = [
     id: 'msg-2-ai',
     sender: 'ai',
     text: 'You can lodge an instant dispatch ticket through Campus Care. In active learning spaces like Turing Hall B-204, classroom AV incidents are automatically tagged under Tier 1 Rapid Response SLA (<45 minute target resolution) with automated technician dispatch.',
-    time: '10:44 AM • NextCampus Copilot v4.4',
+    time: '10:44 AM • NextCampus Copilot v4.5',
     engineName: 'CAFM Operations Engine',
     cards: [
       {
@@ -120,7 +128,7 @@ const INITIAL_MESSAGES = [
         category: 'Classroom AV / HDMI Glitch',
         priority: 'High Priority',
         actionLabel: 'Submit Ticket to CAFM',
-        actionRoute: '/complaints'
+        actionRoute: '/care'
       }
     ]
   }
@@ -132,11 +140,15 @@ export function AiAssistant() {
   const [messages, setMessages] = useState(INITIAL_MESSAGES);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [lastFailedPrompt, setLastFailedPrompt] = useState('');
   const [searchHistoryQuery, setSearchHistoryQuery] = useState('');
   const [activeSessionId, setActiveSessionId] = useState('h-1');
   const [isVoiceActive, setIsVoiceActive] = useState(false);
+  const [showMobileHistory, setShowMobileHistory] = useState(false);
 
   const chatEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -153,25 +165,30 @@ export function AiAssistant() {
       }
     ]);
     setActiveSessionId(`h-new-${Date.now()}`);
+    setErrorMessage('');
+    setShowMobileHistory(false);
   };
 
   const handleSendMessage = async (textToSend) => {
     const text = textToSend || inputValue;
     if (!text || !text.trim()) return;
 
+    const userPrompt = text.trim();
     const userMsg = {
       id: `user-${Date.now()}`,
       sender: 'user',
-      text: text.trim(),
+      text: userPrompt,
       time: 'Just now • Student'
     };
 
     setMessages((prev) => [...prev, userMsg]);
     if (!textToSend) setInputValue('');
     setIsLoading(true);
+    setErrorMessage('');
+    setLastFailedPrompt('');
 
     try {
-      const res = await api.post('/ai/query', { prompt: text.trim() });
+      const res = await api.post('/ai/query', { prompt: userPrompt });
       if (res && res.success && res.data) {
         const aiData = res.data;
         const aiMsg = {
@@ -179,7 +196,7 @@ export function AiAssistant() {
           sender: 'ai',
           text: aiData.reply || 'Request processed successfully.',
           time: 'Just now • NextCampus AI',
-          engineName: aiData.engineName || 'Mewar Spatial AI Engine',
+          engineName: aiData.engineName || 'NextCampus Spatial AI Engine',
           thought: aiData.thought || [
             '⚡ Spatial Graph: Queried Mewar University CAD & GIS topology node.',
             '⚡ Live Telemetry: LoRaWAN 100Hz IoT mesh active.'
@@ -201,12 +218,12 @@ export function AiAssistant() {
         };
         setMessages((prev) => [...prev, aiMsg]);
       } else {
-        throw new Error('Fallback trigger');
+        throw new Error('API returned unformatted response');
       }
-    } catch {
-      // High-fidelity fallback
-      const q = text.toLowerCase();
-      let fallbackText = `Here is the campus information for "${text.trim()}":\nRoom B-204 in Faculty of Engineering & Technology (Level 2) is currently operating normally with 42 seats available.`;
+    } catch (err) {
+      // High-fidelity fallback logic
+      const q = userPrompt.toLowerCase();
+      let fallbackText = `Here is the campus information for "${userPrompt}":\nRoom B-204 in Faculty of Engineering & Technology (Level 2) is currently operating normally with 42 seats available.`;
       let fallbackCards = [
         {
           type: 'room_telemetry',
@@ -216,7 +233,7 @@ export function AiAssistant() {
           temp: '21.8°C',
           co2: '410 ppm Pristine',
           actionLabel: 'Inspect in SmartRooms',
-          actionRoute: '/smartroom'
+          actionRoute: '/smartrooms?search=B-204'
         }
       ];
 
@@ -229,7 +246,7 @@ export function AiAssistant() {
             tag: 'Acoustic Soundproof',
             room: 'Pods 1–8 (West Wing)',
             actionLabel: 'Reserve Pod in SmartRooms',
-            actionRoute: '/smartroom'
+            actionRoute: '/smartrooms?search=LIB-03'
           }
         ];
       } else if (q.includes('prof') || q.includes('faculty') || q.includes('roy')) {
@@ -241,7 +258,22 @@ export function AiAssistant() {
             tag: 'In Office Hours Today',
             room: 'Faculty of Engineering Room B-204',
             actionLabel: 'View in Directory',
-            actionRoute: '/directory'
+            actionRoute: '/directory?search=Roy'
+          }
+        ];
+      } else if (q.includes('complaint') || q.includes('repair') || q.includes('broken')) {
+        fallbackText = `You can lodge an instant maintenance ticket through NextCampus Care. Standard classroom repairs follow a rapid SLA (<45 mins).`;
+        fallbackCards = [
+          {
+            type: 'care_ticket',
+            title: 'Campus Care Helpdesk',
+            tag: 'Rapid SLA',
+            building: 'Faculty of Engineering (ENG-02)',
+            room: 'Room B-204',
+            category: 'Classroom Equipment',
+            priority: 'High Priority',
+            actionLabel: 'Submit Ticket to Care',
+            actionRoute: '/care'
           }
         ];
       }
@@ -274,44 +306,89 @@ export function AiAssistant() {
     }
   };
 
+  const handleRetry = () => {
+    if (lastFailedPrompt) {
+      handleSendMessage(lastFailedPrompt);
+    }
+  };
+
+  // Filter history items by search query
+  const filteredHistoryGroups = DEFAULT_HISTORY_GROUPS.map((grp) => ({
+    ...grp,
+    items: grp.items.filter((item) => {
+      if (!searchHistoryQuery.trim()) return true;
+      const q = searchHistoryQuery.toLowerCase();
+      return item.title.toLowerCase().includes(q) || item.category.toLowerCase().includes(q);
+    })
+  })).filter((grp) => grp.items.length > 0);
+
   return (
-    <div className="flex flex-col gap-4 w-full max-w-7xl mx-auto text-slate-900 h-[calc(100vh-5.5rem)] pb-4 font-sans">
-      {/* Top Copilot Ribbon */}
+    <div className="flex flex-col gap-3.5 w-full max-w-7xl mx-auto text-slate-900 h-[calc(100vh-5.5rem)] pb-3 font-sans">
+      {/* Top Copilot Header Ribbon */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 rounded-2xl bg-white border border-slate-200 shadow-sm shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#9E153E] to-[#BE123C] text-white flex items-center justify-center font-bold shadow-xs">
+          <div className="w-9 h-9 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#168567]/20 flex items-center justify-center font-bold shadow-xs">
             <Bot size={18} />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-bold text-slate-900 tracking-tight">NextCampus AI Copilot</span>
-              <Badge variant="success" size="sm">
+              <span className="px-2 py-0.5 rounded-full bg-[#EAF5EF] text-[#168567] border border-[#168567]/20 font-mono text-[10px] font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#168567] animate-pulse"></span>
                 Mesh Live
-              </Badge>
+              </span>
             </div>
             <span className="text-[11px] text-slate-500 font-mono">
-              Mewar University • 24/7 Spatial &amp; Facility Assistant
+              Mewar University • 24/7 Spatial Navigation &amp; Facility Assistant
             </span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Mobile History Toggle */}
+          <button
+            type="button"
+            onClick={() => setShowMobileHistory(!showMobileHistory)}
+            className="lg:hidden p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 cursor-pointer"
+            title="Toggle dialogue history"
+          >
+            {showMobileHistory ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
+          </button>
+
           <Button
             variant="secondary"
             size="sm"
             icon={Plus}
             onClick={handleStartNewChat}
           >
-            New Chat
+            New Dialogue
           </Button>
         </div>
       </div>
 
       {/* Main Integrated Workspace */}
-      <div className="flex flex-1 min-h-0 gap-4 overflow-hidden">
-        {/* Left History Rail */}
-        <aside className="hidden lg:flex flex-col w-72 rounded-2xl bg-white border border-slate-200 p-3.5 overflow-hidden shadow-sm shrink-0 justify-between">
+      <div className="flex flex-1 min-h-0 gap-3.5 overflow-hidden relative">
+        {/* Left History Rail (Desktop fixed, Mobile overlay drawer) */}
+        <aside
+          className={`${
+            showMobileHistory ? 'flex absolute inset-0 z-40 bg-white' : 'hidden lg:flex'
+          } flex-col w-72 rounded-2xl bg-white border border-slate-200 p-3.5 overflow-hidden shadow-sm shrink-0 justify-between`}
+        >
           <div className="flex flex-col gap-3 overflow-hidden">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-900 uppercase tracking-wider font-mono">
+                Dialogue History
+              </span>
+              {showMobileHistory && (
+                <button
+                  onClick={() => setShowMobileHistory(false)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 cursor-pointer"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
             <Button
               variant="primary"
               size="sm"
@@ -329,12 +406,12 @@ export function AiAssistant() {
                 value={searchHistoryQuery}
                 onChange={(e) => setSearchHistoryQuery(e.target.value)}
                 placeholder="Search dialogue history..."
-                className="w-full h-8 pl-8 pr-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#9E153E] focus:ring-1 focus:ring-rose-100"
+                className="w-full h-8 pl-8 pr-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#168567] focus:ring-1 focus:ring-[#168567]/10"
               />
             </div>
 
             <div className="flex-1 overflow-y-auto flex flex-col gap-3 pr-1">
-              {DEFAULT_HISTORY_GROUPS.map((grp, gIdx) => (
+              {filteredHistoryGroups.map((grp, gIdx) => (
                 <div key={gIdx} className="flex flex-col gap-1">
                   <span className="text-[10px] font-mono text-slate-400 uppercase font-bold px-2">
                     {grp.groupTitle}
@@ -344,14 +421,17 @@ export function AiAssistant() {
                     return (
                       <button
                         key={item.id}
-                        onClick={() => setActiveSessionId(item.id)}
+                        onClick={() => {
+                          setActiveSessionId(item.id);
+                          setShowMobileHistory(false);
+                        }}
                         className={`w-full text-left p-2.5 rounded-xl text-xs transition-all flex items-start gap-2 border cursor-pointer ${
                           isSelected
-                            ? 'bg-rose-50 border-rose-300 text-[#9E153E] font-semibold'
+                            ? 'bg-[#EAF5EF] border-[#168567]/30 text-[#168567] font-semibold'
                             : 'bg-slate-50/60 border-slate-200/80 text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                         }`}
                       >
-                        <MessageSquare className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isSelected ? 'text-[#9E153E]' : 'text-slate-400'}`} />
+                        <MessageSquare className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isSelected ? 'text-[#168567]' : 'text-slate-400'}`} />
                         <div className="min-w-0 flex-1">
                           <p className="truncate leading-snug">{item.title}</p>
                           <span className="text-[10px] font-mono text-slate-400">{item.category}</span>
@@ -365,7 +445,7 @@ export function AiAssistant() {
           </div>
 
           <div className="pt-3 border-t border-slate-100 text-[11px] font-mono text-slate-500 flex items-center justify-between">
-            <span>Model: Mewar-Copilot 4.4</span>
+            <span>Mewar Copilot v4.5</span>
             <span className="text-emerald-700 font-semibold">Online</span>
           </div>
         </aside>
@@ -374,9 +454,9 @@ export function AiAssistant() {
         <main className="flex-1 flex flex-col min-w-0 rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
           {/* Scroll Area */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-5 flex flex-col gap-4">
-            <div className="flex items-center justify-center my-1">
+            <div className="flex items-center justify-center my-0.5">
               <span className="px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-slate-500 text-xs font-medium">
-                Mewar University AI Assistant • Connected to Live IoT &amp; CAD Mesh
+                NextCampus AI Assistant • Connected to Live IoT &amp; CAD Mesh
               </span>
             </div>
 
@@ -385,7 +465,7 @@ export function AiAssistant() {
                 {msg.sender === 'user' ? (
                   <div className="flex justify-end items-start gap-2 max-w-2xl ml-auto">
                     <div className="flex flex-col items-end">
-                      <div className="p-3.5 px-4.5 rounded-2xl rounded-tr-sm bg-[#9E153E] text-white text-xs sm:text-sm font-medium shadow-xs leading-relaxed">
+                      <div className="p-3.5 px-4.5 rounded-2xl rounded-tr-sm bg-slate-900 text-white text-xs sm:text-sm font-medium shadow-xs leading-relaxed">
                         {msg.text}
                       </div>
                       <span className="text-[10px] font-mono text-slate-400 mt-1">{msg.time}</span>
@@ -393,7 +473,7 @@ export function AiAssistant() {
                   </div>
                 ) : (
                   <div className="flex justify-start items-start gap-3 max-w-3xl mr-auto">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#9E153E] to-[#BE123C] text-white flex items-center justify-center font-bold shadow-xs shrink-0 mt-0.5">
+                    <div className="w-8 h-8 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#168567]/20 flex items-center justify-center font-bold shadow-xs shrink-0 mt-0.5">
                       <Bot size={16} />
                     </div>
 
@@ -401,10 +481,10 @@ export function AiAssistant() {
                       <div className="p-4 rounded-2xl rounded-tl-sm bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-800 leading-relaxed shadow-xs">
                         <p className="whitespace-pre-line leading-relaxed">{msg.text}</p>
 
-                        {/* Thought Reasoning Chain */}
+                        {/* Thought Reasoning Trace */}
                         {msg.thought && msg.thought.length > 0 && (
                           <div className="mt-3 pt-3 border-t border-slate-200 flex flex-col gap-1 font-mono text-[11px] text-slate-600 bg-white p-2.5 rounded-xl border border-slate-200">
-                            <span className="text-[#9E153E] font-bold uppercase tracking-wider text-[10px]">
+                            <span className="text-[#168567] font-bold uppercase tracking-wider text-[10px]">
                               Telemetry &amp; Spatial Reasoning Ingest:
                             </span>
                             {msg.thought.map((t, idx) => (
@@ -425,27 +505,27 @@ export function AiAssistant() {
                               <div>
                                 <div className="flex items-center justify-between mb-1.5">
                                   <span className="text-xs font-bold text-slate-900 leading-tight">{card.title}</span>
-                                  <Badge variant="brand" size="sm">
+                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#EAF5EF] text-[#168567] border border-[#168567]/20">
                                     {card.tag}
-                                  </Badge>
+                                  </span>
                                 </div>
 
                                 {card.type === 'route' ? (
                                   <div className="flex flex-col gap-1 text-xs text-slate-600">
                                     <span>From: <strong className="text-slate-800">{card.from}</strong></span>
-                                    <span>To: <strong className="text-[#9E153E]">{card.to}</strong></span>
+                                    <span>To: <strong className="text-[#168567]">{card.to}</strong></span>
                                     <span className="text-[11px] font-mono text-emerald-700 font-semibold mt-1">{card.metric}</span>
                                   </div>
                                 ) : card.type === 'room_telemetry' ? (
                                   <div className="flex flex-col gap-1 text-xs text-slate-600">
                                     <span>Live Occupancy: <strong className="text-slate-900">{card.occupancy}</strong></span>
                                     <span>Climate: <strong className="text-sky-700">{card.temp}</strong> • {card.co2}</span>
-                                    <span className="text-[11px] text-[#9E153E] font-mono font-semibold mt-1">Next: {card.nextClass}</span>
+                                    <span className="text-[11px] text-[#168567] font-mono font-semibold mt-1">Next: {card.nextClass}</span>
                                   </div>
                                 ) : card.type === 'care_ticket' ? (
                                   <div className="flex flex-col gap-1 text-xs text-slate-600">
                                     <span>Building: <strong className="text-slate-900">{card.building}</strong></span>
-                                    <span>Category: <strong className="text-[#9E153E]">{card.category}</strong></span>
+                                    <span>Category: <strong className="text-[#168567]">{card.category}</strong></span>
                                     <span className="text-[11px] text-slate-500">{card.priority}</span>
                                   </div>
                                 ) : (
@@ -473,15 +553,35 @@ export function AiAssistant() {
               </div>
             ))}
 
+            {/* Loading Indicator */}
             {isLoading && (
               <div className="flex items-center gap-3 max-w-lg mr-auto">
-                <div className="w-8 h-8 rounded-xl bg-rose-50 text-[#9E153E] border border-rose-200 flex items-center justify-center animate-pulse">
+                <div className="w-8 h-8 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#168567]/20 flex items-center justify-center animate-pulse">
                   <Bot size={16} />
                 </div>
                 <div className="p-3 px-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#E11D48] animate-ping"></span>
+                  <span className="w-2 h-2 rounded-full bg-[#168567] animate-ping"></span>
                   <span>Synthesizing spatial graph &amp; live room telemetries...</span>
                 </div>
+              </div>
+            )}
+
+            {/* Error / Retry Banner */}
+            {errorMessage && (
+              <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <AlertCircle size={15} className="text-rose-600 shrink-0" />
+                  <span>{errorMessage}</span>
+                </div>
+                {lastFailedPrompt && (
+                  <button
+                    onClick={handleRetry}
+                    className="flex items-center gap-1 font-bold text-rose-700 hover:text-rose-900 underline cursor-pointer"
+                  >
+                    <RotateCcw size={13} />
+                    <span>Retry</span>
+                  </button>
+                )}
               </div>
             )}
 
@@ -490,10 +590,10 @@ export function AiAssistant() {
 
           {/* Voice Visualizer Banner */}
           {isVoiceActive && (
-            <div className="p-3 bg-rose-50/80 border-t border-rose-200 flex items-center justify-between px-4 animate-in fade-in duration-200">
+            <div className="p-3 bg-[#EAF5EF] border-t border-[#168567]/20 flex items-center justify-between px-4 animate-in fade-in duration-200">
               <div className="flex items-center gap-3">
-                <span className="w-3 h-3 rounded-full bg-[#E11D48] animate-ping"></span>
-                <span className="text-xs font-mono font-bold text-[#9E153E]">
+                <span className="w-3 h-3 rounded-full bg-[#168567] animate-ping"></span>
+                <span className="text-xs font-mono font-bold text-[#168567]">
                   Listening for voice query... Speak now ("How do I reach the library?")
                 </span>
               </div>
@@ -501,7 +601,7 @@ export function AiAssistant() {
                 {[12, 24, 16, 28, 20, 32, 14, 22].map((h, i) => (
                   <div
                     key={i}
-                    className="w-1 bg-[#9E153E] rounded-full animate-pulse"
+                    className="w-1 bg-[#168567] rounded-full animate-pulse"
                     style={{ height: `${h}px`, animationDelay: `${i * 0.1}s` }}
                   ></div>
                 ))}
@@ -509,14 +609,15 @@ export function AiAssistant() {
             </div>
           )}
 
-          {/* Quick Prompt Chips */}
+          {/* Suggested Context-Aware Prompt Chips */}
           <div className="p-2.5 px-4 bg-slate-50/80 border-t border-slate-100 flex items-center gap-2 overflow-x-auto scrollbar-none">
             <span className="text-[11px] font-mono uppercase text-slate-400 font-bold shrink-0">Try Asking:</span>
             {[
               'Are there quiet study pods free in Central Library?',
               'How to reach Room B-204 from Main Campus Gate?',
               'Report projector glitch in B-204',
-              'When are Prof. Roy office hours?'
+              'When are Prof. Roy office hours?',
+              'What is the EV shuttle schedule today?'
             ].map((chip, i) => (
               <button
                 key={i}
@@ -535,13 +636,15 @@ export function AiAssistant() {
                 e.preventDefault();
                 handleSendMessage();
               }}
-              className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl p-1.5 focus-within:bg-white focus-within:border-[#9E153E] focus-within:ring-2 focus-within:ring-rose-100 transition-all"
+              className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl p-1.5 focus-within:bg-white focus-within:border-[#168567] focus-within:ring-2 focus-within:ring-[#168567]/10 transition-all"
             >
               <button
                 type="button"
                 onClick={handleToggleVoice}
                 className={`p-2 rounded-lg transition-colors cursor-pointer ${
-                  isVoiceActive ? 'bg-rose-100 text-[#9E153E] animate-pulse' : 'text-slate-400 hover:text-slate-800 hover:bg-slate-100'
+                  isVoiceActive
+                    ? 'bg-[#EAF5EF] text-[#168567] animate-pulse'
+                    : 'text-slate-400 hover:text-slate-800 hover:bg-slate-100'
                 }`}
                 title="Simulate Voice Input"
               >
@@ -549,6 +652,7 @@ export function AiAssistant() {
               </button>
 
               <input
+                ref={inputRef}
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
