@@ -35,8 +35,11 @@ import {
   Zap,
   Lock,
   Unlock,
-  CornerUpRight
+  CornerUpRight,
+  Cpu,
+  RefreshCw,
 } from 'lucide-react';
+import api from '../services/api';
 
 // ============================================================================
 // DATA: Comprehensive Campus Rooms & Architectural CAD Metadata
@@ -46,7 +49,7 @@ const INITIAL_ROOMS = [
   {
     id: 'B-204',
     roomNumber: 'B-204',
-    name: 'Multi-Media Lecture Theatre',
+    name: 'Multi-Media Lecture Theatre & AI Hub',
     type: 'Lecture Theatres',
     building: 'Faculty of Engineering & Technology (Block ENG-02)',
     buildingCode: 'ENG-02',
@@ -62,7 +65,7 @@ const INITIAL_ROOMS = [
     tempTarget: 22.0,
     humidity: 44,
     noiseDb: 34,
-    noiseStatus: 'Whisper Quiet',
+    noiseStatus: 'Whisper Quiet (<35dB)',
     wifiSpeed: '820 Mbps',
     wifiLatency: '3 ms',
     wifiDevices: 18,
@@ -71,7 +74,7 @@ const INITIAL_ROOMS = [
       'Motorized Lectern (USB-C Thunderbolt 4)',
       'Wi-Fi 7 Enterprise Core AP',
       'ADA Front Row & Hearing Loop',
-      'HVAC HEPA Air Purification'
+      'HVAC HEPA Air Purification',
     ],
     image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80',
     has4kLaser: true,
@@ -82,8 +85,8 @@ const INITIAL_ROOMS = [
     routeSteps: [
       { step: '1. Cross Level 2 Skybridge', desc: 'Enter Alan Turing Hall through automatic glass sliding doors (0m)' },
       { step: '2. Continue down North Main Corridor', desc: 'Walk straight past Restrooms and West Lifts (25m)' },
-      { step: '3. Turn Left at Student Lounge', desc: 'Follow the illuminated green guidance signs (15m)' },
-      { step: '4. Arrive at Room B-204', desc: 'On your right side. Double acoustic doors with NFC smart lock (8m)' }
+      { step: '3. Turn Left at Student Lounge', desc: 'Follow illuminated directional wayfinding (15m)' },
+      { step: '4. Arrive at Room B-204', desc: 'On your right side. Double acoustic doors with NFC smart lock (8m)' },
     ],
     routeDistance: '48 meters (1.2 min walk)',
     slots: [
@@ -93,7 +96,7 @@ const INITIAL_ROOMS = [
       { id: 'b204-4', start: '13:00', end: '14:30', title: 'CS-301 Operating Systems', lecturer: 'Dr. Verma', status: 'reserved', isBookable: false },
       { id: 'b204-5', start: '14:30', end: '16:30', title: 'Open Team Project Study Slot', lecturer: 'Open Access', status: 'available', isBookable: true },
       { id: 'b204-6', start: '16:30', end: '18:30', title: 'Evening Capstone Lab Access', lecturer: 'Open Access', status: 'available', isBookable: true },
-    ]
+    ],
   },
   {
     id: 'B-203',
@@ -123,7 +126,7 @@ const INITIAL_ROOMS = [
       '10GbE SFP+ Fiber Network Drop',
       'Dual 4K OLED Color-Accurate Monitors',
       'ADA Workstation #1 (Motorized Height)',
-      'Touchless NFC Access Controller'
+      'Touchless NFC Access Controller',
     ],
     image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80',
     has4kLaser: false,
@@ -134,7 +137,7 @@ const INITIAL_ROOMS = [
     routeSteps: [
       { step: '1. Enter Level 2 Corridor', desc: 'Exit West Lift Bank and head west (0m)' },
       { step: '2. Head West down Main Hallway', desc: 'Pass Amphitheatre entrance on left (30m)' },
-      { step: '3. Arrive at Room B-203', desc: 'Door on the left side with dual NFC biometric terminal (10m)' }
+      { step: '3. Arrive at Room B-203', desc: 'Door on the left side with dual NFC biometric terminal (10m)' },
     ],
     routeDistance: '40 meters (1.0 min walk)',
     slots: [
@@ -143,7 +146,7 @@ const INITIAL_ROOMS = [
       { id: 'b203-3', start: '13:30', end: '15:00', title: 'Autonomous Systems Sim', lecturer: 'Prof. Mehta', status: 'reserved', isBookable: false },
       { id: 'b203-4', start: '15:00', end: '17:00', title: 'Distributed Systems Practical', lecturer: 'Dr. Sengupta', status: 'reserved', isBookable: false },
       { id: 'b203-5', start: '17:00', end: '19:00', title: 'Evening Open AI Hackathon Desks', lecturer: 'Student Club', status: 'available', isBookable: true },
-    ]
+    ],
   },
   {
     id: 'B-201',
@@ -172,7 +175,7 @@ const INITIAL_ROOMS = [
       'Tiered Acoustic Auditoria Seating',
       'Dual 4K Christie Laser Projectors',
       'Array Ceiling Mics & Live Webcast Hub',
-      'ADA Hearing Assist Loop + Ramp Entry'
+      'ADA Hearing Assist Loop + Ramp Entry',
     ],
     image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80',
     has4kLaser: true,
@@ -182,7 +185,7 @@ const INITIAL_ROOMS = [
     cadBox: { x: 70, y: 120, w: 160, h: 160, door: { x: 150, y: 280 } },
     routeSteps: [
       { step: '1. Exit West Lifts', desc: 'Turn left into Central Concourse (5m)' },
-      { step: '2. Arrive at Amphitheatre B-201', desc: 'Main acoustic double doors on south wall (15m)' }
+      { step: '2. Arrive at Amphitheatre B-201', desc: 'Main acoustic double doors on south wall (15m)' },
     ],
     routeDistance: '20 meters (0.5 min walk)',
     slots: [
@@ -190,7 +193,7 @@ const INITIAL_ROOMS = [
       { id: 'b201-2', start: '10:30', end: '13:00', title: 'Algorithms (CS-204)', lecturer: 'Prof. R. Sen', status: 'occupied', isBookable: false },
       { id: 'b201-3', start: '13:00', end: '15:00', title: 'Tech Speaker Series Keynote', lecturer: 'Guest Faculty', status: 'reserved', isBookable: false },
       { id: 'b201-4', start: '15:00', end: '17:00', title: 'Open Revision & Problem Solving', lecturer: 'TA Session', status: 'available', isBookable: true },
-    ]
+    ],
   },
   {
     id: 'B-202',
@@ -218,7 +221,7 @@ const INITIAL_ROOMS = [
     features: [
       'Interactive Smart Touchboard 85"',
       'Conference AI Auto-Framing Camera',
-      'Modular Acoustic Glass Collaboration Pods'
+      'Modular Acoustic Glass Collaboration Pods',
     ],
     image: 'https://images.unsplash.com/photo-1577412647305-991150c7d163?auto=format&fit=crop&w=800&q=80',
     has4kLaser: false,
@@ -228,14 +231,14 @@ const INITIAL_ROOMS = [
     cadBox: { x: 730, y: 120, w: 160, h: 160, door: { x: 810, y: 280 } },
     routeSteps: [
       { step: '1. Exit East Lifts', desc: 'Turn right into East Corridor (5m)' },
-      { step: '2. Arrive at B-202', desc: 'Glass entry door on right (12m)' }
+      { step: '2. Arrive at B-202', desc: 'Glass entry door on right (12m)' },
     ],
     routeDistance: '17 meters (0.4 min walk)',
     slots: [
       { id: 'b202-1', start: '09:00', end: '11:00', title: 'Department Curriculum Review', lecturer: 'HOD CSE', status: 'past', isBookable: false },
       { id: 'b202-2', start: '11:00', end: '13:30', title: 'Open Faculty Desk Time', lecturer: 'Faculty Only', status: 'available', isBookable: true },
       { id: 'b202-3', start: '14:00', end: '16:00', title: 'Faculty Council Session', lecturer: 'Dean Academic', status: 'reserved', isBookable: false },
-    ]
+    ],
   },
   {
     id: 'B-205',
@@ -264,7 +267,7 @@ const INITIAL_ROOMS = [
       'NVIDIA Jetson AI Prototyping Benches',
       'Indoor Drone Flight Netting Enclosure',
       'ESD Soldering & 3D Print Farm',
-      'ADA Ergonomic Height Workstation'
+      'ADA Ergonomic Height Workstation',
     ],
     image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80',
     has4kLaser: false,
@@ -274,14 +277,14 @@ const INITIAL_ROOMS = [
     cadBox: { x: 540, y: 340, w: 180, h: 160, door: { x: 630, y: 340 } },
     routeSteps: [
       { step: '1. Main Concourse', desc: 'Walk past Student Lounge east (20m)' },
-      { step: '2. Arrive at B-205', desc: 'Entry on south side with RFID lock (10m)' }
+      { step: '2. Arrive at B-205', desc: 'Entry on south side with RFID lock (10m)' },
     ],
     routeDistance: '30 meters (0.8 min walk)',
     slots: [
       { id: 'b205-1', start: '09:00', end: '12:00', title: 'Robotics Sensors Lab', lecturer: 'Dr. Chauhan', status: 'past', isBookable: false },
       { id: 'b205-2', start: '12:00', end: '16:00', title: 'Autonomous Drones Flight Test', lecturer: 'Robotics Guild', status: 'occupied', isBookable: false },
       { id: 'b205-3', start: '16:00', end: '19:00', title: 'Open Maker Bench Access', lecturer: 'Open Lab', status: 'available', isBookable: true },
-    ]
+    ],
   },
   {
     id: 'B-206',
@@ -310,7 +313,7 @@ const INITIAL_ROOMS = [
       '16x Frameless ANC Acoustic Glass Pods',
       'Dual 100W USB-C PD Superchargers',
       'Adjustable Circadian Lighting Strip',
-      'Touchless QR / NFC Pass Unlock'
+      'Touchless QR / NFC Pass Unlock',
     ],
     image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
     has4kLaser: false,
@@ -320,7 +323,7 @@ const INITIAL_ROOMS = [
     cadBox: { x: 740, y: 340, w: 150, h: 160, door: { x: 815, y: 340 } },
     routeSteps: [
       { step: '1. East Corridor', desc: 'Walk straight past East Lifts (25m)' },
-      { step: '2. Arrive at B-206 Pods', desc: 'Acoustic glass bay on south end (15m)' }
+      { step: '2. Arrive at B-206 Pods', desc: 'Acoustic glass bay on south end (15m)' },
     ],
     routeDistance: '40 meters (1.0 min walk)',
     slots: [
@@ -330,7 +333,7 @@ const INITIAL_ROOMS = [
       { id: 'b206-4', start: '14:00', end: '16:00', title: 'Open Pod Slot B', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
       { id: 'b206-5', start: '16:00', end: '18:00', title: 'Open Pod Slot C', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
       { id: 'b206-6', start: '18:00', end: '20:00', title: 'Night Focus Slot', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
-    ]
+    ],
   },
 
   // --- Block LIB-03 (Swami Vivekananda Central Library) - Level 2 ---
@@ -348,12 +351,12 @@ const INITIAL_ROOMS = [
     statusText: '26 Desks Open Now',
     nextClass: 'Open Study All Day',
     co2: 385,
-    co2Status: 'Pristine Forest Air',
+    co2Status: 'Pristine Clean Air',
     temp: 21.0,
     tempTarget: 21.0,
     humidity: 42,
     noiseDb: 26,
-    noiseStatus: 'Strict Silent Zone',
+    noiseStatus: 'Strict Silent Zone (<28dB)',
     wifiSpeed: '900 Mbps',
     wifiLatency: '3 ms',
     wifiDevices: 14,
@@ -361,7 +364,7 @@ const INITIAL_ROOMS = [
       'Single Carrels with Acoustic Felt Partitions',
       'Individual Reading Task LED (4000K)',
       '100W USB-C & Universal AC Sockets',
-      'ADA Compliant Wide Aisles'
+      'ADA Compliant Wide Aisles',
     ],
     image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80',
     has4kLaser: false,
@@ -372,14 +375,14 @@ const INITIAL_ROOMS = [
     routeSteps: [
       { step: '1. Enter Library Central Atrium', desc: 'Pass RFID security turnstiles (10m)' },
       { step: '2. Take Central Glass Elevator to Level 2', desc: 'Exit onto Quiet Floor landing (15m)' },
-      { step: '3. Turn North to Focus Bay', desc: 'Acoustic glass automatic doors on left (20m)' }
+      { step: '3. Turn North to Focus Bay', desc: 'Acoustic glass automatic doors on left (20m)' },
     ],
     routeDistance: '45 meters (1.1 min walk)',
     slots: [
       { id: 'lib201-1', start: '08:00', end: '12:00', title: 'Morning Focus Period', lecturer: 'Open Study', status: 'available', isBookable: true },
       { id: 'lib201-2', start: '12:00', end: '16:00', title: 'Afternoon Silent Session', lecturer: 'Open Study', status: 'available', isBookable: true },
       { id: 'lib201-3', start: '16:00', end: '20:00', title: 'Evening Research Hours', lecturer: 'Open Study', status: 'available', isBookable: true },
-    ]
+    ],
   },
   {
     id: 'LIB-202',
@@ -408,7 +411,7 @@ const INITIAL_ROOMS = [
       'Double Glazed ANC Soundproof Pod Glass',
       'Air Ventilation HEPA System (6 ACH)',
       'Digital "In-Use" Status Beacon',
-      'Mobile App Bluetooth / NFC Pass Reader'
+      'Mobile App Bluetooth / NFC Pass Reader',
     ],
     image: 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80',
     has4kLaser: false,
@@ -418,7 +421,7 @@ const INITIAL_ROOMS = [
     cadBox: { x: 520, y: 150, w: 260, h: 260, door: { x: 650, y: 410 } },
     routeSteps: [
       { step: '1. Level 2 Library Landing', desc: 'Proceed straight past Information Desk (10m)' },
-      { step: '2. Turn Right to West Wing Pod Row', desc: 'Glass pods numbered 1 through 8 (18m)' }
+      { step: '2. Turn Right to West Wing Pod Row', desc: 'Glass pods numbered 1 through 8 (18m)' },
     ],
     routeDistance: '28 meters (0.7 min walk)',
     slots: [
@@ -426,8 +429,8 @@ const INITIAL_ROOMS = [
       { id: 'lib202-2', start: '11:00', end: '13:00', title: 'Available Pod #4', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
       { id: 'lib202-3', start: '13:00', end: '15:00', title: 'Available Pod #7', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
       { id: 'lib202-4', start: '15:00', end: '17:00', title: 'Available Pod #1', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
-    ]
-  }
+    ],
+  },
 ];
 
 // Buildings directory
@@ -452,9 +455,8 @@ export function SmartRooms() {
     laser4k: false,
     gpuCluster: false,
     interactiveBoard: false,
-    ada: false
+    ada: false,
   });
-  const [startNode, setStartNode] = useState('Level 2 Skybridge Arrival (from Library)');
 
   // CAD Viewer Interactive Pan & Zoom
   const [cadZoom, setCadZoom] = useState(1);
@@ -485,9 +487,35 @@ export function SmartRooms() {
       date: 'Today',
       studentRoll: 'MU/CSE/2024/0482',
       purpose: 'Deep Focus Coding',
-      status: 'Active Pass'
-    }
+      status: 'Active Pass',
+    },
   ]);
+
+  // Attempt to sync room status with backend if available
+  useEffect(() => {
+    api.get('/smartrooms/rooms')
+      .then((res) => {
+        if (res && res.data && Array.isArray(res.data) && res.data.length > 0) {
+          // Keep existing rich CAD metadata while updating any matching room occupancy/status from DB
+          setRooms((prev) =>
+            prev.map((r) => {
+              const matched = res.data.find(
+                (dbR) => dbR.roomNumber === r.roomNumber || dbR.name === r.name
+              );
+              if (!matched) return r;
+              return {
+                ...r,
+                currentOccupancy: typeof matched.currentOccupancy === 'number' ? matched.currentOccupancy : r.currentOccupancy,
+                status: matched.status || r.status,
+              };
+            })
+          );
+        }
+      })
+      .catch(() => {
+        // Fallback gracefully to verified in-memory dataset
+      });
+  }, []);
 
   // Selected Room Object
   const selectedRoom = useMemo(() => {
@@ -520,6 +548,25 @@ export function SmartRooms() {
     });
   }, [buildingFilteredRooms, selectedFloor, selectedType, searchQuery, activeFilters]);
 
+  // Summary Metrics
+  const summaryMetrics = useMemo(() => {
+    const totalDesks = rooms.reduce((acc, r) => acc + (r.capacity || 0), 0);
+    const occupiedDesks = rooms.reduce((acc, r) => acc + (r.currentOccupancy || 0), 0);
+    const availableDesks = Math.max(0, totalDesks - occupiedDesks);
+    const activeRooms = rooms.filter((r) => r.status === 'occupied').length;
+    const avgCo2 = Math.round(rooms.reduce((acc, r) => acc + (r.co2 || 400), 0) / Math.max(1, rooms.length));
+    const occupancyPercent = totalDesks > 0 ? Math.round((occupiedDesks / totalDesks) * 100) : 0;
+
+    return {
+      totalRooms: rooms.length,
+      totalDesks,
+      availableDesks,
+      activeRooms,
+      avgCo2,
+      occupancyPercent,
+    };
+  }, [rooms]);
+
   // Handle building change
   const handleBuildingChange = (bldgName) => {
     setSelectedBuilding(bldgName);
@@ -537,7 +584,7 @@ export function SmartRooms() {
   // Open booking modal for a specific slot
   const handleOpenBooking = (slot) => {
     if (slot.status === 'occupied') {
-      setBookingConflictMsg(`Slot Conflict: "${slot.title}" is in session. Cannot reserve occupied academic hours.`);
+      setBookingConflictMsg(`Slot Conflict: "${slot.title}" is currently in session. Cannot reserve occupied academic hours.`);
     } else if (slot.status === 'past') {
       setBookingConflictMsg(`Time Expired: This slot was earlier today and is no longer bookable.`);
     } else {
@@ -564,7 +611,7 @@ export function SmartRooms() {
       studentRoll,
       studentName,
       purpose: bookingPurpose,
-      status: 'Active Pass'
+      status: 'Active Pass',
     };
 
     // Update room slot status in state
@@ -578,7 +625,7 @@ export function SmartRooms() {
             s.id === slotToBook.id
               ? { ...s, status: 'reserved', title: `Reserved: ${bookingPurpose}`, isBookable: false }
               : s
-          )
+          ),
         };
       })
     );
@@ -602,78 +649,74 @@ export function SmartRooms() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16 text-slate-800">
+    <div style={{ backgroundColor: 'var(--bg-canvas)', minHeight: '100%' }} className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* =========================================================================
-          TOP SPATIAL RIBBON & BREADCRUMB STRIP
+          TOP INSTITUTIONAL HEADER & COMPACT METRICS HIERARCHY
           ========================================================================= */}
-      <div className="flex flex-col gap-4 pb-6 border-b border-slate-200/80">
+      <div className="flex flex-col gap-4 pb-6 border-b border-[#E4EAE5]">
+        {/* Breadcrumb & Live Mesh Status */}
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-slate-500">
-            <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 font-semibold flex items-center gap-1.5 shadow-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <div className="flex items-center gap-2 text-xs font-mono text-[var(--text-secondary)]">
+            <span className="px-2.5 py-1 rounded-full bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold flex items-center gap-1.5 shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] animate-pulse"></span>
               IoT Mesh Live
             </span>
-            <span className="hidden sm:inline text-slate-400">• Mewar University Gangrar</span>
-            <span className="text-slate-300">/</span>
-            <span className="text-slate-700 font-semibold">{selectedRoom.buildingCode}</span>
-            <span className="text-slate-300">/</span>
-            <span className="text-[#9E153E] font-semibold">{selectedFloor} Architectural CAD</span>
+            <span className="hidden sm:inline text-[var(--text-muted)]">• Mewar University Gangrar</span>
+            <span className="text-[var(--border-subtle)]">/</span>
+            <span className="text-[var(--text-primary)] font-semibold">{selectedRoom.buildingCode}</span>
+            <span className="text-[var(--border-subtle)]">/</span>
+            <span className="text-[var(--brand-primary)] font-semibold">{selectedFloor} Architectural CAD</span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsMyPassesOpen(true)}
-              className="relative px-3.5 py-1.5 rounded-xl bg-white border border-slate-200/90 hover:border-[#9E153E] hover:text-[#9E153E] text-xs font-semibold text-slate-700 flex items-center gap-2 transition-all shadow-xs"
+              className="px-3.5 py-1.5 rounded-xl bg-white border border-[#E4EAE5] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)] text-xs font-semibold text-[var(--text-primary)] flex items-center gap-2 transition-all shadow-xs cursor-pointer"
             >
-              <QrCode className="w-3.5 h-3.5 text-[#9E153E]" />
+              <QrCode className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
               <span>My Active Passes</span>
               {savedPasses.length > 0 && (
-                <span className="px-1.5 py-0.5 rounded-full bg-rose-50 text-[#9E153E] text-[10px] font-bold border border-rose-200">
+                <span className="px-1.5 py-0.5 rounded-full bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] text-[10px] font-bold border border-[var(--brand-soft-border)]">
                   {savedPasses.length}
                 </span>
               )}
             </button>
-
-            <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100/90 border border-slate-200/80 text-slate-500 text-xs font-medium">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-              Telemetry: 100Hz
-            </span>
           </div>
         </div>
 
-        {/* Headline & Quick Stats */}
+        {/* Page Title & Compact Summary Hierarchy */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-heading">
                 SmartRooms &amp; Space Intelligence
               </h1>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 font-mono font-medium">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-white text-[var(--text-secondary)] border border-[#E4EAE5] font-mono font-medium">
                 CAD BIM v2.4
               </span>
             </div>
-            <p className="text-sm text-slate-500 max-w-2xl mt-1">
-              Real-time room occupancy, environmental sensor dials, clash-free slot booking, and verified NFC digital passes across Mewar academic wings.
+            <p className="text-sm text-[var(--text-secondary)] max-w-2xl mt-1">
+              Real-time room occupancy, indoor CAD floor plans, verified environmental telemetry, and clash-free slot bookings across campus.
             </p>
           </div>
 
-          {/* Quick Metrics Bar */}
+          {/* Compact Verified Metrics Grid */}
           <div className="flex flex-wrap items-center gap-2.5">
-            <div className="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 shadow-xs flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Total Desks</span>
-              <span className="text-lg font-bold text-slate-900">184</span>
+            <div className="px-3.5 py-2 rounded-xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col min-w-[95px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">Monitored</span>
+              <span className="text-lg font-bold text-[var(--text-primary)] font-heading">{summaryMetrics.totalRooms} Spaces</span>
             </div>
-            <div className="px-3.5 py-2 rounded-xl bg-emerald-50/70 border border-emerald-200/80 shadow-xs flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700">Available</span>
-              <span className="text-lg font-bold text-emerald-700">92 Desks</span>
+            <div className="px-3.5 py-2 rounded-xl bg-[var(--brand-soft-bg)] border border-[var(--brand-soft-border)] shadow-xs flex flex-col min-w-[95px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--brand-primary)] font-bold">Available Desks</span>
+              <span className="text-lg font-bold text-[var(--brand-primary)] font-heading">{summaryMetrics.availableDesks} Free</span>
             </div>
-            <div className="px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 shadow-xs flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Air CO₂ Avg</span>
-              <span className="text-lg font-bold text-slate-800">408 ppm</span>
+            <div className="px-3.5 py-2 rounded-xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col min-w-[95px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">Occupancy</span>
+              <span className="text-lg font-bold text-[var(--text-primary)] font-heading">{summaryMetrics.occupancyPercent}% Active</span>
             </div>
-            <div className="px-3.5 py-2 rounded-xl bg-amber-50/70 border border-amber-200/80 shadow-xs flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-700">In Session</span>
-              <span className="text-lg font-bold text-amber-700">4 Rooms</span>
+            <div className="px-3.5 py-2 rounded-xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col min-w-[95px]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">Avg CO₂</span>
+              <span className="text-lg font-bold text-[var(--text-primary)] font-heading">{summaryMetrics.avgCo2} ppm</span>
             </div>
           </div>
         </div>
@@ -682,23 +725,23 @@ export function SmartRooms() {
       {/* =========================================================================
           FACILITY SEARCH & CONTROL BAR
           ========================================================================= */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col gap-4">
+      <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col gap-4">
         {/* Row 1: Search & Building Picker */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
           <div className="md:col-span-7 lg:col-span-8 relative flex items-center">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
+            <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3.5 pointer-events-none" />
             <input
               id="roomSearchInput"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search room code (e.g. B-204, B-206), hardware (RTX 4090, 4K Laser), or features..."
-              className="w-full h-11 pl-10 pr-12 rounded-xl bg-slate-50 hover:bg-slate-50/80 focus:bg-white text-slate-900 placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E] border border-slate-200/90 transition-all"
+              className="w-full h-11 pl-10 pr-12 rounded-xl bg-[var(--bg-canvas)] hover:bg-white focus:bg-white text-[var(--text-primary)] placeholder:text-[var(--text-placeholder)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-soft-border)] focus:border-[var(--brand-primary)] border border-[#E4EAE5] transition-all"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 text-slate-400 hover:text-slate-600 text-xs font-medium"
+                className="absolute right-3 text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs font-medium cursor-pointer"
               >
                 Clear
               </button>
@@ -709,7 +752,7 @@ export function SmartRooms() {
             <select
               value={selectedBuilding}
               onChange={(e) => handleBuildingChange(e.target.value)}
-              className="w-full h-11 pl-3.5 pr-8 rounded-xl bg-slate-50 hover:bg-slate-50/80 focus:bg-white text-slate-800 text-xs sm:text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E] border border-slate-200/90 cursor-pointer font-medium transition-all"
+              className="w-full h-11 pl-3.5 pr-8 rounded-xl bg-[var(--bg-canvas)] hover:bg-white focus:bg-white text-[var(--text-primary)] text-xs sm:text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[var(--brand-soft-border)] focus:border-[var(--brand-primary)] border border-[#E4EAE5] cursor-pointer font-medium transition-all"
             >
               {BUILDINGS.map((b) => (
                 <option key={b.id} value={b.name}>
@@ -717,24 +760,24 @@ export function SmartRooms() {
                 </option>
               ))}
             </select>
-            <Building2 className="w-4 h-4 text-slate-400 absolute right-3 top-3.5 pointer-events-none" />
+            <Building2 className="w-4 h-4 text-[var(--text-muted)] absolute right-3 top-3.5 pointer-events-none" />
           </div>
         </div>
 
         {/* Row 2: Floor Switcher & Category Pills */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2 border-t border-slate-100">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2 border-t border-[#E4EAE5]">
           {/* Floor Segmented Control */}
-          <div className="flex items-center gap-1 p-1 bg-slate-100/80 rounded-xl border border-slate-200/80 overflow-x-auto">
+          <div className="flex items-center gap-1 p-1 bg-[var(--bg-canvas)] rounded-xl border border-[#E4EAE5] overflow-x-auto">
             {['Ground', 'Level 1', 'Level 2', 'Level 3'].map((fl) => {
               const isActive = selectedFloor === fl;
               return (
                 <button
                   key={fl}
                   onClick={() => setSelectedFloor(fl)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? 'bg-white text-slate-900 border border-slate-200/90 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                      ? 'bg-white text-[var(--text-primary)] border border-[#E4EAE5] shadow-xs'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/60'
                   }`}
                 >
                   {fl}
@@ -750,15 +793,15 @@ export function SmartRooms() {
               { label: 'Lecture Theatres', val: 'Lecture Theatres' },
               { label: 'Computer Labs', val: 'Computer Labs' },
               { label: 'Study Pods', val: 'Study Pods' },
-              { label: 'Smart Classrooms', val: 'Smart Classrooms' }
+              { label: 'Smart Classrooms', val: 'Smart Classrooms' },
             ].map((tp) => (
               <button
                 key={tp.val}
                 onClick={() => setSelectedType(tp.val)}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
                   selectedType === tp.val
-                    ? 'bg-[#9E153E] text-white font-bold shadow-xs'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900 border border-slate-200/60'
+                    ? 'bg-[var(--brand-primary)] text-white font-bold shadow-xs'
+                    : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:bg-white hover:text-[var(--text-primary)] border border-[#E4EAE5]'
                 }`}
               >
                 {tp.label}
@@ -768,66 +811,66 @@ export function SmartRooms() {
         </div>
 
         {/* Row 3: Feature Filters Multi-Select */}
-        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-100">
-          <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider mr-1">Filter Hardware:</span>
+        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#E4EAE5]">
+          <span className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-wider mr-1">Filter Hardware:</span>
 
           <button
             onClick={() => handleToggleFilter('availableNow')}
-            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
               activeFilters.availableNow
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-300 font-semibold'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70 border border-slate-200/60'
+                ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold'
+                : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:bg-white border border-[#E4EAE5]'
             }`}
           >
-            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+            <CheckCircle2 className="w-3 h-3 text-[var(--brand-primary)]" />
             Available Now
           </button>
 
           <button
             onClick={() => handleToggleFilter('laser4k')}
-            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
               activeFilters.laser4k
-                ? 'bg-rose-50 text-[#9E153E] border border-rose-300 font-semibold'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70 border border-slate-200/60'
+                ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold'
+                : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:bg-white border border-[#E4EAE5]'
             }`}
           >
-            <Sparkles className="w-3 h-3 text-[#9E153E]" />
+            <Sparkles className="w-3 h-3 text-[var(--brand-primary)]" />
             4K Laser Projector
           </button>
 
           <button
             onClick={() => handleToggleFilter('gpuCluster')}
-            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
               activeFilters.gpuCluster
-                ? 'bg-rose-50 text-[#9E153E] border border-rose-300 font-semibold'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70 border border-slate-200/60'
+                ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold'
+                : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:bg-white border border-[#E4EAE5]'
             }`}
           >
-            <Zap className="w-3 h-3 text-[#9E153E]" />
+            <Cpu className="w-3 h-3 text-[var(--brand-primary)]" />
             RTX 4090 GPU Rig
           </button>
 
           <button
             onClick={() => handleToggleFilter('interactiveBoard')}
-            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
               activeFilters.interactiveBoard
-                ? 'bg-rose-50 text-[#9E153E] border border-rose-300 font-semibold'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70 border border-slate-200/60'
+                ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold'
+                : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:bg-white border border-[#E4EAE5]'
             }`}
           >
-            <Sliders className="w-3 h-3 text-[#9E153E]" />
+            <Sliders className="w-3 h-3 text-[var(--brand-primary)]" />
             Interactive Touchboard
           </button>
 
           <button
             onClick={() => handleToggleFilter('ada')}
-            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
               activeFilters.ada
-                ? 'bg-blue-50 text-blue-700 border border-blue-300 font-semibold'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70 border border-slate-200/60'
+                ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold'
+                : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:bg-white border border-[#E4EAE5]'
             }`}
           >
-            <DoorOpen className="w-3 h-3 text-blue-600" />
+            <DoorOpen className="w-3 h-3 text-[var(--brand-primary)]" />
             ADA Step-Free / Loop
           </button>
         </div>
@@ -839,49 +882,49 @@ export function SmartRooms() {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
         {/* LEFT / CENTER: ARCHITECTURAL CAD VECTOR VIEWER */}
         <div className="xl:col-span-8 flex flex-col gap-6">
-          <div className="relative w-full rounded-2xl bg-white border border-slate-200/90 overflow-hidden shadow-sm">
+          <div className="relative w-full rounded-2xl bg-white border border-[#E4EAE5] overflow-hidden shadow-sm">
             {/* CAD Viewer Top Overlay Navigation */}
             <div className="absolute top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
               {/* Active Route Wayfinding Badge */}
-              <div className="pointer-events-auto flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200 shadow-md backdrop-blur-md text-xs text-slate-700">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                <span className="text-slate-400 font-medium">Vector Path:</span>
-                <span className="font-semibold text-slate-900">Skybridge Arrival</span>
-                <ArrowRight className="w-3 h-3 text-slate-400" />
-                <span className="font-bold text-[#9E153E]">Room {selectedRoom.roomNumber}</span>
-                <span className="text-slate-500 font-mono text-[11px]">({selectedRoom.routeDistance})</span>
+              <div className="pointer-events-auto flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/95 border border-[#E4EAE5] shadow-md backdrop-blur-md text-xs text-[var(--text-primary)]">
+                <span className="w-2 h-2 rounded-full bg-[var(--brand-primary)] animate-ping"></span>
+                <span className="text-[var(--text-muted)] font-medium">Vector Path:</span>
+                <span className="font-semibold text-[var(--text-primary)]">Skybridge Arrival</span>
+                <ArrowRight className="w-3 h-3 text-[var(--text-muted)]" />
+                <span className="font-bold text-[var(--brand-primary)]">Room {selectedRoom.roomNumber}</span>
+                <span className="text-[var(--text-secondary)] font-mono text-[11px]">({selectedRoom.routeDistance})</span>
               </div>
 
               {/* Viewport Scale & Route Manipulation Tools */}
-              <div className="pointer-events-auto flex items-center gap-1 p-1 rounded-xl bg-white/95 border border-slate-200 shadow-md backdrop-blur-md">
+              <div className="pointer-events-auto flex items-center gap-1 p-1 rounded-xl bg-white/95 border border-[#E4EAE5] shadow-md backdrop-blur-md">
                 <button
                   onClick={() => setCadZoom((z) => Math.min(1.4, z + 0.1))}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+                  className="w-7 h-7 flex items-center justify-center rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-canvas)] transition-colors cursor-pointer"
                   title="Zoom In CAD Plan"
                 >
                   <span className="font-bold text-sm">+</span>
                 </button>
                 <button
                   onClick={() => setCadZoom((z) => Math.max(0.7, z - 0.1))}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+                  className="w-7 h-7 flex items-center justify-center rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-canvas)] transition-colors cursor-pointer"
                   title="Zoom Out CAD Plan"
                 >
                   <span className="font-bold text-sm">-</span>
                 </button>
                 <button
                   onClick={() => setCadZoom(1)}
-                  className="px-2 py-1 rounded-lg text-[11px] font-mono text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+                  className="px-2 py-1 rounded-lg text-[11px] font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-canvas)] transition-colors cursor-pointer"
                   title="Reset 100% Zoom"
                 >
                   {Math.round(cadZoom * 100)}%
                 </button>
-                <div className="w-px h-4 bg-slate-200 mx-0.5"></div>
+                <div className="w-px h-4 bg-[#E4EAE5] mx-0.5"></div>
                 <button
                   onClick={() => setIsAdaRoute(!isAdaRoute)}
-                  className={`px-2 py-1 flex items-center gap-1 rounded-lg text-[11px] font-semibold transition-colors ${
+                  className={`px-2 py-1 flex items-center gap-1 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer ${
                     isAdaRoute
-                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)]'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-canvas)]'
                   }`}
                   title="Toggle Step-Free ADA Elevator Route"
                 >
@@ -897,8 +940,8 @@ export function SmartRooms() {
               <svg className="absolute inset-0 w-full h-full opacity-20 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <pattern id="cadGridDark" width="36" height="36" patternUnits="userSpaceOnUse">
-                    <path d="M 36 0 L 0 0 0 36" fill="none" stroke="#38BDF8" strokeWidth="0.5" strokeDasharray="1 3" />
-                    <circle cx="0" cy="0" r="1" fill="#38BDF8" />
+                    <path d="M 36 0 L 0 0 0 36" fill="none" stroke="#168567" strokeWidth="0.5" strokeDasharray="1 3" />
+                    <circle cx="0" cy="0" r="1" fill="#168567" />
                   </pattern>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#cadGridDark)" />
@@ -913,10 +956,7 @@ export function SmartRooms() {
                 <defs>
                   {/* Glowing Filter for Selected Vector Route */}
                   <filter id="emeraldRouteGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#10B981" floodOpacity="0.8" />
-                  </filter>
-                  <filter id="crimsonRouteGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#F43F5E" floodOpacity="0.8" />
+                    <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#10B981" floodOpacity="0.85" />
                   </filter>
                 </defs>
 
@@ -940,7 +980,7 @@ export function SmartRooms() {
                 <path d="M 120,310 L 840,310" fill="none" stroke="#334155" strokeWidth="1" strokeDasharray="4 6" />
 
                 {/* Skybridge Arrival Point (From Central Library) */}
-                <rect x="420" y="10" width="120" height="70" rx="8" fill="#1E293B" stroke="#10B981" strokeWidth="1.5" />
+                <rect x="420" y="10" width="120" height="70" rx="8" fill="#1E293B" stroke="#168567" strokeWidth="1.5" />
                 <text x="480" y="36" textAnchor="middle" fill="#34D399" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="700" letterSpacing="1">
                   NORTH SKYBRIDGE
                 </text>
@@ -995,8 +1035,8 @@ export function SmartRooms() {
                       room.status === 'available'
                         ? '#10B981'
                         : room.status === 'reserved'
-                        ? '#F59E0B'
-                        : '#EF4444';
+                        ? '#B7791F'
+                        : '#C43D4B';
 
                     return (
                       <g
@@ -1122,32 +1162,32 @@ export function SmartRooms() {
               `}</style>
 
               {/* Floating Blueprint Legend */}
-              <div className="absolute bottom-3 left-3 p-2.5 px-3.5 rounded-xl bg-white/95 backdrop-blur-md text-slate-700 border border-slate-200/90 shadow-md z-20 flex flex-wrap items-center gap-3 text-xs">
-                <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px]">CAD Legend:</span>
+              <div className="absolute bottom-3 left-3 p-2.5 px-3.5 rounded-xl bg-white/95 backdrop-blur-md text-[var(--text-primary)] border border-[#E4EAE5] shadow-md z-20 flex flex-wrap items-center gap-3 text-xs">
+                <span className="font-bold text-[var(--text-muted)] uppercase tracking-wider text-[10px]">CAD Legend:</span>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                  <span className="font-medium">Available</span>
+                  <span className="font-medium text-[var(--text-secondary)]">Available</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-                  <span className="font-medium">In Session</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                  <span className="font-medium text-[var(--text-secondary)]">In Session</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-                  <span className="font-medium">Reserved</span>
+                  <span className="font-medium text-[var(--text-secondary)]">Reserved</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
-                  <span className="font-medium">Elevator Lift</span>
+                  <span className="font-medium text-[var(--text-secondary)]">Elevator Lift</span>
                 </div>
               </div>
 
               {/* Wayfinding Duration Chip */}
-              <div className="absolute bottom-3 right-3 p-2.5 px-3.5 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-md z-20 flex items-center gap-2">
-                <Navigation className="w-4 h-4 text-[#9E153E]" />
+              <div className="absolute bottom-3 right-3 p-2.5 px-3.5 rounded-xl bg-white/95 backdrop-blur-md border border-[#E4EAE5] shadow-md z-20 flex items-center gap-2">
+                <Navigation className="w-4 h-4 text-[var(--brand-primary)]" />
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold text-slate-900">{selectedRoom.routeDistance}</span>
-                  <span className="text-[10px] text-slate-500">Door-to-door CAD routing</span>
+                  <span className="text-xs font-bold text-[var(--text-primary)]">{selectedRoom.routeDistance}</span>
+                  <span className="text-[10px] text-[var(--text-muted)]">Door-to-door CAD routing</span>
                 </div>
               </div>
             </div>
@@ -1156,20 +1196,20 @@ export function SmartRooms() {
           {/* =====================================================================
               VISUAL TIME-SCRUBBER TIMELINE & INSTANT RESERVATION SCHEDULE
               ===================================================================== */}
-          <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col gap-4">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[#9E153E]" />
+                <h3 className="text-base font-bold text-[var(--text-primary)] font-heading flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-[var(--brand-primary)]" />
                   <span>Room {selectedRoom.roomNumber} Today's Schedule &amp; Clash-Free Booking</span>
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                   Select any available block below to reserve instantly and generate your verified NFC pass.
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-[11px] font-mono font-medium text-slate-600 border border-slate-200/80">
+                <span className="px-2.5 py-1 rounded-lg bg-[var(--bg-canvas)] text-[11px] font-mono font-medium text-[var(--text-secondary)] border border-[#E4EAE5]">
                   Current Time: {currentTimeHour}
                 </span>
               </div>
@@ -1188,25 +1228,25 @@ export function SmartRooms() {
                     key={slot.id}
                     className={`p-3.5 rounded-xl border flex flex-col justify-between transition-all ${
                       isAvailable
-                        ? 'bg-white border-emerald-200 hover:border-emerald-400 hover:shadow-md'
+                        ? 'bg-white border-[var(--brand-soft-border)] hover:border-[var(--brand-primary)] hover:shadow-md'
                         : isOccupied
-                        ? 'bg-rose-50/50 border-rose-200/70 opacity-90'
+                        ? 'bg-red-50/50 border-red-200/70 opacity-90'
                         : isReserved
                         ? 'bg-amber-50/50 border-amber-200/70 opacity-90'
-                        : 'bg-slate-50 border-slate-200/60 opacity-60'
+                        : 'bg-[var(--bg-canvas)] border-[#E4EAE5] opacity-60'
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between gap-1 mb-1.5">
-                        <span className="text-xs font-mono font-bold text-slate-800">
+                        <span className="text-xs font-mono font-bold text-[var(--text-primary)]">
                           {slot.start} - {slot.end}
                         </span>
                         <span
                           className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                             isAvailable
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)]'
                               : isOccupied
-                              ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                              ? 'bg-red-50 text-red-700 border border-red-200'
                               : isReserved
                               ? 'bg-amber-50 text-amber-700 border border-amber-200'
                               : 'bg-slate-200/70 text-slate-500'
@@ -1222,25 +1262,25 @@ export function SmartRooms() {
                         </span>
                       </div>
 
-                      <h4 className="text-xs font-semibold text-slate-900 leading-tight line-clamp-1">
+                      <h4 className="text-xs font-semibold text-[var(--text-primary)] leading-tight line-clamp-1">
                         {slot.title}
                       </h4>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
+                      <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
                         {slot.lecturer}
                       </p>
                     </div>
 
-                    <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between">
+                    <div className="pt-3 mt-3 border-t border-[#E4EAE5] flex items-center justify-between">
                       {isAvailable ? (
                         <button
                           onClick={() => handleOpenBooking(slot)}
-                          className="w-full py-1.5 px-3 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-[0.98]"
+                          className="w-full py-1.5 px-3 rounded-lg bg-[var(--brand-soft-bg)] hover:bg-[var(--brand-primary)] hover:text-white text-[var(--brand-primary)] border border-[var(--brand-soft-border)] text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer"
                         >
-                          <QrCode className="w-3.5 h-3.5 text-emerald-600" />
+                          <QrCode className="w-3.5 h-3.5 text-current" />
                           <span>Reserve Slot</span>
                         </button>
                       ) : (
-                        <span className="text-[11px] text-slate-400 italic">
+                        <span className="text-[11px] text-[var(--text-muted)] italic">
                           {isOccupied ? 'Clash: Timetable Lock' : isReserved ? 'Reserved by Peer' : 'Slot Concluded'}
                         </span>
                       )}
@@ -1256,10 +1296,10 @@ export function SmartRooms() {
               ===================================================================== */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider font-mono">
+              <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wider font-mono">
                 {selectedFloor} Spaces in {selectedRoom.buildingCode}
               </h3>
-              <span className="text-xs text-slate-500">Click any card to inspect telemetry &amp; route</span>
+              <span className="text-xs text-[var(--text-secondary)]">Click any card to inspect telemetry &amp; route</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -1271,44 +1311,44 @@ export function SmartRooms() {
                     onClick={() => setSelectedRoomId(r.id)}
                     className={`cursor-pointer p-4 rounded-xl flex flex-col justify-between transition-all bg-white ${
                       isSelected
-                        ? 'border-2 border-[#9E153E] shadow-md ring-2 ring-rose-100'
-                        : 'border border-slate-200/90 hover:border-slate-300 hover:shadow-xs'
+                        ? 'border-2 border-[var(--brand-primary)] shadow-md ring-2 ring-[var(--brand-soft-border)]'
+                        : 'border border-[#E4EAE5] hover:border-slate-300 hover:shadow-xs'
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <span
                           className={`px-2 py-0.5 rounded text-xs font-mono font-bold ${
-                            isSelected ? 'bg-rose-50 text-[#9E153E]' : 'bg-slate-100 text-slate-600'
+                            isSelected ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)]' : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)]'
                           }`}
                         >
                           {r.roomNumber}
                         </span>
                         <span
                           className={`text-xs font-medium flex items-center gap-1 ${
-                            r.status === 'available' ? 'text-emerald-700' : 'text-rose-600'
+                            r.status === 'available' ? 'text-[var(--brand-primary)]' : 'text-red-600'
                           }`}
                         >
                           <span
                             className={`w-1.5 h-1.5 rounded-full ${
-                              r.status === 'available' ? 'bg-emerald-500' : 'bg-rose-500'
+                              r.status === 'available' ? 'bg-[var(--brand-primary)]' : 'bg-red-500'
                             }`}
                           ></span>
                           {r.statusText}
                         </span>
                       </div>
-                      <h4 className="text-sm font-bold text-slate-900 line-clamp-1">{r.name}</h4>
-                      <p className="text-xs text-slate-500 mt-1 line-clamp-1">
+                      <h4 className="text-sm font-bold text-[var(--text-primary)] line-clamp-1">{r.name}</h4>
+                      <p className="text-xs text-[var(--text-muted)] mt-1 line-clamp-1">
                         {r.capacity} Seats • {r.features[0]}
                       </p>
                     </div>
 
-                    <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <div className="pt-3 mt-3 border-t border-[#E4EAE5] flex items-center justify-between text-xs text-[var(--text-secondary)]">
                       <span className="flex items-center gap-1">
-                        <Users className="w-3.5 h-3.5 text-slate-400" />
+                        <Users className="w-3.5 h-3.5 text-[var(--text-muted)]" />
                         <span>{r.currentOccupancy}/{r.capacity} Occ</span>
                       </span>
-                      <span className={isSelected ? 'text-[#9E153E] font-semibold' : 'text-slate-500'}>
+                      <span className={isSelected ? 'text-[var(--brand-primary)] font-semibold' : 'text-[var(--text-muted)]'}>
                         {isSelected ? 'Inspecting ✓' : 'Select →'}
                       </span>
                     </div>
@@ -1323,28 +1363,28 @@ export function SmartRooms() {
             RIGHT COLUMN: IOT TELEMETRY DIALS & ROOM WAYFINDING INSPECTOR
             ========================================================================= */}
         <div className="xl:col-span-4 flex flex-col gap-5">
-          <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col gap-5">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col gap-5">
             {/* Header info */}
             <div className="flex items-start justify-between">
               <div>
-                <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#9E153E] uppercase font-bold tracking-wider">
+                <div className="flex items-center gap-1.5 text-[11px] font-mono text-[var(--brand-primary)] uppercase font-bold tracking-wider">
                   <span>{selectedRoom.buildingCode}</span>
                   <span>•</span>
                   <span>{selectedRoom.floor}</span>
                   <span>•</span>
                   <span>Wing A</span>
                 </div>
-                <h2 className="text-xl font-extrabold text-slate-900 tracking-tight mt-0.5">
+                <h2 className="text-xl font-extrabold text-[var(--text-primary)] tracking-tight font-heading mt-0.5">
                   Room {selectedRoom.roomNumber}: {selectedRoom.name}
                 </h2>
               </div>
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200 shrink-0">
+              <span className="px-2.5 py-0.5 rounded-full bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] text-xs font-bold border border-[var(--brand-soft-border)] shrink-0">
                 Active Node
               </span>
             </div>
 
             {/* Room Photo Preview with Live Tag */}
-            <div className="relative w-full h-44 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+            <div className="relative w-full h-44 rounded-xl overflow-hidden bg-slate-100 border border-[#E4EAE5]">
               <img
                 src={selectedRoom.image}
                 alt={selectedRoom.name}
@@ -1352,10 +1392,10 @@ export function SmartRooms() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none"></div>
               <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-xs">
-                <span className="px-2 py-1 rounded-md bg-white/95 backdrop-blur-md text-slate-800 font-semibold shadow-xs">
+                <span className="px-2 py-1 rounded-md bg-white/95 backdrop-blur-md text-[var(--text-primary)] font-semibold shadow-xs">
                   {selectedRoom.type}
                 </span>
-                <span className="px-2 py-1 rounded-md bg-emerald-500/90 backdrop-blur-md text-white font-bold shadow-xs">
+                <span className="px-2 py-1 rounded-md bg-[var(--brand-primary)] backdrop-blur-md text-white font-bold shadow-xs">
                   {selectedRoom.capacity - selectedRoom.currentOccupancy} Desks Open
                 </span>
               </div>
@@ -1366,64 +1406,64 @@ export function SmartRooms() {
                 =================================================================== */}
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold flex items-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5 text-[#9E153E]" />
+                <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-bold flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
                   Live IoT Sensor Dials
                 </span>
-                <span className="text-[10px] text-emerald-600 font-mono font-medium">Calibrated 1s ago</span>
+                <span className="text-[10px] text-[var(--brand-primary)] font-mono font-medium">Calibrated 1s ago</span>
               </div>
 
               {/* Grid of Gauges */}
               <div className="grid grid-cols-2 gap-2.5">
                 {/* 1. CO2 & Air Quality Dial */}
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-slate-500 mb-1">
+                <div className="p-3 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-[var(--text-secondary)] mb-1">
                     <span className="text-[10px] font-mono uppercase font-semibold">Air CO₂</span>
-                    <Wind className="w-3.5 h-3.5 text-emerald-600" />
+                    <Wind className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
                   </div>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-xl font-black text-slate-900">{selectedRoom.co2}</span>
-                    <span className="text-[11px] text-slate-500">ppm</span>
+                    <span className="text-xl font-black text-[var(--text-primary)] font-heading">{selectedRoom.co2}</span>
+                    <span className="text-[11px] text-[var(--text-muted)]">ppm</span>
                   </div>
-                  <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1.5">
+                  <div className="w-full bg-[#E4EAE5] h-1.5 rounded-full overflow-hidden mt-1.5">
                     <div
-                      className="bg-emerald-500 h-full rounded-full transition-all"
+                      className="bg-[var(--brand-primary)] h-full rounded-full transition-all"
                       style={{ width: `${Math.min(100, (selectedRoom.co2 / 800) * 100)}%` }}
                     ></div>
                   </div>
-                  <span className="text-[10px] text-emerald-700 font-medium mt-1">{selectedRoom.co2Status}</span>
+                  <span className="text-[10px] text-[var(--brand-primary)] font-medium mt-1">{selectedRoom.co2Status}</span>
                 </div>
 
                 {/* 2. Thermal Comfort Dial */}
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-slate-500 mb-1">
+                <div className="p-3 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-[var(--text-secondary)] mb-1">
                     <span className="text-[10px] font-mono uppercase font-semibold">HVAC Temp</span>
                     <Thermometer className="w-3.5 h-3.5 text-sky-600" />
                   </div>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-xl font-black text-slate-900">{selectedRoom.temp}°</span>
-                    <span className="text-[11px] text-slate-500">C</span>
+                    <span className="text-xl font-black text-[var(--text-primary)] font-heading">{selectedRoom.temp}°</span>
+                    <span className="text-[11px] text-[var(--text-muted)]">C</span>
                   </div>
-                  <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1.5">
+                  <div className="w-full bg-[#E4EAE5] h-1.5 rounded-full overflow-hidden mt-1.5">
                     <div
                       className="bg-sky-500 h-full rounded-full transition-all"
                       style={{ width: '68%' }}
                     ></div>
                   </div>
-                  <span className="text-[10px] text-slate-500 mt-1">Target: {selectedRoom.tempTarget}°C • {selectedRoom.humidity}% RH</span>
+                  <span className="text-[10px] text-[var(--text-muted)] mt-1">Target: {selectedRoom.tempTarget}°C • {selectedRoom.humidity}% RH</span>
                 </div>
 
                 {/* 3. Acoustic Sound Level Dial */}
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-slate-500 mb-1">
+                <div className="p-3 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-[var(--text-secondary)] mb-1">
                     <span className="text-[10px] font-mono uppercase font-semibold">Acoustics</span>
                     <Volume2 className="w-3.5 h-3.5 text-amber-600" />
                   </div>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-xl font-black text-slate-900">{selectedRoom.noiseDb}</span>
-                    <span className="text-[11px] text-slate-500">dB</span>
+                    <span className="text-xl font-black text-[var(--text-primary)] font-heading">{selectedRoom.noiseDb}</span>
+                    <span className="text-[11px] text-[var(--text-muted)]">dB</span>
                   </div>
-                  <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1.5">
+                  <div className="w-full bg-[#E4EAE5] h-1.5 rounded-full overflow-hidden mt-1.5">
                     <div
                       className="bg-amber-500 h-full rounded-full transition-all"
                       style={{ width: `${Math.min(100, (selectedRoom.noiseDb / 80) * 100)}%` }}
@@ -1433,16 +1473,16 @@ export function SmartRooms() {
                 </div>
 
                 {/* 4. Wi-Fi 7 Enterprise Telemetry */}
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-slate-500 mb-1">
+                <div className="p-3 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-[var(--text-secondary)] mb-1">
                     <span className="text-[10px] font-mono uppercase font-semibold">Wi-Fi 7 Core</span>
                     <Wifi className="w-3.5 h-3.5 text-purple-600" />
                   </div>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-xl font-black text-slate-900">{selectedRoom.wifiSpeed.split(' ')[0]}</span>
-                    <span className="text-[11px] text-slate-500">Mbps</span>
+                    <span className="text-xl font-black text-[var(--text-primary)] font-heading">{selectedRoom.wifiSpeed.split(' ')[0]}</span>
+                    <span className="text-[11px] text-[var(--text-muted)]">Mbps</span>
                   </div>
-                  <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1.5">
+                  <div className="w-full bg-[#E4EAE5] h-1.5 rounded-full overflow-hidden mt-1.5">
                     <div
                       className="bg-purple-500 h-full rounded-full transition-all"
                       style={{ width: '85%' }}
@@ -1455,14 +1495,14 @@ export function SmartRooms() {
 
             {/* Room Features List */}
             <div className="flex flex-col gap-2">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-bold">
                 Equipment &amp; Accessibility
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {selectedRoom.features.map((feat, idx) => (
                   <span
                     key={idx}
-                    className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-[11px] text-slate-700 font-medium"
+                    className="px-2.5 py-1 rounded-lg bg-[var(--bg-canvas)] border border-[#E4EAE5] text-[11px] text-[var(--text-secondary)] font-medium"
                   >
                     {feat}
                   </span>
@@ -1471,21 +1511,21 @@ export function SmartRooms() {
             </div>
 
             {/* Walking Directions from Chosen Node */}
-            <div className="flex flex-col gap-2 pt-1 border-t border-slate-100">
+            <div className="flex flex-col gap-2 pt-1 border-t border-[#E4EAE5]">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-bold">
                   Walking Turn Directions
                 </span>
-                <span className="text-xs text-[#9E153E] font-semibold">{selectedRoom.routeDistance}</span>
+                <span className="text-xs text-[var(--brand-primary)] font-semibold">{selectedRoom.routeDistance}</span>
               </div>
 
-              <div className="flex flex-col gap-2.5 relative pl-3 border-l-2 border-[#9E153E]/40 ml-1 mt-1">
+              <div className="flex flex-col gap-2.5 relative pl-3 border-l-2 border-[var(--brand-primary)] ml-1 mt-1">
                 {selectedRoom.routeSteps.map((st, i) => (
                   <div key={i} className="flex flex-col">
-                    <span className="text-xs font-semibold text-slate-900">
+                    <span className="text-xs font-semibold text-[var(--text-primary)]">
                       {st.step}
                     </span>
-                    <span className="text-[11px] text-slate-500">{st.desc}</span>
+                    <span className="text-[11px] text-[var(--text-muted)]">{st.desc}</span>
                   </div>
                 ))}
               </div>
@@ -1498,7 +1538,7 @@ export function SmartRooms() {
                   const firstBookable = selectedRoom.slots.find((s) => s.isBookable) || selectedRoom.slots[0];
                   handleOpenBooking(firstBookable);
                 }}
-                className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#9E153E] to-[#BE123C] hover:from-[#881337] hover:to-[#9E153E] active:scale-[0.99] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md shadow-rose-900/10 transition-all cursor-pointer"
+                className="w-full py-3 px-4 rounded-xl bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] active:scale-[0.99] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
               >
                 <QrCode className="w-4 h-4 text-white" />
                 <span>Instant Reserve &amp; Generate NFC Pass</span>
@@ -1506,9 +1546,9 @@ export function SmartRooms() {
 
               <button
                 onClick={() => navigate(`/campus-map?bldg=eng&room=${selectedRoom.roomNumber}`)}
-                className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-2 border border-slate-200 transition-all cursor-pointer"
+                className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[var(--bg-canvas)] text-[var(--text-primary)] text-xs font-semibold flex items-center justify-center gap-2 border border-[#E4EAE5] transition-all cursor-pointer"
               >
-                <Navigation className="w-3.5 h-3.5 text-[#9E153E]" />
+                <Navigation className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
                 <span>Open in Mewar Campus GIS Map</span>
               </button>
             </div>
@@ -1521,14 +1561,14 @@ export function SmartRooms() {
           ========================================================================= */}
       {isBookingModalOpen && slotToBook && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-slate-200 shadow-2xl p-6 flex flex-col gap-5 text-slate-800 animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-6 flex flex-col gap-5 text-[var(--text-primary)] animate-in fade-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="flex items-start justify-between">
               <div>
-                <span className="text-[11px] font-mono text-[#9E153E] font-bold uppercase tracking-wider">
+                <span className="text-[11px] font-mono text-[var(--brand-primary)] font-bold uppercase tracking-wider">
                   Clash-Free Room Reservation
                 </span>
-                <h3 className="text-xl font-bold text-slate-900 mt-0.5">
+                <h3 className="text-xl font-bold text-[var(--text-primary)] font-heading mt-0.5">
                   Book Room {selectedRoom.roomNumber} ({slotToBook.start} - {slotToBook.end})
                 </h3>
               </div>
@@ -1537,7 +1577,7 @@ export function SmartRooms() {
                   setIsBookingModalOpen(false);
                   setActivePass(null);
                 }}
-                className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-lg bg-[var(--bg-canvas)] hover:bg-slate-200 text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1545,13 +1585,13 @@ export function SmartRooms() {
 
             {/* Error Message if Slot Conflict */}
             {bookingConflictMsg ? (
-              <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+              <div className="p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold text-rose-900">Timetable Conflict Detected</span>
-                  <span className="text-xs text-rose-700 mt-0.5">{bookingConflictMsg}</span>
-                  <span className="text-[11px] text-slate-500 mt-2">
-                    Tip: Look for slots labeled <span className="text-emerald-700 font-semibold">"Bookable"</span> in the schedule timeline.
+                  <span className="text-xs font-bold text-red-900">Timetable Conflict Detected</span>
+                  <span className="text-xs text-red-700 mt-0.5">{bookingConflictMsg}</span>
+                  <span className="text-[11px] text-[var(--text-muted)] mt-2">
+                    Tip: Look for slots labeled <span className="text-[var(--brand-primary)] font-semibold">"Bookable"</span> in the schedule timeline.
                   </span>
                 </div>
               </div>
@@ -1560,78 +1600,78 @@ export function SmartRooms() {
                  VERIFIED NFC & DIGITAL QR ACCESS PASS BADGE
                  =================================================================== */
               <div className="flex flex-col gap-4">
-                <div className="p-5 rounded-2xl bg-white border-2 border-emerald-500 shadow-lg flex flex-col gap-4 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full blur-2xl pointer-events-none"></div>
+                <div className="p-5 rounded-2xl bg-white border-2 border-[var(--brand-primary)] shadow-lg flex flex-col gap-4 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--brand-soft-bg)] rounded-full blur-2xl pointer-events-none"></div>
 
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div className="flex items-center justify-between border-b border-[#E4EAE5] pb-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center">
-                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                      <div className="w-7 h-7 rounded-lg bg-[var(--brand-soft-bg)] border border-[var(--brand-soft-border)] flex items-center justify-center">
+                        <ShieldCheck className="w-4 h-4 text-[var(--brand-primary)]" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-xs font-bold text-slate-900">Mewar University Digital Key</span>
-                        <span className="text-[10px] font-mono text-emerald-700 font-semibold">NFC Smart Lock Authorized</span>
+                        <span className="text-xs font-bold text-[var(--text-primary)]">Mewar University Digital Key</span>
+                        <span className="text-[10px] font-mono text-[var(--brand-primary)] font-semibold">NFC Smart Lock Authorized</span>
                       </div>
                     </div>
-                    <span className="text-xs font-mono font-bold text-slate-600">{activePass.passId}</span>
+                    <span className="text-xs font-mono font-bold text-[var(--text-secondary)]">{activePass.passId}</span>
                   </div>
 
                   {/* QR Graphic and Details */}
                   <div className="flex items-center gap-4">
                     {/* High-fidelity SVG QR Code */}
-                    <div className="w-28 h-28 p-2 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 shadow-xs">
+                    <div className="w-28 h-28 p-2 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex items-center justify-center shrink-0 shadow-xs">
                       <svg viewBox="0 0 100 100" className="w-full h-full">
-                        <rect x="0" y="0" width="100" height="100" fill="#F8FAFC" />
+                        <rect x="0" y="0" width="100" height="100" fill="#F6F8F6" />
                         {/* Position Markers */}
-                        <rect x="10" y="10" width="25" height="25" fill="#0F172A" />
-                        <rect x="15" y="15" width="15" height="15" fill="#F8FAFC" />
-                        <rect x="18" y="18" width="9" height="9" fill="#0F172A" />
+                        <rect x="10" y="10" width="25" height="25" fill="#142D28" />
+                        <rect x="15" y="15" width="15" height="15" fill="#F6F8F6" />
+                        <rect x="18" y="18" width="9" height="9" fill="#168567" />
 
-                        <rect x="65" y="10" width="25" height="25" fill="#0F172A" />
-                        <rect x="70" y="15" width="15" height="15" fill="#F8FAFC" />
-                        <rect x="73" y="18" width="9" height="9" fill="#0F172A" />
+                        <rect x="65" y="10" width="25" height="25" fill="#142D28" />
+                        <rect x="70" y="15" width="15" height="15" fill="#F6F8F6" />
+                        <rect x="73" y="18" width="9" height="9" fill="#168567" />
 
-                        <rect x="10" y="65" width="25" height="25" fill="#0F172A" />
-                        <rect x="15" y="70" width="15" height="15" fill="#F8FAFC" />
-                        <rect x="18" y="73" width="9" height="9" fill="#0F172A" />
+                        <rect x="10" y="65" width="25" height="25" fill="#142D28" />
+                        <rect x="15" y="70" width="15" height="15" fill="#F6F8F6" />
+                        <rect x="18" y="73" width="9" height="9" fill="#168567" />
 
                         {/* Data Pixels */}
-                        <rect x="40" y="12" width="6" height="6" fill="#0F172A" />
-                        <rect x="52" y="15" width="6" height="6" fill="#0F172A" />
-                        <rect x="42" y="30" width="6" height="6" fill="#0F172A" />
-                        <rect x="54" y="38" width="6" height="6" fill="#0F172A" />
-                        <rect x="68" y="44" width="6" height="6" fill="#0F172A" />
-                        <rect x="40" y="55" width="6" height="6" fill="#0F172A" />
-                        <rect x="50" y="65" width="6" height="6" fill="#0F172A" />
-                        <rect x="62" y="75" width="6" height="6" fill="#0F172A" />
-                        <rect x="75" y="62" width="6" height="6" fill="#0F172A" />
-                        <rect x="85" y="80" width="6" height="6" fill="#0F172A" />
-                        <circle cx="50" cy="50" r="5" fill="#10B981" />
+                        <rect x="40" y="12" width="6" height="6" fill="#142D28" />
+                        <rect x="52" y="15" width="6" height="6" fill="#142D28" />
+                        <rect x="42" y="30" width="6" height="6" fill="#142D28" />
+                        <rect x="54" y="38" width="6" height="6" fill="#142D28" />
+                        <rect x="68" y="44" width="6" height="6" fill="#142D28" />
+                        <rect x="40" y="55" width="6" height="6" fill="#142D28" />
+                        <rect x="50" y="65" width="6" height="6" fill="#142D28" />
+                        <rect x="62" y="75" width="6" height="6" fill="#142D28" />
+                        <rect x="75" y="62" width="6" height="6" fill="#142D28" />
+                        <rect x="85" y="80" width="6" height="6" fill="#142D28" />
+                        <circle cx="50" cy="50" r="5" fill="#168567" />
                       </svg>
                     </div>
 
                     <div className="flex flex-col gap-1 text-xs">
-                      <span className="font-bold text-slate-900 text-base">
+                      <span className="font-bold text-[var(--text-primary)] text-base font-heading">
                         Room {activePass.roomNumber}
                       </span>
-                      <span className="text-slate-500">{activePass.roomName}</span>
-                      <span className="text-emerald-700 font-mono font-semibold mt-1">
+                      <span className="text-[var(--text-secondary)]">{activePass.roomName}</span>
+                      <span className="text-[var(--brand-primary)] font-mono font-semibold mt-1">
                         Valid: {activePass.slotTime} ({activePass.date})
                       </span>
-                      <span className="text-slate-500">
+                      <span className="text-[var(--text-muted)]">
                         Student: {activePass.studentName} ({activePass.studentRoll})
                       </span>
                     </div>
                   </div>
 
                   {/* NFC Door Unlock Simulator */}
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <div className="pt-2 border-t border-[#E4EAE5] flex items-center justify-between">
                     <button
                       onClick={handleSimulateUnlock}
                       className={`py-2 px-3.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
                         simulatedUnlockSuccess
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200'
+                          ? 'bg-[var(--brand-primary)] text-white'
+                          : 'bg-[var(--brand-soft-bg)] hover:bg-[var(--brand-soft-border)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)]'
                       }`}
                     >
                       {simulatedUnlockSuccess ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
@@ -1640,9 +1680,9 @@ export function SmartRooms() {
 
                     <button
                       onClick={() => copyPassId(activePass.passId)}
-                      className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1 font-mono cursor-pointer"
+                      className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center gap-1 font-mono cursor-pointer"
                     >
-                      {hasCopiedPassId ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                      {hasCopiedPassId ? <Check className="w-3.5 h-3.5 text-[var(--brand-primary)]" /> : <Copy className="w-3.5 h-3.5" />}
                       <span>{hasCopiedPassId ? 'Copied' : 'Copy ID'}</span>
                     </button>
                   </div>
@@ -1650,7 +1690,7 @@ export function SmartRooms() {
 
                 <button
                   onClick={() => setIsBookingModalOpen(false)}
-                  className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold cursor-pointer"
+                  className="w-full py-2.5 rounded-xl bg-[var(--bg-canvas)] hover:bg-slate-200 text-[var(--text-primary)] text-xs font-semibold cursor-pointer border border-[#E4EAE5]"
                 >
                   Close &amp; View Schedule
                 </button>
@@ -1658,34 +1698,34 @@ export function SmartRooms() {
             ) : (
               /* Booking Configuration Form */
               <div className="flex flex-col gap-4">
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div className="p-3.5 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex items-center justify-between">
                   <div>
-                    <span className="text-[11px] text-slate-400 font-mono">Slot Timing</span>
-                    <h4 className="text-sm font-bold text-slate-900">{slotToBook.start} - {slotToBook.end} Today</h4>
+                    <span className="text-[11px] text-[var(--text-muted)] font-mono">Slot Timing</span>
+                    <h4 className="text-sm font-bold text-[var(--text-primary)]">{slotToBook.start} - {slotToBook.end} Today</h4>
                   </div>
-                  <span className="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
+                  <span className="px-2.5 py-1 rounded-md bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] text-xs font-bold border border-[var(--brand-soft-border)]">
                     No Conflicts
                   </span>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-slate-700">Student Roll Number</label>
+                  <label className="text-xs font-semibold text-[var(--text-secondary)]">Student Roll Number</label>
                   <input
                     type="text"
                     value={studentRoll}
                     onChange={(e) => setStudentRoll(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E] font-mono"
+                    className="w-full h-10 px-3 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] text-sm text-[var(--text-primary)] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[var(--brand-soft-border)] focus:border-[var(--brand-primary)] font-mono"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-slate-700">Reservation Purpose</label>
+                  <label className="text-xs font-semibold text-[var(--text-secondary)]">Reservation Purpose</label>
                   <div className="flex flex-wrap gap-2 mb-1.5">
                     {[
                       'Capstone Project Team Collab',
                       'Solo Deep Work Pod',
                       'AI Model Training & Lab',
-                      'Peer Group Study'
+                      'Peer Group Study',
                     ].map((purp) => (
                       <button
                         key={purp}
@@ -1693,8 +1733,8 @@ export function SmartRooms() {
                         onClick={() => setBookingPurpose(purp)}
                         className={`px-2.5 py-1 rounded-lg text-xs transition-colors cursor-pointer ${
                           bookingPurpose === purp
-                            ? 'bg-rose-50 text-[#9E153E] border border-rose-300 font-semibold'
-                            : 'bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200/80'
+                            ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold'
+                            : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[#E4EAE5]'
                         }`}
                       >
                         {purp}
@@ -1703,16 +1743,16 @@ export function SmartRooms() {
                   </div>
                 </div>
 
-                <div className="pt-2 flex items-center justify-end gap-3 border-t border-slate-100">
+                <div className="pt-2 flex items-center justify-end gap-3 border-t border-[#E4EAE5]">
                   <button
                     onClick={() => setIsBookingModalOpen(false)}
-                    className="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+                    className="px-4 py-2 rounded-xl text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-canvas)] transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleConfirmReservation}
-                    className="px-5 py-2.5 rounded-xl bg-[#9E153E] hover:bg-[#881337] text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all cursor-pointer"
+                    className="px-5 py-2.5 rounded-xl bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all cursor-pointer"
                   >
                     <ShieldCheck className="w-4 h-4" />
                     <span>Confirm &amp; Issue Digital Pass</span>
@@ -1729,45 +1769,45 @@ export function SmartRooms() {
           ========================================================================= */}
       {isMyPassesOpen && (
         <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="w-full max-w-md h-full bg-white border-l border-slate-200 p-6 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-300">
+          <div className="w-full max-w-md h-full bg-white border-l border-[#E4EAE5] p-6 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-300">
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div className="flex items-center justify-between pb-4 border-b border-[#E4EAE5]">
                 <div className="flex items-center gap-2">
-                  <QrCode className="w-5 h-5 text-[#9E153E]" />
-                  <h3 className="text-base font-bold text-slate-900">My Active Campus Passes</h3>
+                  <QrCode className="w-5 h-5 text-[var(--brand-primary)]" />
+                  <h3 className="text-base font-bold text-[var(--text-primary)] font-heading">My Active Campus Passes</h3>
                 </div>
                 <button
                   onClick={() => setIsMyPassesOpen(false)}
-                  className="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center cursor-pointer"
+                  className="w-7 h-7 rounded-lg bg-[var(--bg-canvas)] text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center justify-center cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               {savedPasses.length === 0 ? (
-                <div className="py-12 flex flex-col items-center justify-center text-center text-slate-400">
-                  <QrCode className="w-10 h-10 mb-2 opacity-30 text-slate-400" />
-                  <p className="text-xs font-medium text-slate-600">No active passes issued yet.</p>
-                  <p className="text-[11px] text-slate-400 mt-1">Book any room slot to generate an NFC pass.</p>
+                <div className="py-12 flex flex-col items-center justify-center text-center text-[var(--text-muted)]">
+                  <QrCode className="w-10 h-10 mb-2 opacity-30 text-[var(--text-muted)]" />
+                  <p className="text-xs font-medium text-[var(--text-secondary)]">No active passes issued yet.</p>
+                  <p className="text-[11px] text-[var(--text-muted)] mt-1">Book any room slot to generate an NFC pass.</p>
                 </div>
               ) : (
                 <div className="flex flex-col gap-3 overflow-y-auto max-h-[70vh] pr-1">
                   {savedPasses.map((p, idx) => (
                     <div
                       key={idx}
-                      className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-[#9E153E]/50 flex flex-col gap-2.5 transition-all"
+                      className="p-4 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] hover:border-[var(--brand-soft-border)] flex flex-col gap-2.5 transition-all"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-mono font-bold text-[#9E153E]">{p.passId}</span>
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span className="text-xs font-mono font-bold text-[var(--brand-primary)]">{p.passId}</span>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)]">
                           {p.status}
                         </span>
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-slate-900">Room {p.roomNumber}</h4>
-                        <p className="text-xs text-slate-500">{p.roomName}</p>
+                        <h4 className="text-sm font-bold text-[var(--text-primary)] font-heading">Room {p.roomNumber}</h4>
+                        <p className="text-xs text-[var(--text-secondary)]">{p.roomName}</p>
                       </div>
-                      <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 text-[11px] text-slate-500">
+                      <div className="flex items-center justify-between pt-2 border-t border-[#E4EAE5] text-[11px] text-[var(--text-muted)]">
                         <span>Time: {p.slotTime}</span>
                         <span>{p.purpose}</span>
                       </div>
@@ -1777,10 +1817,10 @@ export function SmartRooms() {
               )}
             </div>
 
-            <div className="pt-4 border-t border-slate-100">
+            <div className="pt-4 border-t border-[#E4EAE5]">
               <button
                 onClick={() => setIsMyPassesOpen(false)}
-                className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-800 cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-[var(--bg-canvas)] hover:bg-slate-200 text-xs font-semibold text-[var(--text-primary)] cursor-pointer border border-[#E4EAE5]"
               >
                 Close Drawer
               </button>
