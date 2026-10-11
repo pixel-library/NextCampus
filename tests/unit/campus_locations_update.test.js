@@ -69,14 +69,13 @@ test('Campus Locations & Road Routing: All 26 real Mewar University locations an
   assert.ok(gisContent.includes('CAMPUS_GIS_LOCATIONS.farm = CAMPUS_GIS_LOCATIONS.agriculture;'), 'farm alias must resolve to agriculture');
 
   // Verify authentic ground-truth coordinates
-  assert.ok(gisContent.includes('25.031920'), 'Gate 1 must be at the NH-48 entrance portal (25.031920)');
-  assert.ok(gisContent.includes('25.033480'), 'Gate 2 must be at perimeter boundary portal (25.033480)');
-  assert.ok(gisContent.includes('25.033720'), 'Temple center must be 25.033720');
-  assert.ok(gisContent.includes('25.031185'), 'Parking center must be 25.031185');
-  assert.ok(gisContent.includes('25.030247'), 'Cricket Ground center must be 25.030247');
-  assert.ok(gisContent.includes('25.030816'), 'Gymnasium center must be 25.030816');
-  assert.ok(gisContent.includes('25.030931'), 'Volleyball Ground center must be 25.030931');
-  assert.ok(gisContent.includes('25.029973'), 'Agriculture Field center must be 25.029973');
+  assert.ok(gisContent.includes('25.032009'), 'Gate 1 must be at the NH-48 entrance portal (25.032009)');
+  assert.ok(gisContent.includes('25.034828'), 'Gate 2 must be at perimeter boundary portal (25.034828)');
+  assert.ok(gisContent.includes('25.033719'), 'Temple center must be 25.033719');
+  assert.ok(gisContent.includes('25.031328'), 'Parking center must be 25.031328');
+  assert.ok(gisContent.includes('25.030278'), 'Cricket Ground center must be 25.030278');
+  assert.ok(gisContent.includes('25.030725'), 'Gymnasium / Volleyball center must be 25.030725');
+  assert.ok(gisContent.includes('25.030016'), 'Agriculture Field center must be 25.030016');
 
   // Verify Dijkstra road graph exports
   assert.ok(gisContent.includes('export const MEWAR_CAMPUS_GRAPH'), 'CampusGisMap must export MEWAR_CAMPUS_GRAPH');

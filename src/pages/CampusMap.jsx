@@ -1205,8 +1205,8 @@ export const CampusMap = () => {
 
   // GPS & Live Simulation State
   const [userCoords, setUserCoords] = useState({
-    lat: 25.031920, // Mewar University Main Gate 1 on NH-48
-    lng: 74.635280,
+    lat: 25.032009, // Mewar University Main Gate 1 on NH-48
+    lng: 74.634483,
     accuracy: 6,
     heading: 0,
     speed: 1.2,
@@ -1378,8 +1378,8 @@ export const CampusMap = () => {
       setIsSimulatingWalk(true);
 
       const dest = CAMPUS_GIS_LOCATIONS[selectedBldg] || CAMPUS_GIS_LOCATIONS.eng;
-      const startLat = userCoords?.lat || 25.031907; // NH-48 Main Gate
-      const startLng = userCoords?.lng || 74.635428;
+      const startLat = userCoords?.lat || 25.032009; // NH-48 Main Gate
+      const startLng = userCoords?.lng || 74.634483;
       const endLat = customDestination ? customDestination.lat : dest.lat;
       const endLng = customDestination ? customDestination.lng : dest.lng;
 
@@ -1439,8 +1439,8 @@ export const CampusMap = () => {
     setSimulationProgress(0);
     setActiveStepIndex(0);
     setUserCoords({
-      lat: 25.031907, // NH-48 Main Gate
-      lng: 74.635428,
+      lat: 25.032009, // NH-48 Main Gate
+      lng: 74.634483,
       accuracy: 6,
       heading: 0,
       speed: 1.2,
