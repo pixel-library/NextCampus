@@ -17,6 +17,8 @@ import {
   Info,
   Shield,
   Check,
+  X,
+  Footprints,
 } from 'lucide-react';
 
 // Exact Centroid of Mewar University, Gangrar, Chittorgarh (Rajasthan, India)
@@ -78,6 +80,7 @@ export const MEWAR_CAMPUS_ROADS = [
 ];
 
 // Official Real-World Buildings & Footprints of Mewar University, Gangrar
+// Styled with NextCampus Institutional Color Palette
 export const CAMPUS_GIS_LOCATIONS = {
   gate: {
     id: 'gate',
@@ -85,8 +88,8 @@ export const CAMPUS_GIS_LOCATIONS = {
     name: 'Main Campus Gate (NH-48, Gangrar)',
     shortName: 'Main Campus Gate',
     category: 'facility',
-    color: '#2563EB',
-    bgColor: '#EFF6FF',
+    color: '#142D28',
+    bgColor: '#EAF5EF',
     icon: '🚪',
     lat: 25.031907,
     lng: 74.635428,
@@ -106,8 +109,8 @@ export const CAMPUS_GIS_LOCATIONS = {
     name: 'Maharana Pratap Main Academic & Admin Block',
     shortName: 'Admin & Academic Block',
     category: 'academic',
-    color: '#9E153E',
-    bgColor: '#FFF1F2',
+    color: '#142D28',
+    bgColor: '#EAF5EF',
     icon: '🏛️',
     lat: 25.031866,
     lng: 74.637113,
@@ -144,8 +147,8 @@ export const CAMPUS_GIS_LOCATIONS = {
     name: 'Faculty of Engineering & Technology',
     shortName: 'Engineering & AI Labs',
     category: 'academic',
-    color: '#7C3AED',
-    bgColor: '#F5F3FF',
+    color: '#168567',
+    bgColor: '#EAF5EF',
     icon: '💻',
     lat: 25.032130,
     lng: 74.636623,
@@ -168,8 +171,8 @@ export const CAMPUS_GIS_LOCATIONS = {
     name: 'Swami Vivekananda Central Library',
     shortName: 'Central Library',
     category: 'libraries',
-    color: '#D97706',
-    bgColor: '#FFFBEB',
+    color: '#B7791F',
+    bgColor: '#FEF8EC',
     icon: '📚',
     lat: 25.033592,
     lng: 74.636105,
@@ -190,8 +193,8 @@ export const CAMPUS_GIS_LOCATIONS = {
     name: 'Mewar University Central Auditorium',
     shortName: 'Central Auditorium',
     category: 'facility',
-    color: '#DB2777',
-    bgColor: '#FDF2F8',
+    color: '#7C3AED',
+    bgColor: '#F5F3FF',
     icon: '🎭',
     lat: 25.030470,
     lng: 74.636497,
@@ -212,7 +215,7 @@ export const CAMPUS_GIS_LOCATIONS = {
     name: 'University Cafeteria & Food Court',
     shortName: 'Campus Cafeteria',
     category: 'facility',
-    color: '#EA580C',
+    color: '#D97706',
     bgColor: '#FFF7ED',
     icon: '🍽️',
     lat: 25.034447,
@@ -251,8 +254,8 @@ export const CAMPUS_GIS_LOCATIONS = {
     name: 'Rana Sanga Boys Residential Hostel',
     shortName: 'Sanga Boys Hostel',
     category: 'facility',
-    color: '#4F46E5',
-    bgColor: '#EEF2FF',
+    color: '#3478B8',
+    bgColor: '#EEF5FA',
     icon: '🛏️',
     lat: 25.034645,
     lng: 74.635783,
@@ -303,7 +306,7 @@ export const CAMPUS_GIS_LOCATIONS = {
     name: 'Meera Bai Girls Residential Hostel',
     shortName: 'Meera Bai Girls Hostel',
     category: 'facility',
-    color: '#9333EA',
+    color: '#8B5CF6',
     bgColor: '#FAF5FF',
     icon: '🏠',
     lat: 25.034085,
@@ -327,7 +330,7 @@ export const CAMPUS_GIS_LOCATIONS = {
     name: 'Mewar Sports Arena & Cricket Ground',
     shortName: 'Cricket & Sports Arena',
     category: 'facility',
-    color: '#059669',
+    color: '#0D9488',
     bgColor: '#ECFDF5',
     icon: '🏏',
     lat: 25.030684,
@@ -349,7 +352,7 @@ export const CAMPUS_GIS_LOCATIONS = {
     name: 'Mewar University Hospital & Health Centre',
     shortName: 'University Hospital',
     category: 'facility',
-    color: '#DC2626',
+    color: '#C43D4B',
     bgColor: '#FEF2F2',
     icon: '🏥',
     lat: 25.031342,
@@ -414,12 +417,15 @@ export const CampusGisMap = ({
   setSimulationProgress,
   onNavigationUpdate,
   isDrawerOpen = false,
+  isNavPanelOpen = true,
+  onOpenDetails,
 }) => {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const userMarkerRef = useRef(null);
   const userAccuracyCircleRef = useRef(null);
   const customDestMarkerRef = useRef(null);
+  const routeCasingPolylineRef = useRef(null);
   const routePolylineRef = useRef(null);
   const buildingMarkersRef = useRef({});
   const buildingPolygonsRef = useRef({});
@@ -428,8 +434,9 @@ export const CampusGisMap = ({
   const roadsLayerRef = useRef([]);
 
   // Map Tile Style: 'satellite' | 'streets'
-  // Esri provides 100% clean, high-resolution GIS tiles with ZERO watermarks
   const [mapLayerStyle, setMapLayerStyle] = useState('satellite');
+  // Toggleable Map Legend
+  const [showLegend, setShowLegend] = useState(false);
 
   // Active target destination (either custom clicked point or selected building)
   const activeDestination = customDestination
@@ -439,6 +446,8 @@ export const CampusGisMap = ({
         lat: customDestination.lat,
         lng: customDestination.lng,
         isCustom: true,
+        color: '#168567',
+        icon: '📍',
       }
     : CAMPUS_GIS_LOCATIONS[selectedBuildingKey] || CAMPUS_GIS_LOCATIONS.eng;
 
@@ -476,7 +485,7 @@ export const CampusGisMap = ({
       // Add Zoom Control bottom right
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      // 1. INVERSE SHADED MASK: Dim everything outside the university perimeter
+      // 1. INVERSE SHADED MASK: Dim everything outside the university perimeter with calm Forest Green
       const outerWorldPolygon = [
         [24.90, 74.50],
         [24.90, 74.80],
@@ -484,30 +493,34 @@ export const CampusGisMap = ({
         [25.15, 74.50],
       ];
       L.polygon([outerWorldPolygon, MEWAR_PERIMETER_POLYGON], {
-        color: '#0F172A',
+        color: '#142D28',
         weight: 0,
-        fillColor: '#0F172A',
-        fillOpacity: 0.38,
+        fillColor: '#142D28',
+        fillOpacity: 0.32,
         interactive: false,
       }).addTo(map);
 
       // 2. OFFICIAL CAMPUS PERIMETER FENCE (OSM Way 549126310)
       perimeterLayerRef.current = L.polygon(MEWAR_PERIMETER_POLYGON, {
-        color: '#10B981',
+        color: '#168567',
         weight: 2.5,
-        fillColor: '#10B981',
-        fillOpacity: 0.05,
+        fillColor: '#168567',
+        fillOpacity: 0.04,
         dashArray: '6, 6',
       })
-        .bindTooltip('🏫 Mewar University 30-Acre Campus Perimeter (Restricted)', { permanent: false, direction: 'center' })
+        .bindTooltip('🏫 Mewar University 30-Acre Campus Perimeter (Restricted)', {
+          permanent: false,
+          direction: 'center',
+          className: 'mewar-tooltip',
+        })
         .addTo(map);
 
       // Draw Walkway & Internal Road Network
       roadsLayerRef.current = MEWAR_CAMPUS_ROADS.map((roadCoords) =>
         L.polyline(roadCoords, {
-          color: '#38BDF8',
+          color: '#10B981',
           weight: 3,
-          opacity: 0.65,
+          opacity: 0.6,
           dashArray: '4, 4',
         }).addTo(map)
       );
@@ -535,6 +548,16 @@ export const CampusGisMap = ({
       }
     };
   }, []);
+
+  // Invalidate Map Size when drawer or nav panel state transitions
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 320);
+    return () => clearTimeout(timer);
+  }, [isDrawerOpen, isNavPanelOpen]);
 
   // Switch Tile Layer (Satellite Aerial vs Esri Street Map)
   useEffect(() => {
@@ -569,10 +592,10 @@ export const CampusGisMap = ({
       // 1. Draw Visible Building Footprint Polygon
       if (bldg.polygon) {
         const poly = L.polygon(bldg.polygon, {
-          color: isSelected ? '#E11D48' : bldg.color,
+          color: isSelected ? '#168567' : bldg.color,
           weight: isSelected ? 3.5 : 2,
-          fillColor: bldg.color,
-          fillOpacity: isSelected ? 0.45 : 0.28,
+          fillColor: isSelected ? '#168567' : bldg.color,
+          fillOpacity: isSelected ? 0.38 : 0.22,
           dashArray: isSelected ? '6, 4' : null,
         }).addTo(map);
 
@@ -591,7 +614,7 @@ export const CampusGisMap = ({
         buildingPolygonsRef.current[key] = poly;
       }
 
-      // 2. Draw Marker Pin with Icon & Badge
+      // 2. Draw Marker Pin with Icon & Badge (NextCampus Institutional Palette)
       const markerHtml = `
         <div style="
           position: relative;
@@ -606,10 +629,10 @@ export const CampusGisMap = ({
             width: ${isSelected ? '38px' : '32px'};
             height: ${isSelected ? '38px' : '32px'};
             border-radius: 50%;
-            background-color: ${isSelected ? '#9E153E' : '#FFFFFF'};
+            background-color: ${isSelected ? '#142D28' : '#FFFFFF'};
             color: ${isSelected ? '#FFFFFF' : bldg.color};
-            border: 2.5px solid ${isSelected ? '#FFFFFF' : bldg.color};
-            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+            border: 2.5px solid ${isSelected ? '#168567' : bldg.color};
+            box-shadow: 0 4px 14px rgba(20,45,40,0.28);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -622,15 +645,16 @@ export const CampusGisMap = ({
             isSelected
               ? `
             <div style="
-              background: #9E153E;
+              background: #142D28;
               color: #FFFFFF;
               font-size: 11px;
-              font-weight: 800;
-              padding: 4px 9px;
+              font-weight: 700;
+              font-family: 'Plus Jakarta Sans', sans-serif;
+              padding: 4px 10px;
               border-radius: 9999px;
               white-space: nowrap;
-              box-shadow: 0 4px 12px rgba(158,21,62,0.35);
-              border: 1px solid rgba(255,255,255,0.4);
+              box-shadow: 0 4px 14px rgba(20,45,40,0.3);
+              border: 1.5px solid #168567;
             ">
               ${bldg.shortName}
             </div>
@@ -651,15 +675,15 @@ export const CampusGisMap = ({
 
       marker.bindPopup(`
         <div style="padding: 10px; font-family: Inter, sans-serif; min-width: 220px;">
-          <div style="font-weight: 800; font-size: 14px; color: #0F172A; margin-bottom: 2px;">
+          <div style="font-weight: 800; font-size: 13.5px; color: #142D28; margin-bottom: 3px; font-family: 'Plus Jakarta Sans', sans-serif;">
             ${bldg.name}
           </div>
-          <div style="font-size: 11px; color: #64748B; margin-bottom: 8px; line-height: 1.4;">
+          <div style="font-size: 11px; color: #65736B; margin-bottom: 8px; line-height: 1.45;">
             ${bldg.description}
           </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #E2E8F0; padding-top: 6px;">
-            <span style="font-size: 10px; color: #16A34A; font-weight: 700;">● ${bldg.dept}</span>
-            <span style="font-size: 10px; font-weight: 600; color: #475569;">${bldg.elevation}</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #E4EAE5; padding-top: 6px;">
+            <span style="font-size: 10px; color: #168567; font-weight: 700;">● ${bldg.dept}</span>
+            <span style="font-size: 10px; font-weight: 600; color: #87968D;">${bldg.elevation}</span>
           </div>
         </div>
       `);
@@ -700,30 +724,29 @@ export const CampusGisMap = ({
           transform: translate(-50%, -100%);
         ">
           <div style="
-            background: #E11D48;
+            background: #142D28;
             color: #FFFFFF;
             font-size: 11px;
-            font-weight: 800;
+            font-weight: 700;
             padding: 4px 10px;
             border-radius: 9999px;
-            box-shadow: 0 4px 16px rgba(225,29,72,0.45);
+            box-shadow: 0 4px 16px rgba(20,45,40,0.35);
             white-space: nowrap;
             display: flex;
             align-items: center;
             gap: 4px;
-            border: 1.5px solid #FFFFFF;
-            animation: bounce 1.4s infinite;
+            border: 1.5px solid #168567;
           ">
             <span>📍 Marked Destination</span>
           </div>
           <div style="
             width: 14px;
             height: 14px;
-            background: #E11D48;
+            background: #168567;
             border: 3px solid #FFFFFF;
             border-radius: 50%;
             margin-top: 4px;
-            box-shadow: 0 0 10px rgba(225,29,72,0.8);
+            box-shadow: 0 0 10px rgba(22,133,103,0.8);
           "></div>
         </div>
       `;
@@ -748,7 +771,7 @@ export const CampusGisMap = ({
     }
   }, [customDestination]);
 
-  // Update Route Polyline & Live Guidance Stats
+  // Update Route Polyline & Live Guidance Stats with Double-Cased Visibility
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map || !activeDestination || !userCoords) return;
@@ -784,22 +807,36 @@ export const CampusGisMap = ({
       });
     }
 
-    // Draw Dynamic Walking Route Polyline (Emerald Green matching Reference Image 3)
+    // Dynamic Waypoint Route Polyline
     const routePoints = interpolateRoute(
       { lat: userCoords.lat, lng: userCoords.lng },
       { lat: activeDestination.lat, lng: activeDestination.lng },
       18
     );
 
+    // 1. Route Casing (White outer halo for maximum GIS contrast against satellite imagery)
+    if (routeCasingPolylineRef.current) {
+      routeCasingPolylineRef.current.setLatLngs(routePoints);
+    } else {
+      routeCasingPolylineRef.current = L.polyline(routePoints, {
+        color: '#FFFFFF',
+        weight: 7.5,
+        opacity: 0.85,
+        lineCap: 'round',
+        interactive: false,
+      }).addTo(map);
+    }
+
+    // 2. Route Core Polyline (NextCampus Intelligent Green)
     if (routePolylineRef.current) {
       routePolylineRef.current.setLatLngs(routePoints);
       routePolylineRef.current.setStyle({
-        color: customDestination ? '#E11D48' : '#059669',
+        color: '#168567',
       });
     } else {
       routePolylineRef.current = L.polyline(routePoints, {
-        color: customDestination ? '#E11D48' : '#059669', // Emerald green matching Reference Image 3
-        weight: 5,
+        color: '#168567',
+        weight: 4.5,
         opacity: 0.95,
         lineCap: 'round',
       }).addTo(map);
@@ -817,15 +854,15 @@ export const CampusGisMap = ({
           width: 16px;
           height: 16px;
           border-radius: 50%;
-          background-color: #2563EB;
+          background-color: #3478B8;
           border: 3px solid #FFFFFF;
-          box-shadow: 0 0 16px rgba(37,99,235,1);
+          box-shadow: 0 0 16px rgba(52, 120, 184, 0.85);
         "></div>
         <div style="
           position: absolute;
           inset: 0;
           border-radius: 50%;
-          border: 2px solid #3B82F6;
+          border: 2px solid #3478B8;
           animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
         "></div>
       </div>
@@ -842,7 +879,7 @@ export const CampusGisMap = ({
       userMarkerRef.current.setLatLng([userCoords.lat, userCoords.lng]);
     } else {
       userMarkerRef.current = L.marker([userCoords.lat, userCoords.lng], { icon: userIcon }).addTo(map);
-      userMarkerRef.current.bindTooltip('<b>You Are Here</b>', { permanent: false, direction: 'top' });
+      userMarkerRef.current.bindTooltip('<b>You Are Here</b>', { permanent: false, direction: 'top', className: 'mewar-tooltip' });
     }
 
     if (userAccuracyCircleRef.current) {
@@ -851,7 +888,7 @@ export const CampusGisMap = ({
     } else {
       userAccuracyCircleRef.current = L.circle([userCoords.lat, userCoords.lng], {
         radius: userCoords.accuracy || 8,
-        color: '#3B82F6',
+        color: '#3478B8',
         fillColor: '#93C5FD',
         fillOpacity: 0.15,
         weight: 1,
@@ -894,8 +931,8 @@ export const CampusGisMap = ({
           right: '16px',
           zIndex: 30,
           backgroundColor: 'rgba(255, 255, 255, 0.96)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '12px',
+          backdropFilter: 'blur(12px)',
+          borderRadius: '10px',
           border: '1px solid var(--border-subtle)',
           boxShadow: 'var(--shadow-md)',
           padding: '4px',
@@ -908,7 +945,7 @@ export const CampusGisMap = ({
           onClick={() => setMapLayerStyle('satellite')}
           style={{
             padding: '6px 12px',
-            borderRadius: '8px',
+            borderRadius: '7px',
             border: 'none',
             fontSize: '11px',
             fontWeight: 700,
@@ -929,7 +966,7 @@ export const CampusGisMap = ({
           onClick={() => setMapLayerStyle('streets')}
           style={{
             padding: '6px 12px',
-            borderRadius: '8px',
+            borderRadius: '7px',
             border: 'none',
             fontSize: '11px',
             fontWeight: 700,
@@ -952,14 +989,15 @@ export const CampusGisMap = ({
         style={{
           position: 'absolute',
           top: '16px',
-          left: '420px',
+          left: isNavPanelOpen ? '430px' : '16px',
+          transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           zIndex: 25,
-          backgroundColor: 'rgba(15, 23, 42, 0.94)',
-          backdropFilter: 'blur(10px)',
+          backgroundColor: 'rgba(20, 45, 40, 0.94)',
+          backdropFilter: 'blur(12px)',
           borderRadius: '9999px',
-          padding: '6px 16px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
+          padding: '6px 14px',
+          border: '1px solid rgba(255, 255, 255, 0.16)',
+          boxShadow: 'var(--shadow-md)',
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
@@ -971,18 +1009,17 @@ export const CampusGisMap = ({
       >
         <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#10B981', display: 'inline-block' }} />
         <Shield size={13} style={{ color: '#10B981' }} />
-        <span>University Area Locked • Mewar Campus Only</span>
+        <span>University Area Locked • 30-Acre Campus</span>
       </div>
 
-      {/* FLOATING CAMPUS DESTINATION CARD ON MAP */}
-      {activeDestination && (
+      {/* FLOATING CAMPUS DESTINATION CARD ON MAP (Shown when right drawer is closed) */}
+      {activeDestination && !isDrawerOpen && (
         <div
           className="campus-map-floating-card"
           style={{
             position: 'absolute',
-            top: '70px',
-            right: isDrawerOpen ? '388px' : '16px',
-            transition: 'right 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            top: '64px',
+            right: '16px',
             zIndex: 32,
             display: 'flex',
             flexDirection: 'column',
@@ -993,16 +1030,16 @@ export const CampusGisMap = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div
                 style={{
-                  width: '40px',
-                  height: '40px',
+                  width: '38px',
+                  height: '38px',
                   borderRadius: '10px',
-                  backgroundColor: activeDestination.color || '#059669',
+                  backgroundColor: activeDestination.color || '#168567',
                   color: '#FFFFFF',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 800,
-                  fontSize: '15px',
+                  fontSize: '16px',
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
                   position: 'relative',
                 }}
@@ -1016,19 +1053,19 @@ export const CampusGisMap = ({
                     width: '10px',
                     height: '10px',
                     borderRadius: '50%',
-                    backgroundColor: '#22C55E',
+                    backgroundColor: '#10B981',
                     border: '2px solid #FFFFFF',
                   }}
                 />
               </div>
               <div>
-                <div style={{ fontSize: '13px', fontWeight: 800, color: '#0F172A', lineHeight: 1.25 }}>
+                <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.25, fontFamily: 'var(--font-heading)' }}>
                   {activeDestination.shortName || activeDestination.name}
                 </div>
-                <div style={{ fontSize: '11px', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                <div style={{ fontSize: '11px', color: 'var(--brand-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
                   <span>● Open</span>
-                  <span style={{ color: '#94A3B8' }}>•</span>
-                  <span style={{ color: '#64748B' }}>{activeDestination.code || 'Campus Zone'}</span>
+                  <span style={{ color: 'var(--text-muted)' }}>•</span>
+                  <span style={{ color: 'var(--text-secondary)' }}>{activeDestination.code || 'Campus Zone'}</span>
                 </div>
               </div>
             </div>
@@ -1041,12 +1078,12 @@ export const CampusGisMap = ({
                 width: '32px',
                 height: '32px',
                 borderRadius: '8px',
-                backgroundColor: '#F1F5F9',
-                border: '1px solid #E2E8F0',
+                backgroundColor: 'var(--bg-surface-subtle)',
+                border: '1px solid var(--border-subtle)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#475569',
+                color: 'var(--text-secondary)',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
@@ -1056,47 +1093,121 @@ export const CampusGisMap = ({
           </div>
 
           {/* Department / Zone */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', fontSize: '11.5px', color: '#475569', lineHeight: 1.4 }}>
-            <MapPin size={13} style={{ color: '#059669', flexShrink: 0, marginTop: '2px' }} />
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', fontSize: '11.5px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+            <MapPin size={13} style={{ color: 'var(--brand-primary)', flexShrink: 0, marginTop: '2px' }} />
             <span>{activeDestination.dept || 'Mewar University Academic Zone'}</span>
           </div>
 
-          {/* Elevation / Floors Info */}
-          {activeDestination.elevation && (
-            <div style={{ fontSize: '11px', color: '#64748B', paddingLeft: '19px' }}>
-              Level: <strong style={{ color: '#0F172A' }}>{activeDestination.elevation}</strong>
-            </div>
-          )}
-
-          {/* Primary Action Button: Focus & Navigate */}
-          <button
-            type="button"
-            onClick={handleFitRoute}
-            style={{
-              width: '100%',
-              padding: '9px 14px',
-              backgroundColor: '#059669',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '12px',
-              fontWeight: 700,
-              color: '#FFFFFF',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              boxShadow: '0 2px 8px rgba(5, 150, 105, 0.25)',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <Navigation size={13} />
-            <span>Focus &amp; Navigate Route</span>
-          </button>
+          {/* Action Row */}
+          <div style={{ display: 'flex', gap: '6px', marginTop: '2px' }}>
+            <button
+              type="button"
+              onClick={handleFitRoute}
+              style={{
+                flex: 1,
+                padding: '8px 12px',
+                backgroundColor: 'var(--brand-primary)',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '11.5px',
+                fontWeight: 700,
+                color: '#FFFFFF',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '5px',
+                boxShadow: 'var(--shadow-brand-glow)',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Navigation size={12} />
+              <span>Fit Route</span>
+            </button>
+            {onOpenDetails && (
+              <button
+                type="button"
+                onClick={onOpenDetails}
+                style={{
+                  padding: '8px 12px',
+                  backgroundColor: 'var(--brand-soft-bg)',
+                  border: '1px solid var(--brand-soft-border)',
+                  borderRadius: '8px',
+                  fontSize: '11.5px',
+                  fontWeight: 700,
+                  color: 'var(--brand-primary)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <span>Details</span>
+              </button>
+            )}
+          </div>
         </div>
       )}
 
-      {/* FLOATING BOTTOM-RIGHT QUICK ACTIONS (LOCATE, FIT ROUTE & RECENTER) */}
+      {/* FLOATING MAP LEGEND (COLLAPSIBLE) */}
+      {showLegend && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '80px',
+            right: '68px',
+            zIndex: 35,
+            backgroundColor: 'rgba(255, 255, 255, 0.98)',
+            backdropFilter: 'blur(16px)',
+            borderRadius: '12px',
+            border: '1px solid var(--border-subtle)',
+            boxShadow: 'var(--shadow-lg)',
+            padding: '14px 16px',
+            minWidth: '220px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            animation: 'fadeIn 0.2s ease',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
+              Campus Map Legend
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowLegend(false)}
+              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '2px' }}
+            >
+              <X size={14} />
+            </button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '11px', color: 'var(--text-secondary)' }}>
+            {[
+              { color: '#168567', label: 'Academic & Tech Wings' },
+              { color: '#B7791F', label: 'Central Library' },
+              { color: '#142D28', label: 'Administrative Secretariat' },
+              { color: '#3478B8', label: 'Student Residences (Hostels)' },
+              { color: '#0D9488', label: 'Sports Arena & Grounds' },
+              { color: '#C43D4B', label: 'Health Centre & Hospital' },
+              { color: '#D97706', label: 'Dining & Cafeteria' },
+              { color: '#7C3AED', label: 'Auditorium & Convocation' },
+            ].map((item, idx) => (
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '9px', height: '9px', borderRadius: '50%', backgroundColor: item.color, flexShrink: 0 }} />
+                <span>{item.label}</span>
+              </div>
+            ))}
+            <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '6px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ width: '12px', height: '2px', backgroundColor: '#168567', borderTop: '2px dashed #168567', flexShrink: 0 }} />
+              <span style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>Restricted Boundary (30 Acres)</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FLOATING BOTTOM-RIGHT QUICK ACTIONS (LOCATE, FIT ROUTE, RECENTER & LEGEND) */}
       <div
         style={{
           position: 'absolute',
@@ -1108,6 +1219,28 @@ export const CampusGisMap = ({
           gap: '8px',
         }}
       >
+        <button
+          type="button"
+          onClick={() => setShowLegend(!showLegend)}
+          title="Toggle Campus Legend"
+          style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: '10px',
+            backgroundColor: showLegend ? 'var(--brand-primary)' : 'rgba(255, 255, 255, 0.96)',
+            color: showLegend ? '#FFFFFF' : 'var(--text-secondary)',
+            border: '1px solid var(--border-subtle)',
+            boxShadow: 'var(--shadow-md)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.15s ease',
+          }}
+        >
+          <Info size={16} />
+        </button>
+
         {userCoords && (
           <button
             type="button"
@@ -1117,19 +1250,21 @@ export const CampusGisMap = ({
               width: '38px',
               height: '38px',
               borderRadius: '10px',
-              backgroundColor: isLiveGpsActive ? '#2563EB' : '#FFFFFF',
-              color: isLiveGpsActive ? '#FFFFFF' : '#2563EB',
+              backgroundColor: isLiveGpsActive ? 'var(--brand-primary)' : 'rgba(255, 255, 255, 0.96)',
+              color: isLiveGpsActive ? '#FFFFFF' : 'var(--brand-primary)',
               border: '1px solid var(--border-subtle)',
               boxShadow: 'var(--shadow-md)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              transition: 'all 0.15s ease',
             }}
           >
-            <Locate size={18} />
+            <Locate size={17} />
           </button>
         )}
+
         <button
           type="button"
           onClick={handleFitRoute}
@@ -1138,7 +1273,7 @@ export const CampusGisMap = ({
             width: '38px',
             height: '38px',
             borderRadius: '10px',
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            backgroundColor: 'rgba(255, 255, 255, 0.96)',
             border: '1px solid var(--border-subtle)',
             boxShadow: 'var(--shadow-md)',
             color: 'var(--brand-primary)',
@@ -1146,10 +1281,12 @@ export const CampusGisMap = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            transition: 'all 0.15s ease',
           }}
         >
-          <Crosshair size={18} />
+          <Crosshair size={17} />
         </button>
+
         <button
           type="button"
           onClick={handleRecenter}
@@ -1158,7 +1295,7 @@ export const CampusGisMap = ({
             width: '38px',
             height: '38px',
             borderRadius: '10px',
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            backgroundColor: 'rgba(255, 255, 255, 0.96)',
             border: '1px solid var(--border-subtle)',
             boxShadow: 'var(--shadow-md)',
             color: 'var(--text-primary)',
@@ -1166,6 +1303,7 @@ export const CampusGisMap = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            transition: 'all 0.15s ease',
           }}
         >
           <Maximize2 size={16} />

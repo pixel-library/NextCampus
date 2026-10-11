@@ -46,6 +46,10 @@ import {
   ZoomOut,
   ChevronsRight,
   ChevronLeft,
+  ArrowUpDown,
+  SlidersHorizontal,
+  Clock,
+  Info,
 } from 'lucide-react';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
@@ -234,8 +238,8 @@ const INITIAL_BUILDINGS = {
   hostel_b: {
     id: 'hostel_b',
     code: 'HST-06',
-    name: 'Aravalli Boys Residential Hostel',
-    shortName: 'Aravalli Boys Hostel',
+    name: 'Rana Sanga Boys Residential Hostel',
+    shortName: 'Sanga Boys Hostel',
     block: 'Block HST-06',
     dept: 'Male Student Residence Precinct (Blocks 1–4)',
     category: 'facility',
@@ -256,15 +260,43 @@ const INITIAL_BUILDINGS = {
     image: 'https://lh3.googleusercontent.com/aida/AEtjO1V6NaAN18Lf9daDEOiUCcg0Qz9TKAJTZEk9ECU3aySgNV_3O2hapiSnHSeUeScEXSjx47TLmk0cx0dsb_ZVA9EORszw3fNNN0V5EICouIgNfcs0lFyeVR0z0-fBJTvFLwabJeDl7KTSnD62my8TfA-M8AVfxPtiTO4SRRFQokqKIaWdLNfZtih4yUWkpusJLlN7f8edtZ98cv56xSSZJgS1akZwa_mq0qR3mAERMOY_rHpGJyiEVsGYmjpP',
     steps: [
       { num: 1, text: 'Depart Faculty of Engineering', sub: 'Head southeast past Sports Arena', dist: '0 m' },
-      { num: 2, text: 'Arrive at Aravalli Hostel Gate', sub: 'Turn into Block 1-4 residential corridor', dist: '180 m • 2.5 min' },
+      { num: 2, text: 'Arrive at Sanga Hostel Gate', sub: 'Turn into Block 1-4 residential corridor', dist: '180 m • 2.5 min' },
+    ],
+  },
+  kumbha: {
+    id: 'kumbha',
+    code: 'HST-07',
+    name: 'Maharana Kumbha Boys Hostel',
+    shortName: 'Kumbha Boys Hostel',
+    block: 'Block HST-07',
+    dept: 'Senior Student Residence Wing',
+    category: 'facility',
+    x: 1060,
+    y: 600,
+    width: 240,
+    height: 150,
+    description: 'Senior scholar dormitory units with high-speed campus LAN, study halls, and laundry amenities.',
+    occupancy: '76%',
+    seats: '200 Resident Capacity',
+    temp: '22.4°C',
+    air: '395 ppm CO₂',
+    accessibility: 'Step-Free Ramp Access',
+    hours: 'Open 24/7 (Gate curfew 09:30 PM)',
+    status: 'open',
+    targetRoom: 'Hostel Study Commons & Resident Office',
+    targetDesc: 'Senior Scholar Residential Wing',
+    image: 'https://lh3.googleusercontent.com/aida/AEtjO1V6NaAN18Lf9daDEOiUCcg0Qz9TKAJTZEk9ECU3aySgNV_3O2hapiSnHSeUeScEXSjx47TLmk0cx0dsb_ZVA9EORszw3fNNN0V5EICouIgNfcs0lFyeVR0z0-fBJTvFLwabJeDl7KTSnD62my8TfA-M8AVfxPtiTO4SRRFQokqKIaWdLNfZtih4yUWkpusJLlN7f8edtZ98cv56xSSZJgS1akZwa_mq0qR3mAERMOY_rHpGJyiEVsGYmjpP',
+    steps: [
+      { num: 1, text: 'Depart Faculty of Engineering', sub: 'Walk south along Student Living Quad', dist: '0 m' },
+      { num: 2, text: 'Arrive at Kumbha Boys Hostel', sub: 'Main entrance archway', dist: '160 m • 2 min' },
     ],
   },
   hostel_g: {
     id: 'hostel_g',
-    code: 'HST-07',
+    code: 'HST-08',
     name: 'Meera Bai Girls Residential Hostel',
     shortName: 'Meera Bai Girls Hostel',
-    block: 'Block HST-07',
+    block: 'Block HST-08',
     dept: 'Female Student Residence Precinct',
     category: 'facility',
     x: 1060,
@@ -289,10 +321,10 @@ const INITIAL_BUILDINGS = {
   },
   sports: {
     id: 'sports',
-    code: 'SPT-08',
+    code: 'SPT-10',
     name: 'Mewar Sports Arena & Cricket Ground',
     shortName: 'Cricket & Sports Arena',
-    block: 'Block SPT-08',
+    block: 'Block SPT-10',
     dept: 'Department of Physical Education & Sports',
     category: 'facility',
     x: 1360,
@@ -747,6 +779,8 @@ export const CampusMap = () => {
   const [viewEngine, setViewEngine] = useState('gis'); // 'gis' | 'blueprint'
   const [zoomLevel, setZoomLevel] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isNavPanelOpen, setIsNavPanelOpen] = useState(true);
+  const [panelMode, setPanelMode] = useState('directory'); // 'directory' | 'directions'
   const [facilitySearch, setFacilitySearch] = useState('');
   const [customDestination, setCustomDestination] = useState(null);
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'buildings' | 'hostels' | 'amenities'
@@ -827,7 +861,7 @@ export const CampusMap = () => {
 
   const currentBldg = buildings[selectedBldg] || buildings.eng || Object.values(buildings)[0];
 
-  const handleSelectBuilding = (id) => {
+  const handleSelectBuilding = (id, openDetails = false) => {
     if (!buildings[id]) return;
     setSelectedBldg(id);
     setActiveStepIndex(0);
@@ -840,8 +874,18 @@ export const CampusMap = () => {
         setSelectedRoomId(floorRooms[0].id);
       }
     }
-    setDrawerOpen(true);
+    if (openDetails) {
+      setDrawerOpen(true);
+    }
     setSearchParams({ bldg: id });
+  };
+
+  const handleStartNavigationTo = (id) => {
+    handleSelectBuilding(id, false);
+    setCustomDestination(null);
+    setPanelMode('directions');
+    setIsNavPanelOpen(true);
+    triggerToast(`Calculating route to ${buildings[id]?.shortName || buildings[id]?.name}...`);
   };
 
   // Real Hardware Browser GPS Tracking (watchPosition)
@@ -970,6 +1014,11 @@ export const CampusMap = () => {
     triggerToast('Location reset to Mewar University Main Gate (NH-48)');
   };
 
+  // Swap Origin and Destination
+  const handleSwapRoute = () => {
+    triggerToast('Route direction inverted.');
+  };
+
   // Nudge selected building on map canvas
   const handleNudgeBuilding = async (dx, dy) => {
     if (!isAdmin || !buildings[selectedBldg]) return;
@@ -1073,7 +1122,7 @@ export const CampusMap = () => {
       return b.id.includes('hostel') || b.id.includes('kumbha');
     }
     if (activeTab === 'amenities') {
-      return b.category === 'facility' && !b.id.includes('hostel');
+      return b.category === 'facility' && !b.id.includes('hostel') && !b.id.includes('kumbha');
     }
     if (activeTab === 'buildings') {
       return b.category === 'academic' || b.category === 'libraries';
@@ -1107,27 +1156,29 @@ export const CampusMap = () => {
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 100,
-            backgroundColor: 'rgba(158, 21, 62, 0.95)',
+            backgroundColor: 'var(--brand-forest)',
             color: '#FFFFFF',
-            padding: '10px 24px',
+            padding: '9px 22px',
             borderRadius: '9999px',
-            fontSize: '13px',
+            fontSize: '12.5px',
             fontWeight: 700,
             boxShadow: 'var(--shadow-lg)',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.16)',
+            animation: 'fadeIn 0.2s ease',
           }}
         >
-          <CheckCircle2 size={16} />
+          <CheckCircle2 size={16} style={{ color: '#10B981' }} />
           <span>{adminToast}</span>
         </div>
       )}
 
-      {/* TOP UNIFIED SUB-HEADER TOOLBAR (Reference Image 3 Dashboard Layout) */}
+      {/* TOP UNIFIED SUB-HEADER TOOLBAR (NextCampus Institutional Palette) */}
       <header
         style={{
-          height: '60px',
+          height: '56px',
           backgroundColor: '#FFFFFF',
           borderBottom: '1px solid var(--border-subtle)',
           padding: '0 20px',
@@ -1135,62 +1186,67 @@ export const CampusMap = () => {
           alignItems: 'center',
           justifyContent: 'space-between',
           zIndex: 40,
-          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+          boxShadow: '0 1px 3px rgba(20, 45, 40, 0.04)',
         }}
       >
         {/* Left: Mewar University Campus Badge & Title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div
               style={{
-                width: '34px',
-                height: '34px',
+                width: '32px',
+                height: '32px',
                 borderRadius: '8px',
-                backgroundColor: 'var(--brand-primary)',
+                backgroundColor: 'var(--brand-forest)',
                 color: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontWeight: 800,
                 fontSize: '13px',
+                fontFamily: 'var(--font-heading)',
               }}
             >
               MU
             </div>
             <div>
-              <div style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+              <div style={{ fontSize: '13.5px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, fontFamily: 'var(--font-heading)' }}>
                 Mewar University
               </div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
                 Gangrar, Chittorgarh • 30-Acre Campus
               </div>
             </div>
           </div>
 
-          <div style={{ height: '24px', width: '1px', backgroundColor: 'var(--border-subtle)' }} />
+          <div style={{ height: '20px', width: '1px', backgroundColor: 'var(--border-subtle)' }} />
 
-          {/* Sub-Tabs (Clean Campus Categorization inspired by dashboard tab patterns) */}
-          <div style={{ display: 'flex', gap: '4px', backgroundColor: 'var(--bg-surface-subtle)', padding: '3px', borderRadius: '10px' }}>
+          {/* Quick Sub-Filter Tabs */}
+          <div style={{ display: 'flex', gap: '3px', backgroundColor: 'var(--bg-surface-subtle)', padding: '3px', borderRadius: '8px' }}>
             {[
               { id: 'all', label: `All Facilities (${Object.keys(buildings).length})` },
               { id: 'buildings', label: 'Academic Wings' },
               { id: 'hostels', label: 'Hostels & Living' },
-              { id: 'amenities', label: 'Sports & Amenities' },
+              { id: 'amenities', label: 'Sports & Dining' },
             ].map((tab) => (
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  if (!isNavPanelOpen) setIsNavPanelOpen(true);
+                  setPanelMode('directory');
+                }}
                 style={{
-                  padding: '5px 12px',
-                  borderRadius: '7px',
+                  padding: '5px 11px',
+                  borderRadius: '6px',
                   border: 'none',
-                  fontSize: '11.5px',
+                  fontSize: '11px',
                   fontWeight: 700,
                   cursor: 'pointer',
                   backgroundColor: activeTab === tab.id ? '#FFFFFF' : 'transparent',
                   color: activeTab === tab.id ? 'var(--text-primary)' : 'var(--text-muted)',
-                  boxShadow: activeTab === tab.id ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                  boxShadow: activeTab === tab.id ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
                   transition: 'all 0.15s ease',
                 }}
               >
@@ -1206,7 +1262,7 @@ export const CampusMap = () => {
             display: 'flex',
             backgroundColor: 'var(--bg-surface-subtle)',
             padding: '3px',
-            borderRadius: '10px',
+            borderRadius: '9px',
             border: '1px solid var(--border-subtle)',
           }}
         >
@@ -1214,10 +1270,10 @@ export const CampusMap = () => {
             type="button"
             onClick={() => setViewEngine('gis')}
             style={{
-              padding: '6px 14px',
-              borderRadius: '8px',
+              padding: '6px 13px',
+              borderRadius: '7px',
               border: 'none',
-              fontSize: '12px',
+              fontSize: '11.5px',
               fontWeight: 700,
               cursor: 'pointer',
               display: 'flex',
@@ -1229,16 +1285,16 @@ export const CampusMap = () => {
             }}
           >
             <Compass size={14} />
-            <span>Campus GIS &amp; GPS</span>
+            <span>Interactive Campus GIS</span>
           </button>
           <button
             type="button"
             onClick={() => setViewEngine('blueprint')}
             style={{
-              padding: '6px 14px',
-              borderRadius: '8px',
+              padding: '6px 13px',
+              borderRadius: '7px',
               border: 'none',
-              fontSize: '12px',
+              fontSize: '11.5px',
               fontWeight: 700,
               cursor: 'pointer',
               display: 'flex',
@@ -1250,36 +1306,17 @@ export const CampusMap = () => {
             }}
           >
             <Layers size={14} />
-            <span>Indoor Blueprint</span>
+            <span>Indoor CAD Blueprint</span>
           </button>
         </div>
 
-        {/* Right: Strict University Boundary Badge, Refresh & Admin */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Boundary Lock Pill */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '11px',
-              fontWeight: 700,
-              color: '#059669',
-              backgroundColor: '#ECFDF5',
-              padding: '5px 12px',
-              borderRadius: '9999px',
-              border: '1px solid #A7F3D0',
-            }}
-          >
-            <Shield size={13} style={{ color: '#059669' }} />
-            <span>Campus Only (Locked)</span>
-          </div>
-
-          {/* Refresh Action (Reference 3 Refresh Button) */}
+        {/* Right: Refresh & Admin Controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Refresh Action */}
           <button
             type="button"
             onClick={handleResetLocation}
-            title="Refresh Location to Main Gate"
+            title="Reset Location to Main Gate"
             style={{
               padding: '6px 12px',
               borderRadius: '8px',
@@ -1292,11 +1329,12 @@ export const CampusMap = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '5px',
-              boxShadow: 'var(--shadow-sm)',
+              boxShadow: 'var(--shadow-xs)',
+              transition: 'all 0.15s ease',
             }}
           >
             <RefreshCw size={13} />
-            <span>Refresh</span>
+            <span>Recenter</span>
           </button>
 
           {isAdmin && (
@@ -1314,24 +1352,70 @@ export const CampusMap = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '5px',
+                transition: 'all 0.15s ease',
               }}
             >
               <ShieldCheck size={14} />
-              <span>{adminMapMode ? 'Admin Active' : 'Admin Tools'}</span>
+              <span>{adminMapMode ? 'Admin Mode' : 'Admin Tools'}</span>
             </button>
           )}
         </div>
       </header>
 
-      {/* MAIN WORKSPACE: MAP CANVAS + FLOATING LEFT CARD + RIGHT DRAWER */}
+      {/* MAIN WORKSPACE: MAP CANVAS + COLLAPSIBLE DIRECTORY + RIGHT DETAILS DRAWER */}
       <div style={{ position: 'relative', flex: 1, width: '100%', overflow: 'hidden' }}>
-        {/* FLOATING LEFT CAMPUS NAVIGATION & DIRECTORY PANEL */}
+        {/* FLOATING EXPAND PILL (Appears when Left Panel is Collapsed to maximize map view) */}
+        {!isNavPanelOpen && (
+          <button
+            type="button"
+            onClick={() => setIsNavPanelOpen(true)}
+            title="Open Campus Directory & Routes"
+            style={{
+              position: 'absolute',
+              top: '16px',
+              left: '16px',
+              zIndex: 35,
+              backgroundColor: 'rgba(255, 255, 255, 0.98)',
+              backdropFilter: 'blur(16px)',
+              borderRadius: '9999px',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: 'var(--shadow-md)',
+              padding: '8px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '12px',
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              cursor: 'pointer',
+              animation: 'fadeIn 0.2s ease',
+            }}
+          >
+            <Search size={14} style={{ color: 'var(--brand-primary)' }} />
+            <span>Campus Directory &amp; Routes</span>
+            <span
+              style={{
+                fontSize: '10.5px',
+                color: 'var(--brand-primary)',
+                backgroundColor: 'var(--brand-soft-bg)',
+                padding: '2px 7px',
+                borderRadius: '9999px',
+                fontWeight: 800,
+              }}
+            >
+              {Object.keys(buildings).length}
+            </span>
+            <ChevronsRight size={14} style={{ color: 'var(--text-muted)' }} />
+          </button>
+        )}
+
+        {/* LEFT COLLAPSIBLE CAMPUS DIRECTORY & NAVIGATION DRAWER */}
         <div
           style={{
             position: 'absolute',
             top: '16px',
             bottom: '16px',
-            left: '16px',
+            left: isNavPanelOpen ? '16px' : '-430px',
             width: '390px',
             maxWidth: 'calc(100vw - 32px)',
             zIndex: 25,
@@ -1339,453 +1423,738 @@ export const CampusMap = () => {
             backdropFilter: 'blur(16px)',
             borderRadius: '16px',
             border: '1px solid var(--border-subtle)',
-            boxShadow: '0 12px 36px rgba(15, 23, 42, 0.12)',
+            boxShadow: 'var(--shadow-lg)',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
+            transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
-          {/* Header row in card: Search and Category Filter */}
-          <div style={{ padding: '14px 16px 10px 16px', borderBottom: '1px solid var(--border-subtle)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A' }}>Campus Directory</span>
-                <span style={{ fontSize: '11px', color: '#64748B', fontWeight: 600 }}>({filteredBuildingList.length} locations)</span>
-              </div>
-              <div style={{ fontSize: '11px', color: '#059669', fontWeight: 700, backgroundColor: '#F0FDF4', padding: '2px 8px', borderRadius: '9999px', border: '1px solid #BBF7D0' }}>
-                ● Wayfinding Active
-              </div>
+          {/* Card Header row: Title & Collapse Button */}
+          <div style={{ padding: '12px 16px 8px 16px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Compass size={17} style={{ color: 'var(--brand-primary)' }} />
+              <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
+                Campus GIS Navigator
+              </span>
             </div>
-
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <div
-                style={{
-                  flex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  backgroundColor: 'var(--bg-surface-subtle)',
-                  padding: '7px 10px',
-                  borderRadius: '8px',
-                  border: '1px solid var(--border-subtle)',
-                }}
-              >
-                <Search size={14} style={{ color: 'var(--text-muted)' }} />
-                <input
-                  type="text"
-                  placeholder="Search campus buildings, labs, departments..."
-                  value={facilitySearch}
-                  onChange={(e) => setFacilitySearch(e.target.value)}
-                  style={{
-                    width: '100%',
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '12px',
-                    color: 'var(--text-primary)',
-                    outline: 'none',
-                  }}
-                />
-              </div>
-
-              {/* Category dropdown matching Reference Image 3 "All ▾" */}
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                style={{
-                  backgroundColor: 'var(--bg-surface-subtle)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: '8px',
-                  padding: '6px 10px',
-                  fontSize: '11.5px',
-                  fontWeight: 700,
-                  color: 'var(--text-primary)',
-                  cursor: 'pointer',
-                  outline: 'none',
-                }}
-              >
-                <option value="all">All</option>
-                <option value="academic">Academic</option>
-                <option value="libraries">Libraries</option>
-                <option value="facility">Facilities</option>
-              </select>
-            </div>
+            <button
+              type="button"
+              onClick={() => setIsNavPanelOpen(false)}
+              title="Collapse Panel (Maximize Map)"
+              style={{
+                width: '28px',
+                height: '28px',
+                borderRadius: '7px',
+                border: '1px solid var(--border-subtle)',
+                backgroundColor: 'var(--bg-surface-subtle)',
+                color: 'var(--text-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <ChevronLeft size={16} />
+            </button>
           </div>
 
-          {/* Route Planning Inputs (Origin & Destination) */}
-          <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '8px', backgroundColor: '#F8FAFC' }}>
-            {/* Origin Row */}
-            <div
+          {/* Mode Tabs: Directory vs Directions */}
+          <div style={{ display: 'flex', padding: '10px 14px 6px 14px', gap: '6px', backgroundColor: '#FFFFFF' }}>
+            <button
+              type="button"
+              onClick={() => setPanelMode('directory')}
               style={{
+                flex: 1,
+                padding: '7px 10px',
+                borderRadius: '8px',
+                border: 'none',
+                fontSize: '11.5px',
+                fontWeight: 700,
+                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                backgroundColor: '#FFFFFF',
-                padding: '6px 10px',
-                borderRadius: '8px',
-                border: '1px solid var(--border-subtle)',
+                justifyContent: 'center',
+                gap: '6px',
+                backgroundColor: panelMode === 'directory' ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
+                color: panelMode === 'directory' ? '#FFFFFF' : 'var(--text-secondary)',
+                transition: 'all 0.15s ease',
               }}
             >
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2563EB', flexShrink: 0 }} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '9px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                  Starting Point
-                </div>
-                <div style={{ fontSize: '11.5px', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {isLiveGpsActive ? '📍 My Current GPS Location' : '🚪 NH-48 Main Campus Gate (Turnstiles)'}
-                </div>
-              </div>
-            </div>
+              <Building size={13} />
+              <span>Campus Directory</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setPanelMode('directions')}
+              style={{
+                flex: 1,
+                padding: '7px 10px',
+                borderRadius: '8px',
+                border: 'none',
+                fontSize: '11.5px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                backgroundColor: panelMode === 'directions' ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
+                color: panelMode === 'directions' ? '#FFFFFF' : 'var(--text-secondary)',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Navigation size={13} />
+              <span>Directions &amp; Route</span>
+            </button>
+          </div>
 
-            {/* Destination Row */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                backgroundColor: customDestination ? '#FFF1F2' : '#FFFFFF',
-                padding: '6px 10px',
-                borderRadius: '8px',
-                border: customDestination ? '1.5px solid #E11D48' : '1px solid var(--border-interactive)',
-              }}
-            >
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: customDestination ? '#E11D48' : '#059669', flexShrink: 0 }} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '9px', fontWeight: 800, color: customDestination ? '#E11D48' : '#059669', textTransform: 'uppercase' }}>
-                  {customDestination ? '📍 Marked Destination' : 'Destination'}
-                </div>
-                {customDestination ? (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                    <div style={{ fontSize: '11.5px', fontWeight: 700, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {customDestination.name}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setCustomDestination(null)}
-                      style={{
-                        padding: '1px 6px',
-                        borderRadius: '4px',
-                        backgroundColor: '#FFFFFF',
-                        border: '1px solid #FECDD3',
-                        color: '#E11D48',
-                        fontSize: '10px',
-                        fontWeight: 800,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ) : (
-                  <select
-                    value={selectedBldg}
-                    onChange={(e) => handleSelectBuilding(e.target.value)}
+          {/* PANEL MODE 1: CAMPUS DIRECTORY (FACILITIES LIST & SEARCH) */}
+          {panelMode === 'directory' && (
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+              {/* Search & Category Filter Row */}
+              <div style={{ padding: '8px 14px 10px 14px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    padding: '7px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-subtle)',
+                  }}
+                >
+                  <Search size={14} style={{ color: 'var(--text-muted)' }} />
+                  <input
+                    type="text"
+                    placeholder="Search campus buildings, labs, hostels..."
+                    value={facilitySearch}
+                    onChange={(e) => setFacilitySearch(e.target.value)}
                     style={{
                       width: '100%',
                       background: 'none',
                       border: 'none',
                       fontSize: '12px',
-                      fontWeight: 700,
                       color: 'var(--text-primary)',
                       outline: 'none',
+                    }}
+                  />
+                  {facilitySearch && (
+                    <button
+                      type="button"
+                      onClick={() => setFacilitySearch('')}
+                      style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0 }}
+                    >
+                      <X size={13} />
+                    </button>
+                  )}
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px' }}>
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
+                    Showing <strong>{filteredBuildingList.length}</strong> locations
+                  </span>
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: '1px solid var(--border-subtle)',
+                      borderRadius: '6px',
+                      padding: '3px 8px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: 'var(--text-primary)',
                       cursor: 'pointer',
+                      outline: 'none',
                     }}
                   >
-                    {Object.entries(buildings).map(([key, bldg]) => (
-                      <option key={key} value={key}>
-                        {bldg.name} ({bldg.code})
-                      </option>
-                    ))}
+                    <option value="all">All Categories</option>
+                    <option value="academic">Academic Wings</option>
+                    <option value="libraries">Central Library</option>
+                    <option value="facility">Living &amp; Facilities</option>
                   </select>
+                </div>
+              </div>
+
+              {/* Scrollable Facility List */}
+              <div style={{ flex: 1, overflowY: 'auto', padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {filteredBuildingList.length === 0 ? (
+                  <div style={{ padding: '30px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>
+                    No campus facilities matching "{facilitySearch}"
+                  </div>
+                ) : (
+                  filteredBuildingList.map((bldg) => {
+                    const isSelected = selectedBldg === bldg.id && !customDestination;
+                    const bldgCoords = CAMPUS_GIS_LOCATIONS[bldg.id] || { lat: 25.03213, lng: 74.636623 };
+                    const bldgDist = calculateDistanceMeters(userCoords.lat, userCoords.lng, bldgCoords.lat, bldgCoords.lng);
+                    const bldgEta = Math.max(1, Math.round(bldgDist / 1.25 / 60));
+
+                    return (
+                      <div
+                        key={bldg.id}
+                        className={`campus-wayfinding-card ${isSelected ? 'active' : ''}`}
+                        onClick={() => handleSelectBuilding(bldg.id, false)}
+                        style={{
+                          backgroundColor: isSelected ? 'var(--brand-soft-bg)' : '#FFFFFF',
+                          borderColor: isSelected ? 'var(--brand-primary)' : 'var(--border-subtle)',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '18px' }}>
+                              {CAMPUS_GIS_LOCATIONS[bldg.id]?.icon || '🏛️'}
+                            </span>
+                            <div>
+                              <div style={{ fontSize: '12.5px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.25 }}>
+                                {bldg.shortName || bldg.name}
+                              </div>
+                              <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                                {bldg.dept}
+                              </div>
+                            </div>
+                          </div>
+                          <span
+                            style={{
+                              fontSize: '9.5px',
+                              fontWeight: 800,
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              backgroundColor: isSelected ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
+                              color: isSelected ? '#FFFFFF' : 'var(--text-secondary)',
+                              fontFamily: 'var(--font-mono)',
+                            }}
+                          >
+                            {bldg.code}
+                          </span>
+                        </div>
+
+                        {/* Telemetry info row */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '10.5px', color: 'var(--text-secondary)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ color: '#16A34A', fontWeight: 700 }}>● Open</span>
+                            <span>•</span>
+                            <span>{bldg.occupancy} Occupancy</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--brand-primary)', fontWeight: 700 }}>
+                            <Footprints size={12} />
+                            <span>{bldgDist} m (~{bldgEta} min)</span>
+                          </div>
+                        </div>
+
+                        {/* Action buttons inside card */}
+                        <div style={{ display: 'flex', gap: '6px', paddingTop: '4px', borderTop: '1px solid var(--border-subtle)' }}>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleStartNavigationTo(bldg.id);
+                            }}
+                            style={{
+                              flex: 1,
+                              padding: '5px 10px',
+                              borderRadius: '6px',
+                              backgroundColor: 'var(--brand-primary)',
+                              color: '#FFFFFF',
+                              border: 'none',
+                              fontSize: '11px',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <Navigation size={11} />
+                            <span>Navigate</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSelectBuilding(bldg.id, true);
+                            }}
+                            style={{
+                              padding: '5px 10px',
+                              borderRadius: '6px',
+                              backgroundColor: 'var(--bg-surface-subtle)',
+                              color: 'var(--text-secondary)',
+                              border: '1px solid var(--border-subtle)',
+                              fontSize: '11px',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            <span>Details</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </div>
+          )}
 
-            {/* Mobility Mode Pills */}
-            <div style={{ display: 'flex', gap: '4px', backgroundColor: 'var(--bg-surface-subtle)', padding: '2px', borderRadius: '8px' }}>
-              <button
-                type="button"
-                onClick={() => setMobilityMode('walk')}
-                style={{
-                  flex: 1,
-                  padding: '5px 8px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  backgroundColor: mobilityMode === 'walk' ? '#059669' : 'transparent',
-                  color: mobilityMode === 'walk' ? '#FFFFFF' : 'var(--text-secondary)',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                🚶 Walk
-              </button>
-              <button
-                type="button"
-                onClick={() => setMobilityMode('wheelchair')}
-                style={{
-                  flex: 1,
-                  padding: '5px 8px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  backgroundColor: mobilityMode === 'wheelchair' ? '#059669' : 'transparent',
-                  color: mobilityMode === 'wheelchair' ? '#FFFFFF' : 'var(--text-secondary)',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                ♿ Step-Free
-              </button>
-              <button
-                type="button"
-                onClick={() => setMobilityMode('shuttle')}
-                style={{
-                  flex: 1,
-                  padding: '5px 8px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  backgroundColor: mobilityMode === 'shuttle' ? '#059669' : 'transparent',
-                  color: mobilityMode === 'shuttle' ? '#FFFFFF' : 'var(--text-secondary)',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                🚐 EV Shuttle
-              </button>
-            </div>
-          </div>
-
-          {/* Active Route Guidance HUD Banner */}
-          <div
-            style={{
-              backgroundColor: '#F0FDF4',
-              borderBottom: '1px solid #BBF7D0',
-              display: 'flex',
-              flexDirection: 'column',
-              position: 'relative',
-            }}
-          >
-            {/* Real-time Walking Progress Bar */}
-            <div style={{ height: '3px', width: '100%', backgroundColor: '#DCFCE7', overflow: 'hidden' }}>
-              <div
-                style={{
-                  height: '100%',
-                  width: `${isSimulatingWalk ? simulationProgress : Math.min(100, Math.max(10, ((activeStepIndex + 1) / Math.max(1, currentBldg?.steps?.length || 3)) * 100))}%`,
-                  backgroundColor: '#059669',
-                  transition: 'width 0.3s ease',
-                }}
-              />
-            </div>
-
-            <div style={{ padding: '10px 16px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#059669', animation: 'pulse 1.8s infinite' }} />
-                  <span style={{ fontSize: '10px', fontWeight: 800, color: '#16A34A', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    Live Step-by-Step Wayfinding
-                  </span>
+          {/* PANEL MODE 2: DIRECTIONS & ROUTE PLANNING */}
+          {panelMode === 'directions' && (
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+              {/* Route Planning Inputs (Origin & Destination) */}
+              <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '8px', backgroundColor: '#F8FAFC' }}>
+                {/* Origin Row */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    backgroundColor: '#FFFFFF',
+                    padding: '6px 10px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-subtle)',
+                  }}
+                >
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#3478B8', flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '9px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                      Starting Point
+                    </div>
+                    <div style={{ fontSize: '11.5px', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {isLiveGpsActive ? '📍 My Current GPS Location' : '🚪 NH-48 Main Campus Gate (Turnstiles)'}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSwapRoute}
+                    title="Swap Origin and Destination"
+                    style={{
+                      padding: '4px',
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--text-muted)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <ArrowUpDown size={14} />
+                  </button>
                 </div>
-                <div style={{ display: 'flex', gap: '6px', fontSize: '11.5px', fontWeight: 800, color: '#059669' }}>
-                  <span>{navigationStats.distanceMeters} m</span>
-                  <span>•</span>
-                  <span>~{navigationStats.etaMinutes} min</span>
+
+                {/* Destination Row */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    backgroundColor: customDestination ? 'var(--brand-soft-bg)' : '#FFFFFF',
+                    padding: '6px 10px',
+                    borderRadius: '8px',
+                    border: customDestination ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-interactive)',
+                  }}
+                >
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--brand-primary)', flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '9px', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase' }}>
+                      {customDestination ? '📍 Marked Destination' : 'Destination'}
+                    </div>
+                    {customDestination ? (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                        <div style={{ fontSize: '11.5px', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {customDestination.name}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setCustomDestination(null)}
+                          style={{
+                            padding: '1px 6px',
+                            borderRadius: '4px',
+                            backgroundColor: '#FFFFFF',
+                            border: '1px solid var(--border-subtle)',
+                            color: 'var(--brand-primary)',
+                            fontSize: '10px',
+                            fontWeight: 800,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      <select
+                        value={selectedBldg}
+                        onChange={(e) => handleSelectBuilding(e.target.value, false)}
+                        style={{
+                          width: '100%',
+                          background: 'none',
+                          border: 'none',
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          color: 'var(--text-primary)',
+                          outline: 'none',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {Object.entries(buildings).map(([key, bldg]) => (
+                          <option key={key} value={key}>
+                            {bldg.name} ({bldg.code})
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                </div>
+
+                {/* Mobility Mode Selector Pills */}
+                <div style={{ display: 'flex', gap: '4px', backgroundColor: 'var(--bg-surface-subtle)', padding: '2px', borderRadius: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setMobilityMode('walk')}
+                    style={{
+                      flex: 1,
+                      padding: '5px 8px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      backgroundColor: mobilityMode === 'walk' ? 'var(--brand-primary)' : 'transparent',
+                      color: mobilityMode === 'walk' ? '#FFFFFF' : 'var(--text-secondary)',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    🚶 Walk (1.2 m/s)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMobilityMode('wheelchair')}
+                    style={{
+                      flex: 1,
+                      padding: '5px 8px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      backgroundColor: mobilityMode === 'wheelchair' ? 'var(--brand-primary)' : 'transparent',
+                      color: mobilityMode === 'wheelchair' ? '#FFFFFF' : 'var(--text-secondary)',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    ♿ Step-Free ADA
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMobilityMode('shuttle')}
+                    style={{
+                      flex: 1,
+                      padding: '5px 8px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      backgroundColor: mobilityMode === 'shuttle' ? 'var(--brand-primary)' : 'transparent',
+                      color: mobilityMode === 'shuttle' ? '#FFFFFF' : 'var(--text-secondary)',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    🚐 EV Shuttle
+                  </button>
                 </div>
               </div>
 
-              {/* Maneuver Navigation Card */}
-              {(() => {
-                const stepsArr = currentBldg?.steps || [
-                  { num: 1, text: 'Depart Main Campus Gate (NH-48)', sub: 'Turnstiles & Security Outpost', dist: '0 m' },
-                  { num: 2, text: `Walk along campus avenue towards ${currentBldg?.shortName}`, sub: 'Direct paved pathway', dist: `${navigationStats.distanceMeters} m` },
-                ];
-                const activeStep = stepsArr[Math.min(activeStepIndex, stepsArr.length - 1)] || stepsArr[0];
-                const isLast = activeStepIndex === stepsArr.length - 1;
+              {/* Active Route Guidance HUD Banner */}
+              <div
+                style={{
+                  backgroundColor: 'var(--brand-soft-bg)',
+                  borderBottom: '1px solid var(--brand-soft-border)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  position: 'relative',
+                }}
+              >
+                {/* Real-time Walking Progress Bar */}
+                <div style={{ height: '3px', width: '100%', backgroundColor: '#D1FAE5', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      height: '100%',
+                      width: `${isSimulatingWalk ? simulationProgress : Math.min(100, Math.max(10, ((activeStepIndex + 1) / Math.max(1, currentBldg?.steps?.length || 3)) * 100))}%`,
+                      backgroundColor: 'var(--brand-primary)',
+                      transition: 'width 0.3s ease',
+                    }}
+                  />
+                </div>
 
-                const getManeuverIcon = (text = '', num = 1) => {
-                  if (isLast) return <CheckCircle2 size={16} style={{ color: '#059669' }} />;
-                  const l = text.toLowerCase();
-                  if (l.includes('depart') || l.includes('gate') || num === 1) return <Footprints size={16} style={{ color: '#2563EB' }} />;
-                  if (l.includes('right')) return <CornerUpRight size={16} style={{ color: '#059669' }} />;
-                  if (l.includes('left')) return <CornerUpLeft size={16} style={{ color: '#059669' }} />;
-                  if (l.includes('lift') || l.includes('stairs') || l.includes('floor') || l.includes('ascend')) return <Layers size={16} style={{ color: '#7C3AED' }} />;
-                  if (l.includes('arrive') || l.includes('room')) return <CheckCircle2 size={16} style={{ color: '#059669' }} />;
-                  return <MoveUp size={16} style={{ color: '#059669' }} />;
-                };
+                <div style={{ padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--brand-primary)', animation: 'pulse 1.8s infinite' }} />
+                      <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                        Live Route Telemetry
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '6px', fontSize: '11.5px', fontWeight: 800, color: 'var(--brand-primary)' }}>
+                      <span>{navigationStats.distanceMeters} m</span>
+                      <span>•</span>
+                      <span>~{navigationStats.etaMinutes} min</span>
+                    </div>
+                  </div>
 
-                return (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <div
-                      style={{
-                        backgroundColor: '#FFFFFF',
-                        border: '1px solid #A7F3D0',
-                        borderRadius: '10px',
-                        padding: '9px 12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '10px',
-                        boxShadow: '0 1px 4px rgba(5, 150, 105, 0.08)',
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
+                  {/* Maneuver Navigation Card */}
+                  {(() => {
+                    const stepsArr = currentBldg?.steps || [
+                      { num: 1, text: 'Depart Main Campus Gate (NH-48)', sub: 'Turnstiles & Security Outpost', dist: '0 m' },
+                      { num: 2, text: `Walk along campus avenue towards ${currentBldg?.shortName}`, sub: 'Direct paved pathway', dist: `${navigationStats.distanceMeters} m` },
+                    ];
+                    const activeStep = stepsArr[Math.min(activeStepIndex, stepsArr.length - 1)] || stepsArr[0];
+                    const isLast = activeStepIndex === stepsArr.length - 1;
+
+                    const getManeuverIcon = (text = '', num = 1) => {
+                      if (isLast) return <CheckCircle2 size={16} style={{ color: 'var(--brand-primary)' }} />;
+                      const l = text.toLowerCase();
+                      if (l.includes('depart') || l.includes('gate') || num === 1) return <Footprints size={16} style={{ color: '#3478B8' }} />;
+                      if (l.includes('right')) return <CornerUpRight size={16} style={{ color: 'var(--brand-primary)' }} />;
+                      if (l.includes('left')) return <CornerUpLeft size={16} style={{ color: 'var(--brand-primary)' }} />;
+                      if (l.includes('lift') || l.includes('stairs') || l.includes('floor') || l.includes('ascend')) return <Layers size={16} style={{ color: '#7C3AED' }} />;
+                      if (l.includes('arrive') || l.includes('room')) return <CheckCircle2 size={16} style={{ color: 'var(--brand-primary)' }} />;
+                      return <MoveUp size={16} style={{ color: 'var(--brand-primary)' }} />;
+                    };
+
+                    return (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         <div
                           style={{
-                            width: '32px',
-                            height: '32px',
-                            borderRadius: '8px',
-                            backgroundColor: '#ECFDF5',
-                            border: '1px solid #A7F3D0',
+                            backgroundColor: '#FFFFFF',
+                            border: '1px solid var(--brand-soft-border)',
+                            borderRadius: '10px',
+                            padding: '9px 12px',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0,
+                            justifyContent: 'space-between',
+                            gap: '10px',
+                            boxShadow: 'var(--shadow-xs)',
                           }}
                         >
-                          {getManeuverIcon(activeStep.text, activeStep.num)}
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ fontSize: '9.5px', fontWeight: 800, color: '#059669', textTransform: 'uppercase' }}>
-                              Maneuver {activeStep.num} of {stepsArr.length}
-                            </span>
-                            {activeStep.dist && (
-                              <span style={{ fontSize: '9.5px', color: '#64748B', fontWeight: 600 }}>
-                                • {activeStep.dist}
-                              </span>
-                            )}
-                          </div>
-                          <div style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {activeStep.text}
-                          </div>
-                          <div style={{ fontSize: '10.5px', color: '#64748B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {activeStep.sub}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Step Navigation Chevrons */}
-                      <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
-                        <button
-                          type="button"
-                          disabled={activeStepIndex === 0}
-                          onClick={() => setActiveStepIndex((prev) => Math.max(0, prev - 1))}
-                          style={{
-                            width: '26px',
-                            height: '26px',
-                            borderRadius: '6px',
-                            backgroundColor: activeStepIndex === 0 ? '#F1F5F9' : '#ECFDF5',
-                            color: activeStepIndex === 0 ? '#94A3B8' : '#059669',
-                            border: '1px solid #A7F3D0',
-                            cursor: activeStepIndex === 0 ? 'not-allowed' : 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          <ChevronLeft size={14} />
-                        </button>
-                        <button
-                          type="button"
-                          disabled={activeStepIndex >= stepsArr.length - 1}
-                          onClick={() => setActiveStepIndex((prev) => Math.min(stepsArr.length - 1, prev + 1))}
-                          style={{
-                            width: '26px',
-                            height: '26px',
-                            borderRadius: '6px',
-                            backgroundColor: activeStepIndex >= stepsArr.length - 1 ? '#F1F5F9' : '#ECFDF5',
-                            color: activeStepIndex >= stepsArr.length - 1 ? '#94A3B8' : '#059669',
-                            border: '1px solid #A7F3D0',
-                            cursor: activeStepIndex >= stepsArr.length - 1 ? 'not-allowed' : 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          <ChevronRight size={14} />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Collapsible toggle for all steps */}
-                    <button
-                      type="button"
-                      onClick={() => setShowAllManeuvers(!showAllManeuvers)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        fontSize: '10.5px',
-                        fontWeight: 700,
-                        color: '#059669',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '4px',
-                        padding: '2px 0',
-                      }}
-                    >
-                      <span>{showAllManeuvers ? 'Hide Maneuver Steps ▲' : `View All ${stepsArr.length} Maneuver Steps ▼`}</span>
-                    </button>
-
-                    {showAllManeuvers && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '2px', maxHeight: '180px', overflowY: 'auto' }}>
-                        {stepsArr.map((st, sIdx) => {
-                          const isActive = sIdx === activeStepIndex;
-                          return (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
                             <div
-                              key={st.num}
-                              onClick={() => setActiveStepIndex(sIdx)}
                               style={{
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '8px',
+                                backgroundColor: 'var(--brand-soft-bg)',
+                                border: '1px solid var(--brand-soft-border)',
                                 display: 'flex',
-                                alignItems: 'flex-start',
-                                gap: '8px',
-                                padding: '6px 8px',
-                                borderRadius: '6px',
-                                backgroundColor: isActive ? '#ECFDF5' : '#FFFFFF',
-                                border: isActive ? '1px solid #10B981' : '1px solid #E2E8F0',
-                                cursor: 'pointer',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
                               }}
                             >
-                              <span
-                                style={{
-                                  width: '18px',
-                                  height: '18px',
-                                  borderRadius: '50%',
-                                  backgroundColor: isActive ? '#059669' : '#E2E8F0',
-                                  color: isActive ? '#FFFFFF' : '#475569',
-                                  fontSize: '9.5px',
-                                  fontWeight: 800,
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  flexShrink: 0,
-                                  marginTop: '1px',
-                                }}
-                              >
-                                {st.num}
-                              </span>
-                              <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{ fontSize: '11px', fontWeight: isActive ? 800 : 600, color: isActive ? '#065F46' : '#1E293B' }}>
-                                  {st.text}
-                                </div>
-                                <div style={{ fontSize: '9.5px', color: '#64748B' }}>
-                                  {st.sub} • {st.dist}
-                                </div>
+                              {getManeuverIcon(activeStep.text, activeStep.num)}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span style={{ fontSize: '9.5px', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase' }}>
+                                  Maneuver {activeStep.num} of {stepsArr.length}
+                                </span>
+                                {activeStep.dist && (
+                                  <span style={{ fontSize: '9.5px', color: 'var(--text-muted)', fontWeight: 600 }}>
+                                    • {activeStep.dist}
+                                  </span>
+                                )}
+                              </div>
+                              <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {activeStep.text}
+                              </div>
+                              <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {activeStep.sub}
                               </div>
                             </div>
-                          );
-                        })}
+                          </div>
+
+                          {/* Step Navigation Chevrons */}
+                          <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+                            <button
+                              type="button"
+                              disabled={activeStepIndex === 0}
+                              onClick={() => setActiveStepIndex((prev) => Math.max(0, prev - 1))}
+                              style={{
+                                width: '26px',
+                                height: '26px',
+                                borderRadius: '6px',
+                                backgroundColor: activeStepIndex === 0 ? 'var(--bg-surface-subtle)' : 'var(--brand-soft-bg)',
+                                color: activeStepIndex === 0 ? 'var(--text-muted)' : 'var(--brand-primary)',
+                                border: '1px solid var(--brand-soft-border)',
+                                cursor: activeStepIndex === 0 ? 'not-allowed' : 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                            >
+                              <ChevronLeft size={14} />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={activeStepIndex >= stepsArr.length - 1}
+                              onClick={() => setActiveStepIndex((prev) => Math.min(stepsArr.length - 1, prev + 1))}
+                              style={{
+                                width: '26px',
+                                height: '26px',
+                                borderRadius: '6px',
+                                backgroundColor: activeStepIndex >= stepsArr.length - 1 ? 'var(--bg-surface-subtle)' : 'var(--brand-soft-bg)',
+                                color: activeStepIndex >= stepsArr.length - 1 ? 'var(--text-muted)' : 'var(--brand-primary)',
+                                border: '1px solid var(--brand-soft-border)',
+                                cursor: activeStepIndex >= stepsArr.length - 1 ? 'not-allowed' : 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                            >
+                              <ChevronRight size={14} />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Collapsible toggle for all steps */}
+                        <button
+                          type="button"
+                          onClick={() => setShowAllManeuvers(!showAllManeuvers)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            fontSize: '10.5px',
+                            fontWeight: 700,
+                            color: 'var(--brand-primary)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '4px',
+                            padding: '2px 0',
+                          }}
+                        >
+                          <span>{showAllManeuvers ? 'Hide Maneuver Steps ▲' : `View All ${stepsArr.length} Maneuver Steps ▼`}</span>
+                        </button>
+
+                        {showAllManeuvers && (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginTop: '2px', maxHeight: '160px', overflowY: 'auto' }}>
+                            {stepsArr.map((st, sIdx) => {
+                              const isActive = sIdx === activeStepIndex;
+                              return (
+                                <div
+                                  key={st.num}
+                                  onClick={() => setActiveStepIndex(sIdx)}
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    gap: '8px',
+                                    padding: '6px 8px',
+                                    borderRadius: '6px',
+                                    backgroundColor: isActive ? 'var(--brand-soft-bg)' : '#FFFFFF',
+                                    border: isActive ? '1px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      width: '18px',
+                                      height: '18px',
+                                      borderRadius: '50%',
+                                      backgroundColor: isActive ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
+                                      color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
+                                      fontSize: '9.5px',
+                                      fontWeight: 800,
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      flexShrink: 0,
+                                      marginTop: '1px',
+                                    }}
+                                  >
+                                    {st.num}
+                                  </span>
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ fontSize: '11px', fontWeight: isActive ? 800 : 600, color: isActive ? 'var(--brand-primary)' : 'var(--text-primary)' }}>
+                                      {st.text}
+                                    </div>
+                                    <div style={{ fontSize: '9.5px', color: 'var(--text-muted)' }}>
+                                      {st.sub} • {st.dist}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
-                    )}
+                    );
+                  })()}
+                </div>
+              </div>
+
+              {/* Navigation Action Buttons: Hardware GPS & Simulation */}
+              <div style={{ padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid var(--border-subtle)', marginTop: 'auto' }}>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={toggleLiveGps}
+                    style={{
+                      flex: 1,
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      border: '1px solid var(--border-subtle)',
+                      backgroundColor: isLiveGpsActive ? 'var(--brand-primary)' : '#FFFFFF',
+                      color: isLiveGpsActive ? '#FFFFFF' : 'var(--text-primary)',
+                      fontSize: '11.5px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      boxShadow: 'var(--shadow-xs)',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <Compass size={13} />
+                    <span>{isLiveGpsActive ? 'Stop Live GPS' : 'Enable Live GPS'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={toggleSimulation}
+                    style={{
+                      flex: 1,
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      backgroundColor: isSimulatingWalk ? '#B7791F' : 'var(--brand-primary)',
+                      color: '#FFFFFF',
+                      fontSize: '11.5px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      boxShadow: 'var(--shadow-xs)',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    {isSimulatingWalk ? <Pause size={13} /> : <Play size={13} />}
+                    <span>{isSimulatingWalk ? 'Pause Walk' : 'Simulate Walk'}</span>
+                  </button>
+                </div>
+
+                {gpsError && (
+                  <div style={{ fontSize: '10.5px', color: 'var(--status-danger)', backgroundColor: 'var(--status-danger-bg)', padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--status-danger-border)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <AlertCircle size={13} />
+                    <span>{gpsError}</span>
                   </div>
-                );
-              })()}
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* MAP CANVAS ENGINE (Leaflet GIS vs Blueprint SVG) */}
@@ -1793,7 +2162,7 @@ export const CampusMap = () => {
           <div style={{ width: '100%', height: '100%' }}>
             <CampusGisMap
               selectedBuildingKey={selectedBldg}
-              onSelectBuilding={handleSelectBuilding}
+              onSelectBuilding={(key) => handleSelectBuilding(key, false)}
               customDestination={customDestination}
               onSetCustomDestination={(dest) => {
                 setCustomDestination(dest);
@@ -1811,6 +2180,8 @@ export const CampusMap = () => {
               setSimulationProgress={setSimulationProgress}
               onNavigationUpdate={setNavigationStats}
               isDrawerOpen={drawerOpen}
+              isNavPanelOpen={isNavPanelOpen}
+              onOpenDetails={() => setDrawerOpen(true)}
             />
           </div>
         ) : (
@@ -1830,7 +2201,7 @@ export const CampusMap = () => {
               style={{
                 position: 'absolute',
                 top: '16px',
-                left: '420px',
+                left: isNavPanelOpen ? '420px' : '16px',
                 right: drawerOpen ? '388px' : '16px',
                 zIndex: 30,
                 display: 'flex',
@@ -1844,7 +2215,7 @@ export const CampusMap = () => {
                 borderRadius: '14px',
                 border: '1px solid rgba(255, 255, 255, 0.12)',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.35)',
-                transition: 'right 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               }}
             >
               {/* Left: Building & Current Blueprint Title */}
@@ -1884,7 +2255,7 @@ export const CampusMap = () => {
                   border: '1px solid rgba(255, 255, 255, 0.08)',
                 }}
               >
-                {['Ground', 'Level 1', 'Level 2', 'Level 3'].map((fl) => {
+                {['Ground', 'Level 1', 'Level 2'].map((fl) => {
                   const bldgBp = INDOOR_BLUEPRINTS[selectedBldg] || INDOOR_BLUEPRINTS.eng;
                   const hasFloorData = !!bldgBp.floors[fl];
                   const isActive = selectedFloor === fl;
@@ -1951,13 +2322,16 @@ export const CampusMap = () => {
                       borderRadius: '6px',
                       backgroundColor: 'rgba(30, 41, 59, 0.9)',
                       border: '1px solid rgba(255, 255, 255, 0.12)',
-                      color: '#CBD5E1',
+                      color: '#FFFFFF',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
                       fontSize: '11px',
                       fontWeight: 700,
-                      cursor: 'pointer',
                     }}
                   >
-                    {Math.round(zoomLevel * 100)}%
+                    Reset
                   </button>
                   <button
                     type="button"
@@ -1982,68 +2356,40 @@ export const CampusMap = () => {
               </div>
             </div>
 
-            {/* SVG ARCHITECTURAL CAD BLUEPRINT CANVAS */}
+            {/* SVG Interactive Architectural CAD Canvas */}
             {(() => {
               const bldgBp = INDOOR_BLUEPRINTS[selectedBldg] || INDOOR_BLUEPRINTS.eng;
               const activeFl = bldgBp.floors[selectedFloor] || Object.values(bldgBp.floors)[0];
-              const roomsList = activeFl?.rooms || [];
-              const selectedRoom = roomsList.find((r) => r.id === selectedRoomId) || roomsList[0];
-
-              const doorX = selectedRoom ? selectedRoom.door.x : 755;
-              const doorY = selectedRoom ? selectedRoom.door.y : 500;
+              const roomsList = activeFl.rooms || [];
+              const selectedRoom = roomsList.find((r) => r.id === selectedRoomId);
+              const doorX = selectedRoom ? selectedRoom.door.x : 365;
+              const doorY = selectedRoom ? selectedRoom.door.y : 370;
 
               return (
                 <svg
-                  width="100%"
-                  height="100%"
-                  viewBox="0 0 1440 900"
+                  viewBox="0 0 1600 950"
                   style={{
+                    width: '100%',
+                    height: '100%',
                     transform: `scale(${zoomLevel})`,
                     transformOrigin: 'center center',
-                    transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
                   }}
                 >
                   <defs>
-                    <pattern id="cadGridSmall" width="20" height="20" patternUnits="userSpaceOnUse">
-                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255, 255, 255, 0.03)" strokeWidth="0.8" />
-                    </pattern>
-                    <pattern id="cadGridLarge" width="100" height="100" patternUnits="userSpaceOnUse">
-                      <rect width="100" height="100" fill="url(#cadGridSmall)" />
-                      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(56, 189, 248, 0.08)" strokeWidth="1.2" />
+                    <pattern id="cadGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+                      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1" />
                     </pattern>
                     <filter id="emeraldGlow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feDropShadow dx="0" dy="0" stdDeviation="8" floodColor="#10B981" floodOpacity="0.6" />
+                      <feGaussianBlur stdDeviation="8" result="blur" />
+                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
                     </filter>
                   </defs>
 
-                  {/* CAD Canvas Background */}
-                  <rect width="1440" height="900" fill="#0B132B" />
-                  <rect width="1440" height="900" fill="url(#cadGridLarge)" />
+                  <rect width="100%" height="100%" fill="#0A0F1D" />
+                  <rect width="100%" height="100%" fill="url(#cadGrid)" />
 
-                  {/* Concrete Building Perimeter Envelope */}
-                  <rect
-                    x="180"
-                    y="110"
-                    width="1160"
-                    height="680"
-                    rx="16"
-                    fill="rgba(15, 23, 42, 0.85)"
-                    stroke="rgba(56, 189, 248, 0.25)"
-                    strokeWidth="3"
-                  />
-                  <rect
-                    x="174"
-                    y="104"
-                    width="1172"
-                    height="692"
-                    rx="20"
-                    fill="none"
-                    stroke="rgba(56, 189, 248, 0.12)"
-                    strokeWidth="1.5"
-                    strokeDasharray="8 4"
-                  />
-
-                  {/* SKYBRIDGE ARRIVAL PORTAL (West Entrance) */}
+                  {/* SKYBRIDGE LINKAGE (If level has one) */}
                   {activeFl.skybridge && (
                     <g>
                       <rect
@@ -2340,22 +2686,24 @@ export const CampusMap = () => {
               maxWidth: 'calc(100vw - 32px)',
               backgroundColor: '#FFFFFF',
               borderRadius: '16px',
-              boxShadow: '0 12px 36px rgba(15, 23, 42, 0.14)',
+              boxShadow: 'var(--shadow-lg)',
               border: '1px solid var(--border-subtle)',
               zIndex: 35,
               display: 'flex',
               flexDirection: 'column',
               overflow: 'hidden',
+              animation: 'fadeIn 0.2s ease',
             }}
           >
             {/* Header Image */}
             <div style={{ position: 'relative', height: '140px', width: '100%' }}>
               <img src={currentBldg.image} alt={currentBldg.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%)' }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(20, 45, 40, 0.75) 0%, transparent 60%)' }} />
 
               <button
                 type="button"
                 onClick={() => setDrawerOpen(false)}
+                title="Close Details"
                 style={{
                   position: 'absolute',
                   top: '10px',
@@ -2363,21 +2711,44 @@ export const CampusMap = () => {
                   width: '28px',
                   height: '28px',
                   borderRadius: '50%',
-                  backgroundColor: 'rgba(0,0,0,0.6)',
+                  backgroundColor: 'rgba(20, 45, 40, 0.7)',
                   border: 'none',
                   color: '#FFFFFF',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  transition: 'all 0.15s ease',
                 }}
               >
                 <X size={15} />
               </button>
 
               <div style={{ position: 'absolute', bottom: '10px', left: '14px', display: 'flex', gap: '6px' }}>
-                <span style={{ fontSize: '10px', fontWeight: 700, backgroundColor: '#FFFFFF', color: 'var(--brand-primary)', padding: '2px 8px', borderRadius: '4px' }}>
+                <span
+                  style={{
+                    fontSize: '10px',
+                    fontWeight: 700,
+                    backgroundColor: '#FFFFFF',
+                    color: 'var(--brand-forest)',
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    boxShadow: 'var(--shadow-xs)',
+                  }}
+                >
                   {currentBldg.hours}
+                </span>
+                <span
+                  style={{
+                    fontSize: '10px',
+                    fontWeight: 700,
+                    backgroundColor: 'var(--brand-primary)',
+                    color: '#FFFFFF',
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                  }}
+                >
+                  {currentBldg.code}
                 </span>
               </div>
             </div>
@@ -2402,7 +2773,7 @@ export const CampusMap = () => {
                     </button>
                   )}
                 </div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: '4px 0 6px 0' }}>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', margin: '4px 0 6px 0', fontFamily: 'var(--font-heading)' }}>
                   {currentBldg.name}
                 </h3>
                 <p style={{ fontSize: '11.5px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
@@ -2410,26 +2781,79 @@ export const CampusMap = () => {
                 </p>
               </div>
 
+              {/* Action Buttons: Navigate Here & CAD Blueprint */}
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => handleStartNavigationTo(currentBldg.id)}
+                  style={{
+                    flex: 1,
+                    padding: '9px 12px',
+                    backgroundColor: 'var(--brand-primary)',
+                    color: '#FFFFFF',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    boxShadow: 'var(--shadow-brand-glow)',
+                  }}
+                >
+                  <Navigation size={13} />
+                  <span>Route Here</span>
+                </button>
+
+                {INDOOR_BLUEPRINTS[currentBldg.id] && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setViewEngine('blueprint');
+                      triggerToast(`Switched to Indoor Blueprint for ${currentBldg.shortName}`);
+                    }}
+                    style={{
+                      padding: '9px 12px',
+                      backgroundColor: 'var(--brand-soft-bg)',
+                      border: '1px solid var(--brand-soft-border)',
+                      color: 'var(--brand-primary)',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                    }}
+                  >
+                    <Layers size={13} />
+                    <span>CAD Blueprint</span>
+                  </button>
+                )}
+              </div>
+
               {/* Quick Metrics */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
                 <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '8px', borderRadius: '8px', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
                   <span style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Occupancy</span>
-                  <div style={{ fontSize: '14px', fontWeight: 800, color: 'var(--brand-primary)' }}>{currentBldg.occupancy}</div>
+                  <div style={{ fontSize: '13.5px', fontWeight: 800, color: 'var(--brand-primary)' }}>{currentBldg.occupancy}</div>
                   <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>{currentBldg.seats}</span>
                 </div>
                 <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '8px', borderRadius: '8px', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
                   <span style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>HVAC Temp</span>
-                  <div style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>{currentBldg.temp}</div>
+                  <div style={{ fontSize: '13.5px', fontWeight: 800, color: 'var(--text-primary)' }}>{currentBldg.temp}</div>
                   <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>{currentBldg.air}</span>
                 </div>
                 <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '8px', borderRadius: '8px', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
                   <span style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Ramp ADA</span>
-                  <div style={{ fontSize: '14px', fontWeight: 800, color: '#16A34A' }}>Pass</div>
+                  <div style={{ fontSize: '13.5px', fontWeight: 800, color: '#16A34A' }}>Pass</div>
                   <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>Full Access</span>
                 </div>
               </div>
 
-              {/* Selected Room Live Telemetry Card */}
+              {/* Selected Room Live Telemetry Card (If Available) */}
               {(() => {
                 const bldgBp = INDOOR_BLUEPRINTS[selectedBldg] || INDOOR_BLUEPRINTS.eng;
                 const flData = bldgBp?.floors[selectedFloor] || Object.values(bldgBp?.floors || {})[0];
@@ -2440,18 +2864,18 @@ export const CampusMap = () => {
                 return (
                   <div
                     style={{
-                      backgroundColor: '#ECFDF5',
-                      border: '1.5px solid #10B981',
+                      backgroundColor: 'var(--brand-soft-bg)',
+                      border: '1.5px solid var(--brand-soft-border)',
                       borderRadius: '12px',
                       padding: '12px',
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '8px',
-                      boxShadow: '0 2px 8px rgba(16, 185, 129, 0.12)',
+                      boxShadow: 'var(--shadow-xs)',
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '10px', fontWeight: 800, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                         Selected Space • {selectedFloor}
                       </span>
                       <span
@@ -2461,7 +2885,7 @@ export const CampusMap = () => {
                           padding: '2px 8px',
                           borderRadius: '9999px',
                           backgroundColor: activeRoom.status === 'available' ? '#DCFCE7' : activeRoom.status === 'reserved' ? '#FEF3C7' : '#FFE4E6',
-                          color: activeRoom.status === 'available' ? '#15803D' : activeRoom.status === 'reserved' ? '#D97706' : '#E11D48',
+                          color: activeRoom.status === 'available' ? '#15803D' : activeRoom.status === 'reserved' ? '#B7791F' : 'var(--status-danger)',
                         }}
                       >
                         {activeRoom.statusText}
@@ -2469,85 +2893,37 @@ export const CampusMap = () => {
                     </div>
 
                     <div>
-                      <div style={{ fontSize: '13.5px', fontWeight: 800, color: '#0F172A' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)' }}>
                         {activeRoom.code}: {activeRoom.name}
                       </div>
-                      <div style={{ fontSize: '11px', color: '#64748B' }}>
+                      <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                         {activeRoom.type} • Capacity: {activeRoom.capacity} ({activeRoom.occupancy} Current)
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '11px', color: '#334155' }}>
-                      <span style={{ backgroundColor: '#FFFFFF', padding: '3px 8px', borderRadius: '6px', border: '1px solid #D1FAE5', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <Thermometer size={12} style={{ color: '#059669' }} />
+                    <div style={{ display: 'flex', gap: '8px', fontSize: '11px', color: 'var(--text-secondary)' }}>
+                      <span style={{ backgroundColor: '#FFFFFF', padding: '3px 8px', borderRadius: '6px', border: '1px solid var(--brand-soft-border)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Thermometer size={12} style={{ color: 'var(--brand-primary)' }} />
                         {activeRoom.temp}
                       </span>
-                      <span style={{ backgroundColor: '#FFFFFF', padding: '3px 8px', borderRadius: '6px', border: '1px solid #D1FAE5', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <Users size={12} style={{ color: '#2563EB' }} />
+                      <span style={{ backgroundColor: '#FFFFFF', padding: '3px 8px', borderRadius: '6px', border: '1px solid var(--brand-soft-border)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Users size={12} style={{ color: '#3478B8' }} />
                         {activeRoom.co2}
                       </span>
-                    </div>
-
-                    {activeRoom.features && activeRoom.features.length > 0 && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '2px' }}>
-                        {activeRoom.features.map((feat, fIdx) => (
-                          <span
-                            key={fIdx}
-                            style={{
-                              fontSize: '9.5px',
-                              padding: '2px 6px',
-                              backgroundColor: '#FFFFFF',
-                              borderRadius: '4px',
-                              border: '1px solid #E2E8F0',
-                              color: '#475569',
-                            }}
-                          >
-                            ✓ {feat}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setViewEngine('blueprint');
-                          triggerToast(`Switched to Indoor Blueprint for ${activeRoom.code}`);
-                        }}
-                        style={{
-                          flex: 1,
-                          padding: '6px 10px',
-                          borderRadius: '8px',
-                          backgroundColor: '#059669',
-                          color: '#FFFFFF',
-                          border: 'none',
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '4px',
-                        }}
-                      >
-                        <Layers size={12} />
-                        <span>View CAD Blueprint</span>
-                      </button>
                     </div>
                   </div>
                 );
               })()}
 
-              {/* Target Space */}
-              <div style={{ backgroundColor: '#FFF1F2', padding: '10px 12px', borderRadius: '10px', border: '1px solid #FECDD3' }}>
+              {/* Target Primary Facility Node */}
+              <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px 12px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase' }}>
                   Primary Facility Node
                 </div>
-                <div style={{ fontSize: '13px', fontWeight: 800, color: '#0F172A', marginTop: '2px' }}>
+                <div style={{ fontSize: '12.5px', fontWeight: 800, color: 'var(--text-primary)', marginTop: '2px' }}>
                   {currentBldg.targetRoom}
                 </div>
-                <div style={{ fontSize: '11px', color: '#64748B' }}>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
                   {currentBldg.targetDesc}
                 </div>
               </div>
@@ -2578,25 +2954,25 @@ export const CampusMap = () => {
 
       {/* ADMIN EDIT MODAL */}
       {showEditModal && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15,23,42,0.5)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div style={{ width: '100%', maxWidth: '500px', backgroundColor: '#FFFFFF', borderRadius: '16px', overflow: 'hidden', boxShadow: 'var(--shadow-xl)' }}>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(20,45,40,0.5)', backdropFilter: 'blur(4px)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ width: '100%', maxWidth: '500px', backgroundColor: '#FFFFFF', borderRadius: '16px', overflow: 'hidden', boxShadow: 'var(--shadow-xl)', border: '1px solid var(--border-subtle)' }}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800 }}>Edit Facility: {editFormData.name}</h3>
-              <button onClick={() => setShowEditModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={16} /></button>
+              <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>Edit Facility: {editFormData.name}</h3>
+              <button onClick={() => setShowEditModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X size={16} /></button>
             </div>
             <form onSubmit={handleSaveBuildingEdits} style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
-                <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase' }}>Facility Name</label>
+                <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Facility Name</label>
                 <input
                   type="text"
                   required
                   value={editFormData.name}
                   onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                  style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px' }}
+                  style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
                 />
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
-                <button type="button" onClick={handleDeleteBuilding} style={{ color: '#DC2626', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
+                <button type="button" onClick={handleDeleteBuilding} style={{ color: 'var(--status-danger)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
                   Delete Facility
                 </button>
                 <div style={{ display: 'flex', gap: '8px' }}>
