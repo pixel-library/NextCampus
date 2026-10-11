@@ -72,6 +72,18 @@ export const AuthPage = () => {
     }
   }, [isAuthenticated, user, navigate, location]);
 
+  // Keyboard accessibility: Escape to dismiss forgot modal
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && showForgotModal) {
+        setShowForgotModal(false);
+        setForgotFeedback(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showForgotModal]);
+
   // Password strength calculator
   const calculatePasswordStrength = (pass) => {
     if (!pass) return { score: 0, label: 'Required', color: 'var(--text-muted)' };
@@ -1365,6 +1377,15 @@ export const AuthPage = () => {
       {/* ======================================================== */}
       {showForgotModal && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="forgot-modal-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowForgotModal(false);
+              setForgotFeedback(null);
+            }
+          }}
           style={{
             position: 'fixed',
             inset: 0,
@@ -1407,12 +1428,13 @@ export const AuthPage = () => {
                 >
                   <KeyRound size={20} />
                 </div>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                <h3 id="forgot-modal-title" style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                   Institutional Account Recovery
                 </h3>
               </div>
               <button
                 type="button"
+                aria-label="Close recovery dialog"
                 onClick={() => {
                   setShowForgotModal(false);
                   setForgotFeedback(null);

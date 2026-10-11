@@ -779,7 +779,9 @@ export const CampusMap = () => {
   const [viewEngine, setViewEngine] = useState('gis'); // 'gis' | 'blueprint'
   const [zoomLevel, setZoomLevel] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [isNavPanelOpen, setIsNavPanelOpen] = useState(true);
+  const [isNavPanelOpen, setIsNavPanelOpen] = useState(
+    typeof window !== 'undefined' ? window.innerWidth >= 1024 : true
+  );
   const [panelMode, setPanelMode] = useState('directory'); // 'directory' | 'directions'
   const [facilitySearch, setFacilitySearch] = useState('');
   const [customDestination, setCustomDestination] = useState(null);
@@ -876,6 +878,9 @@ export const CampusMap = () => {
     }
     if (openDetails) {
       setDrawerOpen(true);
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+        setIsNavPanelOpen(false);
+      }
     }
     setSearchParams({ bldg: id });
   };
@@ -885,6 +890,9 @@ export const CampusMap = () => {
     setCustomDestination(null);
     setPanelMode('directions');
     setIsNavPanelOpen(true);
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setDrawerOpen(false);
+    }
     triggerToast(`Calculating route to ${buildings[id]?.shortName || buildings[id]?.name}...`);
   };
 
@@ -1140,7 +1148,7 @@ export const CampusMap = () => {
       style={{
         position: 'relative',
         width: '100%',
-        height: 'calc(100vh - 64px)',
+        height: '100%',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -1177,20 +1185,10 @@ export const CampusMap = () => {
 
       {/* TOP UNIFIED SUB-HEADER TOOLBAR (NextCampus Institutional Palette) */}
       <header
-        style={{
-          height: '56px',
-          backgroundColor: '#FFFFFF',
-          borderBottom: '1px solid var(--border-subtle)',
-          padding: '0 20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          zIndex: 40,
-          boxShadow: '0 1px 3px rgba(20, 45, 40, 0.04)',
-        }}
+        className="min-h-[56px] h-auto py-2 px-3 sm:px-5 bg-white border-b border-[#E4EAE5] flex flex-wrap items-center justify-between gap-2.5 z-40 shadow-xs"
       >
         {/* Left: Mewar University Campus Badge & Title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div
               style={{
@@ -1213,16 +1211,16 @@ export const CampusMap = () => {
               <div style={{ fontSize: '13.5px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, fontFamily: 'var(--font-heading)' }}>
                 Mewar University
               </div>
-              <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
+              <div className="hidden sm:block" style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
                 Gangrar, Chittorgarh • 30-Acre Campus
               </div>
             </div>
           </div>
 
-          <div style={{ height: '20px', width: '1px', backgroundColor: 'var(--border-subtle)' }} />
+          <div className="hidden md:block" style={{ height: '20px', width: '1px', backgroundColor: 'var(--border-subtle)' }} />
 
           {/* Quick Sub-Filter Tabs */}
-          <div style={{ display: 'flex', gap: '3px', backgroundColor: 'var(--bg-surface-subtle)', padding: '3px', borderRadius: '8px' }}>
+          <div className="flex items-center gap-1 overflow-x-auto max-w-[280px] sm:max-w-none" style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '3px', borderRadius: '8px' }}>
             {[
               { id: 'all', label: `All Facilities (${Object.keys(buildings).length})` },
               { id: 'buildings', label: 'Academic Wings' },

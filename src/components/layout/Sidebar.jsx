@@ -77,10 +77,11 @@ export const Sidebar = ({ onClose }) => {
         {onClose && (
           <button
             onClick={onClose}
-            className="md:hidden p-1.5 text-[#87968D] hover:text-[#202A27] hover:bg-[#F0F4F1] rounded-lg transition-colors"
+            aria-label="Close navigation"
+            className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center p-2 text-[#87968D] hover:text-[#202A27] hover:bg-[#F0F4F1] rounded-xl transition-colors cursor-pointer"
             title="Close navigation"
           >
-            <X size={18} />
+            <X size={20} />
           </button>
         )}
       </div>
@@ -100,7 +101,7 @@ export const Sidebar = ({ onClose }) => {
                   to={item.path}
                   onClick={handleLinkClick}
                   className={({ isActive }) =>
-                    `flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all duration-150 group text-decoration-none ${
+                    `flex items-center justify-between px-3 py-3 sm:py-2.5 min-h-[44px] sm:min-h-0 rounded-xl text-xs transition-all duration-150 group text-decoration-none ${
                       isActive
                         ? 'bg-[#EAF5EF] text-[#142D28] font-bold shadow-xs'
                         : 'text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1] font-semibold'

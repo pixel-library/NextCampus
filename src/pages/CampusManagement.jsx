@@ -199,6 +199,17 @@ export function CampusManagement() {
     fetchCampusData();
   }, []);
 
+  // Keyboard accessibility: Escape to dismiss facility modal
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && showAddBuildingModal) {
+        setShowAddBuildingModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showAddBuildingModal]);
+
   const fetchCampusData = async () => {
     setLoading(true);
     try {
@@ -963,13 +974,23 @@ export function CampusManagement() {
           MODAL: ADD / EDIT BUILDING
           ========================================================================= */}
       {showAddBuildingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="building-modal-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowAddBuildingModal(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200"
+        >
           <div className="relative w-full max-w-lg rounded-2xl bg-white border border-slate-200 shadow-2xl p-6 flex flex-col gap-4 text-slate-800">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">
+              <h3 id="building-modal-title" className="text-lg font-bold text-slate-900">
                 {editingBuilding ? 'Edit Campus Facility' : 'Register New Campus Facility Node'}
               </h3>
               <button
+                type="button"
+                aria-label="Close facility node dialog"
                 onClick={() => setShowAddBuildingModal(false)}
                 className="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center cursor-pointer"
               >

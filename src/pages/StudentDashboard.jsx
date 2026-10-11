@@ -59,6 +59,17 @@ export function StudentDashboard() {
     return () => clearInterval(timer);
   }, []);
 
+  // Keyboard accessibility: Escape to dismiss gate pass modal
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isGatePassOpen) {
+        setIsGatePassOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isGatePassOpen]);
+
   const formattedCountdown = useMemo(() => {
     const mins = Math.floor(classCountdownSecs / 60);
     const secs = classCountdownSecs % 60;
@@ -714,20 +725,30 @@ export function StudentDashboard() {
           MODAL: DIGITAL NFC CAMPUS SMART GATE PASS
           ========================================================================= */}
       {isGatePassOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#142D28]/40 backdrop-blur-sm animate-in fade-in duration-200">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="gate-pass-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsGatePassOpen(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#142D28]/40 backdrop-blur-sm animate-in fade-in duration-200"
+        >
           <div className="relative w-full max-w-sm rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-6 flex flex-col gap-5 text-[#202A27]">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-[#E4EAE5]">
               <div className="flex items-center gap-2">
                 <ShieldCheck size={20} className="text-[#168567]" />
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold text-[#202A27]">Mewar University Smart ID</span>
+                  <span id="gate-pass-title" className="text-xs font-bold text-[#202A27]">Mewar University Smart ID</span>
                   <span className="text-[10px] text-[#65736B] font-medium">Turnstile Gate Pass</span>
                 </div>
               </div>
               <button
+                type="button"
+                aria-label="Close turnstile gate pass"
                 onClick={() => setIsGatePassOpen(false)}
-                className="w-7 h-7 rounded-lg bg-[#F0F4F1] text-[#65736B] hover:text-[#202A27] flex items-center justify-center transition-colors"
+                className="w-7 h-7 rounded-lg bg-[#F0F4F1] text-[#65736B] hover:text-[#202A27] flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X size={16} />
               </button>

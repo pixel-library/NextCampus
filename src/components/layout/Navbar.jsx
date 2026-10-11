@@ -84,15 +84,16 @@ export const Navbar = ({ onToggleSidebar }) => {
   return (
     <header className="h-16 bg-white/95 backdrop-blur-md border-b border-[#E4EAE5] px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-[0_1px_3px_rgba(20,45,40,0.02)]">
       {/* Left: Mobile Toggle + Campus Live Status */}
-      <div className="flex items-center gap-2.5 sm:gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         {onToggleSidebar && (
           <button
             type="button"
             onClick={onToggleSidebar}
+            aria-label="Toggle navigation menu"
             title="Toggle Menu"
-            className="md:hidden p-2 text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1] rounded-xl transition-colors"
+            className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center p-2 text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1] rounded-xl transition-colors cursor-pointer"
           >
-            <Menu size={18} />
+            <Menu size={20} />
           </button>
         )}
 
@@ -114,10 +115,11 @@ export const Navbar = ({ onToggleSidebar }) => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search rooms, buildings, staff, tickets..."
-            className="w-full text-xs font-medium pl-9 pr-12 py-2 bg-[#F0F4F1] border border-[#E4EAE5] rounded-xl outline-none text-[#202A27] placeholder:text-[#87968D] focus:bg-white focus:border-[#168567] focus:ring-2 focus:ring-[#168567]/15 transition-all"
+            aria-label="Search rooms, buildings, staff, tickets"
+            placeholder="Search campus resources..."
+            className="w-full text-xs font-medium pl-9 pr-8 sm:pr-12 py-2 bg-[#F0F4F1] border border-[#E4EAE5] rounded-xl outline-none text-[#202A27] placeholder:text-[#87968D] focus:bg-white focus:border-[#168567] focus:ring-2 focus:ring-[#168567]/15 transition-all"
           />
-          <div className="absolute right-2.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white border border-[#E4EAE5] text-[#65736B] text-[10px] font-semibold shadow-2xs">
+          <div className="absolute right-2.5 hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white border border-[#E4EAE5] text-[#65736B] text-[10px] font-semibold shadow-2xs">
             <span>⌘</span>
             <span>K</span>
           </div>
@@ -125,14 +127,15 @@ export const Navbar = ({ onToggleSidebar }) => {
       </form>
 
       {/* Right Actions: Notifications & Profile */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3">
         {/* Notifications Popover */}
         <div ref={notifRef} className="relative">
           <button
             type="button"
             onClick={() => setShowNotifications(!showNotifications)}
+            aria-label="Campus Notifications"
             title="Campus Notifications"
-            className={`relative p-2 rounded-xl transition-colors ${
+            className={`relative min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 p-2 flex items-center justify-center rounded-xl transition-colors cursor-pointer ${
               showNotifications
                 ? 'bg-[#EAF5EF] text-[#168567]'
                 : 'text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1]'
@@ -145,7 +148,7 @@ export const Navbar = ({ onToggleSidebar }) => {
           </button>
 
           {showNotifications && (
-            <div className="absolute top-12 right-0 w-80 sm:w-96 bg-white border border-[#E4EAE5] rounded-2xl shadow-xl z-50 p-4 space-y-3 animate-in fade-in zoom-in-95 duration-150">
+            <div className="absolute top-12 right-0 w-[calc(100vw-2rem)] max-w-sm sm:w-96 bg-white border border-[#E4EAE5] rounded-2xl shadow-xl z-50 p-4 space-y-3 animate-in fade-in zoom-in-95 duration-150">
               <div className="flex items-center justify-between pb-2.5 border-b border-[#E4EAE5]">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-[#202A27]">Campus Alerts</span>

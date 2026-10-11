@@ -252,6 +252,17 @@ export function CareComplaints() {
     fetchComplaints();
   }, [user]);
 
+  // Keyboard accessibility: Escape to dismiss lightbox
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && lightboxImage) {
+        setLightboxImage(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxImage]);
+
   // Live SLA countdown ticker
   useEffect(() => {
     const interval = setInterval(() => {
@@ -1553,6 +1564,9 @@ export function CareComplaints() {
           ========================================================================= */}
       {lightboxImage && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="lightbox-dialog-title"
           onClick={() => setLightboxImage(null)}
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200"
         >
@@ -1561,10 +1575,12 @@ export function CareComplaints() {
             className="relative max-w-3xl max-h-[85vh] rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-2xl flex flex-col"
           >
             <div className="flex items-center justify-between p-3.5 bg-slate-50 border-b border-slate-200">
-              <span className="text-xs font-mono text-slate-800 font-bold">
+              <span id="lightbox-dialog-title" className="text-xs font-mono text-slate-800 font-bold">
                 Diagnostic Attachment Inspector • {selectedTicket?.ticketId}
               </span>
               <button
+                type="button"
+                aria-label="Close diagnostic inspector"
                 onClick={() => setLightboxImage(null)}
                 className="w-7 h-7 rounded-lg bg-slate-200 text-slate-600 hover:text-slate-900 flex items-center justify-center cursor-pointer"
               >

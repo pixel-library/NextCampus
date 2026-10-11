@@ -42,6 +42,19 @@ export function ComplaintAdmin() {
     fetchComplaintsData();
   }, []);
 
+  // Keyboard accessibility: Escape to dismiss modals
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (zoomEvidenceUrl) setZoomEvidenceUrl(null);
+        else if (showDispatchRulesModal) setShowDispatchRulesModal(false);
+        else if (showLogTicketModal) setShowLogTicketModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [zoomEvidenceUrl, showDispatchRulesModal, showLogTicketModal]);
+
   const fetchComplaintsData = async () => {
     setLoading(true);
     try {
@@ -1210,18 +1223,28 @@ export function ComplaintAdmin() {
 
       {/* MODAL: Dispatch Rules */}
       {showDispatchRulesModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface-container-lowest/80 backdrop-blur-md p-space-md">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="dispatch-rules-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowDispatchRulesModal(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-surface-container-lowest/80 backdrop-blur-md p-space-md"
+        >
           <div className="bg-surface-variant w-full max-w-lg rounded-xl shadow-2xl p-space-lg flex flex-col gap-space-md border border-outline-variant/30">
             <div className="flex items-center justify-between pb-2 border-b border-outline-variant/20">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-secondary text-[24px]">tune</span>
-                <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">
+                <h3 id="dispatch-rules-title" className="font-headline-sm text-headline-sm text-on-surface font-bold">
                   Automated Dispatch &amp; SLA Rules
                 </h3>
               </div>
               <button
+                type="button"
+                aria-label="Close dispatch rules dialog"
                 onClick={() => setShowDispatchRulesModal(false)}
-                className="p-1 rounded-lg text-on-surface-variant hover:text-on-surface"
+                className="p-1 rounded-lg text-on-surface-variant hover:text-on-surface cursor-pointer"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
@@ -1249,8 +1272,9 @@ export function ComplaintAdmin() {
 
             <div className="flex justify-end pt-2 border-t border-outline-variant/20">
               <button
+                type="button"
                 onClick={() => setShowDispatchRulesModal(false)}
-                className="px-4 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-bold"
+                className="px-4 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-bold cursor-pointer"
               >
                 Got It
               </button>
@@ -1261,18 +1285,28 @@ export function ComplaintAdmin() {
 
       {/* MODAL: Log Internal Ticket */}
       {showLogTicketModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface-container-lowest/80 backdrop-blur-md p-space-md">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="log-ticket-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowLogTicketModal(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-surface-container-lowest/80 backdrop-blur-md p-space-md"
+        >
           <div className="bg-surface-variant w-full max-w-lg rounded-xl shadow-2xl p-space-lg flex flex-col gap-space-md border border-outline-variant/30">
             <div className="flex items-center justify-between pb-2 border-b border-outline-variant/20">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary text-[24px]">add_circle</span>
-                <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">
+                <h3 id="log-ticket-title" className="font-headline-sm text-headline-sm text-on-surface font-bold">
                   Log Institutional Maintenance Ticket
                 </h3>
               </div>
               <button
+                type="button"
+                aria-label="Close log ticket dialog"
                 onClick={() => setShowLogTicketModal(false)}
-                className="p-1 rounded-lg text-on-surface-variant hover:text-on-surface"
+                className="p-1 rounded-lg text-on-surface-variant hover:text-on-surface cursor-pointer"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
@@ -1379,14 +1413,19 @@ export function ComplaintAdmin() {
       {/* LIGHTBOX MODAL: Evidence Zoom Preview */}
       {zoomEvidenceUrl && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Enlarged complaint evidence inspector"
           onClick={() => setZoomEvidenceUrl(null)}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 cursor-pointer"
         >
           <div className="relative max-w-3xl max-h-[85vh] rounded-2xl overflow-hidden shadow-2xl border border-outline-variant/30">
             <img src={zoomEvidenceUrl} alt="Evidence zoomed" className="w-full h-full object-contain" />
             <button
+              type="button"
+              aria-label="Close enlarged evidence"
               onClick={() => setZoomEvidenceUrl(null)}
-              className="absolute top-3 right-3 bg-black/60 text-white p-2 rounded-full hover:bg-black/90"
+              className="absolute top-3 right-3 bg-black/60 text-white p-2 rounded-full hover:bg-black/90 cursor-pointer"
             >
               <span className="material-symbols-outlined text-[20px]">close</span>
             </button>

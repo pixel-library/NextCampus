@@ -986,6 +986,7 @@ export const CampusGisMap = ({
 
       {/* FLOATING CAMPUS BOUNDARY LOCKED BADGE */}
       <div
+        className="hidden md:flex"
         style={{
           position: 'absolute',
           top: '16px',
@@ -998,7 +999,6 @@ export const CampusGisMap = ({
           padding: '6px 14px',
           border: '1px solid rgba(255, 255, 255, 0.16)',
           boxShadow: 'var(--shadow-md)',
-          display: 'flex',
           alignItems: 'center',
           gap: '8px',
           fontSize: '11px',
@@ -1020,6 +1020,7 @@ export const CampusGisMap = ({
             position: 'absolute',
             top: '64px',
             right: '16px',
+            maxWidth: 'calc(100vw - 32px)',
             zIndex: 32,
             display: 'flex',
             flexDirection: 'column',
@@ -1155,8 +1156,9 @@ export const CampusGisMap = ({
         <div
           style={{
             position: 'absolute',
-            bottom: '80px',
+            bottom: '76px',
             right: '68px',
+            maxWidth: 'calc(100vw - 32px)',
             zIndex: 35,
             backgroundColor: 'rgba(255, 255, 255, 0.98)',
             backdropFilter: 'blur(16px)',
@@ -1178,6 +1180,7 @@ export const CampusGisMap = ({
             <button
               type="button"
               onClick={() => setShowLegend(false)}
+              aria-label="Close campus legend"
               style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '2px' }}
             >
               <X size={14} />
@@ -1211,7 +1214,7 @@ export const CampusGisMap = ({
       <div
         style={{
           position: 'absolute',
-          bottom: '80px',
+          bottom: '24px',
           right: '16px',
           zIndex: 30,
           display: 'flex',
@@ -1223,10 +1226,11 @@ export const CampusGisMap = ({
           type="button"
           onClick={() => setShowLegend(!showLegend)}
           title="Toggle Campus Legend"
+          aria-label="Toggle Campus Legend"
           style={{
-            width: '38px',
-            height: '38px',
-            borderRadius: '10px',
+            width: '42px',
+            height: '42px',
+            borderRadius: '11px',
             backgroundColor: showLegend ? 'var(--brand-primary)' : 'rgba(255, 255, 255, 0.96)',
             color: showLegend ? '#FFFFFF' : 'var(--text-secondary)',
             border: '1px solid var(--border-subtle)',
@@ -1238,7 +1242,7 @@ export const CampusGisMap = ({
             transition: 'all 0.15s ease',
           }}
         >
-          <Info size={16} />
+          <Info size={17} />
         </button>
 
         {userCoords && (
@@ -1246,10 +1250,11 @@ export const CampusGisMap = ({
             type="button"
             onClick={handleCenterOnUser}
             title="Center on My Location"
+            aria-label="Center on My Location"
             style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '10px',
+              width: '42px',
+              height: '42px',
+              borderRadius: '11px',
               backgroundColor: isLiveGpsActive ? 'var(--brand-primary)' : 'rgba(255, 255, 255, 0.96)',
               color: isLiveGpsActive ? '#FFFFFF' : 'var(--brand-primary)',
               border: '1px solid var(--border-subtle)',
@@ -1261,7 +1266,7 @@ export const CampusGisMap = ({
               transition: 'all 0.15s ease',
             }}
           >
-            <Locate size={17} />
+            <Locate size={18} />
           </button>
         )}
 
@@ -1269,10 +1274,11 @@ export const CampusGisMap = ({
           type="button"
           onClick={handleFitRoute}
           title="Fit Route View"
+          aria-label="Fit Route View"
           style={{
-            width: '38px',
-            height: '38px',
-            borderRadius: '10px',
+            width: '42px',
+            height: '42px',
+            borderRadius: '11px',
             backgroundColor: 'rgba(255, 255, 255, 0.96)',
             border: '1px solid var(--border-subtle)',
             boxShadow: 'var(--shadow-md)',
@@ -1284,17 +1290,18 @@ export const CampusGisMap = ({
             transition: 'all 0.15s ease',
           }}
         >
-          <Crosshair size={17} />
+          <Crosshair size={18} />
         </button>
 
         <button
           type="button"
           onClick={handleRecenter}
           title="Recenter Mewar University"
+          aria-label="Recenter Mewar University Campus View"
           style={{
-            width: '38px',
-            height: '38px',
-            borderRadius: '10px',
+            width: '42px',
+            height: '42px',
+            borderRadius: '11px',
             backgroundColor: 'rgba(255, 255, 255, 0.96)',
             border: '1px solid var(--border-subtle)',
             boxShadow: 'var(--shadow-md)',
@@ -1306,7 +1313,7 @@ export const CampusGisMap = ({
             transition: 'all 0.15s ease',
           }}
         >
-          <Maximize2 size={16} />
+          <Maximize2 size={17} />
         </button>
       </div>
     </div>
