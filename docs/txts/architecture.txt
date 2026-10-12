@@ -1,0 +1,390 @@
+================================================================================
+NEXTCAMPUS TECHNICAL ARCHITECTURE & SYSTEMS DESIGN SPECIFICATION
+================================================================================
+Document: docs/architecture.txt
+Scope: Systems Architecture, Component Topologies, Data Boundaries & ASCII Diagrams
+Status: PRODUCTION READY / MASTER AUDIT VERIFIED
+Design Philosophy: Decoupled Three-Tier Web Architecture with Resilient Failover
+================================================================================
+
+--------------------------------------------------------------------------------
+A. ARCHITECTURE OVERVIEW
+--------------------------------------------------------------------------------
+
+NextCampus is engineered as a decoupled, modern three-tier web application:
+1. Presentation Tier (Client SPA):
+   - React 18 Single Page Application compiled with Vite 5.
+   - Executes client-side inside user web browsers.
+   - Manages interactive GIS map rendering, real-time sensor dashboards, and
+     reactive state.
+2. Application & API Gateway Tier (Backend Compute):
+   - Python 3.11 FastAPI asynchronous REST microservice running under Uvicorn.
+   - Enforces RBAC permissions, validates payloads via Pydantic, and executes
+     institutional business rules.
+   - Dual-mounted routes on `/api/v1` and `/api` ensure complete client compatibility.
+3. Data & Persistence Tier:
+   - MongoDB 7.0+ document database providing schema flexibility for spatial,
+     IoT, and maintenance records.
+   - Accessed asynchronously using the non-blocking Motor driver.
+   - Includes a thread-safe in-memory mock store providing 100% test decoupling
+     and graceful offline resilience.
+
+
+--------------------------------------------------------------------------------
+B. TECHNOLOGY ARCHITECTURE
+--------------------------------------------------------------------------------
+
+DIAGRAM 1: END-TO-END TECHNOLOGY STACK RELATIONSHIPS
+```
++-----------------------------------------------------------------------------+
+|                               CAMPUS CLIENTS                                |
+|        (Students, Faculty, Facilities Operations, System Administrators)    |
++-----------------------------------------------------------------------------+
+                                      |
+                                      | HTTPS (Port 443)
+                                      v
++-----------------------------------------------------------------------------+
+|                             WEB BROWSER LAYER                               |
+|   +---------------------------------------------------------------------+   |
+|   |                         REACT 18 SPA (VITE 5)                       |   |
+|   |  - React Router DOM v6 (Client History Navigation)                  |   |
+|   |  - Leaflet 1.9.4 GIS Cartographic Engine (CampusGisMap)             |   |
+|   |  - Custom Design System Tokens (5-Color Dark-Licorice Palette)       |   |
+|   |  - AuthContext (JWT & User Session in localStorage)                 |   |
+|   |  - Centralized API Client (src/services/api.js)                     |   |
+|   +---------------------------------------------------------------------+   |
++-----------------------------------------------------------------------------+
+                                      |
+                                      | JSON REST Requests (Bearer Token)
+                                      v
++-----------------------------------------------------------------------------+
+|                       FASTAPI APPLICATION GATEWAY LAYER                     |
+|                           (Uvicorn ASGI Process :5000)                      |
+|                                                                             |
+|  +-----------------------------------------------------------------------+  |
+|  | Middleware: CORSMiddleware | Global Exception Handlers | Static Files |  |
+|  +-----------------------------------------------------------------------+  |
+|                                      |                                      |
+|  +-----------------------------------------------------------------------+  |
+|  | Dependency Injection Guards: get_current_user | require_admin         |  |
+|  +-----------------------------------------------------------------------+  |
+|                                      |                                      |
+|  +-----------------------------------------------------------------------+  |
+|  | Route Controllers (/api/v1 and /api):                                 |  |
+|  |   /auth          -> auth.py          /care         -> care.py         |  |
+|  |   /campus        -> campus.py        /skillcampus  -> skill.py        |  |
+|  |   /smartrooms    -> room.py          /sustainability -> sust.py       |  |
+|  |   /admin         -> admin.py         /ai           -> ai.py           |  |
+|  +-----------------------------------------------------------------------+  |
+|                                      |                                      |
+|  +-----------------------------------------------------------------------+  |
+|  | Service Business Logic Layer:                                          |  |
+|  |   auth_service | campus_service | room_service | care_service         |  |
+|  |   skill_service | sustainability_service | ai_service | admin_service  |  |
+|  +-----------------------------------------------------------------------+  |
++-----------------------------------------------------------------------------+
+               |                                            |
+               | Async Motor TCP/IP                         | HTTPS (Outbound)
+               v                                            v
++-----------------------------+             +---------------------------------+
+|      PERSISTENCE TIER       |             |     EXTERNAL SERVICES TIER      |
+|                             |             |                                 |
+|  +-----------------------+  |             |  +---------------------------+  |
+|  |       MONGODB         |  |             |  |   GOOGLE GEMINI 1.5 FLASH |  |
+|  |  (Database: nextcampus|  |             |  |  (Generative AI Copilot)  |  |
+|  |   Collections: 8)     |  |             |  +---------------------------+  |
+|  +-----------------------+  |             |                                 |
+|              ^              |             |  +---------------------------+  |
+|              | Failover     |             |  |    OPENSTREETMAP TILES    |  |
+|  +-----------------------+  |             |  |  (CartoDB Vector Layers)  |  |
+|  | In-Memory Mock Store  |  |             |  +---------------------------+  |
+|  |    (IN_MEMORY_*)      |  |             +---------------------------------+
+|  +-----------------------+  |
++-----------------------------+
+```
+Explanation of Diagram 1:
+- The React SPA communicates solely with the FastAPI Gateway via JSON over HTTPS.
+- Incoming requests pass through CORS and authentication dependencies before reaching
+  the route controllers.
+- Route controllers delegate to pure service functions.
+- Services query the MongoDB persistence tier via Motor, automatically falling back
+  to in-memory mock datasets if MongoDB is offline.
+- External AI operations communicate outbound with Google Gemini 1.5 Flash using HTTPX.
+
+
+--------------------------------------------------------------------------------
+C. DEPLOYMENT ARCHITECTURE
+--------------------------------------------------------------------------------
+
+DIAGRAM 2: CLOUD PRODUCTION DEPLOYMENT TOPOLOGY
+```
+                             +-------------------+
+                             |   CAMPUS USERS    |
+                             | (Mobile & Laptop) |
+                             +-------------------+
+                                       |
+                                       | HTTPS DNS Resolution
+                                       v
+                     +-----------------------------------+
+                     |          VERCEL EDGE CDN          |
+                     |   (Global Edge Network / Anycast) |
+                     |                                   |
+                     |   Hosts: React 18 SPA (dist/)     |
+                     |   Build: npm run build (Vite)     |
+                     |   Rule: /(.*) -> /index.html      |
+                     +-----------------------------------+
+                                       |
+                                       | HTTPS REST Calls
+                                       | (VITE_API_URL configured at build)
+                                       v
+                     +-----------------------------------+
+                     |        RENDER CLOUD SERVICE       |
+                     |   (Python 3.11 Web Service Dyno)  |
+                     |                                   |
+                     |   Service: nextcampus-api         |
+                     |   Start: uvicorn on :$PORT        |
+                     |   Env: MONGODB_URI, JWT_SECRET    |
+                     +-----------------------------------+
+                                       |
+                                       | TLS Encrypted SRV Socket
+                                       | mongodb+srv://...
+                                       v
+                     +-----------------------------------+
+                     |       MONGODB ATLAS CLUSTER       |
+                     |    (Managed Database Cluster)     |
+                     |                                   |
+                     |   Database: nextcampus            |
+                     |   Network: Whitelist 0.0.0.0/0    |
+                     |   Storage: WiredTiger Engine      |
+                     +-----------------------------------+
+```
+Explanation of Diagram 2:
+- Frontend is hosted on Vercel's global CDN, providing fast load times and automatic
+  SPA routing rewrites.
+- Backend is hosted as a managed Python web service on Render, listening dynamically
+  on `$PORT`.
+- Database is hosted on MongoDB Atlas in a cloud region close to campus.
+- Crucially, Vercel never communicates with MongoDB directly, ensuring connection
+  strings and private keys remain safely isolated inside Render.
+
+
+--------------------------------------------------------------------------------
+D. COMPONENT ARCHITECTURE & LAYER BOUNDARIES
+--------------------------------------------------------------------------------
+
+1. Client Presentation Layer (`src/`):
+- Pages (`src/pages/`): Full views mapped to routes in `App.jsx`.
+- Components (`src/components/`):
+  * Layout: `AppLayout`, `Navbar`, `Sidebar`, `MobileNav` managing responsive viewports.
+  * Common: UI atomics (`Button`, `Card`, `Badge`, `Modal`, `Table`, `Tabs`).
+  * Map: `CampusGisMap` managing Leaflet map tiles, polygon bounding boxes, and markers.
+- Context: `AuthContext.jsx` manages user credentials, token persistence, and role guards.
+- Service Adapter: `src/services/api.js` encapsulates network fetch calls and token injection.
+
+2. API Gateway & Middleware Layer (`backend/app/main.py`):
+- Route Registration: Symmetrical mounting on both `/api/v1` and `/api`.
+- Exception Normalization: Catches exceptions and returns standardized JSON envelopes.
+- Upload Server: Serves local files from `server/uploads` at `/uploads`.
+
+3. Business Service Layer (`backend/app/services/`):
+- Decoupled from HTTP: Functions accept Python dictionaries or primitives and return
+  clean data objects, never touching FastAPI `Request` or `Response` objects.
+- Testable: Enables automated unit and integration tests to verify business logic
+  directly without spinning up mock HTTP servers.
+
+4. Data Layer (`backend/app/db/`):
+- Asynchronous Driver: Motor client pools connections.
+- Seed Pipeline: Canonical initial records auto-seeded if collections are empty.
+- Resilient Store: `IN_MEMORY_*` data structures provide seamless failover.
+
+
+--------------------------------------------------------------------------------
+E. REQUEST ARCHITECTURE (COMPLAINT SUBMISSION LIFECYCLE)
+--------------------------------------------------------------------------------
+
+DIAGRAM 3: REQUEST SEQUENCE FOR MAINTENANCE TICKET CREATION
+```
+STUDENT              REACT SPA            FASTAPI ROUTE        CARE SERVICE         MONGODB
+   |                     |                      |                    |                 |
+   | (1) Fills Form      |                      |                    |                 |
+   |----Click Submit---->|                      |                    |                 |
+   |                     | (2) POST /care/complaints                 |                 |
+   |                     |-----Bearer Token---->|                    |                 |
+   |                     |                      | (3) Auth Guard     |                 |
+   |                     |                      |--Verify JWT Token->|                 |
+   |                     |                      |                    |                 |
+   |                     |                      | (4) Pydantic Check |                 |
+   |                     |                      |--Validate Schema-->|                 |
+   |                     |                      |                    |                 |
+   |                     |                      | (5) Call Service   |                 |
+   |                     |                      |------------------->|                 |
+   |                     |                      |                    | (6) Assign SLA  |
+   |                     |                      |                    | & Gen #CMP-1045 |
+   |                     |                      |                    |                 |
+   |                     |                      |                    | (7) insert_one  |
+   |                     |                      |                    |---------------->|
+   |                     |                      |                    |                 |
+   |                     |                      |                    | (8) Return Doc  |
+   |                     |                      |                    |<----------------|
+   |                     |                      | (9) JSON Envelope  |                 |
+   |                     |                      |<-------------------|                 |
+   |                     | (10) HTTP 201 Created|                    |                 |
+   |                     |<---------------------|                    |                 |
+   | (11) Toast Success  |                      |                    |                 |
+   |<--------------------|                      |                    |                 |
+```
+Explanation of Diagram 3:
+- Steps 1-2: User submits maintenance form; client injects JWT Bearer token.
+- Steps 3-4: Gateway verifies token validity and validates request fields.
+- Steps 5-6: Service layer applies institutional business logic (calculating Tier 1
+  SLA and generating human-readable ticket ID `#CMP-1045`).
+- Steps 7-8: Motor executes non-blocking insertion into MongoDB.
+- Steps 9-11: Result is wrapped in standard NextCampus JSON envelope and returned to UI.
+
+
+--------------------------------------------------------------------------------
+F. DATABASE ARCHITECTURE & RELATIONSHIP MODEL
+--------------------------------------------------------------------------------
+
+DIAGRAM 4: MONGODB ENTITY RELATIONSHIPS & FOREIGN REFERENCES
+```
++-------------------+           +-----------------------+
+|    ENROLLMENTS    |           |         USERS         |
++-------------------+           +-----------------------+
+| enrollmentNumber  |<----+     | id / _id              |
+| fullName          |     +-----| enrollmentNumber      |
+| email             | (Pre-reg  | email (unique)        |
+| department        |  claim)   | password (bcrypt hash)|
+| isClaimed (bool)  |           | role (student/admin)  |
++-------------------+           +-----------------------+
+                                  |         |         |
+                  +---------------+         |         +---------------+
+                  |                         |                         |
+                  | (authorId)              | (studentId)             | (leadStudent)
+                  v                         v                         v
++-----------------------+       +-----------------------+   +-----------------------+
+|     ANNOUNCEMENTS     |       |      COMPLAINTS       |   |       PROJECTS        |
++-----------------------+       +-----------------------+   +-----------------------+
+| id / _id              |       | id / _id              |   | id / _id              |
+| title, content        |       | ticketId (#CMP-xxxx)  |   | title, category       |
+| authorName            |       | studentId (ref User)  |   | leadStudent (ref User)|
+| priority              |       | assignedToName (staff)|   | currentMembers (users)|
++-----------------------+       | status, priority, sla |   | tags, githubRepo      |
+                                | updates (embedded)    |   +-----------------------+
+                                | internalNotes (embed) |
+                                +-----------------------+
+                                            |
+                                            | (building/room context)
+                                            v
++-----------------------+       +-----------------------+
+|       LOCATIONS       |       |         ROOMS         |
++-----------------------+       +-----------------------+
+| id / _id              |       | id / _id              |
+| code (unique, A-01)   |<------| buildingCode (A-01)   |
+| name, category        | 1:N   | roomNumber (B-204)    |
+| coordinates (x, y)    |       | capacity, occupancy   |
+| floors (embedded)     |       | temperature, IoT st.  |
++-----------------------+       +-----------------------+
+```
+Explanation of Diagram 4:
+- Enrollments to Users: Verification relationship ensuring only valid admitted
+  students can claim accounts.
+- Users to Complaints: 1-to-many relationship tracking who submitted each maintenance ticket.
+- Users to Projects: 1-to-many project creation and many-to-many team membership.
+- Locations to Rooms: 1-to-many foreign key relationship linked via `buildingCode`.
+  Cascading deletion protects against orphaned rooms.
+
+
+--------------------------------------------------------------------------------
+G. API ARCHITECTURE & DUAL MOUNTING
+--------------------------------------------------------------------------------
+
+NextCampus employs a dual-mounting architectural pattern in `backend/app/main.py`:
+- Canonical Prefix: `/api/v1` (e.g., `/api/v1/campus/locations`)
+- Compatibility Alias: `/api` (e.g., `/api/campus/locations`)
+Both prefixes point to the identical router instance generated by `create_api_router()`.
+This prevents broken links whether the client or external third-party calls the
+versioned or unversioned route.
+
+
+--------------------------------------------------------------------------------
+H. SOURCE CODE ARCHITECTURE
+--------------------------------------------------------------------------------
+
+Map of Major Directories and Their Responsibilities:
+- `backend/app/main.py`: Application entry point, lifespan hooks, CORS, and exception handlers.
+- `backend/app/api/routes/`: Route controllers receiving HTTP traffic.
+- `backend/app/core/`: Configuration (`config.py`), logging (`logging.py`), security (`security.py`).
+- `backend/app/db/`: Motor database connection (`connection.py`) and seed data (`seed_data.py`).
+- `backend/app/schemas/`: Pydantic input/output schemas enforcing strict typing.
+- `backend/app/services/`: Pure business logic decoupled from HTTP frameworks.
+- `backend/tests/`: Pytest integration test workflows validating all system features.
+- `server/`: Legacy Node.js Express server maintained for architectural reference.
+- `src/`: Client React 18 source code (pages, components, tokens, services).
+- `dist/`: Compiled production assets generated by Vite for Vercel deployment.
+- `docs/`: Master documentation system.
+
+
+--------------------------------------------------------------------------------
+I. SECURITY ARCHITECTURE & TRUST BOUNDARIES
+--------------------------------------------------------------------------------
+
+1. Trust Boundaries:
+- Untrusted Zone: Client browser environment. All incoming data (parameters, bodies,
+  headers) is treated as untrusted and strictly validated by Pydantic schemas.
+- DMZ / Gateway Zone: FastAPI server handling rate limiting, CORS filtering, and JWT verification.
+- Trusted Zone: Backend service layer, Motor database client, and MongoDB Atlas.
+- Secret Isolation: Database credentials (`MONGODB_URI`) and hashing secrets (`JWT_SECRET`)
+  remain strictly inside the Trusted Zone and are never exposed to the browser.
+
+2. Access Control Matrix:
++---------------------+---------+-------+-------+------------+
+| Resource / Action   | Student | Staff | Admin | Unauth     |
++---------------------+---------+-------+-------+------------+
+| View Campus Map     | Yes     | Yes   | Yes   | Yes        |
+| View SmartRooms     | Yes     | Yes   | Yes   | Yes        |
+| Submit Maintenance  | Yes     | Yes   | Yes   | No         |
+| View Internal Notes | No      | Yes   | Yes   | No         |
+| Triage / Assign SLA | No      | Yes   | Yes   | No         |
+| Create / Edit Bldg  | No      | No    | Yes   | No         |
+| Cascade Delete Bldg | No      | No    | Yes   | No         |
+| View Admin Stats    | No      | No    | Yes   | No         |
++---------------------+---------+-------+-------+------------+
+
+
+--------------------------------------------------------------------------------
+J. FAILURE POINTS & RESILIENCE STRATEGIES
+--------------------------------------------------------------------------------
+
+1. Database Unavailability:
+- Behavior: Connection attempts time out after 2000ms.
+- Mitigation: Server logs a warning and automatically switches to the in-memory
+  mock store (`IN_MEMORY_*`). The application continues running without crashing.
+
+2. External AI API (Google Gemini) Outage:
+- Behavior: HTTPX request times out or returns HTTP 429/500.
+- Mitigation: Service catches the exception cleanly and routes the query to the
+  internal Multi-Intent Heuristics Engine v4.5, ensuring uninterrupted student assistance.
+
+3. Frontend Network Dropouts:
+- Behavior: Browser fails to reach direct backend port.
+- Mitigation: `src/services/api.js` automatically retries through Vite's local
+  proxy before throwing a user-friendly network error dialog.
+
+
+--------------------------------------------------------------------------------
+K. ARCHITECTURAL DECISIONS RECORD (ADR)
+--------------------------------------------------------------------------------
+
+1. Decision: Dual-Prefix Symmetrical Routing (`/api/v1` and `/api`):
+   - Rationale: Prevents path mismatches between legacy client components and
+     modern REST v1 endpoints.
+
+2. Decision: Python FastAPI as Primary Engine:
+   - Rationale: High async concurrency, automatic OpenAPI Swagger generation,
+     strict Pydantic validation, and seamless future Python AI integrations.
+
+3. Decision: Decoupled In-Memory Fallback Store:
+   - Rationale: Enables complete automated test execution in headless CI environments
+     without requiring a live MongoDB daemon.
+================================================================================

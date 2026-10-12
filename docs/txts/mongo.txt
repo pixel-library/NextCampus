@@ -1,0 +1,478 @@
+================================================================================
+NEXTCAMPUS MONGODB DATABASE ARCHITECTURE & INTEGRATION MANUAL
+================================================================================
+Document: docs/mongo.txt
+Scope: Database Architecture, Schemas, Collections, Driver Operations & Security
+Status: IMPLEMENTED (Async Motor / PyMongo in Python FastAPI & Mongoose in Node.js)
+Database Engine: MongoDB 7.0+ (Driver: Motor 3.3.2+ / PyMongo 4.6.0+, Mongoose 8.3.1)
+Default Database Name: nextcampus
+================================================================================
+
+--------------------------------------------------------------------------------
+A. WHAT IS MONGODB?
+--------------------------------------------------------------------------------
+
+1. Definition:
+MongoDB is an open-source, high-performance, document-oriented NoSQL database
+system developed by MongoDB Inc. Unlike legacy relational databases that store
+information in rigid two-dimensional tables with fixed rows and columns, MongoDB
+stores structured and semi-structured data as flexible, self-describing BSON
+documents.
+
+2. Document-Oriented Architecture:
+In a document-oriented database, each data entity is stored as an independent,
+self-contained document. Documents are grouped into logical containers called
+"collections", which in turn exist within a "database".
+- Database: A physical and logical container holding multiple collections.
+- Collection: Equivalent to a relational table, but without enforcing a uniform
+  fixed column schema across all contained records.
+- Document: The primary unit of storage, equivalent to a relational row or record,
+  structured as key-value pairs where values can be primitive types, arrays, or
+  nested child documents.
+
+3. BSON and Its Relationship to JSON:
+- JSON (JavaScript Object Notation): A human-readable, text-based data interchange
+  format that supports strings, numbers, booleans, arrays, and objects.
+- BSON (Binary JSON): The internal binary serialization format used by MongoDB to
+  store documents and make remote procedure calls over network sockets.
+- Key advantages of BSON over pure JSON:
+  a. Performance: Highly optimized for fast scanning, traversals, and indexing.
+  b. Rich Data Types: Native support for 64-bit integers, floating-point doubles,
+     UTC Date/Time timestamps, Binary data (UUIDs, images), and unique 12-byte
+     ObjectIds (`_id`).
+  c. Zero Serialization Overhead: Drivers convert native language objects directly
+     into BSON bytes without intermediate string parsing.
+
+4. MongoDB vs. Relational Databases (RDBMS):
++------------------------+--------------------------------+--------------------------------+
+| Architectural Property | Relational Databases (SQL)     | MongoDB (Document NoSQL)       |
++------------------------+--------------------------------+--------------------------------+
+| Data Structure         | Rigid tables with fixed columns| Polymorphic BSON documents     |
+| Schema Definition      | Strict DDL migrations required | Dynamic / Application-enforced |
+| Entity Relationships   | Normalized foreign keys & JOINs| Denormalized embedded objects  |
+| Hierarchical Data      | Complex junction tables        | Native nested arrays & sub-docs|
+| Scalability Model      | Vertical scaling (larger CPU)  | Horizontal sharding & clusters |
+| Performance Profile    | Heavy multi-table JOIN latency | High-throughput sub-ms reads   |
++------------------------+--------------------------------+--------------------------------+
+
+
+--------------------------------------------------------------------------------
+B. WHY DO WE USE MONGODB IN NEXTCAMPUS?
+--------------------------------------------------------------------------------
+
+1. Flexible Document Structures for Campus Entities:
+Campus assets have heterogeneous, polymorphic attributes:
+- Academic buildings have department lists, floor counts, and CAD schema imports.
+- Smart classrooms feature dynamic IoT telemetries (temperature, ambient lux,
+  CO2 levels, acoustic ratings, NFC smart lock status, seating arrangements).
+- Incident maintenance tickets maintain unpredictable update histories, dual
+  public updates, private internal technical notes, and multiple attachments.
+Relational databases would require dozens of junction tables (`ticket_updates`,
+`ticket_internal_notes`, `room_features`, `building_departments`). MongoDB
+stores each entity natively as a clean, unified document.
+
+2. Rapid Schema Evolution and Microservice Iteration:
+NextCampus originated as a hackathon prototype and rapidly matured into an
+institutional platform. MongoDB allows fields to be added (such as ADA accessibility
+ratings, solar microgrid metrics, or AI spatial tags) without blocking database
+migrations or downtime.
+
+3. Native Support for Geospatial and Spatial Topologies:
+NextCampus manages campus GIS wayfinding with 2D tactical maps, building coordinates,
+pathway intersections, and floor layouts. MongoDB's native JSON representation
+matches modern Web GIS data standards (GeoJSON, coordinate pairs, CAD schemas).
+
+4. Appropriateness Assessment for NextCampus:
+MongoDB is the ideal operational data store for NextCampus because:
+- Read-heavy workloads: Students constantly check room occupancy, timetables, and
+  campus navigation.
+- Write patterns: Independent document writes (submitting maintenance tickets,
+  updating user profiles, joining project teams) without distributed transactions.
+- Zero impedance mismatch: Frontend React components and backend Python/JavaScript
+  services communicate via JSON envelopes, mapping 1:1 to MongoDB BSON documents.
+
+
+--------------------------------------------------------------------------------
+C. HOW MONGODB IS USED IN THIS PROJECT
+--------------------------------------------------------------------------------
+
+1. Connection & Deployment Method:
+NextCampus connects to MongoDB through two production-tested drivers:
+- Primary Engine (Python FastAPI): Motor (`motor.motor_asyncio.AsyncIOMotorClient`),
+  an asynchronous, non-blocking driver built on top of Tornado/asyncio and PyMongo.
+- Secondary / Legacy Engine (Node.js Express): Mongoose ODM (`mongoose`), providing
+  schema modeling, validation hooks, and buffered connection pooling.
+The target deployment can be a local daemon (`mongodb://localhost:27017/nextcampus`)
+or a cloud-managed cluster such as MongoDB Atlas (`mongodb+srv://...`).
+
+2. Database Name & Collections:
+- Target Database: `nextcampus`
+- Collections Identified in Codebase:
+  1. `users`              - Student, faculty, staff, and administrator accounts.
+  2. `enrollments`        - University student admission registry for identity claim.
+  3. `locations`          - Campus buildings, facilities, libraries, and spatial zones.
+  4. `rooms`              - Classrooms, lecture theatres, labs, and quiet study pods.
+  5. `complaints`         - NextCampus Care maintenance incident triage tickets.
+  6. `projects`           - SkillCampus student innovation teams and hackathon projects.
+  7. `sustainabilities`   - EcoCampus carbon, solar energy, water, and waste telemetries.
+  8. `announcements`      - Official campus broadcasts, alerts, and news bulletins.
+
+3. Source Files Responsible for Database Operations:
+- Python FastAPI Backend:
+  * `backend/app/db/connection.py`   - Async connection establishment, ping health check,
+                                       collection seeding, and in-memory fallback.
+  * `backend/app/db/seed_data.py`    - Comprehensive canonical seed dataset (users,
+                                       locations, rooms, complaints, enrollments).
+  * `backend/app/services/*_service.py` - Business logic query handlers for each domain.
+- Node.js Express Backend:
+  * `server/config/db.js`            - Mongoose connection bootstrap and logging.
+  * `server/models/*.js`             - Mongoose schema models (`User.js`, `Complaint.js`,
+                                       `Room.js`, `Location.js`, `Project.js`,
+                                       `Sustainability.js`, `Announcement.js`,
+                                       `Enrollment.js`).
+  * `server/services/*.service.js`   - Service query methods with readyState failover.
+
+4. Schemas & Models Overview:
+
+a. Collection: `users`
+- Source Models: `server/models/User.js` & `backend/app/schemas/auth.py`
+- Primary Key: `_id` (ObjectId or string identifier)
+- Key Fields:
+  * `name` (String, required): Full legal name of user.
+  * `preferredName` (String): Informal display name for greeting.
+  * `email` (String, unique, lowercase, required): University email address.
+  * `password` (String, required, hidden from queries): Bcrypt salted hash.
+  * `role` (Enum: `student`, `admin`, `staff`, `care_admin`): RBAC role flag.
+  * `enrollmentNumber` / `studentId` (String, unique): Official registration ID.
+  * `department` (String): Enrolled academic department.
+  * `academicYear` (String): Cohort classification (e.g., 'Class of 2029').
+  * `semester` (String): Current academic semester.
+  * `skills` (Array of Strings): Technical competencies for SkillCampus matching.
+  * `preferences` (Nested Document): Notification switches, theme, highContrast,
+    reduceMotion, textScale, and directory privacy flags.
+  * `createdAt`, `updatedAt` (UTC Date timestamps).
+
+b. Collection: `enrollments`
+- Source Models: `server/models/Enrollment.js` & `backend/app/db/seed_data.py`
+- Primary Key: `_id`
+- Purpose: Institutional pre-registration registry preventing unauthorized account
+  creation. Students must provide an unclaimed enrollment number during signup.
+- Key Fields:
+  * `enrollmentNumber` (String, unique, uppercase, required): e.g., 'MUR2502162'.
+  * `fullName` (String, required): Student name as recorded in university ERP.
+  * `email` (String, unique, lowercase, required): Assigned university email.
+  * `department` (String, required): Enrolled academic program.
+  * `academicYear` (String): Graduating class.
+  * `admissionYear` (Number): Year of matriculation (e.g., 2025).
+  * `isClaimed` (Boolean, default: false): True once the student registers.
+  * `claimedAt` (UTC Date / null): Timestamp when account was claimed.
+
+c. Collection: `locations`
+- Source Models: `server/models/Location.js` & `backend/app/schemas/campus.py`
+- Primary Key: `_id`
+- Purpose: Physical campus facilities for wayfinding and administrative management.
+- Key Fields:
+  * `name` (String, required): Building name (e.g., 'Alan Turing Hall').
+  * `code` (String, unique, uppercase, required): Building code (e.g., 'A-01').
+  * `category` (Enum: `academic`, `facility`, `dining`, `hostel`, `sports`, `admin`,
+    `research`, `library`, `cleanroom`).
+  * `precinct` (String): Campus zone (e.g., 'North Quadrangle').
+  * `totalFloors` (Number): Floor count.
+  * `departments` (Array of Strings): Academic departments located within.
+  * `grossFloorArea` (Number): Total usable floor space in square meters.
+  * `cadSchema` (String): Architectural schema or BIM model reference.
+  * `coordinates` (Nested Document: `{ x: Number, y: Number, floor: String }`).
+  * `status` (Enum: `open`, `restricted`, `closed`, `under_maintenance`).
+  * `floors` (Array of Subdocuments: `{ floorNumber, name, cadVersion, roomsCount }`).
+
+d. Collection: `rooms`
+- Source Models: `server/models/Room.js` & `backend/app/schemas/room.py`
+- Primary Key: `_id`
+- Purpose: Individual rooms, smart classrooms, and study pods with live telemetry.
+- Key Fields:
+  * `roomNumber` (String, unique, required): e.g., 'B-204'.
+  * `name` (String): Functional room title (e.g., 'Distributed Systems Lab').
+  * `building` (String, required): Facility name.
+  * `buildingCode` (String, required): Linked facility code (foreign key).
+  * `floor` (String): e.g., 'Level 2'.
+  * `type` (String): e.g., 'Multi-Media Theatre', 'Quiet Team Study Pod'.
+  * `capacity` (Number, required): Maximum physical seating count.
+  * `currentOccupancy` (Number): Real-time detected occupancy.
+  * `temperature` (Number): Ambient temperature in degrees Celsius (e.g., 21.8).
+  * `lightingStatus` (Enum: `on`, `off`, `dimmed`): IoT lighting circuit state.
+  * `status` (Enum: `available`, `occupied`, `reserved`, `maintenance`).
+  * `features` (Array of Strings): Installed equipment (e.g., 4K Projector, NFC Lock).
+
+e. Collection: `complaints`
+- Source Models: `server/models/Complaint.js` & `backend/app/schemas/care.py`
+- Primary Key: `_id`
+- Purpose: Incident triage tickets lodged by students for facilities maintenance.
+- Key Fields:
+  * `ticketId` (String, unique, required): Human-readable code (e.g., '#CMP-1042').
+  * `title` (String, required): Concise issue title.
+  * `category` (Enum: `infrastructure`, `network`, `cleanliness`, `electrical`,
+    `academic`, `av`, `plumbing`, `hvac`, `furniture`, `sanitation`, `other`).
+  * `priority` (Enum: `low`, `medium`, `high`, `critical`, `urgent`).
+  * `status` (Enum: `open`, `in_progress`, `parts_ordered`, `in_review`,
+    `resolved`, `closed`).
+  * `studentId` (ObjectId / String): Submitting user ID.
+  * `assignedToName` (String): Assigned staff technician name.
+  * `slaHours` (Number, default: 24, Tier-1 rapid response: 0.75).
+  * `attachments` (Array of Strings): Relative URLs of uploaded photos.
+  * `updates` (Array of Subdocuments: `{ message, updatedBy, createdAt }`): Public
+    audit trail visible to students and staff.
+  * `internalNotes` (Array of Subdocuments: `{ note, authorName, createdAt }`):
+    STRICT PRIVACY: Internal engineering logs visible only to administrators.
+
+f. Collection: `projects`
+- Source Models: `server/models/Project.js` & `backend/app/schemas/skill.py`
+- Key Fields:
+  * `title` (String), `category` (String), `description` (String).
+  * `tags` (Array of Strings): Required skills (e.g., 'ROS2', 'Python', 'React').
+  * `status` (Enum: `recruiting`, `in_progress`, `completed`).
+  * `leadStudent` (ObjectId / Nested Object): Project creator identity.
+  * `membersNeeded` (Number): Open positions remaining.
+  * `currentMembers` (Array of User Objects / ObjectIds): Active collaborators.
+  * `githubRepo` (String): Source code repository link.
+
+g. Collection: `sustainabilities`
+- Source Models: `server/models/Sustainability.js`
+- Key Fields:
+  * `metricName` (String): e.g., 'Campus Sustainability Score', 'Electricity Usage'.
+  * `category` (Enum: `solar`, `water`, `waste`, `carbon`).
+  * `value` (Number), `unit` (String), `trendPercentage` (Number).
+  * `status` (Enum: `optimal`, `warning`, `critical`).
+
+
+--------------------------------------------------------------------------------
+D. HOW MONGODB WORKS: LIFECYCLE OF A DATABASE OPERATION
+--------------------------------------------------------------------------------
+
+The following sequence traces an actual write operation: A student submits a
+maintenance report for a failing projector in Room B-204.
+
+1. Frontend Initiation:
+   - Student navigates to `/care` or `/complaints` on the React SPA.
+   - Form inputs (title, category, location, priority, description, photos) are gathered.
+   - `apiRequest('/care/complaints', { method: 'POST', body: ... })` executes.
+   - Browser sends an HTTP POST request with an `Authorization: Bearer <token>` header.
+
+2. Backend Endpoint Ingestion:
+   - FastAPI router (`backend/app/api/routes/care.py`) receives the incoming request.
+   - Dependency `get_current_user` decodes the JWT token and verifies user identity.
+
+3. Request Validation:
+   - Pydantic schema `ComplaintCreate` verifies that `title`, `category`, and
+     `location` exist and conform to allowed enum values.
+
+4. Database Layer Invocation:
+   - Route delegates to `care_service.create_complaint(data, current_user)`.
+   - Service inspects database status via `is_db_connected()`.
+
+5. MongoDB Execution:
+   - Async query sent to MongoDB daemon over connection pool socket:
+     ```python
+     await db.complaints.insert_one(complaint_doc)
+     ```
+   - MongoDB server checks unique indexes on `ticketId`, writes to WiredTiger cache,
+     appends operation to the journal file, and commits BSON document to disk.
+
+6. Backend Serialization:
+   - Motor returns `InsertOneResult` containing the generated `inserted_id`.
+   - Service retrieves or serializes document, stripping MongoDB-specific `_id` into
+     a string `id` and packaging into a standardized envelope:
+     `{ "success": True, "message": "Ticket created", "data": complaint_doc }`.
+
+7. Frontend Reception & State Update:
+   - React receives HTTP 201 Created JSON response.
+   - UI optimistic state updates, toast notification confirms submission, and
+     real-time ticket timeline refreshes.
+
+8. Resilience Failover Pattern (Offline Fallback):
+   If MongoDB is unreachable (e.g., during headless CI or network disconnection),
+   `is_db_connected()` returns `False`. The service transparently executes against
+   the thread-safe `IN_MEMORY_COMPLAINTS` array store, returning identical JSON
+   data without throwing 500 errors to the client.
+
+
+--------------------------------------------------------------------------------
+E. MONGODB OPERATIONS USED IN NEXTCAMPUS
+--------------------------------------------------------------------------------
+
+1. Insert Operations:
+- Single Document Insertion:
+  FastAPI: `await db.locations.insert_one(payload)`
+  Express: `await Location.create(payload)`
+  Example: Admin creates a new research wing ('CYBER-99').
+- Batch Seeding:
+  FastAPI: `await db.locations.insert_many(copy.deepcopy(SEED_LOCATIONS))`
+  Executed at application startup when collections contain 0 records.
+
+2. Find Operations:
+- Find by Unique Field:
+  FastAPI: `doc = await db.locations.find_one({"code": code})`
+  Express: `doc = await Location.findOne({ code })`
+- Filtered Catalog Search:
+  FastAPI:
+  ```python
+  query = {}
+  if category:
+      query["category"] = category
+  cursor = db.locations.find(query).sort("name", 1)
+  locations = await cursor.to_list(length=100)
+  ```
+  Express:
+  ```javascript
+  const locations = await Location.find(query).sort({ name: 1 });
+  ```
+
+3. Update Operations:
+- Atomic Document Field Update:
+  FastAPI:
+  ```python
+  await db.users.update_one(
+      {"_id": user_id},
+      {"$set": {"preferredName": name, "skills": skills, "updatedAt": datetime.now(timezone.utc)}}
+  )
+  ```
+- Subdocument Array Pushing (`$push`):
+  Adding public updates or staff notes to complaints:
+  ```python
+  await db.complaints.update_one(
+      {"_id": complaint_id},
+      {"$push": {"updates": update_entry}}
+  )
+  ```
+- Identity Claiming Atomic Updates:
+  Claiming an enrollment record during registration:
+  ```python
+  await db.enrollments.update_one(
+      {"enrollmentNumber": enrollment_number},
+      {"$set": {"isClaimed": True, "claimedAt": datetime.now(timezone.utc)}}
+  )
+  ```
+
+4. Delete Operations:
+- Single Document Deletion:
+  `await db.locations.delete_one({"_id": location_id})`
+- Dependent Cascading Deletion:
+  In `campus_service.delete_location`:
+  ```python
+  linked_rooms = await db.rooms.count_documents({"buildingCode": loc["code"]})
+  if linked_rooms > 0 and not cascade:
+      return {"conflict": True, "dependentRooms": linked_rooms}
+  if cascade:
+      await db.rooms.delete_many({"buildingCode": loc["code"]})
+  await db.locations.delete_one({"_id": location_id})
+  ```
+
+5. Indexing:
+NextCampus defines unique indexes across critical natural keys to guarantee
+referential integrity:
+- `users`: `email` (unique, lowercase), `enrollmentNumber` (unique).
+- `enrollments`: `enrollmentNumber` (unique, uppercase).
+- `locations`: `code` (unique, uppercase).
+- `rooms`: `roomNumber` (unique).
+- `complaints`: `ticketId` (unique).
+
+
+--------------------------------------------------------------------------------
+F. DATABASE CONNECTION & LIFECYCLE MANAGEMENT
+--------------------------------------------------------------------------------
+
+1. Motor Asynchronous Driver Setup (`backend/app/db/connection.py`):
+```python
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+from backend.app.core.config import settings
+
+client: Optional[AsyncIOMotorClient] = None
+db: Optional[AsyncIOMotorDatabase] = None
+_is_connected: bool = False
+
+async def connect_db():
+    global client, db, _is_connected
+    try:
+        conn_str = settings.MONGODB_URI or "mongodb://localhost:27017/nextcampus"
+        # 2-second timeout prevents server hangs when database is offline
+        client = AsyncIOMotorClient(conn_str, serverSelectionTimeoutMS=2000)
+        # Verify connection with low-level administrative ping
+        await client.admin.command("ping")
+        db = client[settings.DB_NAME]
+        _is_connected = True
+        logger.info(f"[NextCampus DB] Connected to database '{settings.DB_NAME}'")
+        await _seed_collections_if_empty()
+    except Exception as e:
+        _is_connected = False
+        logger.warning(f"[NextCampus DB] Running in decoupled in-memory fallback: {e}")
+```
+
+2. Connection Lifecycle in Application Startup:
+FastAPI utilizes the modern `lifespan` async context manager:
+```python
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    setup_logging()
+    await connect_db()
+    yield
+    await close_db()
+```
+When Uvicorn boots, database connectivity is established and verified before any
+incoming HTTP requests are accepted. When Uvicorn shuts down (SIGTERM/SIGINT),
+`close_db()` gracefully flushes and disconnects client sockets.
+
+3. Environment Variable Configuration:
+Database connection settings are loaded securely via `.env` or cloud environment
+dashboards without hardcoded credentials:
+- `MONGODB_URI`: Connection string URI (format: `mongodb://localhost:27017/nextcampus`
+  for local development, or `mongodb+srv://<user>:<password>@cluster.mongodb.net/nextcampus`
+  for cloud MongoDB Atlas).
+- `DB_NAME`: Database namespace (`nextcampus`).
+
+
+--------------------------------------------------------------------------------
+G. SECURITY AND BEST PRACTICES
+--------------------------------------------------------------------------------
+
+1. Secret-Key & Connection String Isolation:
+- `MONGODB_URI` is NEVER committed to Git. The `.gitignore` file strictly excludes
+  all `.env`, `.env.local`, and `.env.production` files.
+- In production (Render/Vercel), credentials are injected as secure environment
+  variables managed in the cloud platform console.
+
+2. Password Protection & Hashing:
+- Plaintext passwords are NEVER stored in MongoDB.
+- All user passwords are encrypted using `bcrypt` with a work factor cost of 10.
+- Password hashes are stored under `password` in `users`.
+- In query projections, the password field is explicitly excluded (`select: false`
+  in Mongoose, and removed from dictionaries in Python services).
+
+3. Role-Based Access Control (RBAC) Data Sanitization:
+- High-privilege fields (`internalNotes` in `complaints`) contain private maintenance
+  diagnostics and vendor warranty notes.
+- When a student requests a complaint document, the service layer strictly redacts
+  `internalNotes` before returning the response. Only verified administrators
+  receive the full document.
+
+4. Injection Prevention:
+- BSON type enforcement and Pydantic schema validation eliminate classic NoSQL
+  injection attacks ($gt, $ne object injections).
+- All queries utilize parameterized dictionary filters rather than string-concatenated
+  evaluations.
+
+5. Backup & Disaster Recovery:
+- Database backups should be scheduled using standard MongoDB Atlas continuous
+  snapshots or automated `mongodump` cron routines:
+  `mongodump --uri="$MONGODB_URI" --out=/backups/$(date +%F)`
+
+
+--------------------------------------------------------------------------------
+H. IMPLEMENTATION STATUS SUMMARY
+--------------------------------------------------------------------------------
+
+- MongoDB Database Engine: IMPLEMENTED (Async Motor in Python + Mongoose in Node.js)
+- Collections Configured & Seeded: IMPLEMENTED (8 canonical collections)
+- Automated Database Seeding: IMPLEMENTED (Canonical initial state in `seed_data.py`)
+- In-Memory Fallback Failover: IMPLEMENTED (Resilient offline testing support)
+- Connection Pool Management: IMPLEMENTED (Lifespan context manager in FastAPI)
+- Security & Password Hashing: IMPLEMENTED (Bcrypt work factor 10, env URI)
+================================================================================

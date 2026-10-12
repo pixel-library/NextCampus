@@ -1,0 +1,280 @@
+================================================================================
+NEXTCAMPUS PYTHON BACKEND & FASTAPI ENGINE SPECIFICATION
+================================================================================
+Document: docs/python.txt
+Scope: Python Runtime, FastAPI Server, Motor Database Driver, Libraries & Execution
+Status: IMPLEMENTED & VERIFIED (Primary Modern Backend)
+Python Version: 3.11.x (Render production target: 3.11.9)
+Virtual Environment: backend/.venv
+================================================================================
+
+--------------------------------------------------------------------------------
+A. WHAT IS PYTHON?
+--------------------------------------------------------------------------------
+
+1. Definition & Characteristics:
+Python is a high-level, dynamically typed, garbage-collected programming language
+designed by Guido van Rossum. It emphasizes code readability, developer productivity,
+and clear syntax. While historically recognized for scripting and data science,
+modern Python (version 3.10+) has evolved into a premier language for high-concurrency
+asynchronous microservices through native `asyncio` syntax and robust static type
+hinting.
+
+2. Key Features Utilized in NextCampus:
+- Asynchronous Coroutines (`async` / `await`): Native non-blocking I/O allows a
+  single Uvicorn process to handle concurrent database queries and external AI calls
+  without thread exhaustion.
+- Type Hints & Annotations: Used extensively with Pydantic for data validation,
+  IDE autocompletion, and automated OpenAPI documentation generation.
+- Rich Standard Library & Packaging: Modules such as `pathlib`, `contextlib`,
+  `datetime`, and `typing` provide clean, cross-platform filesystem and time handling.
+- Unified AI Ecosystem: Seamless interoperability with machine learning libraries
+  and cloud generative AI APIs (such as Google Gemini).
+
+
+--------------------------------------------------------------------------------
+B. WHY PYTHON IS USED IN THIS PROJECT
+--------------------------------------------------------------------------------
+
+1. Architectural Role:
+Python serves as the primary modern backend application engine for NextCampus.
+While the repository includes a legacy Node.js Express server (`server/`), the active
+production server, default start scripts (`npm run server`, `npm run start`), Render
+cloud deployment (`render.yaml`), and main automated test suites are driven by Python.
+
+2. Features Implemented in Python:
+- Core REST API Gateway: FastAPI application in `backend/app/main.py`.
+- Asynchronous Database Operations: Motor driver executing queries against MongoDB.
+- Student Identity & Authentication: Bcrypt password hashing, JWT generation,
+  and enrollment pre-check logic.
+- NextCampus Care Incident Triage: SLA calculation, technician assignment, and
+  dual-note privacy enforcement.
+- SkillCampus Project Hub: Student team creation, tag filtering, and duplicate
+  membership blocking.
+- AI Spatial Copilot: Multi-intent institutional reasoning engine with Google
+  Gemini 1.5 Flash client.
+- Automated Test Suite: Pytest integration tests executing in `backend/tests/`.
+
+3. Interaction with Other Components:
+- With Frontend: Delivers standardized REST JSON envelopes to the React SPA over
+  port 5000 and serves static photos from `/uploads`.
+- With MongoDB: Executes non-blocking BSON read/write operations via Motor.
+- With Cloud Hosting: Configured in `render.yaml` as a Python web service.
+
+
+--------------------------------------------------------------------------------
+C. PYTHON EXECUTION & RUNTIME SPECIFICATION
+--------------------------------------------------------------------------------
+
+1. Entry Points:
+- Application Entry: `backend.app.main:app`
+- Test Entry: `backend/tests/test_all_workflows.py`
+
+2. Python Version:
+- Tested and verified on Python 3.11.x (Render runtime pinned to `3.11.9`).
+
+3. Virtual Environment:
+- The project includes a dedicated virtual environment at `backend/.venv`.
+- Python binary: `./backend/.venv/bin/python`
+- Uvicorn binary: `./backend/.venv/bin/uvicorn`
+- Pytest binary: `./backend/.venv/bin/pytest`
+
+4. Dependency Installation:
+Dependencies are pinned in `backend/requirements.txt`:
+```bash
+# Create virtual environment if setting up fresh:
+python3.11 -m venv backend/.venv
+
+# Activate virtual environment:
+source backend/.venv/bin/activate
+
+# Install all requirements:
+pip install -r backend/requirements.txt
+```
+
+5. Startup Commands:
+- Full-Stack Dev Mode (Concurrent React + FastAPI):
+  `npm run dev`
+- Standalone FastAPI Server (with auto-reload):
+  `npm run server`
+  or
+  `./backend/.venv/bin/uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 5000`
+- Production Server (Render):
+  `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`
+
+6. Configuration Loading:
+Configured via `backend/app/core/config.py` using Pydantic `BaseSettings`:
+- Priority order: Environment variables -> `.env` in root -> `backend/.env`.
+
+
+--------------------------------------------------------------------------------
+D. PYTHON LIBRARIES CATALOG
+--------------------------------------------------------------------------------
+
++--------------------+-------------------+-------------------------------+----------------------------------------+------------------------------------+
+| Library Name       | Pinned Version    | Purpose in NextCampus         | Important Classes / Functions          | Source Files Using It              |
++--------------------+-------------------+-------------------------------+----------------------------------------+------------------------------------+
+| fastapi            | >=0.110.0, <1.0.0 | High-performance Web API core | FastAPI, APIRouter, Depends, status    | backend/app/main.py, api/routes/*  |
+| uvicorn[standard]  | >=0.28.0, <1.0.0  | Lightning ASGI Web Server     | uvicorn.run                            | package.json, render.yaml          |
+| pydantic           | >=2.6.0, <3.0.0   | Data validation & schemas     | BaseModel, Field, field_validator      | backend/app/schemas/*              |
+| pydantic-settings  | >=2.2.0, <3.0.0   | Environment variable loading  | BaseSettings, SettingsConfigDict       | backend/app/core/config.py         |
+| motor              | >=3.3.2, <4.0.0   | Async MongoDB driver          | AsyncIOMotorClient, AsyncIOMotorDB     | backend/app/db/connection.py       |
+| pymongo            | >=4.6.0, <5.0.0   | Core BSON & client foundation | MongoClient, ObjectId, errors          | backend/app/db/connection.py       |
+| pyjwt              | >=2.8.0, <3.0.0   | JSON Web Token encoding       | jwt.encode, jwt.decode                 | backend/app/core/security.py       |
+| bcrypt             | >=4.0.0, <5.0.0   | Cryptographic password hashing| bcrypt.hashpw, bcrypt.checkpw          | backend/app/core/security.py       |
+| python-multipart   | >=0.0.9, <1.0.0   | Form-data & file uploads      | MultiPartParser                        | backend/app/api/routes/care.py     |
+| httpx              | >=0.27.0, <1.0.0  | Async outbound HTTP client    | httpx.AsyncClient                      | backend/app/services/ai_service.py |
+| pytest             | >=8.1.0, <9.0.0   | Test suite runner             | pytest.fixture, assert                 | backend/tests/test_all_workflows.py|
+| pytest-asyncio     | >=0.23.0, <1.0.0  | Async test support            | @pytest.mark.asyncio                   | backend/tests/*                    |
++--------------------+-------------------+-------------------------------+----------------------------------------+------------------------------------+
+
+
+--------------------------------------------------------------------------------
+E. PYTHON AND MONGODB INTEGRATION (MOTOR SPECIFICATION)
+--------------------------------------------------------------------------------
+
+1. Driver Architecture:
+FastAPI relies on Motor (`motor.motor_asyncio.AsyncIOMotorClient`), which wraps
+PyMongo to run non-blocking queries on top of the standard Python `asyncio` event loop.
+
+2. Connection Establishment (`backend/app/db/connection.py`):
+```python
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+from backend.app.core.config import settings
+
+client: Optional[AsyncIOMotorClient] = None
+db: Optional[AsyncIOMotorDatabase] = None
+_is_connected: bool = False
+
+async def connect_db():
+    global client, db, _is_connected
+    try:
+        conn_str = settings.MONGODB_URI or "mongodb://localhost:27017/nextcampus"
+        # 2-second timeout avoids hanging server startup if database is offline
+        client = AsyncIOMotorClient(conn_str, serverSelectionTimeoutMS=2000)
+        # Execute low-level ping check
+        await client.admin.command("ping")
+        db = client[settings.DB_NAME]
+        _is_connected = True
+        logger.info(f"[NextCampus DB] Connected to '{settings.DB_NAME}'")
+        await _seed_collections_if_empty()
+    except Exception as e:
+        _is_connected = False
+        logger.warning(f"[NextCampus DB Connection Failure]: {str(e)}")
+        logger.warning("[NextCampus DB Info] Running in in-memory fallback mode.")
+```
+
+3. Representative Python CRUD Queries:
+- Query Single Record:
+  ```python
+  user = await db.users.find_one({"email": email.lower()})
+  ```
+- Filtered Cursor Query:
+  ```python
+  cursor = db.rooms.find({"buildingCode": code}).sort("roomNumber", 1)
+  rooms = await cursor.to_list(length=100)
+  ```
+- Subdocument Array Push:
+  ```python
+  await db.complaints.update_one(
+      {"_id": ticket_id},
+      {"$push": {"updates": {"message": msg, "createdAt": datetime.now(timezone.utc)}}}
+  )
+  ```
+- Safe Dependent Deletion:
+  ```python
+  await db.rooms.delete_many({"buildingCode": loc_code})
+  await db.locations.delete_one({"_id": loc_id})
+  ```
+
+4. BSON Serialization Helpers (`backend/app/utils/helpers.py`):
+MongoDB returns BSON documents containing `_id: ObjectId(...)`. NextCampus
+implements helper functions to sanitize documents for JSON responses:
+```python
+def sanitize_doc(doc: Dict[str, Any]) -> Dict[str, Any]:
+    if not doc:
+        return {}
+    cleaned = dict(doc)
+    if "_id" in cleaned:
+        cleaned["id"] = str(cleaned.pop("_id"))
+    return cleaned
+```
+
+
+--------------------------------------------------------------------------------
+F. PYTHON AND THE FRONTEND (REACT SPA)
+--------------------------------------------------------------------------------
+
+1. REST HTTP Communication:
+- The React SPA communicates with the Python backend using standard HTTP JSON requests.
+- Endpoint symmetry: Endpoints mounted at both `/api/v1/*` and `/api/*`.
+- Development proxy: Vite proxies all `/api` traffic from port 3000 to port 5000.
+
+2. Static File Uploads:
+- FastAPI mounts static directory serving:
+  `app.mount("/uploads", StaticFiles(directory=str(settings.UPLOAD_DIR)), name="uploads")`
+- Uploaded maintenance photos stored on disk in `server/uploads/` are immediately
+  accessible to the React frontend at `http://localhost:5000/uploads/<filename>`.
+
+3. CORS Handling:
+- In `backend/app/main.py`:
+  ```python
+  app.add_middleware(
+      CORSMiddleware,
+      allow_origins=settings.CORS_ORIGINS,
+      allow_credentials=True,
+      allow_methods=["*"],
+      allow_headers=["*"],
+  )
+  ```
+
+
+--------------------------------------------------------------------------------
+G. PYTHON AND OTHER BACKEND SERVICES (NODE.JS COEXISTENCE)
+--------------------------------------------------------------------------------
+
+NextCampus maintains a dual-backend architecture:
+1. Modern Python FastAPI (`backend/app/`):
+   - Invoked by `npm run server` and `npm run start`.
+   - Production target for Render deployment (`render.yaml`).
+2. Legacy Node.js Express (`server/`):
+   - Invoked by `npm run server:legacy`.
+   - Express 4 + Mongoose 8.3 implementation.
+Shared Assets:
+- Both services connect to the identical database (`nextcampus`).
+- Both services share the identical static file storage directory (`server/uploads`).
+- Both services implement the identical REST API endpoints and envelope standards.
+
+
+--------------------------------------------------------------------------------
+H. INSTALLATION & TROUBLESHOOTING GUIDE
+--------------------------------------------------------------------------------
+
+1. Recreating Virtual Environment:
+```bash
+# From project root:
+rm -rf backend/.venv
+python3.11 -m venv backend/.venv
+./backend/.venv/bin/pip install --upgrade pip
+./backend/.venv/bin/pip install -r backend/requirements.txt
+```
+
+2. Running Backend Tests:
+```bash
+# Run all Python integration workflows:
+npm run test:python
+
+# Or execute with verbose output:
+PYTHONPATH=. ./backend/.venv/bin/pytest backend/tests -v
+```
+
+3. Common Errors & Fixes:
+- Error: `ModuleNotFoundError: No module named 'backend'`
+  Fix: Ensure `PYTHONPATH=.` is set when running python scripts directly from root.
+- Error: `Address already in use (port 5000)`
+  Fix: Terminate any leftover Uvicorn or Node instances: `fuser -k 5000/tcp`.
+- Error: `pymongo.errors.ServerSelectionTimeoutError`
+  Fix: Ensure local MongoDB daemon is running (`sudo systemctl start mongod`) or
+  verify your cloud Atlas URI. Note: NextCampus automatically falls back to in-memory
+  mode so the server will continue running regardless.
+================================================================================

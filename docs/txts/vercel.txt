@@ -1,0 +1,231 @@
+================================================================================
+NEXTCAMPUS VERCEL FRONTEND DEPLOYMENT SPECIFICATION
+================================================================================
+Document: docs/vercel.txt
+Scope: Vercel Edge Platform Integration, vercel.json, SPA Routing & Cloud Delivery
+Status: CONFIGURED & VERIFIED (Configuration: vercel.json in repository root)
+Target Component: src/ (Vite + React 18 Single Page Application)
+Output Directory: dist/
+================================================================================
+
+--------------------------------------------------------------------------------
+A. WHAT IS VERCEL?
+--------------------------------------------------------------------------------
+
+1. Definition:
+Vercel is a global cloud platform designed for static sites, frontend frameworks,
+and serverless functions. It provides automated build pipelines, Git-integrated
+preview deployments, edge network caching (Edge CDN), instant DNS, and automatic
+TLS certificate provisioning.
+
+2. Key Capabilities Utilized by Single Page Apps:
+- Global Edge Network: Distributes compiled static assets (HTML, CSS, JS bundles)
+  across edge servers worldwide for sub-100ms first contentful paint times.
+- Immutable Deployments: Every Git branch or pull request generates an isolated
+  preview deployment URL.
+- Routing Rewrites: Critical capability for client-side routing libraries (like
+  React Router DOM), ensuring deep links return `index.html` instead of HTTP 404 errors.
+
+
+--------------------------------------------------------------------------------
+B. IS VERCEL USED IN THIS PROJECT?
+--------------------------------------------------------------------------------
+
+1. Evidence of Vercel Configuration in Codebase:
+- Configuration File: `vercel.json` exists in the repository root (183 bytes).
+- Build Configuration: `buildCommand: "npm run build"`.
+- Output Artifact Directory: `outputDirectory: "dist"`.
+- Framework Preset: `framework: "vite"`.
+- SPA Routing Rewrites: Configured to rewrite all route patterns `/(.*)` to `/index.html`.
+- Documentation References: Documented as the primary frontend hosting tier in
+  `docs/DEPLOYMENT.md` and `docs/TECH_STACK.md`.
+
+2. Verification Distinction:
+- Status: CONFIGURED (Verified in `vercel.json` and production runbooks).
+- Runtime Status: The repository contains complete configuration ready for automated
+  deployment upon connecting the repository to a Vercel project dashboard.
+
+
+--------------------------------------------------------------------------------
+C. VERCEL'S ROLE IN NEXTCAMPUS ARCHITECTURE
+--------------------------------------------------------------------------------
+
+1. Component Hosted on Vercel:
+The client-side React 18 Single Page Application (`src/`).
+
+2. Why Vercel Is Ideal for the NextCampus Frontend:
+- Zero Server Maintenance: Compiles static assets during the build phase (`npm run build`)
+  and serves them directly from Vercel's global CDN without running a continuous Node daemon.
+- High Concurrency: Capable of serving thousands of simultaneous campus students
+  accessing maps and timetables without server CPU bottleneck.
+- Instant Preview URLs: Facilitates code review by spinning up unique preview URLs
+  for every Git branch before merging into `main`.
+
+3. Detailed Configuration Analysis (`vercel.json`):
+```json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
+
+4. The Critical Role of `rewrites`:
+In a Single Page Application (SPA) using React Router DOM, navigation between pages
+(e.g., `/campus-map`, `/care`, `/admin`) is handled entirely in the browser's JavaScript
+via the HTML5 History API.
+- Without `rewrites`: If a user refreshes their browser while on `https://nextcampus.vercel.app/campus-map`,
+  Vercel's web server would look for a physical file named `/campus-map` on disk,
+  fail to find it, and return an HTTP 404 Not Found error.
+- With `rewrites`: The rule `source: "/(.*)", destination: "/index.html"` intercepts
+  every incoming request and serves `dist/index.html`. React Router DOM then reads
+  the browser's URL path and immediately renders the appropriate component
+  (`CampusMap.jsx`).
+
+
+--------------------------------------------------------------------------------
+D. VERCEL AND THE BACKEND (API COMMUNICATION)
+--------------------------------------------------------------------------------
+
+1. Architectural Separation:
+The backend DOES NOT run on Vercel. The backend runs on Render as a dedicated Python
+FastAPI web service.
+
+2. How the Vercel-Hosted Frontend Connects to the Backend:
+```
++------------------------------------+             +----------------------------------+
+|           VERCEL EDGE CDN          |             |       RENDER CLOUD SERVICE       |
+|    Hosts React 18 Static Bundle    |             |    FastAPI Python 3.11 Backend   |
+|   https://nextcampus.vercel.app    |             | https://nextcampus-api.onrender.com |
++------------------------------------+             +----------------------------------+
+                  |                                                  |
+                  | User loads SPA in browser                        |
+                  v                                                  |
+     +--------------------------+                                    |
+     |   CLIENT WEB BROWSER     |                                    |
+     | Executes React Component |                                    |
+     | Reads VITE_API_URL       |------------------------------------+
+     | Makes HTTPS REST Calls   |     HTTPS POST /api/v1/auth/login
+     +--------------------------+     Authorization: Bearer <JWT>
+```
+
+3. Environment Variable Configuration:
+During the Vercel build process, Vite compiles environment variables prefixed with
+`VITE_` into the static JavaScript bundle.
+- Required Vercel Environment Variable:
+  `VITE_API_URL=https://nextcampus-api-xxxx.onrender.com/api/v1`
+- Consumed inside `src/services/api.js`:
+  ```javascript
+  let rawBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+  rawBase = rawBase.replace(/\/+$/, '');
+  const API_BASE_URL = rawBase;
+  ```
+
+4. CORS Requirements:
+Because the frontend origin (`https://nextcampus.vercel.app`) differs from the backend
+origin (`https://nextcampus-api-xxxx.onrender.com`), the backend's `CORSMiddleware`
+must permit requests from the Vercel domain. This is handled by setting `CORS_ORIGINS=*`
+or specifying the exact Vercel URL in Render's environment variables.
+
+
+--------------------------------------------------------------------------------
+E. VERCEL AND MONGODB: DIRECT ACCESS PROHIBITION
+--------------------------------------------------------------------------------
+
+1. Strict Security Principle:
+Vercel NEVER connects directly to MongoDB. There is NO database connection string
+(`MONGODB_URI`) configured in Vercel.
+
+2. Access Path:
+```
+Vercel-hosted Frontend (SPA)
+        |
+        | HTTPS REST Calls (with JWT Bearer token)
+        v
+Render-hosted Backend API (FastAPI)
+        |
+        | Secure TLS BSON Socket (using MONGODB_URI)
+        v
+MongoDB Atlas Managed Database
+```
+
+3. Why Direct Frontend-to-Database Connections Are Forbidden:
+Any environment variable bundled into a frontend SPA is public and easily extracted
+using browser developer tools. Exposing `MONGODB_URI` on Vercel would give public users
+direct, unauthenticated read/write access to the entire institutional database.
+All database access is strictly mediated by the backend API.
+
+
+--------------------------------------------------------------------------------
+F. DEPLOYMENT CONFIGURATION WALKTHROUGH
+--------------------------------------------------------------------------------
+
+1. Step-by-Step Vercel Deployment:
+   Step 1: Push your latest changes to GitHub (`pixel-library/NextCampus`).
+   Step 2: Log into Vercel (`https://vercel.com/`).
+   Step 3: Click **Add New ➔ Project**.
+   Step 4: Import the `pixel-library/NextCampus` repository.
+   Step 5: Vercel automatically detects Vite from `vercel.json`:
+           - Framework Preset: `Vite`
+           - Root Directory: `./`
+           - Build Command: `npm run build`
+           - Output Directory: `dist`
+   Step 6: Expand **Environment Variables** and add:
+           - Name: `VITE_API_URL`
+           - Value: `https://nextcampus-api-xxxx.onrender.com/api/v1`
+   Step 7: Click **Deploy**. Vercel will install dependencies, run Vite build,
+           and publish your application globally within 60 seconds.
+
+2. Custom Domain Configuration:
+   - In Vercel Project Settings ➔ **Domains**, add your custom university domain
+     (e.g., `campus.mewaruniversity.edu` or `nextcampus.edu`).
+   - Add the required CNAME or A records to your DNS provider. Vercel automatically
+     provisions an SSL/TLS certificate via Let's Encrypt.
+
+
+--------------------------------------------------------------------------------
+G. TROUBLESHOOTING COMMON VERCEL ISSUES
+--------------------------------------------------------------------------------
+
+1. Deep Routing 404 Not Found Errors:
+- Symptom: Directly navigating to `https://yourapp.vercel.app/campus-map` returns 404.
+- Cause: Missing or misconfigured rewrite rule.
+- Fix: Verify that `vercel.json` exists in the repository root and contains:
+  `"rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]`.
+
+2. Build Failures during `npm run build`:
+- Symptom: Vercel build log displays `vite: command not found` or syntax errors.
+- Fix: Ensure `vite` is included in `devDependencies` in `package.json` and that
+  no local uncommitted files or broken JSX syntax are present.
+
+3. Outdated or Undefined API Base URL:
+- Symptom: Frontend issues requests to `http://localhost:5000/api/v1` even in production.
+- Cause: Missing `VITE_API_URL` in Vercel environment variables, causing the code
+  to fall back to the local default.
+- Fix: Set `VITE_API_URL=https://your-backend.onrender.com/api/v1` in Vercel project
+  settings and trigger a **Redeploy**. Note: Vite requires a full rebuild to inject
+  updated environment variables.
+
+4. CORS Errors in Browser Console:
+- Symptom: Browser displays `Access to fetch has been blocked by CORS policy`.
+- Fix: Update the backend's `CORS_ORIGINS` setting on Render to include your
+  Vercel domain.
+
+
+--------------------------------------------------------------------------------
+H. IF VERCEL IS NOT USED (ALTERNATIVE HOSTING)
+--------------------------------------------------------------------------------
+
+If Vercel is not used, the compiled static bundle (`dist/`) can be hosted on:
+1. Static CDN Providers: Cloudflare Pages, Netlify, AWS S3 + CloudFront, GitHub Pages.
+2. Self-Hosted Nginx Web Server:
+   - Run `npm run build`.
+   - Point Nginx `root` directive to `/var/www/nextcampus/dist`.
+   - Include `try_files $uri $uri/ /index.html;` to provide the same SPA rewrite behavior.
+================================================================================

@@ -1,0 +1,231 @@
+================================================================================
+NEXTCAMPUS RENDER CLOUD DEPLOYMENT SPECIFICATION
+================================================================================
+Document: docs/render.txt
+Scope: Render Platform Integration, render.yaml Blueprint, Web Service & Port Binding
+Status: CONFIGURED & PREPARED (Blueprint: render.yaml in repository root)
+Target Component: backend/app (FastAPI Python 3.11 ASGI Service)
+Service Name: nextcampus-api
+================================================================================
+
+--------------------------------------------------------------------------------
+A. WHAT IS RENDER?
+--------------------------------------------------------------------------------
+
+1. Definition:
+Render is a modern cloud Platform-as-a-Service (PaaS) that enables developers to
+build, deploy, and scale web applications, APIs, static websites, background workers,
+cron jobs, and managed databases directly from Git repositories.
+
+2. Key Services Provided by Render:
+- Web Services: Managed HTTP servers with automatic TLS certificates, custom domain
+  support, automated GitHub deploy triggers, and health checks.
+- Background Workers: Continuous background processes consuming task queues.
+- Cron Jobs: Scheduled batch scripts running at fixed intervals.
+- Managed PostgreSQL & Redis: Cloud-hosted persistent relational and cache stores.
+- Infrastructure as Code (IaC): Declarative service provisioning using `render.yaml`
+  blueprints.
+
+
+--------------------------------------------------------------------------------
+B. IS RENDER USED IN THIS PROJECT?
+--------------------------------------------------------------------------------
+
+1. Evidence of Render Configuration in Codebase:
+- Configuration File: `render.yaml` exists in the repository root (533 bytes).
+- Pinned Runtime: Python 3.11.9.
+- Service Definition: Type `web`, named `nextcampus-api`.
+- Package Command: `pip install -r backend/requirements.txt`.
+- Start Command: `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`.
+- Documentation References: Referenced extensively in `docs/DEPLOYMENT.md` and
+  `docs/TECH_STACK.md` as the recommended production backend host.
+
+2. Verification Distinction:
+- Status: CONFIGURED (Verified via `render.yaml` and production runbooks).
+- Runtime Status: The repository contains complete configuration ready for automated
+  deployment upon connecting the repository to a Render account.
+
+
+--------------------------------------------------------------------------------
+C. RENDER'S ROLE IN NEXTCAMPUS ARCHITECTURE
+--------------------------------------------------------------------------------
+
+1. Component Hosted on Render:
+The Python FastAPI backend service (`nextcampus-api`).
+
+2. Why Render Is Used for the Backend:
+- Python 3.11 Compatibility: Direct native support for Python virtual environments
+  and pip package installation without complex custom Dockerfiles.
+- Zero-Downtime Deploys: Automatic blue-green zero-downtime deployments on git push.
+- Environment Secret Management: Secure injection of `MONGODB_URI` and automatic
+  cryptographic generation of `JWT_SECRET`.
+- Free Tier Availability: Provides a free instance type suitable for hackathon
+  evaluations, student projects, and institutional proof-of-concepts.
+
+3. Detailed Blueprint Analysis (`render.yaml`):
+```yaml
+services:
+  - type: web
+    name: nextcampus-api
+    runtime: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: ENVIRONMENT
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: "*"
+```
+
+4. Blueprint Field Breakdown:
+- `buildCommand: pip install -r backend/requirements.txt`:
+  Installs FastAPI, Uvicorn, Motor, Pydantic, PyJWT, and dependencies into Render's
+  Python 3.11 environment.
+- `startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`:
+  Binds Uvicorn to `0.0.0.0` and listens dynamically on the port assigned by Render's
+  load balancer via the `$PORT` environment variable.
+- `key: MONGODB_URI, sync: false`:
+  Instructs Render Blueprint to prompt the developer to supply their private
+  MongoDB connection string during setup, preventing hardcoded credentials in Git.
+- `key: JWT_SECRET, generateValue: true`:
+  Instructs Render to automatically generate a cryptographically strong, unique
+  64-character secret for signing JWT tokens.
+
+
+--------------------------------------------------------------------------------
+D. RENDER AND THE FRONTEND CONNECTION
+--------------------------------------------------------------------------------
+
+1. Decoupled Communication Model:
+The frontend React SPA (hosted separately on Vercel or local browser) communicates
+with the Render-hosted backend over the public internet via HTTPS REST calls:
+```
+[User Browser / React SPA]
+  |
+  | HTTPS GET/POST requests
+  v
+[Render Load Balancer / Reverse Proxy]
+  |
+  | Internal HTTP :$PORT
+  v
+[FastAPI Uvicorn Process (nextcampus-api)]
+```
+
+2. Base URL Injection:
+- In production, the React frontend obtains the backend URL via the build-time
+  environment variable `VITE_API_URL`.
+- Example production value configured in Vercel:
+  `VITE_API_URL=https://nextcampus-api-xxxx.onrender.com/api/v1`
+- Frontend wrapper `src/services/api.js` automatically prepends this URL to all
+  requests and handles token injection.
+
+3. CORS Configuration:
+- To allow the Vercel frontend to query the Render API, `render.yaml` configures
+  `CORS_ORIGINS: "*"`.
+- In high-security production environments, this can be restricted specifically to
+  your frontend domain (e.g., `https://nextcampus.vercel.app`).
+
+
+--------------------------------------------------------------------------------
+E. RENDER AND MONGODB
+--------------------------------------------------------------------------------
+
+1. Separation of Responsibilities:
+Render hosts the stateless web compute layer (FastAPI). It DOES NOT host the MongoDB
+database daemon. MongoDB is hosted separately on MongoDB Atlas (managed cloud cluster)
+or an external database server.
+
+2. Connection Establishment:
+- The Render service connects to MongoDB Atlas over an outbound TLS-encrypted socket
+  using the `MONGODB_URI` environment variable:
+  `mongodb+srv://<db_user>:<db_password>@cluster0.xxxxx.mongodb.net/nextcampus?retryWrites=true&w=majority`
+- MongoDB Atlas Network Access must be configured to allow access from `0.0.0.0/0`
+  (Allow Access from Anywhere), because Render's free tier uses rotating outbound
+  IP address pools.
+
+
+--------------------------------------------------------------------------------
+F. DEPLOYMENT PROCESS WALKTHROUGH
+--------------------------------------------------------------------------------
+
+1. Method A: Deploying via Render Blueprint (`render.yaml`):
+   Step 1: Push repository to GitHub (`pixel-library/NextCampus`).
+   Step 2: Log into Render Dashboard (`https://dashboard.render.com/`).
+   Step 3: Click **New ➔ Blueprint**.
+   Step 4: Select your repository.
+   Step 5: Render reads `render.yaml` and auto-provisions `nextcampus-api`.
+   Step 6: Fill in the requested `MONGODB_URI` prompt with your MongoDB Atlas URI.
+   Step 7: Click **Apply**. Render will run `pip install` and boot Uvicorn.
+
+2. Method B: Manual Web Service Setup:
+   Step 1: In Render Dashboard, click **New ➔ Web Service**.
+   Step 2: Connect your GitHub repository.
+   Step 3: Configure settings:
+           - Name: `nextcampus-api`
+           - Runtime: `Python 3`
+           - Branch: `main`
+           - Build Command: `pip install -r backend/requirements.txt`
+           - Start Command: `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`
+           - Plan: `Free`
+   Step 4: Add Environment Variables:
+           - `PYTHON_VERSION`: `3.11.9`
+           - `ENVIRONMENT`: `production`
+           - `MONGODB_URI`: `<Your MongoDB Atlas connection URI>`
+           - `JWT_SECRET`: `<64-character random string>`
+           - `CORS_ORIGINS`: `*`
+   Step 5: Click **Create Web Service**. Once deployment completes, your API is live
+           at `https://nextcampus-api-xxxx.onrender.com`.
+
+
+--------------------------------------------------------------------------------
+G. COMMON PROBLEMS & TROUBLESHOOTING
+--------------------------------------------------------------------------------
+
+1. Free Tier Inactivity Spin-Down (15-Minute Cold Starts):
+- Problem: Render free web services spin down after 15 minutes of inactivity. The
+  first subsequent request takes 30-50 seconds to boot the dyno.
+- Solution: Configure an external uptime monitor (e.g., UptimeRobot, cron-job.org)
+  to send an HTTP GET request to `https://<service>.onrender.com/api/health`
+  every 10 minutes to keep the dyno warm.
+
+2. Port Binding Errors:
+- Problem: Server crashes with `Error: Address already in use` or fails Render health
+  checks with `Service failed to bind to $PORT`.
+- Cause: Hardcoding a port (such as 5000) in the start command.
+- Fix: The start command MUST use `--port $PORT` as specified in `render.yaml`.
+  Render dynamically assigns a port via the `$PORT` environment variable.
+
+3. Outdated Python Version:
+- Problem: Build fails on Pydantic v2 or modern typing features.
+- Fix: Verify that `PYTHON_VERSION=3.11.9` is present in Render environment variables.
+
+4. Ephemeral Filesystem & Uploaded Files:
+- Problem: Photos uploaded by students to `/uploads` disappear after redeployment.
+- Cause: Render free tier uses an ephemeral filesystem. Any file written to the local
+  disk (`server/uploads`) is wiped when the dyno restarts or redeploys.
+- Production Fix: Attach a persistent Render Disk or configure cloud object storage
+  (AWS S3, Cloudinary, Google Cloud Storage) for permanent image uploads.
+
+
+--------------------------------------------------------------------------------
+H. IF RENDER IS NOT USED (ALTERNATIVE HOSTING)
+--------------------------------------------------------------------------------
+
+If Render is not selected, the application can be deployed on:
+1. Ubuntu / Debian Linux VPS:
+   - Run Uvicorn as a managed Systemd service (`nextcampus-api.service`).
+   - Use Nginx as a reverse proxy listening on port 80/443.
+   - Run local MongoDB daemon (`systemctl start mongod`).
+2. Docker / Container PaaS (AWS ECS, Fly.io, Railway, DigitalOcean App Platform):
+   - Wrap the Uvicorn command in a standard Dockerfile based on `python:3.11-slim`.
+================================================================================

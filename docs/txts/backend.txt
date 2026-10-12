@@ -1,0 +1,393 @@
+================================================================================
+NEXTCAMPUS BACKEND ARCHITECTURE & ENGINE SPECIFICATION
+================================================================================
+Document: docs/backend.txt
+Scope: Server Runtime, FastAPI Routing, Lifespan Hooks, Middleware & Business Logic
+Status: IMPLEMENTED & VERIFIED (Python 3.11 FastAPI Primary + Node Express Secondary)
+Port Configuration: 5000 (Backend API Service)
+================================================================================
+
+--------------------------------------------------------------------------------
+A. BACKEND FUNDAMENTALS
+--------------------------------------------------------------------------------
+
+1. What Is a Backend?
+A backend is the server-side architectural tier responsible for the business logic,
+identity verification, access authorization, persistence management, and external
+system integrations of a software application. While the frontend renders the visual
+interface inside client web browsers, the backend runs in a secured server environment
+where confidential data and algorithmic rules are safely executed.
+
+2. Why Applications Require a Backend:
+- Data Persistence & Consistency: Centralizing state updates in a reliable database
+  engine to prevent conflicting modifications.
+- Cryptographic Security: Safely hashing passwords, signing JWT tokens, and keeping
+  database connection strings and API secrets hidden from public inspection.
+- Role-Based Governance: Validating that an incoming request possesses the necessary
+  privilege level (e.g., verifying that a student cannot delete a campus building).
+- Orchestration: Coordinating interactions between databases, IoT sensor inputs,
+  and third-party cloud APIs (such as Google Gemini).
+
+3. Communication Channels:
+- Frontend to Backend: Asynchronous HTTP/1.1 REST calls over TLS/JSON.
+- Backend to Database: High-speed TCP/IP binary BSON sockets via Motor / MongoDB driver.
+- Backend to External Services: Outbound HTTPS REST requests via HTTPX.
+
+
+--------------------------------------------------------------------------------
+B. BACKEND TECHNOLOGY STACK
+--------------------------------------------------------------------------------
+
+1. Primary Application Engine: Python FastAPI
+- Language: Python 3.11.9
+- Framework: FastAPI (v0.110.0+)
+- ASGI Server: Uvicorn (v0.28.0+)
+- Data Validation: Pydantic v2 & Pydantic-Settings
+- Asynchronous DB Driver: Motor (v3.3.2+) & PyMongo (v4.6.0+)
+- Cryptographic Security: PyJWT (v2.8.0+) & Bcrypt (v4.0.0+)
+- Outbound HTTP Client: HTTPX (v0.27.0+)
+- Test Runner: Pytest (v8.1.0+) & Pytest-Asyncio (v0.23.0+)
+
+2. Why FastAPI Was Chosen:
+- Native Async Concurrency: Built entirely on Python's `asyncio` event loop, enabling
+  hundreds of concurrent non-blocking database queries with low RAM footprint.
+- Automated Data Validation: Pydantic schemas guarantee strict request validation
+  before handlers execute, returning clear 400/422 errors for bad payloads.
+- Automatic Interactive Documentation: Generates interactive Swagger UI (`/docs`)
+  and ReDoc (`/redoc`) directly from type hints without manual YAML maintenance.
+- High Performance: Benchmarks among the fastest web frameworks in the Python ecosystem.
+
+3. Legacy / Secondary Engine: Node.js Express 4
+- Implemented in `server/` with Express 4.19.2, Mongoose 8.3.1, Multer, and BcryptJS.
+- Maintained as an alternative runner (`npm run server:legacy`) sharing the exact
+  same REST API endpoints and MongoDB database.
+
+
+--------------------------------------------------------------------------------
+C. BACKEND FOLDER STRUCTURE & COMPONENT RESPONSIBILITIES
+--------------------------------------------------------------------------------
+
+The primary backend is organized cleanly under `backend/app/`:
+
+backend/
+├── app/
+│   ├── main.py                   # Application root, lifespan manager, CORS, handlers
+│   ├── api/
+│   │   ├── router.py             # Root APIRouter mounting all sub-routers
+│   │   └── routes/
+│   │       ├── auth.py           # Identity, registration, login, profile routes
+│   │       ├── campus.py         # Facility GIS catalog & admin CRUD routes
+│   │       ├── room.py           # SmartRooms & IoT telemetry routes
+│   │       ├── care.py           # NextCampus Care incident triage routes
+│   │       ├── skill.py          # SkillCampus student project routes
+│   │       ├── sustainability.py # EcoCampus environmental telemetry routes
+│   │       ├── ai.py             # Generative AI copilot query route
+│   │       └── admin.py          # Administrative metrics & user management routes
+│   ├── core/
+│   │   ├── config.py             # Pydantic BaseSettings loading .env configuration
+│   │   ├── logging.py            # Centralized structured logger setup
+│   │   └── security.py           # JWT token generation, verification & bcrypt hashing
+│   ├── db/
+│   │   ├── connection.py         # Motor client, connect_db, ping, in-memory failover
+│   │   └── seed_data.py          # Canonical initial seed datasets (1497 lines)
+│   ├── schemas/                  # Pydantic request and response models
+│   │   ├── auth.py, campus.py, room.py, care.py, skill.py, sustainability.py, admin.py, ai.py
+│   │   └── common.py             # Standard JSON envelope models
+│   ├── services/                 # Decoupled business logic layer
+│   │   ├── auth_service.py       # User authentication, password rotation, enrollment check
+│   │   ├── campus_service.py     # Facility queries, cascading room deletion logic
+│   │   ├── room_service.py       # SmartRoom catalog & telemetry updates
+│   │   ├── care_service.py       # SLA calculation, technician triage, dual-note privacy
+│   │   ├── skill_service.py      # Project creation, duplicate join blocking
+│   │   ├── sustainability_service.py # Eco metrics rollups
+│   │   ├── ai_service.py         # Multi-intent heuristic engine & Gemini Flash client
+│   │   └── admin_service.py      # Population statistics & incident rollups
+│   └── utils/
+│       └── helpers.py            # Custom BSON to JSON sanitizers & datetime formatters
+├── tests/
+│   ├── conftest.py               # Pytest client fixture with TestClient
+│   └── test_all_workflows.py     # Comprehensive test suite covering all 10 workflows
+├── requirements.txt              # Pinned Python package dependencies
+└── uploads/ -> ../server/uploads # Static file attachments directory
+
+
+--------------------------------------------------------------------------------
+D. SERVER STARTUP & LIFESPAN INITIALIZATION
+--------------------------------------------------------------------------------
+
+1. Entry Point:
+The application entry point is `backend.app.main:app`.
+
+2. Startup Commands:
+- Development:
+  `npm run server` or
+  `./backend/.venv/bin/uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 5000`
+- Production (Render):
+  `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`
+
+3. Lifespan Execution Sequence:
+```python
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 1. Initialize logging
+    setup_logging()
+    logger.info("[NextCampus Server] Initializing FastAPI application...")
+    
+    # 2. Connect to MongoDB and seed initial records if empty
+    await connect_db()
+    
+    # 3. Yield to begin processing HTTP traffic
+    yield
+    
+    # 4. Graceful shutdown: Flush queues and close database sockets
+    logger.info("[NextCampus Server] Shutting down application...")
+    await close_db()
+```
+
+4. Middleware Initialization:
+- `CORSMiddleware`: Bound to allow origins specified in `settings.CORS_ORIGINS`.
+- Static Files: Mounted at `/uploads` targeting `settings.UPLOAD_DIR` (`server/uploads`).
+- Dual Router Mounting:
+  `app.include_router(create_api_router(), prefix="/api/v1")`
+  `app.include_router(create_api_router(), prefix="/api")`
+  Ensures client calls to either `/api/v1/auth/login` or `/api/auth/login` resolve
+  identically without path rewriting errors.
+
+
+--------------------------------------------------------------------------------
+E. REQUEST PROCESSING LIFECYCLE
+--------------------------------------------------------------------------------
+
+```
++---------------------------------------------------------------------------+
+|                          BROWSER / CLIENT REQUEST                         |
+|           POST /api/v1/care/complaints/cmp_1042/internal-notes            |
+|               Headers: Authorization: Bearer <AdminJWTToken>              |
+|               Body: { "note": "Technician dispatched with PCB spare." }   |
++---------------------------------------------------------------------------+
+                                     |
+                                     v
++---------------------------------------------------------------------------+
+|                           UVICORN ASGI SERVER                             |
+|          Parses raw HTTP stream, extracts headers, allocates socket       |
++---------------------------------------------------------------------------+
+                                     |
+                                     v
++---------------------------------------------------------------------------+
+|                        FASTAPI MIDDLEWARE PIPELINE                        |
+|  - CORSMiddleware verifies origin header                                  |
+|  - Global exception handlers initialized in stack                         |
++---------------------------------------------------------------------------+
+                                     |
+                                     v
++---------------------------------------------------------------------------+
+|                   ROUTER & DEPENDENCY INJECTION (DI)                      |
+|  - Matches /api/v1/care/complaints/{id}/internal-notes                    |
+|  - require_admin dependency runs:                                         |
+|    1. Decodes JWT token using PyJWT & settings.JWT_SECRET                 |
+|    2. Extracts user ID and role                                           |
+|    3. Validates role in ['admin', 'care_admin'] -> 403 Forbidden if not   |
++---------------------------------------------------------------------------+
+                                     |
+                                     v
++---------------------------------------------------------------------------+
+|                       PYDANTIC REQUEST VALIDATION                         |
+|  - Parses incoming JSON body against InternalNoteCreate schema            |
+|  - Validates note is non-empty string -> 400 Bad Request if invalid       |
++---------------------------------------------------------------------------+
+                                     |
+                                     v
++---------------------------------------------------------------------------+
+|                     BUSINESS SERVICE LAYER (CARE_SERVICE)                 |
+|  - Executes care_service.add_internal_note(complaint_id, note, user)      |
+|  - Formats timestamped note record with authorName & role                 |
++---------------------------------------------------------------------------+
+                                     |
+                                     v
++---------------------------------------------------------------------------+
+|                   PERSISTENCE LAYER (MOTOR / MONGODB)                     |
+|  - await db.complaints.update_one(                                        |
+|      {"_id": complaint_id},                                               |
+|      {"$push": {"internalNotes": note_doc}}                               |
+|    )                                                                      |
++---------------------------------------------------------------------------+
+                                     |
+                                     v
++---------------------------------------------------------------------------+
+|                    GLOBAL JSON ENVELOPE SERIALIZATION                     |
+|  - Wraps result in standard response:                                     |
+|    { "success": true, "message": "Internal note appended", "data": ... }  |
+|  - Returns HTTP 200 OK                                                    |
++---------------------------------------------------------------------------+
+```
+
+
+--------------------------------------------------------------------------------
+F. ROUTES AND CONTROLLERS REFERENCE
+--------------------------------------------------------------------------------
+
+1. Auth Sub-Router (`backend/app/api/routes/auth.py`):
+- `POST /register`: Registers student. Verifies enrollment number. Forces `role='student'`.
+- `POST /login`: Validates credentials via bcrypt. Issues JWT.
+- `GET /me`: Returns authenticated user profile. Requires Bearer token.
+- `PUT /profile`: Updates preferred name, skills, and accessibility settings.
+- `PUT /change-password`: Validates current password and saves new bcrypt hash.
+
+2. Campus Facilities Sub-Router (`backend/app/api/routes/campus.py`):
+- `GET /locations`: Lists facilities. Supports `?category=` filter.
+- `GET /locations/{code}`: Looks up facility by building code or ID.
+- `POST /locations`: Admin creates building. Requires admin role.
+- `PUT /locations/{id}`: Admin updates building.
+- `DELETE /locations/{id}`: Deletes building. Returns 409 Conflict if linked rooms
+  exist and `cascade=false`. Deletes linked rooms if `cascade=true`.
+
+3. SmartRooms Sub-Router (`backend/app/api/routes/room.py`):
+- `GET /`: Lists smart rooms with live occupancy & temperature.
+- `GET /{id}`: Returns detailed room telemetry and equipment schedule.
+- `POST /rooms`: Admin registers classroom.
+- `PUT /{id}`: Admin updates room capacity or IoT status.
+- `DELETE /{id}`: Admin deletes room.
+
+4. NextCampus Care Sub-Router (`backend/app/api/routes/care.py`):
+- `GET /complaints`: Returns tickets. Students see own tickets; staff see all.
+- `GET /complaints/{id}`: Returns ticket. Redacts `internalNotes` for students.
+- `POST /complaints`: Student submits ticket. Generates `#CMP-xxxx` ticket ID.
+- `PATCH /complaints/{id}`: Triage status, priority, or SLA window.
+- `POST /complaints/{id}/assign`: Assigns technician to ticket.
+- `POST /complaints/{id}/internal-notes`: Admin appends private engineering note.
+- `POST /complaints/{id}/public-updates`: Staff appends student-visible update.
+
+5. SkillCampus Sub-Router (`backend/app/api/routes/skill.py`):
+- `GET /projects`: Lists student hackathon and research projects.
+- `POST /projects`: Student creates project team.
+- `POST /projects/{id}/join`: Student joins project. Blocks duplicate membership.
+- `DELETE /projects/{id}`: Creator or admin deletes project.
+
+6. EcoCampus Sub-Router (`backend/app/api/routes/sustainability.py`):
+- `GET /metrics`: Returns campus solar generation, water saved, waste diverted,
+  and sustainability grade.
+
+7. Generative AI Sub-Router (`backend/app/api/routes/ai.py`):
+- `POST /query`: Processes prompt via live Gemini or 11-intent local heuristics.
+
+8. Admin Sub-Router (`backend/app/api/routes/admin.py`):
+- `GET /stats`: Returns rollups of campus population, room density, and SLA stats.
+- `GET /users`: Lists user accounts for administrative identity audits.
+
+
+--------------------------------------------------------------------------------
+G. BUSINESS LOGIC IMPLEMENTATION HIGHLIGHTS
+--------------------------------------------------------------------------------
+
+1. Pre-Registration Enrollment Validation (`backend/app/services/auth_service.py`):
+To prevent malicious account spam and unauthorized administrative accounts,
+registration validates the supplied `enrollmentNumber`:
+```python
+enrollment = await db.enrollments.find_one({"enrollmentNumber": data.enrollmentNumber.upper()})
+if not enrollment:
+    raise HTTPException(status_code=400, detail="Enrollment number not found in university records.")
+if enrollment.get("isClaimed"):
+    raise HTTPException(status_code=400, detail="This enrollment number has already been registered.")
+# Force role to student regardless of what user passed in request body
+user_role = "student"
+```
+
+2. Safe Cascading Facility Deletion (`backend/app/services/campus_service.py`):
+Prevents orphaned room records when a facility is deleted:
+```python
+dependent_count = await db.rooms.count_documents({"buildingCode": location["code"]})
+if dependent_count > 0 and not cascade:
+    return {"conflict": True, "dependentRooms": dependent_count}
+if cascade:
+    await db.rooms.delete_many({"buildingCode": location["code"]})
+await db.locations.delete_one({"_id": location_id})
+return {"deleted": True, "removedRooms": dependent_count}
+```
+
+3. Dual-Note Privacy Separation (`backend/app/services/care_service.py`):
+Guarantees confidential engineering notes remain hidden from students:
+```python
+complaint = await db.complaints.find_one({"_id": ticket_id})
+if current_user.get("role") == "student":
+    # Redact internalNotes completely
+    complaint.pop("internalNotes", None)
+return complaint
+```
+
+
+--------------------------------------------------------------------------------
+H. DATABASE INTEGRATION & IN-MEMORY FAILOVER
+--------------------------------------------------------------------------------
+
+- MongoDB Motor Driver: Non-blocking asynchronous queries (`await db.collection.find(...)`).
+- Seed Initialization: Canonical records automatically populated if database is empty.
+- Resilient In-Memory Fallback: If MongoDB is offline, operations seamlessly redirect
+  to memory arrays (`IN_MEMORY_*`), enabling automated headless unit testing.
+
+
+--------------------------------------------------------------------------------
+I. AUTHENTICATION & AUTHORIZATION SPECIFICATION
+--------------------------------------------------------------------------------
+
+- Passwords hashed with `bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt(10))`.
+- JWT tokens signed with `jwt.encode(claims, settings.JWT_SECRET, algorithm='HS256')`.
+- FastAPI dependencies:
+  * `get_current_user`: Extracts Bearer token, validates signature, loads user.
+  * `require_admin`: Enforces `user.role == 'admin'`.
+  * `require_staff`: Enforces `user.role in ['admin', 'staff', 'care_admin']`.
+
+
+--------------------------------------------------------------------------------
+J. SECURITY PRACTICES & AUDIT MITIGATIONS
+--------------------------------------------------------------------------------
+
+1. Hardcoded Secrets Protection:
+Environment files are strictly gitignored. Configuration defaults to safe developer
+dummies in local mode, requiring explicit secret injection in production.
+
+2. Privilege Escalation Prevention:
+Self-registration endpoints hardcode `role = 'student'`, ignoring client body
+role escalation attempts.
+
+3. Static File Upload Sanitization:
+Upload handler validates file size (maximum 10MB) and checks MIME types against
+allowlist (`image/jpeg`, `image/png`, `image/webp`, `application/pdf`).
+
+
+--------------------------------------------------------------------------------
+K. DEPLOYMENT CONFIGURATION
+--------------------------------------------------------------------------------
+
+- Deployed on Render as a managed Python web service using `render.yaml`.
+- Build Command: `pip install -r backend/requirements.txt`.
+- Start Command: `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`.
+- Environment Variables: `PYTHON_VERSION=3.11.9`, `MONGODB_URI`, `JWT_SECRET`, `CORS_ORIGINS`.
+
+
+--------------------------------------------------------------------------------
+L. LOCAL EXECUTION & DEBUGGING GUIDE
+--------------------------------------------------------------------------------
+
+1. Starting the Server:
+```bash
+# Terminal 1: Full-stack dev mode (Frontend + Backend)
+npm run dev
+
+# Or Backend only:
+npm run server
+```
+
+2. Running Automated Tests:
+```bash
+# Run complete Python test suite:
+npm run test:python
+
+# Or direct pytest:
+PYTHONPATH=. ./backend/.venv/bin/pytest backend/tests -v
+```
+
+3. Inspecting Logs:
+Structured colored logs output directly to standard output:
+`[2026-10-12 15:00:00] [INFO] [NextCampus Server] Running on http://0.0.0.0:5000`
+`[2026-10-12 15:00:01] [INFO] [NextCampus DB] Connected to database 'nextcampus'`
+================================================================================

@@ -1,0 +1,392 @@
+================================================================================
+NEXTCAMPUS REST API SPECIFICATION & INTEGRATION MANUAL
+================================================================================
+Document: docs/api.txt
+Scope: Complete RESTful API Architecture, Endpoint Catalog, Payloads & Security
+Status: IMPLEMENTED & TESTED (FastAPI Backend + Legacy Express Dual Prefix)
+Prefixes Mounted: /api/v1 (Canonical) and /api (Backwards Compatibility Alias)
+================================================================================
+
+--------------------------------------------------------------------------------
+A. WHAT IS AN API?
+--------------------------------------------------------------------------------
+
+1. Definition:
+An Application Programming Interface (API) is a standardized set of protocols,
+definitions, and communication rules that enables distinct software components to
+interact and exchange data. In modern web engineering, an API defines the boundary
+between the client-side user experience (presentation) and server-side compute
+and persistence engines.
+
+2. Why APIs Are Essential:
+- Decoupling: The client (React SPA) is completely decoupled from server implementation
+  details. The backend can transition from Node.js Express to Python FastAPI without
+  breaking the client UI as long as the API contract remains consistent.
+- Reusability: A single backend API can serve multiple client interfaces simultaneously
+  (desktop web browsers, mobile responsive web views, IoT classroom displays).
+- Security & Boundary Control: Sensitive resources (database credentials, private
+  hashing keys, administrator records) remain shielded behind private server
+  boundaries. Clients only receive authorized JSON representations.
+
+3. REST Architecture Principles:
+NextCampus adheres to REST (Representational State Transfer) architectural constraints:
+- Client-Server: Strict separation of concerns between React SPA and FastAPI service.
+- Statelessness: Each HTTP request contains all necessary context and authentication
+  credentials (JWT Bearer token); no server-side HTTP session state is stored.
+- Standard HTTP Methods: Standard semantics (GET for reads, POST for creation,
+  PUT for full mutation, PATCH for partial updates, DELETE for removal).
+- Uniform Interface: Standard JSON envelope format across all responses.
+
+4. Distinguishing Project Architecture Tiers:
+- Frontend Code: React 18 SPA executing inside the user's browser, compiling DOM,
+  capturing user gestures, and issuing asynchronous `fetch()` calls.
+- Internal Backend API: FastAPI endpoints hosted on port 5000 (`/api/v1/*`),
+  validating requests, verifying JWT signatures, executing business logic, and
+  querying MongoDB.
+- External Third-Party APIs: Cloud microservices (e.g., Google Gemini 1.5 Flash)
+  invoked securely by the backend using server-side HTTP clients (`httpx`).
+
+
+--------------------------------------------------------------------------------
+B. APIS USED IN THIS PROJECT (INVENTORY)
+--------------------------------------------------------------------------------
+
+The NextCampus platform exposes 8 internal functional sub-routers and integrates
+1 external generative AI cloud service:
+
+1. Authentication & Identity API (`/auth`)
+   - Provider: Internal NextCampus Security Subsystem
+   - Implements: Registration, Login, Token Refresh, Profile Retrieval, Profile Updates,
+     Password Rotation.
+   - Status: IMPLEMENTED & TESTED (`backend/app/api/routes/auth.py`).
+
+2. Campus Facilities & GIS Directory API (`/campus`)
+   - Provider: Internal NextCampus Spatial Subsystem
+   - Implements: Public facility catalogs, category filtering, building lookup by code,
+     administrative building creation, updating, and cascading deletion.
+   - Status: IMPLEMENTED & TESTED (`backend/app/api/routes/campus.py`).
+
+3. SmartRooms & IoT Telemetry API (`/smartrooms` and `/rooms`)
+   - Provider: Internal Classroom Management Subsystem
+   - Implements: Real-time room catalogs, capacity checks, environmental telemetry,
+     desk occupancy, room creation, updates, and deletion.
+   - Status: IMPLEMENTED & TESTED (`backend/app/api/routes/room.py`).
+
+4. NextCampus Care Operations API (`/care`)
+   - Provider: Internal Facilities Incident Triage Subsystem
+   - Implements: Maintenance ticket submission, file attachment linking, staff triage,
+     status workflow transitions, public student updates, private admin notes.
+   - Status: IMPLEMENTED & TESTED (`backend/app/api/routes/care.py`).
+
+5. SkillCampus Collaborative Incubation API (`/skillcampus`)
+   - Provider: Internal Student Project Subsystem
+   - Implements: Hackathon and research project creation, team catalog, duplicate
+     join prevention, and project status toggles.
+   - Status: IMPLEMENTED & TESTED (`backend/app/api/routes/skill.py`).
+
+6. EcoCampus Sustainability Telemetry API (`/sustainability`)
+   - Provider: Internal Environmental Telemetry Subsystem
+   - Implements: Solar microgrid telemetry, carbon offset scores, water savings,
+     and circular waste diversion metrics.
+   - Status: IMPLEMENTED & TESTED (`backend/app/api/routes/sustainability.py`).
+
+7. Administrative Overview & RBAC Metrics API (`/admin`)
+   - Provider: Internal Executive Governance Subsystem
+   - Implements: Campus population rollups, room utilization ratios, open incident
+     metrics, and role management.
+   - Status: IMPLEMENTED & TESTED (`backend/app/api/routes/admin.py`).
+
+8. Generative AI Spatial Copilot API (`/ai`)
+   - Provider: Internal Multi-Intent Heuristics Engine + External Google Gemini 1.5 Flash
+   - Implements: Natural language spatial routing, room telemetries, faculty hours,
+     and automated rich card responses.
+   - Status: IMPLEMENTED & TESTED (`backend/app/api/routes/ai.py`).
+
+
+--------------------------------------------------------------------------------
+C. HTTP METHODS USED IN NEXTCAMPUS
+--------------------------------------------------------------------------------
+
+1. GET (Safe & Idempotent Read Operations):
+- Purpose: Retrieve resources without causing side-effects or mutations.
+- Project Usage:
+  * `GET /api/v1/campus/locations` -> Catalog of campus buildings.
+  * `GET /api/v1/smartrooms` -> Catalog of classrooms with live occupancy.
+  * `GET /api/v1/care/complaints` -> List of active maintenance tickets.
+  * `GET /api/v1/auth/me` -> Current authenticated user identity profile.
+  * `GET /api/health` -> Low-latency health check for deployment monitors.
+
+2. POST (Resource Creation & Action Triggers):
+- Purpose: Submit data to create a new subordinate resource or trigger logic.
+- Project Usage:
+  * `POST /api/v1/auth/register` -> Register new student account.
+  * `POST /api/v1/auth/login` -> Authenticate credentials and receive JWT.
+  * `POST /api/v1/care/complaints` -> Lodge a new maintenance incident ticket.
+  * `POST /api/v1/skillcampus/projects/{id}/join` -> Join an active student team.
+  * `POST /api/v1/ai/query` -> Submit a prompt to the AI copilot engine.
+
+3. PUT (Idempotent Resource Replacement / Full Update):
+- Purpose: Replace the state of an existing entity with the provided payload.
+- Project Usage:
+  * `PUT /api/v1/auth/profile` -> Update user profile details and accessibility settings.
+  * `PUT /api/v1/auth/change-password` -> Rotate user password securely.
+  * `PUT /api/v1/campus/locations/{id}` -> Full update of building specifications.
+
+4. PATCH (Partial Resource Mutation):
+- Purpose: Apply delta modifications to a subset of resource fields.
+- Project Usage:
+  * `PATCH /api/v1/care/complaints/{id}` -> Update ticket status or assign priority.
+  * `PATCH /api/v1/skillcampus/projects/{id}` -> Update project status.
+
+5. DELETE (Resource Removal):
+- Purpose: Permanently delete an identified resource.
+- Project Usage:
+  * `DELETE /api/v1/campus/locations/{id}?cascade=true` -> Remove building & dependent rooms.
+  * `DELETE /api/v1/smartrooms/{id}` -> Remove individual classroom record.
+  * `DELETE /api/v1/skillcampus/projects/{id}` -> Delete student project team.
+
+
+--------------------------------------------------------------------------------
+D. API REQUEST LIFECYCLE & THE NEXTCAMPUS ENVELOPE STANDARD
+--------------------------------------------------------------------------------
+
+1. The Request Journey (Step-by-Step):
+```
+[React SPA]
+     | (1) apiRequest('/care/complaints', { method: 'POST', body: ... })
+     v
+[Fetch API]
+     | (2) Injects Authorization: Bearer <token> & Content-Type: application/json
+     v
+[Vite Proxy / CORS Gateway] (Reverse proxies /api -> http://localhost:5000)
+     | (3) HTTP POST /api/v1/care/complaints
+     v
+[FastAPI Middleware Pipeline]
+     | (4) CORS validation -> Body parsing -> Lifespan context
+     v
+[Dependency Injection & Auth Guard]
+     | (5) get_current_user decodes JWT & fetches User from DB
+     v
+[Pydantic Request Validation]
+     | (6) ComplaintCreate parses title, category, priority, description
+     v
+[Service Layer] (care_service.create_complaint)
+     | (7) Business rules: SLA assignment, ticketId generation (#CMP-xxxx)
+     v
+[Async Motor / MongoDB Driver]
+     | (8) await db.complaints.insert_one(doc)
+     v
+[FastAPI Response Formatter]
+     | (9) Generates NextCampus REST Envelope
+     v
+[Browser Client]
+     | (10) State updated; UI displays new ticket card with live SLA countdown
+```
+
+2. Standardized NextCampus JSON Envelope Specification:
+All endpoints return a uniform JSON schema to eliminate client parsing surprises:
+
+Success Envelope (HTTP 200, 201):
+```json
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": { ... },
+  "meta": {
+    "total": 1,
+    "page": 1,
+    "limit": 20
+  },
+  "timestamp": "2026-10-12T15:00:00.000Z"
+}
+```
+
+Error Envelope (HTTP 400, 401, 403, 404, 409, 500):
+```json
+{
+  "success": false,
+  "message": "Human-readable explanation of error",
+  "data": null,
+  "meta": {
+    "path": "/api/v1/care/complaints",
+    "method": "POST",
+    "errors": ["category: Input should be 'academic', 'av', 'infrastructure'..."]
+  },
+  "timestamp": "2026-10-12T15:00:00.000Z"
+}
+```
+
+
+--------------------------------------------------------------------------------
+E. INTERNAL APIS CATALOG (EXHAUSTIVE TABLE)
+--------------------------------------------------------------------------------
+
++--------+---------------------------------------+------------------------------------------+-----------------------+----------+------------------------------------+
+| Method | Endpoint                              | Purpose                                  | Request Body / Params | Auth     | Source File                        |
++--------+---------------------------------------+------------------------------------------+-----------------------+----------+------------------------------------+
+| GET    | /api/health                           | Server health & uptime telemetry         | None                  | None     | backend/app/main.py                |
+| GET    | /api/v1/health                        | Canonical v1 health check                | None                  | None     | backend/app/main.py                |
+| POST   | /api/v1/auth/register                 | Register student with enrollment check   | AuthRegister schema   | None     | backend/app/api/routes/auth.py     |
+| POST   | /api/v1/auth/login                    | Authenticate user & receive JWT token    | AuthLogin schema      | None     | backend/app/api/routes/auth.py     |
+| GET    | /api/v1/auth/me                       | Retrieve profile of authenticated user   | None                  | Bearer   | backend/app/api/routes/auth.py     |
+| PUT    | /api/v1/auth/profile                  | Update preferences & profile bio         | ProfileUpdate schema  | Bearer   | backend/app/api/routes/auth.py     |
+| PUT    | /api/v1/auth/change-password          | Change current user account password     | PasswordChange schema | Bearer   | backend/app/api/routes/auth.py     |
+| GET    | /api/v1/campus/locations              | Retrieve all campus facilities           | ?category, ?search    | None     | backend/app/api/routes/campus.py   |
+| GET    | /api/v1/campus/locations/{code}       | Lookup facility by building code or ID   | Path: code            | None     | backend/app/api/routes/campus.py   |
+| POST   | /api/v1/campus/locations              | Register a new campus facility           | LocationCreate schema | Admin    | backend/app/api/routes/campus.py   |
+| PUT    | /api/v1/campus/locations/{id}         | Full update of campus facility           | LocationUpdate schema | Admin    | backend/app/api/routes/campus.py   |
+| DELETE | /api/v1/campus/locations/{id}         | Delete facility (with cascade check)     | ?cascade=true/false   | Admin    | backend/app/api/routes/campus.py   |
+| GET    | /api/v1/smartrooms                    | List all smart rooms & study pods        | ?building, ?status    | None     | backend/app/api/routes/room.py     |
+| GET    | /api/v1/rooms                         | Alias for /smartrooms endpoint           | ?building, ?status    | None     | backend/app/api/routes/room.py     |
+| GET    | /api/v1/smartrooms/{id}               | Retrieve room details & IoT telemetry    | Path: id              | None     | backend/app/api/routes/room.py     |
+| POST   | /api/v1/smartrooms/rooms              | Create new room in facility              | RoomCreate schema     | Admin    | backend/app/api/routes/room.py     |
+| PUT    | /api/v1/smartrooms/{id}               | Update room specifications               | RoomUpdate schema     | Admin    | backend/app/api/routes/room.py     |
+| DELETE | /api/v1/smartrooms/{id}               | Delete room record                       | Path: id              | Admin    | backend/app/api/routes/room.py     |
+| GET    | /api/v1/care/complaints               | List complaints (Role-filtered data)     | ?category, ?status    | Bearer   | backend/app/api/routes/care.py     |
+| GET    | /api/v1/care/complaints/{id}          | Retrieve complaint with note privacy     | Path: id              | Bearer   | backend/app/api/routes/care.py     |
+| POST   | /api/v1/care/complaints               | Submit a maintenance complaint           | ComplaintCreate schema| Bearer   | backend/app/api/routes/care.py     |
+| PATCH  | /api/v1/care/complaints/{id}          | Triage complaint status/priority         | Status/Priority update| Staff/Adm | backend/app/api/routes/care.py     |
+| POST   | /api/v1/care/complaints/{id}/assign   | Assign technician to maintenance ticket   | Assigned staff schema | Staff/Adm | backend/app/api/routes/care.py     |
+| POST   | /api/v1/care/complaints/{id}/internal-notes | Add private admin diagnostics     | Note schema            | Admin     | backend/app/api/routes/care.py     |
+| POST   | /api/v1/care/complaints/{id}/public-updates | Add student-visible status message| Message schema         | Staff/Adm | backend/app/api/routes/care.py     |
+| GET    | /api/v1/care/staff                     | List available maintenance technicians    | None                  | Staff/Adm | backend/app/api/routes/care.py     |
+| GET    | /api/v1/skillcampus/projects          | List student projects & recruiting teams  | ?tag, ?category       | None     | backend/app/api/routes/skill.py    |
+| POST   | /api/v1/skillcampus/projects          | Create new student collaborative project  | ProjectCreate schema   | Bearer   | backend/app/api/routes/skill.py    |
+| POST   | /api/v1/skillcampus/projects/{id}/join | Join project team (duplicate prevented)  | None                   | Bearer   | backend/app/api/routes/skill.py    |
+| DELETE | /api/v1/skillcampus/projects/{id}     | Delete project (creator/admin only)       | Path: id              | Bearer   | backend/app/api/routes/skill.py    |
+| GET    | /api/v1/sustainability/metrics        | List campus environmental telemetries     | None                  | None     | backend/app/api/routes/sustainability.py |
+| GET    | /api/v1/admin/stats                   | Administrative overview metrics & rollups | None                  | Admin    | backend/app/api/routes/admin.py    |
+| GET    | /api/v1/admin/users                   | List users for identity administration   | ?role, ?search         | Admin    | backend/app/api/routes/admin.py    |
+| POST   | /api/v1/ai/query                      | Process spatial/campus query with AI      | { "prompt": "..." }   | None     | backend/app/api/routes/ai.py       |
++--------+---------------------------------------+------------------------------------------+-----------------------+----------+------------------------------------+
+
+
+--------------------------------------------------------------------------------
+F. EXTERNAL APIS (GOOGLE GEMINI 1.5 FLASH)
+--------------------------------------------------------------------------------
+
+1. Service Overview:
+- Provider: Google DeepMind / Google Cloud AI
+- Model: `gemini-1.5-flash`
+- Base URL: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`
+- Protocol: HTTPS REST with JSON payload
+
+2. Why Chosen:
+- Ultra-low latency inference suitable for interactive real-time student chats.
+- Generous free-tier request limits via Google AI Studio.
+- Strong spatial, multi-modal, and contextual instruction following capabilities.
+
+3. Backend Integration Details (`backend/app/services/ai_service.py`):
+- Connection: Asynchronous HTTP client using `httpx.AsyncClient(timeout=10.0)`.
+- Configuration: Controlled by environment variable `GEMINI_API_KEY=<configure privately>`.
+- System Instruction Injection: NextCampus injects comprehensive institutional
+  landmarks, building codes (ENG-02, ADM-01, LIB-03, AUD-04, CAF-05, HST-06),
+  and persona rules directly into the prompt payload.
+
+4. Graceful Fallback Architecture:
+If `GEMINI_API_KEY` is not configured, or if Google's API returns a 429 rate limit
+or network timeout:
+- The backend catches the exception cleanly.
+- Execution seamlessly falls back to the **NextCampus Multi-Intent Heuristics Engine v4.5**.
+- The local engine pattern-matches 11 institutional intents (Directions, Study Pods,
+  Maintenance/Care, Faculty Directory, Timetable, EcoCampus, SkillCampus, EV Transit,
+  Cafeteria, Admin Guidance, and General Assistance).
+- Returns rich structured JSON cards and suggested navigation routes with zero downtime.
+
+
+--------------------------------------------------------------------------------
+G. API SECURITY SPECIFICATION
+--------------------------------------------------------------------------------
+
+1. Stateless JSON Web Tokens (JWT):
+- Algorithm: HMAC SHA-256 (`HS256`).
+- Secret: Configured via `JWT_SECRET=<configure privately>` in environment files.
+- Expiration: 7 days (`JWT_EXPIRES_IN=7d`).
+- Claims: `{ "sub": user_id, "id": user_id, "email": email, "role": role, "exp": ... }`.
+- Transport: Client transmits token in the standard `Authorization: Bearer <token>` header.
+
+2. Role-Based Access Control (RBAC):
+- Roles: `student`, `staff`, `care_admin`, `admin`.
+- Route guards enforce strict permissions:
+  * Public routes (read locations, rooms, health check, login/register).
+  * Student-authenticated routes (submit ticket, join project, update profile).
+  * Staff-authenticated routes (triage tickets, assign technicians, public updates).
+  * Admin-exclusive routes (CRUD buildings, cascade delete, private notes, admin stats).
+- Unauthorized requests immediately receive HTTP 403 Forbidden with `{ "success": false }`.
+
+3. Dual-Note Privacy Enforcement:
+In `GET /api/v1/care/complaints/{id}`:
+- If `current_user.role == 'student'`, the backend deletes the `internalNotes` array
+  prior to serialization.
+- Students can never inspect private technician repair notes, vendor RMA numbers,
+  or confidential staff communications.
+
+4. Input Validation & Sanitization:
+- Pydantic models in FastAPI enforce strict field types, regex constraints, and
+  enum value validation before code reaches service handlers.
+- Malformed payloads return clean HTTP 400 or HTTP 422 errors detailing exactly
+  which fields failed validation.
+
+5. Cross-Origin Resource Sharing (CORS):
+- Configured in `backend/app/main.py`:
+  * `allow_origins`: Driven by `CORS_ORIGINS` setting (defaults to `*` in dev,
+    or specific Vercel domains in production).
+  * `allow_credentials`: True.
+  * `allow_methods`: All standard HTTP verbs (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS`).
+  * `allow_headers`: All headers (`Authorization`, `Content-Type`).
+
+
+--------------------------------------------------------------------------------
+H. HOW TO FIND & CONFIGURE API CREDENTIALS
+--------------------------------------------------------------------------------
+
+1. Google Gemini API Key:
+   - Navigate to Google AI Studio: `https://aistudio.google.com/`
+   - Sign in with your institutional or Google account.
+   - Click "Get API key" -> "Create API key in new project".
+   - Copy the string and add to `.env`:
+     `GEMINI_API_KEY=your_key_here`
+   - NEVER commit this key to Git or share it publicly.
+
+2. JWT Authentication Secret:
+   - Generate a cryptographically secure 64-character random string using Python:
+     `python3 -c "import secrets; print(secrets.token_hex(32))"`
+   - Add to your server `.env`:
+     `JWT_SECRET=your_generated_hex_string`
+
+
+--------------------------------------------------------------------------------
+I. TROUBLESHOOTING COMMON API ERRORS
+--------------------------------------------------------------------------------
+
+1. HTTP 401 Unauthorized:
+- Cause: Missing, expired, or malformed JWT token in `Authorization` header.
+- Fix: Ensure user logs in via `/api/v1/auth/login`. Check that client stores token
+  in `localStorage` under `nextcampus_token`.
+
+2. HTTP 403 Forbidden:
+- Cause: Authenticated user lacks required role (e.g., student attempting to access
+  `/api/v1/admin/stats`).
+- Fix: Use an administrator account (`admin@nextcampus.edu`) to perform governance actions.
+
+3. HTTP 404 Not Found:
+- Cause: Incorrect URL or missing resource.
+- Fix: NextCampus mounts all routes symmetrically on both `/api/v1/*` and `/api/*`.
+  Verify endpoint spelling against the catalog table above.
+
+4. HTTP 409 Conflict:
+- Cause: Conflict with existing state (e.g., deleting a building that still contains
+  linked classrooms when `cascade=false`).
+- Fix: Provide `?cascade=true` to confirm recursive dependent removal.
+
+5. HTTP 400 Bad Request / 422 Unprocessable Entity:
+- Cause: Payload validation failed (e.g., attempting self-registration with an
+  enrollment number that is already claimed or not found in university ERP records).
+- Fix: Inspect `meta.errors` in the error JSON response to identify the invalid field.
+
+6. CORS Failures (Browser Network Error):
+- Cause: Browser blocks request because backend `CORS_ORIGINS` does not match client domain.
+- Fix: In development, NextCampus uses Vite proxying in `vite.config.js` to eliminate
+  CORS blocks entirely. In production, verify that Render's `CORS_ORIGINS` includes
+  your Vercel production domain.
+================================================================================

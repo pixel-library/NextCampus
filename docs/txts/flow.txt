@@ -1,0 +1,392 @@
+================================================================================
+NEXTCAMPUS COMPLETE EXECUTION FLOW & LIFECYCLE SPECIFICATION
+================================================================================
+Document: docs/flow.txt
+Scope: Runtime Execution Flows, Startup Lifecycles, End-to-End Operation Tracing
+Status: IMPLEMENTED & VERIFIED
+Coverage: Startup, User Journeys, Authentication, Requests, DB, Errors & CI/CD
+================================================================================
+
+--------------------------------------------------------------------------------
+A. APPLICATION STARTUP FLOW
+--------------------------------------------------------------------------------
+
+1. Backend Server Startup Flow (Python FastAPI / Uvicorn):
+```
+[1. Command Issued] (npm run server / uvicorn backend.app.main:app)
+         |
+         v
+[2. Python Interpreter Boots]
+         | - Loads sys.path with project root
+         | - Imports backend/app/main.py
+         v
+[3. Pydantic Settings Loaded] (backend/app/core/config.py)
+         | - Reads ROOT_DIR/.env and BACKEND_DIR/.env
+         | - Initializes PORT (5000), HOST (0.0.0.0), MONGODB_URI, JWT_SECRET
+         | - Creates UPLOAD_DIR (server/uploads) if missing
+         v
+[4. Lifespan Context Manager Entered] (backend/app/main.py:lifespan)
+         | - setup_logging() establishes structured timestamped console logger
+         | - Logs: "[NextCampus Server] Initializing FastAPI application..."
+         v
+[5. Database Connection Initialized] (backend/app/db/connection.py:connect_db)
+         | - Instantiates AsyncIOMotorClient with 2000ms serverSelectionTimeoutMS
+         | - Executes await client.admin.command('ping')
+         |     * If Ping Succeeds: Sets _is_connected = True; logs success.
+         |     * If Ping Times Out: Sets _is_connected = False; logs warning and
+         |       enables in-memory fallback mode.
+         | - If connected: Checks collection counts and executes _seed_collections_if_empty()
+         v
+[6. Middlewares & Routing Mounted] (backend/app/main.py)
+         | - Attaches CORSMiddleware with allowed origins
+         | - Mounts StaticFiles directory at /uploads
+         | - Registers global exception handlers (HTTPException, RequestValidationError)
+         | - Mounts create_api_router() on BOTH /api/v1 and /api prefixes
+         v
+[7. Uvicorn Socket Bound]
+         | - Listens on http://0.0.0.0:5000
+         | - Yields control in lifespan context; begins accepting HTTP traffic
+```
+
+2. Frontend Client Startup Flow (Vite + React 18):
+```
+[1. Command Issued] (npm run client / vite)
+         |
+         v
+[2. Vite Dev Server Boots] (vite.config.js)
+         | - Binds local development server on http://localhost:3000
+         | - Configures proxy rule: /api -> http://localhost:5000
+         v
+[3. Browser Requests index.html]
+         | - Loads root HTML container: <div id="root"></div>
+         | - Imports main entry point: <script type="module" src="/src/main.jsx">
+         v
+[4. React Application Bootstrapped] (src/main.jsx)
+         | - Imports global styling: src/index.css (design system tokens)
+         | - ReactDOM.createRoot mounts <App />
+         v
+[5. Context & Providers Initialized] (src/App.jsx)
+         | - <AuthProvider> reads token & user from localStorage ('nextcampus_token')
+         | - Initializes user authentication state (isLoggedIn, user, role)
+         | - <BrowserRouter> reads current window.location.pathname
+         | - Mounts matched route (e.g., <LandingPage /> or <AppLayout />)
+```
+
+
+--------------------------------------------------------------------------------
+B. USER INTERACTION FLOW
+--------------------------------------------------------------------------------
+
+1. Landing & Exploration Flow (Unauthenticated Visitor):
+   - Visitor navigates to `http://localhost:3000/`.
+   - `LandingPage.jsx` renders: Campus statistics (facilities, occupancy rates, solar
+     microgrid yield), hero banner, and feature overviews.
+   - User clicks "Launch Campus Map": Navigates to `/campus-map` where `CampusGisMap.jsx`
+     renders public facility polygons and tactical 2D cartography.
+   - User clicks "Sign In / Register": Navigates to `/auth`.
+
+2. Authentication & Identity Flow:
+   - User inputs email, password, and official university `enrollmentNumber`.
+   - Registration triggers verification against the pre-loaded university enrollment database.
+   - Upon successful signup or login, the client receives a signed JWT token.
+   - Token is saved to `localStorage` under `nextcampus_token`.
+   - User is redirected to `/dashboard` (Student Dashboard) or `/admin` (if administrator).
+
+3. Authenticated Navigation Flow:
+   - `AppLayout.jsx` renders persistent sidebar navigation:
+     * Student links: Dashboard, Campus Map, Directory, SmartRooms, Care Complaints,
+       SkillCampus, EcoCampus, AI Assistant, Profile Settings.
+     * Admin exclusive links: Campus Management (Facility CRUD) and Complaint Administration.
+   - Selecting a navigation link updates React Router state and renders the page
+     smoothly without reloading the browser window.
+
+
+--------------------------------------------------------------------------------
+C. REQUEST FLOW (CLIENT TO BACKEND & RETURN)
+--------------------------------------------------------------------------------
+
+DIAGRAM: DETAILED REQUEST FLOW
+```
++------------------+
+|  User Action     | (User clicks "Join Team" on a SkillCampus project)
++------------------+
+         |
+         v
++------------------+
+| Frontend Client  | (src/services/api.js: apiRequest)
+|                  | - Retrieves token from localStorage
+|                  | - Sets 'Authorization: Bearer <token>'
+|                  | - Sends POST /api/v1/skillcampus/projects/{id}/join
++------------------+
+         |
+         v (HTTP / TLS)
++------------------+
+| Vite Dev Proxy   | (Development only: forwards /api requests to :5000)
++------------------+
+         |
+         v
++------------------+
+| FastAPI Server   | (backend/app/main.py)
+| Middleware Stack | - CORS Middleware validates request origin
+|                  | - Allocates async request worker task
++------------------+
+         |
+         v
++------------------+
+| Route Controller | (backend/app/api/routes/skill.py: join_project_endpoint)
+| Dependency Check | - get_current_user decodes JWT claims, verifies user exists
++------------------+
+         |
+         v
++------------------+
+| Business Service | (backend/app/services/skill_service.py: join_project)
+| Verification     | - Checks if user is already in currentMembers array
+|                  | - Checks if user is the project creator
+|                  | - Throws HTTP 400 Bad Request if already a member
++------------------+
+         |
+         v
++------------------+
+| Persistence Tier | (backend/app/db/connection.py: Motor / MongoDB)
+|                  | - await db.projects.update_one(
+|                  |     {"_id": project_id},
+|                  |     {"$push": {"currentMembers": user_obj}}
+|                  |   )
++------------------+
+         |
+         v
++------------------+
+| Response Envelope| - Constructs standardized JSON:
+|                  |   { "success": true, "message": "Joined team", "data": ... }
+|                  | - Status code: HTTP 200 OK
++------------------+
+         |
+         v
++------------------+
+| Frontend UI      | - React state re-renders project card with updated member avatar
+| State Update     | - Toast alert confirms: "Successfully joined project team!"
++------------------+
+```
+
+
+--------------------------------------------------------------------------------
+D. DATABASE FLOW (CRUD LIFECYCLES)
+--------------------------------------------------------------------------------
+
+1. Create Flow:
+   - Client sends JSON payload -> Pydantic validates required fields -> Service
+     generates unique IDs/timestamps -> Motor issues `insert_one()` -> MongoDB
+     commits document to disk journal.
+
+2. Read Flow:
+   - Client requests list with query parameters (e.g., `?category=academic`) ->
+     Service constructs MongoDB query dictionary `{"category": "academic"}` ->
+     Motor opens cursor with `.find(query).sort(...)` -> Returns list of documents ->
+     Service sanitizes `_id` to string `id` -> Encapsulated in JSON envelope.
+
+3. Update Flow:
+   - Client submits updated fields -> Service constructs atomic update dictionary
+     `{"$set": update_dict}` or array modification `{"$push": subdoc}` -> Motor
+     issues `update_one({"_id": id}, update_spec)` -> Returns updated entity.
+
+4. Delete Flow:
+   - Client requests deletion -> Service checks for dependent entities (e.g., linked
+     rooms in a building) -> If dependents exist and `cascade=false`, raises HTTP 409
+     Conflict -> If confirmed with `cascade=true`, deletes children first via
+     `delete_many()` then deletes parent via `delete_one()`.
+
+
+--------------------------------------------------------------------------------
+E. AUTHENTICATION & AUTHORIZATION FLOW
+--------------------------------------------------------------------------------
+
+DIAGRAM: REGISTRATION & LOGIN FLOW
+```
++---------------------------------------------------------------------------+
+|                          STUDENT REGISTRATION FLOW                        |
++---------------------------------------------------------------------------+
+Student enters Name, Email, Password, Enrollment Number (e.g. MUR2502101)
+                                      |
+                                      v
+POST /api/v1/auth/register (backend/app/api/routes/auth.py)
+                                      |
+                                      v
+auth_service.register_user verifies Enrollment Number in db.enrollments:
+   * Record Not Found?    -> HTTP 400 "Enrollment number not found in university records."
+   * isClaimed == True?   -> HTTP 400 "This enrollment number has already been registered."
+   * Exists & Unclaimed?  -> Proceed!
+                                      |
+                                      v
+Verify Email Uniqueness:
+   * db.users.find_one({"email": email}) -> HTTP 400 if already exists
+                                      |
+                                      v
+Hash Password & Create Account:
+   * hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt(10))
+   * Force role = "student" (Blocks client privilege escalation)
+   * await db.users.insert_one(new_user)
+   * await db.enrollments.update_one(..., {"$set": {"isClaimed": True}})
+                                      |
+                                      v
+Issue JWT Token (PyJWT HMAC-SHA256, 7-day expiration)
+                                      |
+                                      v
+Returns HTTP 201 Created with { "success": true, "data": { "token": ..., "user": ... } }
+
++---------------------------------------------------------------------------+
+|                              LOGIN & RBAC FLOW                            |
++---------------------------------------------------------------------------+
+User enters Email & Password -> POST /api/v1/auth/login
+                                      |
+                                      v
+Query db.users by lowercase email -> Compare bcrypt hash:
+   * Mismatch? -> HTTP 401 "Invalid credentials"
+   * Match?    -> Generate new JWT token with role claims
+                                      |
+                                      v
+Subsequent Protected Requests:
+   Client sends: Authorization: Bearer <token>
+   FastAPI Dependency get_current_user decodes token:
+      * If route requires require_admin and user.role != 'admin':
+        -> Immediately terminates with HTTP 403 Forbidden
+      * Otherwise -> Request executes normally
+```
+
+
+--------------------------------------------------------------------------------
+F. EXTERNAL API FLOW (GENERATIVE AI ASSISTANT)
+--------------------------------------------------------------------------------
+
+```
+[Student asks: "Where is Turing Hall Room B-204?"]
+                      |
+                      v
+POST /api/v1/ai/query (backend/app/services/ai_service.py: process_ai_query)
+                      |
+                      v
+Is GEMINI_API_KEY present in settings?
+     |
+     +---> YES:
+     |     - Formats prompt with institutional landmarks and spatial context
+     |     - Sends async HTTPS request to Google Gemini 1.5 Flash via HTTPX (10s timeout)
+     |     - Success? -> Returns AI-generated reply with spatial rich cards
+     |     - Timeout or Error? -> Cleanly falls through to local engine!
+     |
+     +---> NO / FALLTHROUGH:
+           - Evaluates prompt against NextCampus Multi-Intent Heuristics Engine
+           - Matches keywords: "where is", "turing", "b-204" -> Intent 1: Directions
+           - Retrieves exact path: "Level 2 Climate-Controlled Skybridge (190m)"
+           - Retrieves live room telemetry: "18 / 60 Desks Free • 21.8°C • 410 ppm CO2"
+           - Returns formatted reply with interactive turn-by-turn navigation card
+```
+
+
+--------------------------------------------------------------------------------
+G. ERROR FLOW & EXCEPTION HANDLING
+--------------------------------------------------------------------------------
+
+1. Client-Side Network Dropouts:
+   - Wrapped by `src/services/api.js`.
+   - If direct origin connection fails, automatically retries through Vite proxy
+     (`/api/v1/...` and `/api/...`).
+   - If completely unreachable, displays a clear toast: "Unable to connect to NextCampus
+     API server. Please check your network or server status."
+
+2. Validation Errors (HTTP 400 / 422):
+   - Intercepted by `validation_exception_handler` in `backend/app/main.py`.
+   - Converts raw Pydantic errors into readable messages listing exactly which fields
+     were missing or invalid.
+
+3. Uncaught Server Errors (HTTP 500):
+   - Intercepted by `generic_exception_handler` in `backend/app/main.py`.
+   - Logs detailed error stack trace to server logs.
+   - Sanitizes client message in production to prevent leaking system internals:
+     "An unexpected server error occurred. Please contact NextCampus IT Helpdesk."
+
+
+--------------------------------------------------------------------------------
+H. DEPLOYMENT FLOW (CI/CD PIPELINE)
+--------------------------------------------------------------------------------
+
+```
+[Developer pushes commit to GitHub: main branch]
+                     |
+         +-----------+-----------+
+         |                       |
+         v                       v
+[Vercel GitHub Webhook]     [Render GitHub Webhook]
+  - Pulls latest commit       - Pulls latest commit
+  - Runs npm run build        - Reads render.yaml
+  - Compiles Vite SPA         - Runs pip install -r backend/requirements.txt
+  - Generates dist/ assets    - Boots uvicorn backend.app.main:app
+  - Deploys to Edge CDN       - Runs health check on /api/health
+  - Live at vercel.app        - Live at onrender.com
+```
+
+
+--------------------------------------------------------------------------------
+I. COMPLETE END-TO-END FLOW (INCIDENT REPORTING WITH SLA & DUAL NOTES)
+--------------------------------------------------------------------------------
+
+DIAGRAM: REAL END-TO-END COMPLAINT LIFECYCLE
+```
+===================================================================================
+PHASE 1: STUDENT SUBMITS MAINTENANCE COMPLAINT
+===================================================================================
+Actor: Student (Rudra Sharma)
+Action: Notices HDMI projector flickering in Alan Turing Hall Room B-204.
+File: src/pages/CareComplaints.jsx
+Data Enters: { title: "Projector HDMI signal lost", category: "av", location: "B-204", priority: "high" }
+Request: POST /api/v1/care/complaints with Authorization: Bearer <StudentJWT>
+Backend File: backend/app/api/routes/care.py -> care_service.create_complaint
+Processing:
+  - Generates ticketId: "#CMP-1045"
+  - Evaluates SLA rule: Learning spaces categorize under Tier 1 Rapid SLA (<45 min window)
+  - Records student identity: studentId: "usr_student_01", authorName: "Rudra Sharma"
+  - Appends initial public update: "Ticket created via NextCampus Student Care App"
+Database: await db.complaints.insert_one(complaint_doc)
+Data Leaves: Ticket document with id, status: "open", slaHours: 0.75
+Result: Student UI updates immediately displaying live countdown timer.
+
+===================================================================================
+PHASE 2: OPERATIONS DISPATCH & STAFF ASSIGNMENT
+===================================================================================
+Actor: Operations Administrator
+Action: Reviews open tickets on Complaint Admin console.
+File: src/pages/ComplaintAdmin.jsx
+Request: POST /api/v1/care/complaints/cmp_1045/assign
+Backend File: care_service.assign_staff
+Processing:
+  - Updates assignedToName: "Marcus Vance (Campus AV Lead)"
+  - Updates status: "in_progress"
+  - Appends public update: "Technician Marcus Vance dispatched with replacement transceiver."
+Database: await db.complaints.update_one(..., {"$set": ..., "$push": ...})
+
+===================================================================================
+PHASE 3: CONFIDENTIAL ENGINEERING DIAGNOSTIC (STRICT PRIVACY)
+===================================================================================
+Actor: Campus AV Lead / Administrator
+Action: Records private technical diagnostic note.
+Request: POST /api/v1/care/complaints/cmp_1045/internal-notes
+Body: { "note": "CONFIDENTIAL: Extron wall-plate transceiver PCB requires RMA replacement." }
+Backend File: care_service.add_internal_note
+Processing:
+  - Enforces require_admin dependency.
+  - Appends entry into internalNotes array.
+Database: await db.complaints.update_one(..., {"$push": {"internalNotes": note_doc}})
+
+===================================================================================
+PHASE 4: DUAL-NOTE PRIVACY VERIFICATION
+===================================================================================
+Case A: Student views ticket (GET /api/v1/care/complaints/cmp_1045)
+  - Backend verifies current_user.role == 'student'.
+  - Strips internalNotes field completely.
+  - Student sees public updates: "Technician Marcus Vance dispatched."
+  - Student CANNOT see confidential engineering diagnostics.
+
+Case B: Administrator views ticket (GET /api/v1/care/complaints/cmp_1045)
+  - Backend verifies current_user.role == 'admin'.
+  - Returns complete document including internalNotes and hardware RMA details.
+===================================================================================
+```
+================================================================================

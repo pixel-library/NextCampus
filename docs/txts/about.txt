@@ -1,0 +1,256 @@
+================================================================================
+NEXTCAMPUS COMPLETE SYSTEM OVERVIEW & TECHNOLOGY STACK
+================================================================================
+Document: docs/about.txt
+Scope: High-Level System Overview, Technology Catalog, Architectural Decisions & Scope
+Status: PRODUCTION READY / MASTER AUDIT PASSED
+Architecture: Three-Tier Decoupled Web Application (React SPA + FastAPI / Express)
+================================================================================
+
+--------------------------------------------------------------------------------
+A. PROJECT OVERVIEW
+--------------------------------------------------------------------------------
+
+1. Project Identity & Mission:
+NextCampus ("The Next Generation of Smart Campuses") is an institutional-grade,
+unified smart campus operations and student experience platform designed for higher
+education universities, research academies, and collegiate institutes. It was
+originally architected for the MU Hackathon 2026 and evolved into an operational
+system modeled on modern campus topologies (specifically Mewar University, Gangrar).
+
+2. Core Purpose & The "Single Pane of Glass":
+Traditional campuses suffer from digital fragmentation:
+- Facility maintenance uses cumbersome legacy ticketing portals or paper chits.
+- Timetabling and lecture room availability sit locked inside enterprise ERPs.
+- Wayfinding relies on consumer map apps that lack indoor accuracy, ADA step-free
+  routes, or floor-by-floor layouts.
+- Student innovation is siloed, leaving hackathon teams and capstone projects
+  struggling to find cross-departmental collaborators.
+NextCampus solves this by creating a single, integrated digital command center
+accessible across mobile devices, laptops, and smart campus kiosks.
+
+3. Target Stakeholders & Personas:
+- Undergraduate & Postgraduate Students:
+  Navigate facilities, verify classroom environmental conditions (temperature,
+  CO2, density), reserve study pods, lodge rapid maintenance reports, find project
+  collaborators on SkillCampus, and consult the AI campus copilot.
+- Faculty & Academic Staff:
+  Inspect AV hardware status before lectures, monitor room capacities, and publish
+  office consultation hours in the Campus Directory.
+- Facilities & Care Operations Staff:
+  Triage equipment incident reports under guaranteed Tier-1 Rapid Response SLAs
+  (<45 min for active learning spaces), dispatch technicians, record private
+  engineering diagnostics, and order spare parts.
+- University Leadership & Administrators:
+  Oversee building footprints, room allocation schemas, CAD floorplans, sustainability
+  energy metrics, student enrollments, and system security policies.
+
+4. Major Functional Components:
+1. Spatial GIS Wayfinding & Tactical Campus Map (`/campus-map`)
+2. SmartRooms & IoT Telemetry Hub (`/smartrooms` and `/rooms`)
+3. NextCampus Care Rapid SLA Maintenance Triage (`/care` and `/complaints`)
+4. SkillCampus Student Project Incubation Marketplace (`/skillcampus`)
+5. EcoCampus Sustainability & Microgrid Telemetry (`/ecocampus`)
+6. Generative AI Spatial & Institutional Copilot (`/ai-assistant`)
+7. Unified Administrative Governance Console (`/admin`)
+8. Institutional Identity & Admission Pre-Check (`/auth`)
+
+
+--------------------------------------------------------------------------------
+B. TECHNOLOGY STACK TABLE
+--------------------------------------------------------------------------------
+
+The following inventory details technologies actually used and verified in code:
+
++----------------------+--------------------+-----------+--------------------------+--------------------------------------------------------+------------------------------------+
+| Technology           | Category           | Version   | Where Used               | Primary Responsibility                                 | Important Source Files             |
++----------------------+--------------------+-----------+--------------------------+--------------------------------------------------------+------------------------------------+
+| React                | Frontend Library   | 18.2.0    | Client Browser SPA       | Declarative UI component tree & reactive state updates | src/main.jsx, src/App.jsx          |
+| Vite                 | Build Tool / Server| 5.2.11    | Development & Production | ESM bundler, Hot Module Replacement (HMR), Dev proxy   | vite.config.js, package.json       |
+| React Router DOM     | Client Routing     | 6.23.0    | Client Navigation        | Single Page Application client-side route transitions  | src/App.jsx                        |
+| Leaflet              | Web GIS Engine     | 1.9.4     | Campus Map Component     | Interactive GIS maps, marker clusters, layer controls  | src/components/map/CampusGisMap.jsx|
+| Lucide React         | UI Iconography     | 0.378.0   | Frontend Views           | Consistent SVG icon set across all UI cards & nav      | src/components/*, src/pages/*      |
+| Vanilla CSS Tokens   | Design System      | Custom    | Global Styling           | 5-color dark-licorice palette, responsive utilities   | src/index.css, src/tokens.js       |
+| Python               | Backend Language   | 3.11.9    | Server Runtime           | Primary async application engine                       | backend/app/*                      |
+| FastAPI              | Backend Framework  | 0.110.0+  | REST API Server          | Asynchronous routing, OpenAPI docs, DI, lifespan hooks | backend/app/main.py                |
+| Uvicorn              | ASGI Web Server    | 0.28.0+   | Application Server       | Lightning-fast async event loop server on port 5000    | package.json, render.yaml          |
+| Pydantic & Settings  | Data Validation    | 2.6.0+    | Data Modeling & Config   | Request parsing, strict type checking, env loading     | backend/app/schemas/*, config.py   |
+| Motor                | Async MongoDB ODM  | 3.3.2+    | Database Connectivity    | Non-blocking async I/O driver for MongoDB queries      | backend/app/db/connection.py       |
+| PyMongo              | MongoDB Base Lib   | 4.6.0+    | Core Driver Engine       | Low-level BSON serialization and connection logic      | backend/requirements.txt           |
+| PyJWT                | Cryptography       | 2.8.0+    | Authentication           | Generating and validating HMAC-SHA256 JWT tokens       | backend/app/core/security.py       |
+| Bcrypt (Python)      | Password Hashing   | 4.0.0+    | Security Subsystem       | Cryptographic password hashing (work factor 10)        | backend/app/core/security.py       |
+| HTTPX                | Async HTTP Client  | 0.27.0+   | External AI Client       | Server-side calls to Google Gemini 1.5 Flash API       | backend/app/services/ai_service.py |
+| Pytest & Asyncio     | Automated Testing  | 8.1.0+    | Test Automation          | Full-suite integration test runner                     | backend/tests/test_all_workflows.py|
+| Node.js / Express    | Legacy Backend     | 4.19.2    | Alternative Server       | Legacy REST implementation (runnable via npm scripts)  | server/index.js, server/*          |
+| Mongoose             | Legacy ODM         | 8.3.1     | Legacy DB Connectivity   | Schema modeling for Node backend                       | server/models/*, server/config/*   |
+| MongoDB              | Database Engine    | 7.0+      | Persistence Layer        | Document storage for all institutional entities        | Local daemon or Atlas Cluster      |
+| Google Gemini Flash  | Generative AI      | 1.5 Flash | AI Copilot Service       | Spatial reasoning & multi-turn campus assistant        | backend/app/services/ai_service.py |
+| Render               | Cloud PaaS         | Cloud     | Backend Hosting          | Managed Python web service hosting                     | render.yaml                        |
+| Vercel               | Cloud PaaS / CDN   | Cloud     | Frontend Hosting         | Global edge CDN hosting for Vite React SPA             | vercel.json                        |
++----------------------+--------------------+-----------+--------------------------+--------------------------------------------------------+------------------------------------+
+
+
+--------------------------------------------------------------------------------
+C. FRONTEND IMPLEMENTATION SPECIFICATION
+--------------------------------------------------------------------------------
+
+1. Frontend Framework:
+- Built with React 18 using functional components, standard hooks (`useState`,
+  `useEffect`, `useMemo`, `useCallback`, `useContext`), and custom hooks.
+
+2. UI Component Architecture:
+- Layout Primitives (`src/components/layout/`):
+  * `AppLayout.jsx`: Main authenticated shell with dynamic sidebar and header.
+  * `Navbar.jsx`: Top navigation bar with user greetings, search, and notification badges.
+  * `Sidebar.jsx`: Collapsible navigation drawer tailored by user role.
+  * `MobileNav.jsx`: Bottom navigation bar optimized for touch screens and phones.
+- Common Design Primitives (`src/components/common/`):
+  * `Button.jsx`, `Input.jsx`, `Select.jsx`, `Badge.jsx`, `Card.jsx`, `Modal.jsx`,
+    `Tabs.jsx`, `Table.jsx`, `LoadingState.jsx`, `EmptyState.jsx`, `StatusIndicator.jsx`.
+- Specialized Spatial Views (`src/components/map/`):
+  * `CampusGisMap.jsx`: 71KB advanced interactive Leaflet GIS map featuring tactical
+    isometric view, 2D cartography, building search, route pathing, marker clustering,
+    and administrator coordinate drag-and-drop editing.
+
+3. Pages & Routing Hierarchy (`src/pages/`):
+- `/` -> `LandingPage.jsx`: Public landing page with campus overview and stats.
+- `/auth` -> `AuthPage.jsx`: Authentication portal with student enrollment validation.
+- `/dashboard` -> `StudentDashboard.jsx`: Personalized schedule, attendance, and alerts.
+- `/campus-map` -> `CampusMap.jsx`: Full-screen GIS navigation and route finder.
+- `/directory` -> `CampusDirectory.jsx`: Faculty, staff, and department phonebook.
+- `/smartroom` or `/smartrooms` -> `SmartRooms.jsx`: Live classroom IoT sensor matrix.
+- `/care` or `/complaints` -> `CareComplaints.jsx`: Student maintenance ticket portal.
+- `/skillcampus` -> `SkillCampus.jsx`: Student collaborative project incubation board.
+- `/ecocampus` -> `EcoCampus.jsx`: Environmental microgrid telemetry dashboard.
+- `/ai-assistant` -> `AiAssistant.jsx`: Interactive campus AI copilot interface.
+- `/profile` -> `ProfileSettings.jsx`: User profile, accessibility, and security settings.
+- `/admin` -> `AdminDashboard.jsx`: Executive rollups and campus health overview.
+- `/admin/campus-management` -> `CampusManagement.jsx`: Full facility and room CRUD console.
+- `/admin/complaints` -> `ComplaintAdmin.jsx`: Maintenance SLA triage and dispatch console.
+
+4. Styling System & Google Stitch Design Language:
+NextCampus completely avoids generic CSS frameworks in favor of a curated, bespoke
+5-color dark-licorice design system defined in `src/tokens.js` and `src/index.css`:
+- Licorice (`#191516`): Calming canvas base minimizing eye fatigue and OLED consumption.
+- Raisin Black (`#382E31`): Surface elevation for cards, dialogs, and navigation bars.
+- Amaranth Purple (`#AC274F`): Primary energetic accent for active buttons and status.
+- Blush (`#EB638B`): Secondary highlight for active map pins and hover states.
+- Misty Rose (`#FFD9DA`): Legible contrast for typography, subtitles, and badges.
+
+5. State Management & API Communication:
+- Authentication State: Managed globally via `AuthContext.jsx` and consumed via
+  the `useAuth()` hook. Persists user profile and JWT token in `localStorage`.
+- Network Transport: Centralized inside `src/services/api.js`. Components never
+  call raw `fetch()` directly. `apiRequest` handles base URL normalization, JWT
+  header injection, multipart FormData boundary handling, and Vite proxy fallbacks.
+
+
+--------------------------------------------------------------------------------
+D. BACKEND IMPLEMENTATION SPECIFICATION
+--------------------------------------------------------------------------------
+
+1. Backend Runtime & Framework:
+- Primary Engine: Python 3.11 with FastAPI 0.110+ running under Uvicorn ASGI server.
+- Secondary / Alternative Engine: Node.js with Express 4.19+ and Mongoose 8.3+.
+Both engines implement the identical REST API schema contract.
+
+2. Server Startup & Lifespan Context (`backend/app/main.py`):
+FastAPI boots using an async `lifespan` manager:
+- `setup_logging()` configures timestamped structured logs.
+- `connect_db()` connects to MongoDB via Motor, issues an admin ping, and seeds
+  empty collections.
+- CORS middleware is bound (`CORSMiddleware`) using configured domains.
+- Static file serving is mounted at `/uploads` targeting `server/uploads`.
+- Global exception handlers catch `HTTPException`, `RequestValidationError`, and
+  uncaught exceptions, normalizing them into the NextCampus JSON envelope.
+- Symmetrical routes are mounted on both `/api/v1` and `/api`.
+
+3. Business Logic Highlights:
+- Identity Verification: Validates student enrollment against pre-loaded university
+  records, preventing self-assigned administrator privilege escalation.
+- Dual-Note Privacy: Enforces strict field-level redaction so students cannot view
+  private administrative engineering diagnostics on maintenance tickets.
+- Cascading Safety: Checks for dependent classroom records before allowing facility
+  deletions, requiring explicit `?cascade=true` confirmation.
+- Team Membership Integrity: Enforces unique membership constraints on SkillCampus
+  projects to prevent duplicate team join actions.
+
+
+--------------------------------------------------------------------------------
+E. DATABASE IMPLEMENTATION
+--------------------------------------------------------------------------------
+
+- Engine: MongoDB 7.0+
+- Access Driver: Asynchronous Motor (`motor.motor_asyncio`) in Python, and Mongoose ODM
+  in Node.js.
+- Storage Pattern: Document-oriented collections with JSON-compatible BSON encoding.
+- Collections: `users`, `enrollments`, `locations`, `rooms`, `complaints`, `projects`,
+  `sustainabilities`, `announcements`.
+- Decoupled Fallback: Built-in thread-safe in-memory stores (`IN_MEMORY_*`) provide
+  instant offline operation if the MongoDB daemon is offline.
+
+
+--------------------------------------------------------------------------------
+F. THIRD-PARTY INTEGRATIONS
+--------------------------------------------------------------------------------
+
+1. Google Gemini 1.5 Flash (`https://generativelanguage.googleapis.com`):
+- Role: Real-time generative AI assistant for student questions.
+- Integration: Direct server-to-server HTTPS call using `httpx`.
+- Fallback: Multi-Intent Heuristics Engine v4.5 provides full offline assistance.
+
+2. OpenStreetMap & CartoDB Tiles:
+- Role: Map background raster tiles rendered inside Leaflet GIS map.
+- Integration: Client-side tile layer requests.
+
+
+--------------------------------------------------------------------------------
+G. DEVELOPMENT TOOLS & ENVIRONMENT
+--------------------------------------------------------------------------------
+
+- Package Managers: `npm` for frontend / Node; `pip` & virtual environment for Python.
+- Task Runner: `concurrently` runs backend and frontend together with `npm run dev`.
+- Watcher: `uvicorn --reload` (Python) and `nodemon` (Node).
+- Test Automation: `pytest` and `pytest-asyncio` for Python backend test suite;
+  Node.js `assert` master audit test runner (`tests/master_audit.test.js`).
+- Version Control: Git with strict `.gitignore` protection for secrets and uploads.
+
+
+--------------------------------------------------------------------------------
+H. WHY EACH TECHNOLOGY WAS CHOSEN
+--------------------------------------------------------------------------------
+
+1. React 18 & Vite:
+Chosen for instant compilation speed, rich ecosystem, and seamless component-driven
+UI state reactivity required by complex real-time maps and sensor dashboards.
+
+2. Python & FastAPI:
+FastAPI was selected for its high performance, native asynchronous asyncio support,
+built-in OpenAPI documentation, and seamless integration with Python's AI libraries.
+
+3. MongoDB & Motor:
+Document flexibility allows dynamic classroom telemetries, CAD floor schemas, and
+incident update trails to be stored without cumbersome relational schema migrations.
+
+4. Vanilla CSS & Custom Tokens:
+Avoided bloated CSS frameworks to maintain complete aesthetic freedom over the
+Google Stitch 5-color dark-licorice palette.
+
+
+--------------------------------------------------------------------------------
+I. PROJECT LIMITATIONS & DEPENDENCY CONSTRAINTS
+--------------------------------------------------------------------------------
+
+1. File Upload Persistence on Cloud Free Tiers:
+Uploads are stored locally in `server/uploads`. On free hosting tiers like Render,
+the local filesystem is ephemeral and resets during dyno redeployment. Production
+scaling should mount an S3/Cloudinary object store.
+
+2. Python Virtual Environment Dependency:
+The project expects a valid Python 3.11 virtual environment at `backend/.venv` to
+run the `npm run server` script.
+
+3. Single-Node In-Memory Fallback:
+While the in-memory fallback is excellent for automated testing and offline demos,
+state changes in fallback mode do not synchronize across distributed cluster nodes.
+================================================================================
