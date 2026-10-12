@@ -221,23 +221,19 @@ export const CAMPUS_GIS_LOCATIONS = {
     id: 'parking',
     code: 'PRK-02',
     name: 'Main Campus Vehicle & Visitor Parking Zone',
-    shortName: 'Campus Parking',
+    shortName: 'Parking',
     category: 'facility',
     color: '#F97316',
     bgColor: '#FFF7ED',
     icon: '🅿️',
     lat: 25.031181,
-    lng: 74.635785,
+    lng: 74.635524,
     polygon: [
-      [25.031669, 74.635599],
-      [25.031669, 74.635697],
-      [25.030968, 74.635993],
-      [25.030672, 74.636077],
-      [25.030631, 74.636046],
-      [25.030748, 74.635857],
-      [25.031146, 74.635690],
-      [25.031456, 74.635591],
-      [25.031669, 74.635599],
+      [25.031775, 74.635320],
+      [25.031736, 74.635454],
+      [25.030925, 74.635722],
+      [25.030891, 74.635599],
+      [25.031775, 74.635320],
     ],
     dept: 'Campus Transport & Vehicle Management Outpost',
     elevation: 'Ground Level Covered Bays',
@@ -275,17 +271,26 @@ export const CAMPUS_GIS_LOCATIONS = {
     bgColor: '#EAF5EF',
     icon: '🏛️',
     lat: 25.032755,
-    lng: 74.635872,
+    lng: 74.635380,
     polygon: [
-      [25.033477, 74.635356],
-      [25.033532, 74.636008],
-      [25.033270, 74.636145],
-      [25.032480, 74.636418],
-      [25.032068, 74.636479],
-      [25.032019, 74.635857],
-      [25.032033, 74.635401],
-      [25.032721, 74.635227],
-      [25.033477, 74.635356],
+      [25.033525, 74.635212],
+      [25.033501, 74.635588],
+      [25.033452, 74.635722],
+      [25.033331, 74.635856],
+      [25.033039, 74.635963],
+      [25.032699, 74.636071],
+      [25.032431, 74.636151],
+      [25.032358, 74.636232],
+      [25.032286, 74.636205],
+      [25.032091, 74.636178],
+      [25.032091, 74.635400],
+      [25.032529, 74.635400],
+      [25.032529, 74.635202],
+      [25.032650, 74.635078],
+      [25.032796, 74.635078],
+      [25.032942, 74.635202],
+      [25.032942, 74.635330],
+      [25.033525, 74.635212],
     ],
     dept: 'University Secretariat, Admissions & Administrative Council',
     elevation: 'Floors 1–4',
@@ -295,19 +300,19 @@ export const CAMPUS_GIS_LOCATIONS = {
     id: 'temple',
     code: 'TMP-01',
     name: 'Mewar Campus Temple & Meditation Shrine',
-    shortName: 'Campus Temple',
+    shortName: 'Temple',
     category: 'facility',
     color: '#EAB308',
     bgColor: '#FEFCE8',
     icon: '🛕',
     lat: 25.033669,
-    lng: 74.635822,
+    lng: 74.635567,
     polygon: [
-      [25.033738, 74.635637],
-      [25.033752, 74.636008],
-      [25.033587, 74.636008],
-      [25.033587, 74.635637],
-      [25.033738, 74.635637],
+      [25.033758, 74.635502],
+      [25.033758, 74.635631],
+      [25.033642, 74.635631],
+      [25.033642, 74.635502],
+      [25.033758, 74.635502],
     ],
     dept: 'Campus Spiritual Centre & Cultural Forum',
     elevation: 'Ground Level Portico',
@@ -505,17 +510,17 @@ export const CAMPUS_GIS_LOCATIONS = {
     bgColor: '#FEF2F2',
     icon: '🏏',
     lat: 25.030293,
-    lng: 74.636703,
+    lng: 74.636245,
     polygon: [
-      [25.030892, 74.636570],
-      [25.030954, 74.636911],
-      [25.029675, 74.637404],
-      [25.029614, 74.637381],
-      [25.029531, 74.637252],
-      [25.029538, 74.636463],
-      [25.030700, 74.636046],
-      [25.030810, 74.636319],
-      [25.030892, 74.636570],
+      [25.030973, 74.635738],
+      [25.030973, 74.636634],
+      [25.030584, 74.636714],
+      [25.030196, 74.636795],
+      [25.029928, 74.636875],
+      [25.029758, 74.636741],
+      [25.029758, 74.636098],
+      [25.030366, 74.635829],
+      [25.030973, 74.635738],
     ],
     dept: 'Department of Physical Education & Athletics',
     elevation: 'Turf Ground & Pavilion',
@@ -525,19 +530,19 @@ export const CAMPUS_GIS_LOCATIONS = {
     id: 'gym',
     code: 'SPT-04',
     name: 'University Fitness Centre & Gymnasium',
-    shortName: 'Campus Gymnasium',
+    shortName: 'Gym',
     category: 'facility',
-    color: '#475569',
+    color: '#334155',
     bgColor: '#F8FAFC',
     icon: '🏋️',
     lat: 25.030837,
-    lng: 74.637275,
+    lng: 74.637018,
     polygon: [
-      [25.030947, 74.637131],
-      [25.031002, 74.637298],
-      [25.030741, 74.637404],
-      [25.030686, 74.637245],
-      [25.030947, 74.637131],
+      [25.031022, 74.636849],
+      [25.031070, 74.637047],
+      [25.030599, 74.637187],
+      [25.030550, 74.636988],
+      [25.031022, 74.636849],
     ],
     dept: 'Department of Physical Education & Sports Training',
     elevation: 'Ground Floor Sports Complex',
@@ -553,13 +558,13 @@ export const CAMPUS_GIS_LOCATIONS = {
     bgColor: '#F5F3FF',
     icon: '🏐',
     lat: 25.030757,
-    lng: 74.637623,
+    lng: 74.637288,
     polygon: [
-      [25.031009, 74.637419],
-      [25.031009, 74.637715],
-      [25.030617, 74.637875],
-      [25.030500, 74.637579],
-      [25.031009, 74.637419],
+      [25.031119, 74.637079],
+      [25.031119, 74.637465],
+      [25.030682, 74.637492],
+      [25.030667, 74.637117],
+      [25.031119, 74.637079],
     ],
     dept: 'Department of Physical Education & Court Sports',
     elevation: 'Hard Surface Court',
@@ -575,17 +580,17 @@ export const CAMPUS_GIS_LOCATIONS = {
     bgColor: '#F0FDF4',
     icon: '🌾',
     lat: 25.030157,
-    lng: 74.637547,
+    lng: 74.637499,
     polygon: [
-      [25.030548, 74.638026],
-      [25.030349, 74.637313],
-      [25.030184, 74.637397],
-      [25.029888, 74.637503],
-      [25.029572, 74.637617],
-      [25.029517, 74.637730],
-      [25.029455, 74.637981],
-      [25.029455, 74.638026],
-      [25.030548, 74.638026],
+      [25.030439, 74.636902],
+      [25.030439, 74.637144],
+      [25.030657, 74.637519],
+      [25.030657, 74.637787],
+      [25.030463, 74.638029],
+      [25.029709, 74.638029],
+      [25.029709, 74.637251],
+      [25.030074, 74.637010],
+      [25.030439, 74.636902],
     ],
     dept: 'Department of Agriculture Sciences & Horticulture Research',
     elevation: 'Experimental Farm Plots',
@@ -1331,32 +1336,8 @@ export const CampusGisMap = ({
         })
         .addTo(map);
 
-      // Draw Authentic Blue Road & Pathway Network (Google Maps Aesthetic)
-      const roadLayers = [];
-      MEWAR_CAMPUS_ROADS.forEach((roadCoords) => {
-        // Road Casing (subtle dark navy outline for contrast against satellite/street map)
-        const casing = L.polyline(roadCoords, {
-          color: '#0369A1',
-          weight: 6,
-          opacity: 0.45,
-          lineCap: 'round',
-          lineJoin: 'round',
-          interactive: false,
-        }).addTo(map);
-
-        // Core Road Lane (Vibrant Google Maps blue pathway)
-        const core = L.polyline(roadCoords, {
-          color: '#0284C7',
-          weight: 3.8,
-          opacity: 0.95,
-          lineCap: 'round',
-          lineJoin: 'round',
-          interactive: false,
-        }).addTo(map);
-
-        roadLayers.push(casing, core);
-      });
-      roadsLayerRef.current = roadLayers;
+      // Static blue road overlay removed per user request to maintain clean natural satellite imagery
+      roadsLayerRef.current = [];
 
 
       // Click on Map to Mark Destination Anywhere inside Campus!
@@ -1419,7 +1400,7 @@ export const CampusGisMap = ({
 
       // 1. Draw Visible Building Footprint Polygon
       if (bldg.polygon) {
-        const isKeyLandmark = ['main', 'parking', 'temple', 'cricket', 'gym', 'volleyball', 'agriculture'].includes(key);
+        const isKeyLandmark = ['parking', 'temple', 'cricket', 'gym', 'volleyball', 'agriculture'].includes(key);
         const poly = L.polygon(bldg.polygon, {
           color: isSelected ? '#10B981' : bldg.color,
           weight: isSelected ? 4 : (isKeyLandmark ? 3 : 2),
@@ -1440,90 +1421,110 @@ export const CampusGisMap = ({
           className: `mewar-tooltip mewar-badge-${key}`,
         });
 
+        poly.bindPopup(`
+          <div style="padding: 10px; font-family: Inter, sans-serif; min-width: 220px;">
+            <div style="font-weight: 800; font-size: 13.5px; color: #142D28; margin-bottom: 3px; font-family: 'Plus Jakarta Sans', sans-serif;">
+              ${bldg.name}
+            </div>
+            <div style="font-size: 11px; color: #65736B; margin-bottom: 8px; line-height: 1.45;">
+              ${bldg.description}
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #E4EAE5; padding-top: 6px;">
+              <span style="font-size: 10px; color: #168567; font-weight: 700;">● ${bldg.dept}</span>
+              <span style="font-size: 10px; font-weight: 600; color: #87968D;">${bldg.elevation}</span>
+            </div>
+          </div>
+        `);
+
         buildingPolygonsRef.current[key] = poly;
       }
 
       // 2. Draw Marker Pin with Icon & Badge (NextCampus Institutional Palette)
-      const markerHtml = `
-        <div style="
-          position: relative;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          cursor: pointer;
-          user-select: none;
-          transform: translate(-50%, -50%);
-        ">
+      // For key landmarks with dedicated prominent badge tooltips (parking, temple, cricket, gym, volleyball, agriculture),
+      // we only render the badge on the polygon to avoid circular marker icon collision over the center of the badge.
+      const isBadgeOnlyLandmark = ['parking', 'temple', 'cricket', 'gym', 'volleyball', 'agriculture'].includes(key);
+      if (!isBadgeOnlyLandmark) {
+        const markerHtml = `
           <div style="
-            width: ${isSelected ? '38px' : '32px'};
-            height: ${isSelected ? '38px' : '32px'};
-            border-radius: 50%;
-            background-color: ${isSelected ? '#142D28' : '#FFFFFF'};
-            color: ${isSelected ? '#FFFFFF' : bldg.color};
-            border: 2.5px solid ${isSelected ? '#168567' : bldg.color};
-            box-shadow: 0 4px 14px rgba(20,45,40,0.28);
+            position: relative;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: ${isSelected ? '18px' : '15px'};
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            gap: 6px;
+            cursor: pointer;
+            user-select: none;
+            transform: translate(-50%, -50%);
           ">
-            ${bldg.icon}
-          </div>
-          ${
-            isSelected
-              ? `
             <div style="
-              background: #142D28;
-              color: #FFFFFF;
-              font-size: 11px;
-              font-weight: 700;
-              font-family: 'Plus Jakarta Sans', sans-serif;
-              padding: 4px 10px;
-              border-radius: 9999px;
-              white-space: nowrap;
-              box-shadow: 0 4px 14px rgba(20,45,40,0.3);
-              border: 1.5px solid #168567;
+              width: ${isSelected ? '38px' : '32px'};
+              height: ${isSelected ? '38px' : '32px'};
+              border-radius: 50%;
+              background-color: ${isSelected ? '#142D28' : '#FFFFFF'};
+              color: ${isSelected ? '#FFFFFF' : bldg.color};
+              border: 2.5px solid ${isSelected ? '#168567' : bldg.color};
+              box-shadow: 0 4px 14px rgba(20,45,40,0.28);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: ${isSelected ? '18px' : '15px'};
+              transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             ">
-              ${bldg.shortName}
+              ${bldg.icon}
             </div>
-          `
-              : ''
-          }
-        </div>
-      `;
-
-      const markerIcon = L.divIcon({
-        html: markerHtml,
-        className: 'mewar-gis-marker',
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
-      });
-
-      const marker = L.marker([bldg.lat, bldg.lng], { icon: markerIcon }).addTo(map);
-
-      marker.bindPopup(`
-        <div style="padding: 10px; font-family: Inter, sans-serif; min-width: 220px;">
-          <div style="font-weight: 800; font-size: 13.5px; color: #142D28; margin-bottom: 3px; font-family: 'Plus Jakarta Sans', sans-serif;">
-            ${bldg.name}
+            ${
+              isSelected
+                ? `
+              <div style="
+                background: #142D28;
+                color: #FFFFFF;
+                font-size: 11px;
+                font-weight: 700;
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                padding: 4px 10px;
+                border-radius: 9999px;
+                white-space: nowrap;
+                box-shadow: 0 4px 14px rgba(20,45,40,0.3);
+                border: 1.5px solid #168567;
+              ">
+                ${bldg.shortName}
+              </div>
+            `
+                : ''
+            }
           </div>
-          <div style="font-size: 11px; color: #65736B; margin-bottom: 8px; line-height: 1.45;">
-            ${bldg.description}
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #E4EAE5; padding-top: 6px;">
-            <span style="font-size: 10px; color: #168567; font-weight: 700;">● ${bldg.dept}</span>
-            <span style="font-size: 10px; font-weight: 600; color: #87968D;">${bldg.elevation}</span>
-          </div>
-        </div>
-      `);
+        `;
 
-      marker.on('click', (ev) => {
-        L.DomEvent.stopPropagation(ev);
-        if (onClearCustomDestination) onClearCustomDestination();
-        if (onSelectBuilding) onSelectBuilding(key);
-      });
+        const markerIcon = L.divIcon({
+          html: markerHtml,
+          className: 'mewar-gis-marker',
+          iconSize: [36, 36],
+          iconAnchor: [18, 18],
+        });
 
-      buildingMarkersRef.current[key] = marker;
+        const marker = L.marker([bldg.lat, bldg.lng], { icon: markerIcon }).addTo(map);
+
+        marker.bindPopup(`
+          <div style="padding: 10px; font-family: Inter, sans-serif; min-width: 220px;">
+            <div style="font-weight: 800; font-size: 13.5px; color: #142D28; margin-bottom: 3px; font-family: 'Plus Jakarta Sans', sans-serif;">
+              ${bldg.name}
+            </div>
+            <div style="font-size: 11px; color: #65736B; margin-bottom: 8px; line-height: 1.45;">
+              ${bldg.description}
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #E4EAE5; padding-top: 6px;">
+              <span style="font-size: 10px; color: #168567; font-weight: 700;">● ${bldg.dept}</span>
+              <span style="font-size: 10px; font-weight: 600; color: #87968D;">${bldg.elevation}</span>
+            </div>
+          </div>
+        `);
+
+        marker.on('click', (ev) => {
+          L.DomEvent.stopPropagation(ev);
+          if (onClearCustomDestination) onClearCustomDestination();
+          if (onSelectBuilding) onSelectBuilding(key);
+        });
+
+        buildingMarkersRef.current[key] = marker;
+      }
     });
   }, [selectedBuildingKey, customDestination, onSelectBuilding, onClearCustomDestination]);
 

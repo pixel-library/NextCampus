@@ -148,8 +148,8 @@ flowchart TD
   - Subdivides polyline with `subdividePolyline(points, maxStepMeters = 8)` for fluid animation.
   - Calculates true road distance in meters and walking ETA at pedestrian pace.
 - **Google Maps Visual Presentation**:
-  - Blue road network layer: Navy casing (`#1E3A8A`) + vibrant royal blue core (`#2563EB`).
-  - Active navigation ribbon: White contrast halo (`#FFFFFF`, 8px) + deep royal navigation core (`#1D4ED8`, 4.8px) + animated directional pulse flow line (`#93C5FD`, `.route-nav-pulse`).
+  - Clean Satellite Layer: Static blue path lines removed to maintain pristine, authentic natural aerial imagery.
+  - Active navigation ribbon: White contrast halo (`#FFFFFF`, 8px) + deep royal navigation core (`#1D4ED8`, 4.8px) + animated directional pulse flow line (`#93C5FD`, `.route-nav-pulse`) rendered dynamically on demand during routing.
   - Interactive "Simulate Walk": Blue beacon smoothly walks waypoint-by-waypoint along the campus pathways.
 
 ---
