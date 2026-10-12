@@ -1188,8 +1188,8 @@ export const CampusMap = () => {
   const [selectedRoomId, setSelectedRoomId] = useState('B-204');
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [showAllManeuvers, setShowAllManeuvers] = useState(false);
-  const [hoveredRoom, setHoveredRoom] = useState(null);
   const [startPointMode, setStartPointMode] = useState('gate'); // 'gate' | 'gps'
+  const [startLocationId, setStartLocationId] = useState('gate');
   const [mobilityMode, setMobilityMode] = useState('walk'); // walk | wheelchair | shuttle
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [viewEngine, setViewEngine] = useState('gis'); // 'gis' | 'blueprint'
@@ -1464,13 +1464,35 @@ export const CampusMap = () => {
       speed: 1.2,
     });
     setCustomDestination(null);
+    setStartLocationId('gate');
     setStartPointMode('gate');
+    setSelectedBldg('eng');
     triggerToast('Location reset to Mewar University Main Gate (NH-48)');
   };
 
   // Swap Origin and Destination
   const handleSwapRoute = () => {
-    triggerToast('Route direction inverted.');
+    const currentStart = startLocationId;
+    const currentDest = customDestination ? null : selectedBldg;
+    if (!currentDest) {
+      triggerToast('Cannot swap custom pinned point.');
+      return;
+    }
+    setStartLocationId(currentDest);
+    const newStartLoc = CAMPUS_GIS_LOCATIONS[currentDest] || CAMPUS_GIS_LOCATIONS.gate;
+    if (newStartLoc) {
+      setUserCoords({
+        lat: newStartLoc.lat,
+        lng: newStartLoc.lng,
+        accuracy: 5,
+        heading: 0,
+        speed: 1.2,
+      });
+    }
+    if (currentStart !== 'gps') {
+      handleSelectBuilding(currentStart, false);
+    }
+    triggerToast('Swapped starting point and destination.');
   };
 
   // Nudge selected building on map canvas
@@ -1716,6 +1738,95 @@ export const CampusMap = () => {
                 </button>
               ))}
             </div>
+
+            {/* Toggle Directory & Routes Panel Button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (isNavPanelOpen) {
+                  setIsNavPanelOpen(false);
+                } else {
+                  handleOpenNavPanel();
+                }
+              }}
+              title="Toggle Directory & Routes Navigation Panel"
+              style={{
+                padding: '5px 11px',
+                borderRadius: '6px',
+                border: '1px solid var(--border-subtle)',
+                fontSize: '11px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                backgroundColor: isNavPanelOpen ? 'var(--brand-primary)' : '#FFFFFF',
+                color: isNavPanelOpen ? '#FFFFFF' : 'var(--text-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                boxShadow: isNavPanelOpen ? '0 1px 3px rgba(0,0,0,0.1)' : 'var(--shadow-xs)',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Navigation size={12} />
+              <span>{isNavPanelOpen ? 'Hide Directory & Routes' : 'Directory & Routes'}</span>
+            </button>
+
+            {/* Direct Location Selector Dropdown */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                backgroundColor: 'var(--bg-surface-subtle)',
+                padding: '3px 8px 3px 10px',
+                borderRadius: '8px',
+                border: '1px solid var(--border-subtle)',
+              }}
+            >
+              <MapPin size={13} style={{ color: 'var(--brand-primary)', flexShrink: 0 }} />
+              <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>Location:</span>
+              <select
+                aria-label="Select Campus Location"
+                value={selectedBldg}
+                onChange={(e) => {
+                  const locId = e.target.value;
+                  handleSelectBuilding(locId, true);
+                  triggerToast(`Selected: ${buildings[locId]?.name || locId}`);
+                }}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  fontSize: '11.5px',
+                  fontWeight: 700,
+                  color: 'var(--text-primary)',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  maxWidth: '180px',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                <optgroup label="Academic & Administrative">
+                  {uniqueBuildingList.filter((b) => b.category === 'academic').map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.code ? `[${b.code}] ` : ''}{b.shortName || b.name}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="Hostels & Living Quarters">
+                  {uniqueBuildingList.filter((b) => b.category === 'hostels' || b.id.includes('hostel') || ['guest_house', 'kumbha', 'pratap', 'mira', 'panna', 'gora', 'sanaga', 'bhamasha'].includes(b.id)).map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.code ? `[${b.code}] ` : ''}{b.shortName || b.name}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="Sports, Food & Campus Facilities">
+                  {uniqueBuildingList.filter((b) => b.category === 'facility' || b.category === 'amenities' || b.category === 'sports' || ['gate', 'parking', 'gate2', 'mess', 'temple', 'football', 'cricket', 'basketball', 'gym', 'volleyball', 'agriculture', 'park', 'hospital'].includes(b.id)).map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.code ? `[${b.code}] ` : ''}{b.shortName || b.name}
+                    </option>
+                  ))}
+                </optgroup>
+              </select>
+            </div>
           </div>
 
           {/* Center: View Engine Switcher */}
@@ -1929,6 +2040,28 @@ export const CampusMap = () => {
               <Navigation size={11} />
               <span>Directions</span>
             </button>
+
+            {/* Quick Location Selector Chip */}
+            <div className="shrink-0 flex items-center gap-1 bg-white border border-[var(--border-subtle)] rounded-full px-2.5 py-1 shadow-2xs">
+              <MapPin size={11} className="text-[var(--brand-primary)] shrink-0" />
+              <select
+                aria-label="Select Campus Location"
+                value={selectedBldg}
+                onChange={(e) => {
+                  const locId = e.target.value;
+                  handleSelectBuilding(locId, true);
+                  triggerToast(`Selected: ${buildings[locId]?.name || locId}`);
+                }}
+                className="bg-transparent text-[11px] font-bold text-[var(--text-primary)] outline-none border-none max-w-[130px] truncate cursor-pointer"
+              >
+                <option value="" disabled>Select Location</option>
+                {uniqueBuildingList.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.shortName || b.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </header>
@@ -1941,7 +2074,8 @@ export const CampusMap = () => {
             type="button"
             onClick={handleOpenNavPanel}
             title="Open Campus Directory & Routes"
-            className="absolute top-3 left-3 md:top-4 md:left-4 z-30 bg-white/98 backdrop-blur-md rounded-full border border-[var(--border-subtle)] shadow-md px-3.5 py-2 md:px-4 md:py-2 flex items-center gap-2 text-xs font-bold text-[var(--text-primary)] cursor-pointer hover:bg-white transition-all"
+            className="absolute top-3 left-3 md:top-4 md:left-4 bg-white/98 backdrop-blur-md rounded-full border border-[var(--border-subtle)] shadow-md px-3.5 py-2 md:px-4 md:py-2 flex items-center gap-2 text-xs font-bold text-[var(--text-primary)] cursor-pointer hover:bg-white transition-all"
+            style={{ zIndex: 500 }}
           >
             <Search size={14} style={{ color: 'var(--brand-primary)' }} />
             <span><span className="hidden xs:inline">Campus </span>Directory &amp; Routes</span>
@@ -1963,11 +2097,12 @@ export const CampusMap = () => {
 
         {/* LEFT COLLAPSIBLE CAMPUS DIRECTORY & NAVIGATION DRAWER (Slide-over on Desktop, Bottom Sheet on Mobile) */}
         <div
-          className={`absolute z-35 bg-white/98 backdrop-blur-md transition-all duration-300 ease-out flex flex-col overflow-hidden
-            md:top-4 md:bottom-4 md:w-[390px] md:max-w-[calc(100vw-32px)] md:rounded-2xl md:border md:border-[var(--border-subtle)] md:shadow-lg md:h-auto
+          className={`absolute transition-all duration-300 ease-out flex flex-col overflow-hidden bg-white/98 backdrop-blur-md
+            md:top-4 md:bottom-4 md:w-[390px] md:max-w-[calc(100vw-32px)] md:rounded-2xl md:border md:border-[var(--border-subtle)] md:shadow-lg md:h-auto md:max-h-none md:inset-x-auto md:right-auto
             inset-x-0 bottom-0 top-auto w-full max-w-full rounded-t-2xl border-t border-[var(--border-subtle)] shadow-2xl max-h-[80vh] h-[80vh]
-            ${isNavPanelOpen ? 'md:left-4 translate-y-0' : 'md:-left-[430px] translate-y-full md:translate-y-0 pointer-events-none md:pointer-events-auto'}
+            ${isNavPanelOpen ? 'md:left-4 translate-y-0 pointer-events-auto' : 'md:-left-[430px] translate-y-full md:translate-y-0 pointer-events-none'}
           `}
+          style={{ zIndex: 500 }}
         >
           {/* Mobile Drag Handle */}
           <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 md:hidden shrink-0" />
@@ -2264,9 +2399,52 @@ export const CampusMap = () => {
                     <div style={{ fontSize: '9px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
                       Starting Point
                     </div>
-                    <div style={{ fontSize: '11.5px', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {isLiveGpsActive ? '📍 My Current GPS Location' : '🚪 NH-48 Main Campus Gate (Turnstiles)'}
-                    </div>
+                    <select
+                      aria-label="Select Starting Point"
+                      value={startLocationId}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setStartLocationId(val);
+                        if (val === 'gps') {
+                          toggleLiveGps();
+                        } else {
+                          if (isLiveGpsActive) toggleLiveGps();
+                          const loc = CAMPUS_GIS_LOCATIONS[val] || CAMPUS_GIS_LOCATIONS.gate;
+                          if (loc) {
+                            setUserCoords({
+                              lat: loc.lat,
+                              lng: loc.lng,
+                              accuracy: 5,
+                              heading: 0,
+                              speed: 1.2,
+                            });
+                            triggerToast(`Starting point: ${loc.shortName || loc.name}`);
+                          }
+                        }
+                      }}
+                      style={{
+                        width: '100%',
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '11.5px',
+                        fontWeight: 700,
+                        color: 'var(--text-primary)',
+                        outline: 'none',
+                        cursor: 'pointer',
+                        padding: 0,
+                      }}
+                    >
+                      <option value="gate">🚪 Main Campus Gate 1 (NH-48)</option>
+                      <option value="gate2">🚪 West Campus Gate 2</option>
+                      <option value="gps">📍 My Live GPS Location</option>
+                      <optgroup label="Campus Facilities">
+                        {uniqueBuildingList.map((b) => (
+                          <option key={b.id} value={b.id}>
+                            {b.shortName || b.name}
+                          </option>
+                        ))}
+                      </optgroup>
+                    </select>
                   </div>
                   <button
                     type="button"
@@ -3220,10 +3398,11 @@ export const CampusMap = () => {
         {/* SELECTED BUILDING DETAIL DRAWER (Right Slide-over on Desktop, Bottom Sheet on Mobile) */}
         {drawerOpen && currentBldg && (
           <aside
-            className="absolute z-35 bg-white backdrop-blur-md transition-all duration-300 ease-out flex flex-col overflow-hidden
-              md:top-4 md:bottom-4 md:right-4 md:w-[360px] md:max-w-[calc(100vw-32px)] md:rounded-2xl md:border md:border-[var(--border-subtle)] md:shadow-lg md:h-auto
+            className="absolute bg-white backdrop-blur-md transition-all duration-300 ease-out flex flex-col overflow-hidden
+              md:top-4 md:bottom-4 md:right-4 md:w-[360px] md:max-w-[calc(100vw-32px)] md:rounded-2xl md:border md:border-[var(--border-subtle)] md:shadow-lg md:h-auto md:max-h-none md:inset-x-auto md:left-auto
               inset-x-0 bottom-0 top-auto w-full max-w-full rounded-t-2xl border-t border-[var(--border-subtle)] shadow-2xl max-h-[82vh] h-[82vh]"
             style={{
+              zIndex: 500,
               animation: 'fadeIn 0.2s ease',
             }}
           >

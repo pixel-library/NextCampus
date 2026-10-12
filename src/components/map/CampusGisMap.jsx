@@ -1406,12 +1406,11 @@ export const CampusGisMap = ({
 
       // 1. Draw Visible Building Footprint Polygon
       if (bldg.polygon) {
-        const isKeyLandmark = ['parking', 'temple', 'cricket', 'gym', 'volleyball', 'agriculture'].includes(key);
         const poly = L.polygon(bldg.polygon, {
           color: isSelected ? '#10B981' : bldg.color,
-          weight: isSelected ? 4 : (isKeyLandmark ? 3 : 2),
+          weight: isSelected ? 4 : 2,
           fillColor: isSelected ? '#10B981' : bldg.color,
-          fillOpacity: isSelected ? 0.35 : (isKeyLandmark ? 0.22 : 0.15),
+          fillOpacity: isSelected ? 0.35 : 0.15,
           dashArray: isSelected ? '6, 4' : null,
         }).addTo(map);
 
@@ -1421,10 +1420,11 @@ export const CampusGisMap = ({
           if (onSelectBuilding) onSelectBuilding(key);
         });
 
-        poly.bindTooltip(`<b>${bldg.shortName}</b>`, {
-          permanent: isSelected || isKeyLandmark || key === 'eng',
+        // Hover tooltip showing building name
+        poly.bindTooltip(`<b>${bldg.shortName || bldg.name}</b>`, {
+          permanent: isSelected,
           direction: 'center',
-          className: `mewar-tooltip mewar-badge-${key}`,
+          className: 'mewar-tooltip',
         });
 
         poly.bindPopup(`
@@ -1445,92 +1445,94 @@ export const CampusGisMap = ({
         buildingPolygonsRef.current[key] = poly;
       }
 
-      // 2. Draw Marker Pin with Icon & Badge (NextCampus Institutional Palette)
-      // For key landmarks with dedicated prominent badge tooltips (parking, temple, cricket, gym, volleyball, agriculture),
-      // we only render the badge on the polygon to avoid circular marker icon collision over the center of the badge.
-      const isBadgeOnlyLandmark = ['parking', 'temple', 'cricket', 'gym', 'volleyball', 'agriculture'].includes(key);
-      if (!isBadgeOnlyLandmark) {
-        const markerHtml = `
+      // 2. Draw Marker Pin with Icon & Badge for ALL Locations (including temple, parking, gym, cricket, volleyball, agriculture)
+      const markerHtml = `
+        <div style="
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          cursor: pointer;
+          user-select: none;
+          transform: translate(-50%, -50%);
+        ">
           <div style="
-            position: relative;
+            width: ${isSelected ? '38px' : '32px'};
+            height: ${isSelected ? '38px' : '32px'};
+            border-radius: 50%;
+            background-color: ${isSelected ? '#142D28' : '#FFFFFF'};
+            color: ${isSelected ? '#FFFFFF' : bldg.color};
+            border: 2.5px solid ${isSelected ? '#168567' : bldg.color};
+            box-shadow: 0 4px 14px rgba(20,45,40,0.28);
             display: flex;
             align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            user-select: none;
-            transform: translate(-50%, -50%);
+            justify-content: center;
+            font-size: ${isSelected ? '18px' : '15px'};
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
           ">
+            ${bldg.icon}
+          </div>
+          ${
+            isSelected
+              ? `
             <div style="
-              width: ${isSelected ? '38px' : '32px'};
-              height: ${isSelected ? '38px' : '32px'};
-              border-radius: 50%;
-              background-color: ${isSelected ? '#142D28' : '#FFFFFF'};
-              color: ${isSelected ? '#FFFFFF' : bldg.color};
-              border: 2.5px solid ${isSelected ? '#168567' : bldg.color};
-              box-shadow: 0 4px 14px rgba(20,45,40,0.28);
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: ${isSelected ? '18px' : '15px'};
-              transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+              background: #142D28;
+              color: #FFFFFF;
+              font-size: 11px;
+              font-weight: 700;
+              font-family: 'Plus Jakarta Sans', sans-serif;
+              padding: 4px 10px;
+              border-radius: 9999px;
+              white-space: nowrap;
+              box-shadow: 0 4px 14px rgba(20,45,40,0.3);
+              border: 1.5px solid #168567;
             ">
-              ${bldg.icon}
+              ${bldg.shortName}
             </div>
-            ${
-              isSelected
-                ? `
-              <div style="
-                background: #142D28;
-                color: #FFFFFF;
-                font-size: 11px;
-                font-weight: 700;
-                font-family: 'Plus Jakarta Sans', sans-serif;
-                padding: 4px 10px;
-                border-radius: 9999px;
-                white-space: nowrap;
-                box-shadow: 0 4px 14px rgba(20,45,40,0.3);
-                border: 1.5px solid #168567;
-              ">
-                ${bldg.shortName}
-              </div>
-            `
-                : ''
-            }
+          `
+              : ''
+          }
+        </div>
+      `;
+
+      const markerIcon = L.divIcon({
+        html: markerHtml,
+        className: 'mewar-gis-marker',
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+      });
+
+      const marker = L.marker([bldg.lat, bldg.lng], { icon: markerIcon }).addTo(map);
+
+      // Hover tooltip on the circular marker symbol
+      marker.bindTooltip(`<b>${bldg.shortName || bldg.name}</b>`, {
+        direction: 'top',
+        offset: [0, -18],
+        className: 'mewar-tooltip',
+      });
+
+      marker.bindPopup(`
+        <div style="padding: 10px; font-family: Inter, sans-serif; min-width: 220px;">
+          <div style="font-weight: 800; font-size: 13.5px; color: #142D28; margin-bottom: 3px; font-family: 'Plus Jakarta Sans', sans-serif;">
+            ${bldg.name}
           </div>
-        `;
-
-        const markerIcon = L.divIcon({
-          html: markerHtml,
-          className: 'mewar-gis-marker',
-          iconSize: [36, 36],
-          iconAnchor: [18, 18],
-        });
-
-        const marker = L.marker([bldg.lat, bldg.lng], { icon: markerIcon }).addTo(map);
-
-        marker.bindPopup(`
-          <div style="padding: 10px; font-family: Inter, sans-serif; min-width: 220px;">
-            <div style="font-weight: 800; font-size: 13.5px; color: #142D28; margin-bottom: 3px; font-family: 'Plus Jakarta Sans', sans-serif;">
-              ${bldg.name}
-            </div>
-            <div style="font-size: 11px; color: #65736B; margin-bottom: 8px; line-height: 1.45;">
-              ${bldg.description}
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #E4EAE5; padding-top: 6px;">
-              <span style="font-size: 10px; color: #168567; font-weight: 700;">● ${bldg.dept}</span>
-              <span style="font-size: 10px; font-weight: 600; color: #87968D;">${bldg.elevation}</span>
-            </div>
+          <div style="font-size: 11px; color: #65736B; margin-bottom: 8px; line-height: 1.45;">
+            ${bldg.description}
           </div>
-        `);
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #E4EAE5; padding-top: 6px;">
+            <span style="font-size: 10px; color: #168567; font-weight: 700;">● ${bldg.dept}</span>
+            <span style="font-size: 10px; font-weight: 600; color: #87968D;">${bldg.elevation}</span>
+          </div>
+        </div>
+      `);
 
-        marker.on('click', (ev) => {
-          L.DomEvent.stopPropagation(ev);
-          if (onClearCustomDestination) onClearCustomDestination();
-          if (onSelectBuilding) onSelectBuilding(key);
-        });
+      marker.on('click', (ev) => {
+        L.DomEvent.stopPropagation(ev);
+        if (onClearCustomDestination) onClearCustomDestination();
+        if (onSelectBuilding) onSelectBuilding(key);
+      });
 
-        buildingMarkersRef.current[key] = marker;
-      }
+      buildingMarkersRef.current[key] = marker;
     });
   }, [selectedBuildingKey, customDestination, onSelectBuilding, onClearCustomDestination]);
 
@@ -1826,7 +1828,8 @@ export const CampusGisMap = ({
       {/* FLOATING CAMPUS DESTINATION CARD ON MAP (Shown when right drawer is closed) */}
       {activeDestination && !isDrawerOpen && (
         <div
-          className="campus-map-floating-card absolute bottom-3 inset-x-3 md:bottom-auto md:top-16 md:right-4 md:inset-x-auto z-32 flex flex-col gap-2.5"
+          className="campus-map-floating-card absolute bottom-3 inset-x-3 md:bottom-auto md:top-16 md:right-4 md:inset-x-auto flex flex-col gap-2.5"
+          style={{ zIndex: 450 }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -1955,7 +1958,8 @@ export const CampusGisMap = ({
       {/* FLOATING MAP LEGEND (COLLAPSIBLE) */}
       {showLegend && (
         <div
-          className="absolute bottom-16 right-3 md:bottom-20 md:right-16 z-35 bg-white/98 backdrop-blur-md rounded-xl border border-[var(--border-subtle)] shadow-xl p-3.5 sm:p-4 min-w-[210px] max-w-[calc(100vw-24px)] flex flex-col gap-2.5 animate-fadeIn"
+          className="absolute bottom-16 right-3 md:bottom-20 md:right-16 bg-white/98 backdrop-blur-md rounded-xl border border-[var(--border-subtle)] shadow-xl p-3.5 sm:p-4 min-w-[210px] max-w-[calc(100vw-24px)] flex flex-col gap-2.5 animate-fadeIn"
+          style={{ zIndex: 450 }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
@@ -1999,7 +2003,8 @@ export const CampusGisMap = ({
 
       {/* FLOATING BOTTOM-RIGHT QUICK ACTIONS (LOCATE, FIT ROUTE, RECENTER & LEGEND) */}
       <div
-        className="absolute bottom-3 right-3 md:bottom-6 md:right-4 z-30 flex flex-col gap-2"
+        className="absolute bottom-3 right-3 md:bottom-6 md:right-4 flex flex-col gap-2"
+        style={{ zIndex: 450 }}
       >
         <button
           type="button"
