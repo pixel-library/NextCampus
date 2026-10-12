@@ -192,10 +192,10 @@ export function StudentDashboard() {
           ========================================================================= */}
       <section className="w-full">
         {/* HERO LIVE CLASS SPOTLIGHT */}
-        <div className="w-full bg-white rounded-2xl border border-[#E4EAE5] shadow-xs p-6 flex flex-col justify-between relative overflow-hidden">
+        <div className="w-full bg-white rounded-2xl border border-[#E4EAE5] shadow-xs p-4 sm:p-6 flex flex-col justify-between relative overflow-hidden">
           <div>
-            <div className="flex items-center justify-between gap-3 mb-3">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2.5 mb-3">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="px-2.5 py-1 rounded-full bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] font-mono text-xs font-bold flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#168567] animate-ping" />
                   STARTS IN {formattedCountdown}
@@ -209,7 +209,7 @@ export function StudentDashboard() {
               </Badge>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-black text-[#202A27] tracking-tight">
+            <h2 className="text-lg sm:text-2xl font-black text-[#202A27] tracking-tight">
               CS-301: Distributed Systems &amp; Cloud Infrastructure
             </h2>
 
@@ -218,9 +218,9 @@ export function StudentDashboard() {
                 <span className="text-[#87968D]">Instructor:</span>
                 <span className="text-[#202A27] font-semibold">Prof. Ananya Roy</span>
               </div>
-              <span className="text-[#D0DAD2]">•</span>
+              <span className="text-[#D0DAD2] hidden sm:inline">•</span>
               <div className="flex items-center gap-1.5 text-[#168567] font-semibold">
-                <MapPin size={14} />
+                <MapPin size={14} className="shrink-0" />
                 <span>Faculty of Engineering (ENG-02), Room B-204</span>
               </div>
             </div>
@@ -259,9 +259,9 @@ export function StudentDashboard() {
             </div>
           </div>
 
-          <div className="pt-5 mt-5 border-t border-[#E4EAE5] flex flex-wrap items-center justify-between gap-3">
+          <div className="pt-5 mt-5 border-t border-[#E4EAE5] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <span className="text-xs text-[#65736B] flex items-center gap-1.5">
-              <CheckCircle2 size={15} className="text-[#168567]" />
+              <CheckCircle2 size={15} className="text-[#168567] shrink-0" />
               <span>Dual 4K Laser Projection Ready • Wi-Fi 7 Core AP Online</span>
             </span>
 
@@ -269,6 +269,7 @@ export function StudentDashboard() {
               variant="primary"
               size="sm"
               icon={Navigation}
+              className="w-full sm:w-auto justify-center"
               onClick={() => navigate('/campus-map?bldg=eng&room=B-204')}
             >
               Navigate to Room B-204 (1.2 min walk)
@@ -280,64 +281,64 @@ export function StudentDashboard() {
       {/* =========================================================================
           3. RESTRAINED QUICK ACTIONS LAUNCHER BAR
           ========================================================================= */}
-      <section className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+      <section className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5">
         <div
           onClick={() => navigate('/campus-map')}
-          className="p-4 rounded-2xl bg-white border border-[#E4EAE5] hover:border-[#CBE2D4] hover:shadow-sm transition-all flex items-center gap-3.5 cursor-pointer group"
+          className="p-3 sm:p-4 rounded-2xl bg-white border border-[#E4EAE5] hover:border-[#CBE2D4] hover:shadow-sm transition-all flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group"
         >
-          <div className="w-11 h-11 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
-            <Compass size={20} />
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
+            <Compass size={19} />
           </div>
-          <div>
-            <div className="text-xs sm:text-sm font-bold text-[#202A27] leading-tight group-hover:text-[#168567] transition-colors">
+          <div className="min-w-0">
+            <div className="text-xs sm:text-sm font-bold text-[#202A27] leading-tight group-hover:text-[#168567] transition-colors truncate">
               Campus Map
             </div>
-            <div className="text-[11px] text-[#65736B] mt-0.5">3D Vector CAD &amp; GIS</div>
+            <div className="text-[10px] sm:text-[11px] text-[#65736B] mt-0.5 truncate">3D Vector &amp; GIS</div>
           </div>
         </div>
 
         <div
           onClick={() => navigate('/smartroom')}
-          className="p-4 rounded-2xl bg-white border border-[#E4EAE5] hover:border-[#CBE2D4] hover:shadow-sm transition-all flex items-center gap-3.5 cursor-pointer group"
+          className="p-3 sm:p-4 rounded-2xl bg-white border border-[#E4EAE5] hover:border-[#CBE2D4] hover:shadow-sm transition-all flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group"
         >
-          <div className="w-11 h-11 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
-            <DoorOpen size={20} />
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
+            <DoorOpen size={19} />
           </div>
-          <div>
-            <div className="text-xs sm:text-sm font-bold text-[#202A27] leading-tight group-hover:text-[#168567] transition-colors">
+          <div className="min-w-0">
+            <div className="text-xs sm:text-sm font-bold text-[#202A27] leading-tight group-hover:text-[#168567] transition-colors truncate">
               SmartRooms
             </div>
-            <div className="text-[11px] text-[#65736B] mt-0.5">Study Pods &amp; Labs</div>
+            <div className="text-[10px] sm:text-[11px] text-[#65736B] mt-0.5 truncate">Study Pods &amp; Labs</div>
           </div>
         </div>
 
         <div
           onClick={() => navigate('/directory')}
-          className="p-4 rounded-2xl bg-white border border-[#E4EAE5] hover:border-[#C9DFEE] hover:shadow-sm transition-all flex items-center gap-3.5 cursor-pointer group"
+          className="p-3 sm:p-4 rounded-2xl bg-white border border-[#E4EAE5] hover:border-[#C9DFEE] hover:shadow-sm transition-all flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group"
         >
-          <div className="w-11 h-11 rounded-xl bg-[#EEF5FA] text-[#3478B8] border border-[#C9DFEE] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
-            <Users size={20} />
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#EEF5FA] text-[#3478B8] border border-[#C9DFEE] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
+            <Users size={19} />
           </div>
-          <div>
-            <div className="text-xs sm:text-sm font-bold text-[#202A27] leading-tight group-hover:text-[#3478B8] transition-colors">
+          <div className="min-w-0">
+            <div className="text-xs sm:text-sm font-bold text-[#202A27] leading-tight group-hover:text-[#3478B8] transition-colors truncate">
               Directory
             </div>
-            <div className="text-[11px] text-[#65736B] mt-0.5">Faculty &amp; Schedules</div>
+            <div className="text-[10px] sm:text-[11px] text-[#65736B] mt-0.5 truncate">Faculty &amp; Hours</div>
           </div>
         </div>
 
         <div
           onClick={() => navigate('/complaints')}
-          className="p-4 rounded-2xl bg-white border border-[#E4EAE5] hover:border-[#CBE2D4] hover:shadow-sm transition-all flex items-center gap-3.5 cursor-pointer group"
+          className="p-3 sm:p-4 rounded-2xl bg-white border border-[#E4EAE5] hover:border-[#CBE2D4] hover:shadow-sm transition-all flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group"
         >
-          <div className="w-11 h-11 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
-            <LifeBuoy size={20} />
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
+            <LifeBuoy size={19} />
           </div>
-          <div>
-            <div className="text-xs sm:text-sm font-bold text-[#202A27] leading-tight group-hover:text-[#168567] transition-colors">
+          <div className="min-w-0">
+            <div className="text-xs sm:text-sm font-bold text-[#202A27] leading-tight group-hover:text-[#168567] transition-colors truncate">
               Campus Care
             </div>
-            <div className="text-[11px] text-[#65736B] mt-0.5">&lt;45 min CAFM Fix</div>
+            <div className="text-[10px] sm:text-[11px] text-[#65736B] mt-0.5 truncate">&lt;45m CAFM Fix</div>
           </div>
         </div>
       </section>
@@ -349,7 +350,7 @@ export function StudentDashboard() {
         {/* LEFT COLUMN: AGENDA & MAP (8 COLS) */}
         <div className="lg:col-span-8 flex flex-col gap-6">
           {/* A. TODAY'S SCHEDULE TIMELINE */}
-          <section className="bg-white rounded-2xl border border-[#E4EAE5] p-5 sm:p-6 shadow-xs">
+          <section className="bg-white rounded-2xl border border-[#E4EAE5] p-4 sm:p-6 shadow-xs">
             <div className="flex items-center justify-between pb-4 border-b border-[#E4EAE5] mb-4">
               <div className="flex items-center gap-2">
                 <Clock size={16} className="text-[#168567]" />
@@ -381,6 +382,7 @@ export function StudentDashboard() {
                 <Button
                   variant="primary"
                   size="sm"
+                  className="w-full sm:w-auto shrink-0 justify-center"
                   onClick={() => navigate('/campus-map?bldg=eng&room=B-204')}
                 >
                   Map Route
@@ -405,6 +407,7 @@ export function StudentDashboard() {
                 <Button
                   variant="secondary"
                   size="sm"
+                  className="w-full sm:w-auto shrink-0 justify-center"
                   onClick={() => navigate('/campus-map?bldg=eng')}
                 >
                   View Location
@@ -429,6 +432,7 @@ export function StudentDashboard() {
                 <Button
                   variant="secondary"
                   size="sm"
+                  className="w-full sm:w-auto shrink-0 justify-center"
                   onClick={() => navigate('/campus-map?bldg=eng')}
                 >
                   View Location
@@ -481,6 +485,7 @@ export function StudentDashboard() {
                   variant="primary"
                   size="sm"
                   icon={Compass}
+                  className="w-full sm:w-auto shrink-0 justify-center"
                   onClick={() => navigate('/campus-map')}
                 >
                   Open 3D Vector Map
@@ -649,7 +654,7 @@ export function StudentDashboard() {
           }}
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#142D28]/40 backdrop-blur-sm animate-in fade-in duration-200"
         >
-          <div className="relative w-full max-w-sm rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-6 flex flex-col gap-5 text-[#202A27]">
+          <div className="relative w-full max-w-sm rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-4 sm:p-6 flex flex-col gap-5 text-[#202A27] max-h-[90dvh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-[#E4EAE5]">
               <div className="flex items-center gap-2">

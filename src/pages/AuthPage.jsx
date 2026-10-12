@@ -230,13 +230,13 @@ export const AuthPage = () => {
         {/* LEFT PANEL: Institutional Showcase (~42% on desktop)      */}
         {/* ======================================================== */}
         <div
+          className="p-5 sm:p-8 md:p-12"
           style={{
             flex: '1 1 420px',
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            padding: '48px',
             overflow: 'hidden',
             backgroundColor: '#F8FAFC',
             borderRight: '1px solid var(--border-subtle)',
@@ -530,16 +530,17 @@ export const AuthPage = () => {
         {/* RIGHT PANEL: Authentication Forms (~58% on desktop)      */}
         {/* ======================================================== */}
         <div
+          className="py-6 px-3 sm:py-9 sm:px-6"
           style={{
             flex: '1 1 540px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '36px 24px',
             backgroundColor: 'var(--bg-canvas)',
           }}
         >
           <div
+            className="p-5 sm:p-8 md:p-9"
             style={{
               width: '100%',
               maxWidth: '560px',
@@ -547,7 +548,6 @@ export const AuthPage = () => {
               flexDirection: 'column',
               backgroundColor: 'var(--bg-surface)',
               borderRadius: '20px',
-              padding: '36px',
               border: '1px solid var(--border-subtle)',
               boxShadow: 'var(--shadow-lg)',
             }}
@@ -1399,12 +1399,14 @@ export const AuthPage = () => {
           }}
         >
           <div
+            className="p-4 sm:p-7"
             style={{
               backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
-              padding: '28px',
               width: '100%',
               maxWidth: '480px',
+              maxHeight: '90dvh',
+              overflowY: 'auto',
               border: '1px solid var(--border-subtle)',
               boxShadow: 'var(--shadow-xl)',
               display: 'flex',

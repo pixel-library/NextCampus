@@ -752,14 +752,14 @@ export function CampusDirectory() {
                           <div className="flex items-center gap-3 mt-1 text-slate-500 text-[11px] font-mono flex-wrap">
                             <button
                               onClick={() => copyEmail(fac.email)}
-                              className="flex items-center gap-1 hover:text-slate-900 transition-colors cursor-pointer"
+                              className="flex items-center gap-1 hover:text-slate-900 transition-colors cursor-pointer text-left min-w-0"
                               title="Click to copy email"
                             >
-                              <Mail className="w-3.5 h-3.5 text-slate-400" />
-                              <span>{copiedEmail === fac.email ? 'Copied! ✓' : fac.email}</span>
+                              <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span className="break-all">{copiedEmail === fac.email ? 'Copied! ✓' : fac.email}</span>
                             </button>
                             <span>•</span>
-                            <span className="flex items-center gap-1">
+                            <span className="flex items-center gap-1 shrink-0">
                               <Phone className="w-3.5 h-3.5 text-slate-400" />
                               <span>{fac.phone}</span>
                             </span>
@@ -785,11 +785,12 @@ export function CampusDirectory() {
                     </div>
 
                     {/* Actions: Consultation Booking & CAD Navigation */}
-                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
                       <Button
                         variant="secondary"
                         size="sm"
                         icon={Calendar}
+                        className="w-full sm:w-auto justify-center"
                         onClick={() => {
                           setBookingModalFaculty(fac);
                           setSelectedSlot(fac.slots[0]);
@@ -803,6 +804,7 @@ export function CampusDirectory() {
                         variant="primary"
                         size="sm"
                         icon={Navigation}
+                        className="w-full sm:w-auto justify-center"
                         onClick={() =>
                           navigate(
                             `/campus-map?bldg=${fac.bldgId}&room=${encodeURIComponent(fac.room.split(' ')[1] || 'B-204')}`
@@ -1035,7 +1037,7 @@ export function CampusDirectory() {
           ========================================================================= */}
       {bookingModalFaculty && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl p-6 flex flex-col gap-4 text-slate-900">
+          <div className="relative w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl p-4 sm:p-6 flex flex-col gap-4 text-slate-900 max-h-[90dvh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-[#168567]" />

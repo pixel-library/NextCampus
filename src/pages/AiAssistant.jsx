@@ -323,10 +323,10 @@ export function AiAssistant() {
   })).filter((grp) => grp.items.length > 0);
 
   return (
-    <div className="flex flex-col gap-3.5 w-full max-w-7xl mx-auto text-slate-900 h-[calc(100vh-5.5rem)] pb-3 font-sans">
+    <div className="flex flex-col gap-2 sm:gap-3.5 w-full max-w-7xl mx-auto text-slate-900 h-full max-h-full pb-16 md:pb-0 font-sans overflow-hidden">
       {/* Top Copilot Header Ribbon */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 rounded-2xl bg-white border border-slate-200 shadow-sm shrink-0">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 px-3 sm:px-5 py-2 sm:py-3 rounded-2xl bg-white border border-slate-200 shadow-sm shrink-0">
+        <div className="flex items-center gap-2.5 sm:gap-3">
           <div className="w-9 h-9 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#168567]/20 flex items-center justify-center font-bold shadow-xs">
             <Bot size={18} />
           </div>

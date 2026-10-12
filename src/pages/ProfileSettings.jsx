@@ -376,7 +376,7 @@ export const ProfileSettings = () => {
       </section>
 
       {/* Student Identity Hero Card */}
-      <section className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <section className="p-4 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4 flex-wrap">
           <div className="relative">
             <div className="w-20 h-20 rounded-2xl bg-[#EAF5EF] text-[#168567] border-2 border-[#168567]/20 flex items-center justify-center font-black text-2xl shadow-xs">

@@ -41,6 +41,17 @@ export const AppLayout = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Prevent background scrolling while mobile drawer is open
+  useEffect(() => {
+    if (mobileSidebarOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [mobileSidebarOpen]);
+
   // Close mobile drawer on Escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -82,6 +93,7 @@ export const AppLayout = () => {
 
   // Determine if active route requires edge-to-edge full-bleed viewport
   const isMapRoute = location.pathname.startsWith('/campus-map');
+  const isAiRoute = location.pathname.startsWith('/ai-assistant');
 
   return (
     <div className="flex min-h-screen bg-[#F6F8F6] font-sans text-[#202A27] antialiased selection:bg-[#EAF5EF] selection:text-[#142D28]">
@@ -106,7 +118,7 @@ export const AppLayout = () => {
             onClick={() => setMobileSidebarOpen(false)}
             aria-label="Close navigation overlay"
           />
-          <div className="relative z-10 w-[260px] h-full shadow-2xl animate-in slide-in-from-left duration-200">
+          <div className="relative z-10 w-[270px] max-w-[85vw] h-full shadow-2xl animate-in slide-in-from-left duration-200">
             <Sidebar
               isCollapsed={false}
               onClose={() => setMobileSidebarOpen(false)}
@@ -116,7 +128,7 @@ export const AppLayout = () => {
       )}
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0">
+      <div className="flex-1 flex flex-col min-w-0 pb-[calc(4rem+env(safe-area-inset-bottom,0px))] md:pb-0">
         <Navbar
           onToggleSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
           isSidebarCollapsed={isSidebarCollapsed}
@@ -126,8 +138,10 @@ export const AppLayout = () => {
         <main
           className={
             isMapRoute
-              ? 'flex-1 p-0 w-full overflow-hidden h-[calc(100vh-4rem-4rem)] md:h-[calc(100vh-4rem)]'
-              : 'flex-1 p-4 sm:p-6 lg:p-8 w-full'
+              ? 'flex-1 p-0 w-full overflow-hidden h-[calc(100dvh-4rem-4rem)] md:h-[calc(100vh-4rem)]'
+              : isAiRoute
+              ? 'flex-1 p-2 sm:p-4 lg:p-8 w-full'
+              : 'flex-1 p-3.5 sm:p-6 lg:p-8 w-full'
           }
         >
           <Outlet />

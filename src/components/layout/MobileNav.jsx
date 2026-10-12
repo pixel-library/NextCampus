@@ -37,7 +37,7 @@ export const MobileNav = ({ onOpenMore }) => {
     <nav
       role="navigation"
       aria-label="Mobile Bottom Navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md border-t border-[#E4EAE5] flex items-center justify-around z-40 px-1 shadow-[0_-2px_8px_rgba(20,45,40,0.03)]"
+      className="md:hidden fixed bottom-0 left-0 right-0 h-[calc(4rem+env(safe-area-inset-bottom,0px))] pb-[env(safe-area-inset-bottom,0px)] bg-white/95 backdrop-blur-md border-t border-[#E4EAE5] flex items-center justify-around z-40 px-1 shadow-[0_-2px_8px_rgba(20,45,40,0.03)]"
     >
       {items.map((item, idx) => {
         const Icon = item.icon;

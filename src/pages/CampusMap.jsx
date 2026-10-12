@@ -1232,6 +1232,30 @@ export const CampusMap = () => {
   const [adminToast, setAdminToast] = useState('');
   const [isSavingGis, setIsSavingGis] = useState(false);
 
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  );
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleOpenNavPanel = () => {
+    if (windowWidth < 1024) {
+      setDrawerOpen(false);
+    }
+    setIsNavPanelOpen(true);
+  };
+
+  const handleOpenDrawer = () => {
+    if (windowWidth < 1024) {
+      setIsNavPanelOpen(false);
+    }
+    setDrawerOpen(true);
+  };
+
   // Edit building form state
   const [editFormData, setEditFormData] = useState({
     name: '',
@@ -1293,10 +1317,7 @@ export const CampusMap = () => {
       }
     }
     if (openDetails) {
-      setDrawerOpen(true);
-      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
-        setIsNavPanelOpen(false);
-      }
+      handleOpenDrawer();
     }
     setSearchParams({ bldg: id });
   };
@@ -1305,10 +1326,7 @@ export const CampusMap = () => {
     handleSelectBuilding(id, false);
     setCustomDestination(null);
     setPanelMode('directions');
-    setIsNavPanelOpen(true);
-    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
-      setDrawerOpen(false);
-    }
+    handleOpenNavPanel();
     triggerToast(`Calculating route to ${buildings[id]?.shortName || buildings[id]?.name}...`);
   };
 
@@ -1676,7 +1694,7 @@ export const CampusMap = () => {
                 type="button"
                 onClick={() => {
                   setActiveTab(tab.id);
-                  if (!isNavPanelOpen) setIsNavPanelOpen(true);
+                  if (!isNavPanelOpen) handleOpenNavPanel();
                   setPanelMode('directory');
                 }}
                 style={{
@@ -1727,7 +1745,7 @@ export const CampusMap = () => {
             }}
           >
             <Compass size={14} />
-            <span>Interactive Campus GIS</span>
+            <span><span className="hidden sm:inline">Interactive Campus </span>GIS</span>
           </button>
           <button
             type="button"
@@ -1748,7 +1766,7 @@ export const CampusMap = () => {
             }}
           >
             <Layers size={14} />
-            <span>Indoor CAD Blueprint</span>
+            <span><span className="hidden sm:inline">Indoor CAD </span>Blueprint</span>
           </button>
         </div>
 
@@ -1810,7 +1828,7 @@ export const CampusMap = () => {
         {!isNavPanelOpen && (
           <button
             type="button"
-            onClick={() => setIsNavPanelOpen(true)}
+            onClick={handleOpenNavPanel}
             title="Open Campus Directory & Routes"
             style={{
               position: 'absolute',
@@ -2623,7 +2641,7 @@ export const CampusMap = () => {
               onNavigationUpdate={setNavigationStats}
               isDrawerOpen={drawerOpen}
               isNavPanelOpen={isNavPanelOpen}
-              onOpenDetails={() => setDrawerOpen(true)}
+              onOpenDetails={handleOpenDrawer}
             />
           </div>
         ) : (
@@ -2643,8 +2661,8 @@ export const CampusMap = () => {
               style={{
                 position: 'absolute',
                 top: '16px',
-                left: isNavPanelOpen ? '420px' : '16px',
-                right: drawerOpen ? '388px' : '16px',
+                left: windowWidth >= 1024 ? (isNavPanelOpen ? '420px' : '16px') : '12px',
+                right: windowWidth >= 1024 ? (drawerOpen ? '388px' : '16px') : '12px',
                 zIndex: 30,
                 display: 'flex',
                 alignItems: 'center',
@@ -2930,7 +2948,7 @@ export const CampusMap = () => {
                         key={room.id}
                         onClick={() => {
                           setSelectedRoomId(room.id);
-                          setDrawerOpen(true);
+                          handleOpenDrawer();
                           triggerToast(`Selected ${room.code}: ${room.name}`);
                         }}
                         onMouseEnter={() => setHoveredRoom(room.id)}

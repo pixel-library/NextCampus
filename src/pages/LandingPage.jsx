@@ -82,18 +82,7 @@ export const LandingPage = () => {
     <div style={{ width: '100%', minHeight: '100vh', backgroundColor: 'var(--bg-canvas)', color: 'var(--text-secondary)' }}>
       {/* 1. TOP UTILITY STATUS BAR */}
       <div
-        style={{
-          backgroundColor: '#0F172A',
-          color: '#94A3B8',
-          fontSize: '11.5px',
-          padding: '7px 32px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          zIndex: 110,
-          position: 'relative',
-        }}
+        className="hidden sm:flex items-center justify-between py-1.5 px-4 md:px-8 text-[11.5px] bg-[#0F172A] text-[#94A3B8] border-b border-white/10 z-50 relative"
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#E2E8F0', fontWeight: 600 }}>
@@ -123,27 +112,14 @@ export const LandingPage = () => {
 
       {/* 2. STICKY HEADER NAVIGATION */}
       <header
-        style={{
-          width: '100%',
-          height: '72px',
-          backgroundColor: '#FFFFFF',
-          borderBottom: '1px solid var(--border-subtle)',
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 32px',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
-        }}
+        className="w-full h-[72px] bg-white border-b border-[#E4EAE5] sticky top-0 z-50 flex items-center justify-between px-4 md:px-8 shadow-xs"
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <Logo size="md" showText={true} />
           </Link>
 
-          <nav style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+          <nav className="hidden md:flex items-center gap-6">
             <Link
               to="/campus-map"
               style={{

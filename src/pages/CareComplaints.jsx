@@ -665,7 +665,7 @@ export function CareComplaints() {
           </div>
 
           {/* Dynamic, Verified Metrics Strip */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
             <div className="px-3 py-2 rounded-xl bg-white border border-slate-200 shadow-xs flex flex-col min-w-[90px]">
               <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold">Total Logged</span>
               <span className="text-lg font-black text-slate-900">{verifiedMetrics.total}</span>
@@ -743,7 +743,7 @@ export function CareComplaints() {
       {/* =========================================================================
           VIEW SWITCHER TABS (TRACKER vs NEW TICKET)
           ========================================================================= */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-3 mb-6">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 border-b border-slate-200 pb-3 mb-6">
         <button
           onClick={() => setActiveViewMode('tracker')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${

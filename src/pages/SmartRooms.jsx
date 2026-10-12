@@ -718,7 +718,7 @@ export function SmartRooms() {
           </div>
 
           {/* Compact Verified Metrics Grid */}
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2.5 w-full sm:w-auto">
             <div className="px-3.5 py-2 rounded-xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col min-w-[95px]">
               <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">Monitored</span>
               <span className="text-lg font-bold text-[var(--text-primary)] font-heading">{summaryMetrics.totalRooms} Spaces</span>
@@ -903,13 +903,13 @@ export function SmartRooms() {
             {/* CAD Viewer Top Overlay Navigation */}
             <div className="absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 z-20 flex flex-wrap items-center justify-between gap-1.5 sm:gap-2 pointer-events-none">
               {/* Active Route Wayfinding Badge */}
-              <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/95 border border-[#E4EAE5] shadow-md backdrop-blur-md text-[11px] sm:text-xs text-[var(--text-primary)]">
+              <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-xl bg-white/95 border border-[#E4EAE5] shadow-md backdrop-blur-md text-[10px] sm:text-xs text-[var(--text-primary)]">
                 <span className="w-2 h-2 rounded-full bg-[var(--brand-primary)] animate-ping"></span>
-                <span className="text-[var(--text-muted)] font-medium">Vector Path:</span>
-                <span className="font-semibold text-[var(--text-primary)] truncate max-w-[120px] sm:max-w-none">Skybridge Arrival</span>
+                <span className="hidden sm:inline text-[var(--text-muted)] font-medium">Vector Path:</span>
+                <span className="font-semibold text-[var(--text-primary)] truncate max-w-[100px] sm:max-w-none">Skybridge Arrival</span>
                 <ArrowRight className="w-3 h-3 text-[var(--text-muted)] shrink-0" />
                 <span className="font-bold text-[var(--brand-primary)]">Room {selectedRoom.roomNumber}</span>
-                <span className="text-[var(--text-secondary)] font-mono text-[10px] sm:text-[11px]">({selectedRoom.routeDistance})</span>
+                <span className="text-[var(--text-secondary)] font-mono text-[9px] sm:text-[11px]">({selectedRoom.routeDistance})</span>
               </div>
 
               {/* Viewport Scale & Route Manipulation Tools */}
@@ -956,7 +956,7 @@ export function SmartRooms() {
             </div>
 
             {/* SVG Vector 2D CAD Canvas */}
-            <div className="w-full h-[380px] sm:h-[480px] xl:h-[580px] bg-[#0A0F1D] relative overflow-hidden select-none flex items-center justify-center">
+            <div className="w-full h-[340px] sm:h-[480px] xl:h-[580px] bg-[#0A0F1D] relative overflow-hidden select-none flex items-center justify-center">
               {/* CAD Precision Blueprint Grid */}
               <svg className="absolute inset-0 w-full h-full opacity-20 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -1593,7 +1593,7 @@ export function SmartRooms() {
           }}
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
         >
-          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-6 flex flex-col gap-5 text-[var(--text-primary)] animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-4 sm:p-6 flex flex-col gap-5 text-[var(--text-primary)] max-h-[90dvh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="flex items-start justify-between">
               <div>
@@ -1811,7 +1811,7 @@ export function SmartRooms() {
           }}
           className="fixed inset-0 z-50 flex justify-end bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200"
         >
-          <div className="w-full max-w-md h-full bg-white border-l border-[#E4EAE5] p-6 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-300">
+          <div className="w-full max-w-md h-full bg-white border-l border-[#E4EAE5] p-4 sm:p-6 flex flex-col justify-between shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300">
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between pb-4 border-b border-[#E4EAE5]">
                 <div className="flex items-center gap-2">
