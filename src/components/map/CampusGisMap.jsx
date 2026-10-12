@@ -1771,62 +1771,27 @@ export const CampusGisMap = ({
 
       {/* FLOATING TOP-RIGHT LAYER SWITCHER */}
       <div
-        style={{
-          position: 'absolute',
-          top: '16px',
-          right: '16px',
-          zIndex: 30,
-          backgroundColor: 'rgba(255, 255, 255, 0.96)',
-          backdropFilter: 'blur(12px)',
-          borderRadius: '10px',
-          border: '1px solid var(--border-subtle)',
-          boxShadow: 'var(--shadow-md)',
-          padding: '4px',
-          display: 'flex',
-          gap: '4px',
-        }}
+        className="absolute top-2.5 right-2.5 md:top-4 md:right-4 z-30 bg-white/96 backdrop-blur-md rounded-xl border border-[var(--border-subtle)] shadow-md p-1 flex gap-1"
       >
         <button
           type="button"
           onClick={() => setMapLayerStyle('satellite')}
-          style={{
-            padding: '6px 12px',
-            borderRadius: '7px',
-            border: 'none',
-            fontSize: '11px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            backgroundColor: mapLayerStyle === 'satellite' ? 'var(--brand-primary)' : 'transparent',
-            color: mapLayerStyle === 'satellite' ? '#FFFFFF' : 'var(--text-secondary)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px',
-            transition: 'all 0.15s ease',
-          }}
+          className={`px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[11px] font-bold cursor-pointer flex items-center gap-1.5 transition-all ${
+            mapLayerStyle === 'satellite' ? 'bg-[var(--brand-primary)] text-white' : 'bg-transparent text-[var(--text-secondary)]'
+          }`}
         >
           <Layers size={13} />
-          <span>Satellite Aerial</span>
+          <span><span className="hidden sm:inline">Satellite </span>Aerial</span>
         </button>
         <button
           type="button"
           onClick={() => setMapLayerStyle('streets')}
-          style={{
-            padding: '6px 12px',
-            borderRadius: '7px',
-            border: 'none',
-            fontSize: '11px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            backgroundColor: mapLayerStyle === 'streets' ? 'var(--brand-primary)' : 'transparent',
-            color: mapLayerStyle === 'streets' ? '#FFFFFF' : 'var(--text-secondary)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px',
-            transition: 'all 0.15s ease',
-          }}
+          className={`px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[11px] font-bold cursor-pointer flex items-center gap-1.5 transition-all ${
+            mapLayerStyle === 'streets' ? 'bg-[var(--brand-primary)] text-white' : 'bg-transparent text-[var(--text-secondary)]'
+          }`}
         >
           <Building size={13} />
-          <span>Street Map</span>
+          <span><span className="hidden sm:inline">Street </span>Map</span>
         </button>
       </div>
 
@@ -1861,17 +1826,7 @@ export const CampusGisMap = ({
       {/* FLOATING CAMPUS DESTINATION CARD ON MAP (Shown when right drawer is closed) */}
       {activeDestination && !isDrawerOpen && (
         <div
-          className="campus-map-floating-card"
-          style={{
-            position: 'absolute',
-            top: '64px',
-            right: '16px',
-            maxWidth: 'calc(100vw - 32px)',
-            zIndex: 32,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-          }}
+          className="campus-map-floating-card absolute bottom-3 inset-x-3 md:bottom-auto md:top-16 md:right-4 md:inset-x-auto z-32 flex flex-col gap-2.5"
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -2000,24 +1955,7 @@ export const CampusGisMap = ({
       {/* FLOATING MAP LEGEND (COLLAPSIBLE) */}
       {showLegend && (
         <div
-          style={{
-            position: 'absolute',
-            bottom: '76px',
-            right: '68px',
-            maxWidth: 'calc(100vw - 32px)',
-            zIndex: 35,
-            backgroundColor: 'rgba(255, 255, 255, 0.98)',
-            backdropFilter: 'blur(16px)',
-            borderRadius: '12px',
-            border: '1px solid var(--border-subtle)',
-            boxShadow: 'var(--shadow-lg)',
-            padding: '14px 16px',
-            minWidth: '220px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            animation: 'fadeIn 0.2s ease',
-          }}
+          className="absolute bottom-16 right-3 md:bottom-20 md:right-16 z-35 bg-white/98 backdrop-blur-md rounded-xl border border-[var(--border-subtle)] shadow-xl p-3.5 sm:p-4 min-w-[210px] max-w-[calc(100vw-24px)] flex flex-col gap-2.5 animate-fadeIn"
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
@@ -2061,15 +1999,7 @@ export const CampusGisMap = ({
 
       {/* FLOATING BOTTOM-RIGHT QUICK ACTIONS (LOCATE, FIT ROUTE, RECENTER & LEGEND) */}
       <div
-        style={{
-          position: 'absolute',
-          bottom: '24px',
-          right: '16px',
-          zIndex: 30,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-        }}
+        className="absolute bottom-3 right-3 md:bottom-6 md:right-4 z-30 flex flex-col gap-2"
       >
         <button
           type="button"
@@ -2077,8 +2007,8 @@ export const CampusGisMap = ({
           title="Toggle Campus Legend"
           aria-label="Toggle Campus Legend"
           style={{
-            width: '42px',
-            height: '42px',
+            width: '40px',
+            height: '40px',
             borderRadius: '11px',
             backgroundColor: showLegend ? 'var(--brand-primary)' : 'rgba(255, 255, 255, 0.96)',
             color: showLegend ? '#FFFFFF' : 'var(--text-secondary)',
@@ -2101,8 +2031,8 @@ export const CampusGisMap = ({
             title="Center on My Location"
             aria-label="Center on My Location"
             style={{
-              width: '42px',
-              height: '42px',
+              width: '40px',
+              height: '40px',
               borderRadius: '11px',
               backgroundColor: isLiveGpsActive ? 'var(--brand-primary)' : 'rgba(255, 255, 255, 0.96)',
               color: isLiveGpsActive ? '#FFFFFF' : 'var(--brand-primary)',
@@ -2125,8 +2055,8 @@ export const CampusGisMap = ({
           title="Fit Route View"
           aria-label="Fit Route View"
           style={{
-            width: '42px',
-            height: '42px',
+            width: '40px',
+            height: '40px',
             borderRadius: '11px',
             backgroundColor: 'rgba(255, 255, 255, 0.96)',
             border: '1px solid var(--border-subtle)',
@@ -2148,8 +2078,8 @@ export const CampusGisMap = ({
           title="Recenter Mewar University"
           aria-label="Recenter Mewar University Campus View"
           style={{
-            width: '42px',
-            height: '42px',
+            width: '40px',
+            height: '40px',
             borderRadius: '11px',
             backgroundColor: 'rgba(255, 255, 255, 0.96)',
             border: '1px solid var(--border-subtle)',

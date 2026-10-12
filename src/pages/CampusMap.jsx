@@ -1645,48 +1645,259 @@ export const CampusMap = () => {
         </div>
       )}
 
-      {/* TOP UNIFIED SUB-HEADER TOOLBAR (NextCampus Institutional Palette) */}
+      {/* TOP UNIFIED SUB-HEADER TOOLBAR (Desktop view unchanged, Mobile streamlined) */}
       <header
-        className="min-h-[56px] h-auto py-2 px-3 sm:px-5 bg-white border-b border-[#E4EAE5] flex flex-wrap items-center justify-between gap-2.5 z-40 shadow-xs"
+        className="bg-white border-b border-[#E4EAE5] z-40 shadow-xs"
       >
-        {/* Left: Mewar University Campus Badge & Title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '8px',
-                backgroundColor: 'var(--brand-forest)',
-                color: '#FFFFFF',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 800,
-                fontSize: '13px',
-                fontFamily: 'var(--font-heading)',
-              }}
-            >
-              MU
+        {/* DESKTOP TOOLBAR (md and above: 100% identical) */}
+        <div className="hidden md:flex min-h-[56px] py-2 px-4 md:px-5 items-center justify-between gap-2.5">
+          {/* Left: Mewar University Campus Badge & Title */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '8px',
+                  backgroundColor: 'var(--brand-forest)',
+                  color: '#FFFFFF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 800,
+                  fontSize: '13px',
+                  fontFamily: 'var(--font-heading)',
+                }}
+              >
+                MU
+              </div>
+              <div>
+                <div style={{ fontSize: '13.5px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, fontFamily: 'var(--font-heading)' }}>
+                  Mewar University
+                </div>
+                <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
+                  Gangrar, Chittorgarh • 30-Acre Campus
+                </div>
+              </div>
             </div>
-            <div>
-              <div style={{ fontSize: '13.5px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, fontFamily: 'var(--font-heading)' }}>
-                Mewar University
-              </div>
-              <div className="hidden sm:block" style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
-                Gangrar, Chittorgarh • 30-Acre Campus
-              </div>
+
+            <div style={{ height: '20px', width: '1px', backgroundColor: 'var(--border-subtle)' }} />
+
+            {/* Quick Sub-Filter Tabs */}
+            <div className="flex items-center gap-1 overflow-x-auto" style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '3px', borderRadius: '8px' }}>
+              {[
+                { id: 'all', label: `All Facilities (${uniqueBuildingList.length})` },
+                { id: 'buildings', label: 'Academic Wings' },
+                { id: 'hostels', label: 'Hostels & Living' },
+                { id: 'amenities', label: 'Sports & Dining' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    if (!isNavPanelOpen) handleOpenNavPanel();
+                    setPanelMode('directory');
+                  }}
+                  style={{
+                    padding: '5px 11px',
+                    borderRadius: '6px',
+                    border: 'none',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    backgroundColor: activeTab === tab.id ? '#FFFFFF' : 'transparent',
+                    color: activeTab === tab.id ? 'var(--text-primary)' : 'var(--text-muted)',
+                    boxShadow: activeTab === tab.id ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className="hidden md:block" style={{ height: '20px', width: '1px', backgroundColor: 'var(--border-subtle)' }} />
+          {/* Center: View Engine Switcher */}
+          <div
+            style={{
+              display: 'flex',
+              backgroundColor: 'var(--bg-surface-subtle)',
+              padding: '3px',
+              borderRadius: '9px',
+              border: '1px solid var(--border-subtle)',
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setViewEngine('gis')}
+              style={{
+                padding: '6px 13px',
+                borderRadius: '7px',
+                border: 'none',
+                fontSize: '11.5px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                backgroundColor: viewEngine === 'gis' ? 'var(--brand-primary)' : 'transparent',
+                color: viewEngine === 'gis' ? '#FFFFFF' : 'var(--text-secondary)',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Compass size={14} />
+              <span>Interactive Campus GIS</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewEngine('blueprint')}
+              style={{
+                padding: '6px 13px',
+                borderRadius: '7px',
+                border: 'none',
+                fontSize: '11.5px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                backgroundColor: viewEngine === 'blueprint' ? 'var(--brand-primary)' : 'transparent',
+                color: viewEngine === 'blueprint' ? '#FFFFFF' : 'var(--text-secondary)',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Layers size={14} />
+              <span>Indoor CAD Blueprint</span>
+            </button>
+          </div>
 
-          {/* Quick Sub-Filter Tabs */}
-          <div className="flex items-center gap-1 overflow-x-auto max-w-[280px] sm:max-w-none" style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '3px', borderRadius: '8px' }}>
+          {/* Right: Refresh & Admin Controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              type="button"
+              onClick={handleResetLocation}
+              title="Reset Location to Main Gate"
+              style={{
+                padding: '6px 12px',
+                borderRadius: '8px',
+                border: '1px solid var(--border-subtle)',
+                backgroundColor: '#FFFFFF',
+                color: 'var(--text-secondary)',
+                fontSize: '11px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                boxShadow: 'var(--shadow-xs)',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <RefreshCw size={13} />
+              <span>Recenter</span>
+            </button>
+
+            {isAdmin && (
+              <button
+                onClick={() => setAdminMapMode(!adminMapMode)}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--brand-primary)',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  backgroundColor: adminMapMode ? 'var(--brand-primary)' : '#FFFFFF',
+                  color: adminMapMode ? '#FFFFFF' : 'var(--brand-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <ShieldCheck size={14} />
+                <span>{adminMapMode ? 'Admin Mode' : 'Admin Tools'}</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* MOBILE TOOLBAR (< md: Clean, Ergonomic 2-Row Design) */}
+        <div className="flex md:hidden flex-col px-3 py-2 gap-2">
+          {/* Row 1: Logo & Controls */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-[var(--brand-forest)] text-white flex items-center justify-center font-extrabold text-xs">
+                MU
+              </div>
+              <span className="text-xs font-extrabold text-[var(--text-primary)] leading-tight">
+                Campus Map
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              {/* Compact View Switcher */}
+              <div className="flex bg-[var(--bg-surface-subtle)] p-0.5 rounded-lg border border-[var(--border-subtle)]">
+                <button
+                  type="button"
+                  onClick={() => setViewEngine('gis')}
+                  className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 ${
+                    viewEngine === 'gis'
+                      ? 'bg-[var(--brand-primary)] text-white shadow-xs'
+                      : 'text-[var(--text-secondary)]'
+                  }`}
+                >
+                  <Compass size={12} />
+                  <span>GIS</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewEngine('blueprint')}
+                  className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 ${
+                    viewEngine === 'blueprint'
+                      ? 'bg-[var(--brand-primary)] text-white shadow-xs'
+                      : 'text-[var(--text-secondary)]'
+                  }`}
+                >
+                  <Layers size={12} />
+                  <span>CAD</span>
+                </button>
+              </div>
+
+              {/* Recenter Button */}
+              <button
+                type="button"
+                onClick={handleResetLocation}
+                title="Reset Location to Main Gate"
+                className="p-1.5 rounded-lg border border-[var(--border-subtle)] bg-white text-[var(--text-secondary)] hover:bg-slate-50"
+              >
+                <RefreshCw size={14} />
+              </button>
+
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => setAdminMapMode(!adminMapMode)}
+                  title="Toggle Admin Tools"
+                  className={`p-1.5 rounded-lg border text-xs font-bold ${
+                    adminMapMode
+                      ? 'bg-[var(--brand-primary)] text-white border-[var(--brand-primary)]'
+                      : 'bg-white text-[var(--brand-primary)] border-[var(--brand-primary)]'
+                  }`}
+                >
+                  <ShieldCheck size={14} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Row 2: Touch-friendly Quick Filter Chips */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
             {[
-              { id: 'all', label: `All Facilities (${uniqueBuildingList.length})` },
-              { id: 'buildings', label: 'Academic Wings' },
-              { id: 'hostels', label: 'Hostels & Living' },
+              { id: 'all', label: `All (${uniqueBuildingList.length})` },
+              { id: 'buildings', label: 'Academic' },
+              { id: 'hostels', label: 'Hostels' },
               { id: 'amenities', label: 'Sports & Dining' },
             ].map((tab) => (
               <button
@@ -1697,128 +1908,28 @@ export const CampusMap = () => {
                   if (!isNavPanelOpen) handleOpenNavPanel();
                   setPanelMode('directory');
                 }}
-                style={{
-                  padding: '5px 11px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  backgroundColor: activeTab === tab.id ? '#FFFFFF' : 'transparent',
-                  color: activeTab === tab.id ? 'var(--text-primary)' : 'var(--text-muted)',
-                  boxShadow: activeTab === tab.id ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
-                  transition: 'all 0.15s ease',
-                }}
+                className={`shrink-0 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-[var(--brand-forest)] text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
               >
                 {tab.label}
               </button>
             ))}
-          </div>
-        </div>
 
-        {/* Center: View Engine Switcher */}
-        <div
-          style={{
-            display: 'flex',
-            backgroundColor: 'var(--bg-surface-subtle)',
-            padding: '3px',
-            borderRadius: '9px',
-            border: '1px solid var(--border-subtle)',
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => setViewEngine('gis')}
-            style={{
-              padding: '6px 13px',
-              borderRadius: '7px',
-              border: 'none',
-              fontSize: '11.5px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              backgroundColor: viewEngine === 'gis' ? 'var(--brand-primary)' : 'transparent',
-              color: viewEngine === 'gis' ? '#FFFFFF' : 'var(--text-secondary)',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <Compass size={14} />
-            <span><span className="hidden sm:inline">Interactive Campus </span>GIS</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewEngine('blueprint')}
-            style={{
-              padding: '6px 13px',
-              borderRadius: '7px',
-              border: 'none',
-              fontSize: '11.5px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              backgroundColor: viewEngine === 'blueprint' ? 'var(--brand-primary)' : 'transparent',
-              color: viewEngine === 'blueprint' ? '#FFFFFF' : 'var(--text-secondary)',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <Layers size={14} />
-            <span><span className="hidden sm:inline">Indoor CAD </span>Blueprint</span>
-          </button>
-        </div>
-
-        {/* Right: Refresh & Admin Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {/* Refresh Action */}
-          <button
-            type="button"
-            onClick={handleResetLocation}
-            title="Reset Location to Main Gate"
-            style={{
-              padding: '6px 12px',
-              borderRadius: '8px',
-              border: '1px solid var(--border-subtle)',
-              backgroundColor: '#FFFFFF',
-              color: 'var(--text-secondary)',
-              fontSize: '11px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-              boxShadow: 'var(--shadow-xs)',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <RefreshCw size={13} />
-            <span>Recenter</span>
-          </button>
-
-          {isAdmin && (
             <button
-              onClick={() => setAdminMapMode(!adminMapMode)}
-              style={{
-                padding: '6px 12px',
-                borderRadius: '8px',
-                border: '1px solid var(--brand-primary)',
-                fontSize: '11px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                backgroundColor: adminMapMode ? 'var(--brand-primary)' : '#FFFFFF',
-                color: adminMapMode ? '#FFFFFF' : 'var(--brand-primary)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-                transition: 'all 0.15s ease',
+              type="button"
+              onClick={() => {
+                if (!isNavPanelOpen) handleOpenNavPanel();
+                setPanelMode('directions');
               }}
+              className="shrink-0 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] flex items-center gap-1"
             >
-              <ShieldCheck size={14} />
-              <span>{adminMapMode ? 'Admin Mode' : 'Admin Tools'}</span>
+              <Navigation size={11} />
+              <span>Directions</span>
             </button>
-          )}
+          </div>
         </div>
       </header>
 
@@ -1830,29 +1941,10 @@ export const CampusMap = () => {
             type="button"
             onClick={handleOpenNavPanel}
             title="Open Campus Directory & Routes"
-            style={{
-              position: 'absolute',
-              top: '16px',
-              left: '16px',
-              zIndex: 35,
-              backgroundColor: 'rgba(255, 255, 255, 0.98)',
-              backdropFilter: 'blur(16px)',
-              borderRadius: '9999px',
-              border: '1px solid var(--border-subtle)',
-              boxShadow: 'var(--shadow-md)',
-              padding: '8px 16px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              fontSize: '12px',
-              fontWeight: 700,
-              color: 'var(--text-primary)',
-              cursor: 'pointer',
-              animation: 'fadeIn 0.2s ease',
-            }}
+            className="absolute top-3 left-3 md:top-4 md:left-4 z-30 bg-white/98 backdrop-blur-md rounded-full border border-[var(--border-subtle)] shadow-md px-3.5 py-2 md:px-4 md:py-2 flex items-center gap-2 text-xs font-bold text-[var(--text-primary)] cursor-pointer hover:bg-white transition-all"
           >
             <Search size={14} style={{ color: 'var(--brand-primary)' }} />
-            <span>Campus Directory &amp; Routes</span>
+            <span><span className="hidden xs:inline">Campus </span>Directory &amp; Routes</span>
             <span
               style={{
                 fontSize: '10.5px',
@@ -1869,29 +1961,19 @@ export const CampusMap = () => {
           </button>
         )}
 
-        {/* LEFT COLLAPSIBLE CAMPUS DIRECTORY & NAVIGATION DRAWER */}
+        {/* LEFT COLLAPSIBLE CAMPUS DIRECTORY & NAVIGATION DRAWER (Slide-over on Desktop, Bottom Sheet on Mobile) */}
         <div
-          style={{
-            position: 'absolute',
-            top: '16px',
-            bottom: '16px',
-            left: isNavPanelOpen ? '16px' : '-430px',
-            width: '390px',
-            maxWidth: 'calc(100vw - 32px)',
-            zIndex: 25,
-            backgroundColor: 'rgba(255, 255, 255, 0.98)',
-            backdropFilter: 'blur(16px)',
-            borderRadius: '16px',
-            border: '1px solid var(--border-subtle)',
-            boxShadow: 'var(--shadow-lg)',
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-            transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
+          className={`absolute z-35 bg-white/98 backdrop-blur-md transition-all duration-300 ease-out flex flex-col overflow-hidden
+            md:top-4 md:bottom-4 md:w-[390px] md:max-w-[calc(100vw-32px)] md:rounded-2xl md:border md:border-[var(--border-subtle)] md:shadow-lg md:h-auto
+            inset-x-0 bottom-0 top-auto w-full max-w-full rounded-t-2xl border-t border-[var(--border-subtle)] shadow-2xl max-h-[80vh] h-[80vh]
+            ${isNavPanelOpen ? 'md:left-4 translate-y-0' : 'md:-left-[430px] translate-y-full md:translate-y-0 pointer-events-none md:pointer-events-auto'}
+          `}
         >
+          {/* Mobile Drag Handle */}
+          <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 md:hidden shrink-0" />
+
           {/* Card Header row: Title & Collapse Button */}
-          <div style={{ padding: '12px 16px 8px 16px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ padding: '10px 16px 8px 16px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Compass size={17} style={{ color: 'var(--brand-primary)' }} />
               <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
@@ -1916,7 +1998,8 @@ export const CampusMap = () => {
                 transition: 'all 0.15s ease',
               }}
             >
-              <ChevronLeft size={16} />
+              <ChevronLeft size={16} className="hidden md:block" />
+              <X size={16} className="block md:hidden" />
             </button>
           </div>
 
@@ -3134,29 +3217,21 @@ export const CampusMap = () => {
           </div>
         )}
 
-        {/* SELECTED BUILDING DETAIL DRAWER (Right Slide-over, Zero Overlap) */}
+        {/* SELECTED BUILDING DETAIL DRAWER (Right Slide-over on Desktop, Bottom Sheet on Mobile) */}
         {drawerOpen && currentBldg && (
           <aside
+            className="absolute z-35 bg-white backdrop-blur-md transition-all duration-300 ease-out flex flex-col overflow-hidden
+              md:top-4 md:bottom-4 md:right-4 md:w-[360px] md:max-w-[calc(100vw-32px)] md:rounded-2xl md:border md:border-[var(--border-subtle)] md:shadow-lg md:h-auto
+              inset-x-0 bottom-0 top-auto w-full max-w-full rounded-t-2xl border-t border-[var(--border-subtle)] shadow-2xl max-h-[82vh] h-[82vh]"
             style={{
-              position: 'absolute',
-              top: '16px',
-              bottom: '16px',
-              right: '16px',
-              width: '360px',
-              maxWidth: 'calc(100vw - 32px)',
-              backgroundColor: '#FFFFFF',
-              borderRadius: '16px',
-              boxShadow: 'var(--shadow-lg)',
-              border: '1px solid var(--border-subtle)',
-              zIndex: 35,
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
               animation: 'fadeIn 0.2s ease',
             }}
           >
+            {/* Mobile Drag Handle */}
+            <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 md:hidden shrink-0" />
+
             {/* Header Image */}
-            <div style={{ position: 'relative', height: '140px', width: '100%' }}>
+            <div style={{ position: 'relative', height: '140px', width: '100%', flexShrink: 0 }}>
               <img src={currentBldg.image} alt={currentBldg.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(20, 45, 40, 0.75) 0%, transparent 60%)' }} />
 

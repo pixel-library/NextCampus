@@ -163,13 +163,13 @@ export const LandingPage = () => {
               </Button>
             </div>
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Button variant="ghost" size="sm" onClick={() => navigate('/auth')}>
                 Sign In
               </Button>
               <Link to="/campus-map" style={{ textDecoration: 'none' }}>
                 <Button variant="primary" size="sm" icon={Compass}>
-                  Launch Live Map
+                  <span className="hidden sm:inline">Launch </span>Live Map
                 </Button>
               </Link>
             </div>
@@ -180,18 +180,12 @@ export const LandingPage = () => {
       {/* 3. CINEMATIC HERO SECTION */}
       <section
         id="hero"
+        className="relative min-h-[460px] md:min-h-[580px] flex items-center justify-center text-center px-4 py-12 md:py-20 md:px-8"
         style={{
-          position: 'relative',
-          minHeight: '580px',
           backgroundImage: 'linear-gradient(180deg, rgba(15, 23, 42, 0.78) 0%, rgba(15, 23, 42, 0.92) 100%), url("/campus_aerial_hero.png")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '80px 32px 90px 32px',
-          textAlign: 'center',
         }}
       >
         <div
@@ -207,34 +201,17 @@ export const LandingPage = () => {
         >
           {/* Campus Spatial Badge */}
           <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '6px 18px',
-              borderRadius: '9999px',
-              backgroundColor: 'rgba(255, 255, 255, 0.12)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
-              marginBottom: '24px',
-            }}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4.5 sm:py-1.5 rounded-full bg-white/12 backdrop-blur-md border border-white/25 mb-5 md:mb-6"
           >
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10B981' }} />
-            <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.08em', color: '#FFFFFF', textTransform: 'uppercase' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10B981', flexShrink: 0 }} />
+            <span className="text-[10px] sm:text-[11px] font-extrabold tracking-wider text-white uppercase">
               SPATIAL SMART CAMPUS • MEWAR UNIVERSITY, GANGRAR
             </span>
           </div>
 
           {/* Inspiring Headline */}
           <h1
-            style={{
-              fontSize: 'clamp(2.5rem, 5vw, 4rem)',
-              fontWeight: 900,
-              lineHeight: 1.15,
-              color: '#FFFFFF',
-              marginBottom: '20px',
-              letterSpacing: '-0.025em',
-            }}
+            className="text-3xl sm:text-5xl md:text-6xl font-black leading-tight text-white mb-4 md:mb-5 tracking-tight"
           >
             Smarter Navigation.{' '}
             <span style={{ color: '#FB923C', display: 'block', textShadow: '0 2px 14px rgba(249, 115, 22, 0.4)' }}>
@@ -242,30 +219,15 @@ export const LandingPage = () => {
             </span>
           </h1>
 
-          <p style={{ fontSize: '16px', color: '#CBD5E1', maxWidth: '640px', lineHeight: 1.7, marginBottom: '36px' }}>
+          <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed mb-6 md:mb-8">
             NextCampus connects Mewar University&apos;s 30-acre campus with precision turn-by-turn GIS pedestrian wayfinding, real-time classroom telemetry, study pod availability, and unified student services.
           </p>
 
           {/* Primary Action Buttons */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 items-center justify-center w-full max-w-md sm:max-w-none">
             <Link
               to="/campus-map"
-              style={{
-                padding: '14px 28px',
-                backgroundColor: 'var(--brand-primary)',
-                color: '#FFFFFF',
-                borderRadius: '8px',
-                fontWeight: 800,
-                fontSize: '13.5px',
-                letterSpacing: '0.04em',
-                textTransform: 'uppercase',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                boxShadow: '0 4px 18px rgba(158, 21, 62, 0.45)',
-                transition: 'all 0.2s ease',
-              }}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[var(--brand-primary)] text-white rounded-lg font-extrabold text-xs sm:text-[13.5px] uppercase tracking-wider shadow-lg shadow-[#9E153E]/40 hover:opacity-95 transition-all text-center no-underline"
             >
               <Compass size={17} />
               <span>Explore Interactive Map</span>
@@ -273,22 +235,7 @@ export const LandingPage = () => {
 
             <a
               href="#digital-twin"
-              style={{
-                padding: '14px 26px',
-                backgroundColor: '#FFFFFF',
-                color: '#0F172A',
-                borderRadius: '8px',
-                fontWeight: 800,
-                fontSize: '13.5px',
-                letterSpacing: '0.04em',
-                textTransform: 'uppercase',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-                transition: 'all 0.2s ease',
-              }}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-slate-900 rounded-lg font-extrabold text-xs sm:text-[13.5px] uppercase tracking-wider shadow-md hover:bg-slate-50 transition-all text-center no-underline"
             >
               <Activity size={16} />
               <span>Inspect Digital Twin</span>
@@ -296,19 +243,7 @@ export const LandingPage = () => {
 
             <Link
               to="/auth"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                color: '#FFFFFF',
-                fontSize: '13.5px',
-                fontWeight: 700,
-                textDecoration: 'none',
-                padding: '12px 18px',
-                borderRadius: '8px',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-              }}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-white rounded-lg font-bold text-xs sm:text-[13.5px] bg-white/10 hover:bg-white/20 border border-white/25 transition-all text-center no-underline"
             >
               <span>Student Portal</span>
               <ChevronRight size={15} />
@@ -318,29 +253,29 @@ export const LandingPage = () => {
       </section>
 
       {/* 4. INTERACTIVE SPATIAL DIGITAL TWIN SHOWCASE */}
-      <section id="digital-twin" style={{ padding: '72px 32px', backgroundColor: '#F8FAFC', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+      <section id="digital-twin" className="py-10 px-4 md:py-18 md:px-8 bg-slate-50 border-y border-[var(--border-subtle)]">
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '20px', marginBottom: '32px' }}>
+          <div className="flex justify-between items-end flex-wrap gap-4 sm:gap-5 mb-6 md:mb-8">
             <div>
-              <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.1em', color: 'var(--brand-primary)', textTransform: 'uppercase' }}>
+              <span className="text-[11px] font-extrabold tracking-wider text-[var(--brand-primary)] uppercase">
                 CAMPUS DIGITAL TWIN
               </span>
-              <h2 style={{ fontSize: '2.1rem', fontWeight: 800, marginTop: '4px', color: 'var(--text-primary)' }}>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[var(--text-primary)] mt-1">
                 Inspect Live Facilities &amp; Environmental Telemetry
               </h2>
             </div>
-            <p style={{ color: 'var(--text-secondary)', maxWidth: '440px', fontSize: '13px', lineHeight: 1.5 }}>
+            <p className="text-[var(--text-secondary)] max-w-md text-xs sm:text-[13px] leading-relaxed">
               Tap any facility node to view real-time occupancy, climate controls, active lecture timetables, and direct routing paths.
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-6">
             {/* Interactive Vector Map Graphic */}
             <div
               style={{
                 backgroundColor: '#FFFFFF',
                 borderRadius: '16px',
-                padding: '22px',
+                padding: '20px',
                 border: '1px solid var(--border-subtle)',
                 boxShadow: '0 4px 16px rgba(15, 23, 42, 0.04)',
                 display: 'flex',
@@ -348,60 +283,89 @@ export const LandingPage = () => {
                 justifyContent: 'space-between',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Badge status="active">Mewar University Central Quadrangle</Badge>
-                <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>Interactive Vector View</span>
-              </div>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Badge status="active">Mewar University Quadrangle</Badge>
+                  <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>Interactive Vector View</span>
+                </div>
 
-              {/* Vector SVG Graphic */}
-              <div style={{ margin: '18px 0', position: 'relative', width: '100%', height: '280px', background: '#F1F5F9', borderRadius: '12px', border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
-                <svg width="100%" height="100%" viewBox="0 0 800 450" fill="none">
-                  <pattern id="campusGridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0, 0, 0, 0.05)" strokeWidth="1" />
-                  </pattern>
-                  <rect width="800" height="450" fill="url(#campusGridPattern)" />
+                {/* Mobile Quick-Pill Node Selector (Touch Friendly) */}
+                <div className="flex md:hidden items-center gap-1.5 overflow-x-auto pb-1 pt-3 mb-1 scrollbar-none">
+                  {[
+                    { id: 'block-a', label: 'ENG-02 Engineering', icon: '🏛️' },
+                    { id: 'library', label: 'LIB-03 Library', icon: '📚' },
+                    { id: 'innovation', label: 'INN Robotics Lab', icon: '🤖' },
+                    { id: 'activity', label: 'SAC Student Arena', icon: '⚽' },
+                  ].map((node) => {
+                    const isSelected = selectedNode === node.id;
+                    return (
+                      <button
+                        key={node.id}
+                        type="button"
+                        onClick={() => setSelectedNode(node.id)}
+                        className={`shrink-0 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                          isSelected
+                            ? 'bg-[var(--brand-primary)] text-white shadow-xs'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        }`}
+                      >
+                        <span>{node.icon}</span>
+                        <span>{node.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
 
-                  {/* Pathways */}
-                  <path d="M 50 210 L 260 100 L 520 230 L 750 120" stroke="#CBD5E1" strokeWidth="12" strokeLinecap="round" />
-                  <path d="M 260 100 L 380 280 L 640 280" stroke="#CBD5E1" strokeWidth="10" strokeLinecap="round" />
-                  <path d="M 190 145 C 230 190, 310 180, 420 195" stroke="#059669" strokeWidth="4" strokeDasharray="8 8" />
+                {/* Vector SVG Graphic */}
+                <div className="my-3.5 relative w-full h-[240px] sm:h-[280px] bg-[#F1F5F9] rounded-xl border border-[var(--border-subtle)] overflow-hidden">
+                  <svg width="100%" height="100%" viewBox="0 0 800 450" fill="none">
+                    <pattern id="campusGridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0, 0, 0, 0.05)" strokeWidth="1" />
+                    </pattern>
+                    <rect width="800" height="450" fill="url(#campusGridPattern)" />
 
-                  {/* Library Node */}
-                  <g onClick={() => setSelectedNode('library')} style={{ cursor: 'pointer' }}>
-                    <polygon points="140,80 200,110 200,165 140,135" fill={selectedNode === 'library' ? '#9E153E' : '#64748B'} />
-                    <polygon points="140,80 80,110 80,165 140,135" fill="#475569" />
-                    <polygon points="140,80 200,110 140,140 80,110" fill="#E11D48" opacity="0.8" />
-                    <circle cx="140" cy="110" r="15" fill="#9E153E" />
-                    <text x="140" y="114" fill="#FFF" fontSize="10" textAnchor="middle" fontWeight="bold">LIB</text>
-                  </g>
+                    {/* Pathways */}
+                    <path d="M 50 210 L 260 100 L 520 230 L 750 120" stroke="#CBD5E1" strokeWidth="12" strokeLinecap="round" />
+                    <path d="M 260 100 L 380 280 L 640 280" stroke="#CBD5E1" strokeWidth="10" strokeLinecap="round" />
+                    <path d="M 190 145 C 230 190, 310 180, 420 195" stroke="#059669" strokeWidth="4" strokeDasharray="8 8" />
 
-                  {/* Faculty of Engineering Node */}
-                  <g onClick={() => setSelectedNode('block-a')} style={{ cursor: 'pointer' }}>
-                    <polygon points="430,150 510,190 510,260 430,220" fill={selectedNode === 'block-a' ? '#9E153E' : '#64748B'} />
-                    <polygon points="430,150 350,190 350,260 430,220" fill="#475569" />
-                    <polygon points="430,150 510,190 430,230 350,190" fill="#E11D48" opacity="0.8" />
-                    <circle cx="430" cy="190" r="17" fill="#9E153E" />
-                    <text x="430" y="195" fill="#FFF" fontSize="11" textAnchor="middle" fontWeight="bold">ENG</text>
-                  </g>
+                    {/* Library Node */}
+                    <g onClick={() => setSelectedNode('library')} style={{ cursor: 'pointer' }}>
+                      <polygon points="140,80 200,110 200,165 140,135" fill={selectedNode === 'library' ? '#9E153E' : '#64748B'} />
+                      <polygon points="140,80 80,110 80,165 140,135" fill="#475569" />
+                      <polygon points="140,80 200,110 140,140 80,110" fill="#E11D48" opacity="0.8" />
+                      <circle cx="140" cy="110" r="15" fill="#9E153E" />
+                      <text x="140" y="114" fill="#FFF" fontSize="10" textAnchor="middle" fontWeight="bold">LIB</text>
+                    </g>
 
-                  {/* Innovation Center Node */}
-                  <g onClick={() => setSelectedNode('innovation')} style={{ cursor: 'pointer' }}>
-                    <polygon points="620,80 680,110 680,170 620,140" fill={selectedNode === 'innovation' ? '#9E153E' : '#64748B'} />
-                    <polygon points="620,80 560,110 560,170 620,140" fill="#475569" />
-                    <polygon points="620,80 680,110 620,140 560,110" fill="#E11D48" opacity="0.7" />
-                    <circle cx="620" cy="110" r="14" fill="#059669" />
-                    <text x="620" y="114" fill="#FFF" fontSize="9" textAnchor="middle" fontWeight="bold">INN</text>
-                  </g>
+                    {/* Faculty of Engineering Node */}
+                    <g onClick={() => setSelectedNode('block-a')} style={{ cursor: 'pointer' }}>
+                      <polygon points="430,150 510,190 510,260 430,220" fill={selectedNode === 'block-a' ? '#9E153E' : '#64748B'} />
+                      <polygon points="430,150 350,190 350,260 430,220" fill="#475569" />
+                      <polygon points="430,150 510,190 430,230 350,190" fill="#E11D48" opacity="0.8" />
+                      <circle cx="430" cy="190" r="17" fill="#9E153E" />
+                      <text x="430" y="195" fill="#FFF" fontSize="11" textAnchor="middle" fontWeight="bold">ENG</text>
+                    </g>
 
-                  {/* Activity Center Node */}
-                  <g onClick={() => setSelectedNode('activity')} style={{ cursor: 'pointer' }}>
-                    <polygon points="450,280 510,310 510,360 450,330" fill={selectedNode === 'activity' ? '#9E153E' : '#64748B'} />
-                    <polygon points="450,280 390,310 390,360 450,330" fill="#475569" />
-                    <polygon points="450,280 510,310 450,340 390,310" fill="#94A3B8" />
-                    <circle cx="450" cy="310" r="14" fill="#2563EB" />
-                    <text x="450" y="314" fill="#FFF" fontSize="9" textAnchor="middle" fontWeight="bold">SAC</text>
-                  </g>
-                </svg>
+                    {/* Innovation Center Node */}
+                    <g onClick={() => setSelectedNode('innovation')} style={{ cursor: 'pointer' }}>
+                      <polygon points="620,80 680,110 680,170 620,140" fill={selectedNode === 'innovation' ? '#9E153E' : '#64748B'} />
+                      <polygon points="620,80 560,110 560,170 620,140" fill="#475569" />
+                      <polygon points="620,80 680,110 620,140 560,110" fill="#E11D48" opacity="0.7" />
+                      <circle cx="620" cy="110" r="14" fill="#059669" />
+                      <text x="620" y="114" fill="#FFF" fontSize="9" textAnchor="middle" fontWeight="bold">INN</text>
+                    </g>
+
+                    {/* Activity Center Node */}
+                    <g onClick={() => setSelectedNode('activity')} style={{ cursor: 'pointer' }}>
+                      <polygon points="450,280 510,310 510,360 450,330" fill={selectedNode === 'activity' ? '#9E153E' : '#64748B'} />
+                      <polygon points="450,280 390,310 390,360 450,330" fill="#475569" />
+                      <polygon points="450,280 510,310 450,340 390,310" fill="#94A3B8" />
+                      <circle cx="450" cy="310" r="14" fill="#2563EB" />
+                      <text x="450" y="314" fill="#FFF" fontSize="9" textAnchor="middle" fontWeight="bold">SAC</text>
+                    </g>
+                  </svg>
+                </div>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: 'var(--text-muted)' }}>
@@ -417,7 +381,7 @@ export const LandingPage = () => {
               style={{
                 backgroundColor: '#FFFFFF',
                 borderRadius: '16px',
-                padding: '24px',
+                padding: '20px',
                 border: '1px solid var(--border-subtle)',
                 boxShadow: '0 4px 16px rgba(15, 23, 42, 0.04)',
                 display: 'flex',
@@ -433,35 +397,35 @@ export const LandingPage = () => {
                   </span>
                 </div>
 
-                <h3 style={{ fontSize: '1.4rem', color: 'var(--text-primary)', margin: 0, fontWeight: 800 }}>
+                <h3 style={{ fontSize: '1.3rem', color: 'var(--text-primary)', margin: 0, fontWeight: 800 }}>
                   {activeDigitalData.title}
                 </h3>
-                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '18px', marginTop: '4px' }}>
+                <p style={{ fontSize: '12.5px', color: 'var(--text-secondary)', marginBottom: '16px', marginTop: '4px' }}>
                   {activeDigitalData.dept}
                 </p>
 
                 {/* Metrics Grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
-                  <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Operational Status</div>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#059669', marginTop: '2px' }}>{activeDigitalData.status}</div>
+                <div className="grid grid-cols-2 gap-2 sm:gap-2.5 mb-4">
+                  <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '9px 11px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>Operational Status</div>
+                    <div style={{ fontSize: '12.5px', fontWeight: 700, color: '#059669', marginTop: '2px' }}>{activeDigitalData.status}</div>
                   </div>
-                  <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>HVAC Climate</div>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{activeDigitalData.temp}</div>
+                  <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '9px 11px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>HVAC Climate</div>
+                    <div style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{activeDigitalData.temp}</div>
                   </div>
-                  <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Seating Capacity</div>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{activeDigitalData.seats}</div>
+                  <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '9px 11px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>Seating Capacity</div>
+                    <div style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{activeDigitalData.seats}</div>
                   </div>
-                  <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Step-Free Access</div>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--brand-accent)', marginTop: '2px' }}>{activeDigitalData.accessibility}</div>
+                  <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '9px 11px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>Step-Free Access</div>
+                    <div style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--brand-accent)', marginTop: '2px' }}>{activeDigitalData.accessibility}</div>
                   </div>
                 </div>
 
                 {/* Session Card */}
-                <div style={{ backgroundColor: '#F8FAFC', padding: '12px 14px', borderRadius: '10px', border: '1px solid var(--border-subtle)', marginBottom: '20px' }}>
+                <div style={{ backgroundColor: '#F8FAFC', padding: '12px 14px', borderRadius: '10px', border: '1px solid var(--border-subtle)', marginBottom: '18px' }}>
                   <div style={{ fontSize: '10.5px', fontWeight: 700, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Active Lecture Session
                   </div>
@@ -485,16 +449,13 @@ export const LandingPage = () => {
       </section>
 
       {/* 5. STUDENT SPOTLIGHT & CAMPUS CULTURE */}
-      <section id="spotlight" style={{ position: 'relative', overflow: 'hidden' }}>
+      <section id="spotlight" className="relative overflow-hidden">
         <div
+          className="min-h-[380px] md:min-h-[440px] flex items-center px-4 py-10 md:py-16 md:px-8"
           style={{
-            minHeight: '440px',
             backgroundImage: 'linear-gradient(90deg, rgba(15, 23, 42, 0.94) 0%, rgba(15, 23, 42, 0.72) 55%, rgba(15, 23, 42, 0.4) 100%), url("/student_spotlight.png")',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            display: 'flex',
-            alignItems: 'center',
-            padding: '64px 32px',
           }}
         >
           <div style={{ maxWidth: '1240px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 10 }}>
@@ -521,23 +482,19 @@ export const LandingPage = () => {
               </div>
 
               <blockquote
+                className="text-lg sm:text-xl md:text-2xl font-bold leading-relaxed text-white mb-5"
                 style={{
-                  fontSize: 'clamp(1.3rem, 2.2vw, 1.85rem)',
                   fontStyle: 'normal',
-                  fontWeight: 800,
-                  lineHeight: 1.35,
-                  color: '#FFFFFF',
-                  marginBottom: '20px',
                 }}
               >
                 &ldquo;NextCampus changed how we navigate our daily university routine. Having real-time lab room telemetry, instant pedestrian wayfinding, and connected student care in one place makes Mewar University feel truly intelligent.&rdquo;
               </blockquote>
 
               <div style={{ marginBottom: '24px' }}>
-                <div style={{ fontSize: '17px', fontWeight: 800, color: '#F1F5F9' }}>
+                <div style={{ fontSize: '16px', fontWeight: 800, color: '#F1F5F9' }}>
                   Aarav Sharma
                 </div>
-                <div style={{ fontSize: '12.5px', color: '#CBD5E1', marginTop: '2px' }}>
+                <div style={{ fontSize: '12px', color: '#CBD5E1', marginTop: '2px' }}>
                   Class of 2026 • Computer Science &amp; Artificial Intelligence Innovations
                 </div>
               </div>
@@ -571,27 +528,27 @@ export const LandingPage = () => {
       </section>
 
       {/* 6. QUICK LAUNCH ACTION STRIP */}
-      <div className="quick-action-strip">
-        <Link to="/campus-map" className="quick-action-btn">
+      <div className="quick-action-strip flex-col sm:flex-row gap-2.5 sm:gap-4 p-4 sm:p-6 items-stretch sm:items-center justify-center">
+        <Link to="/campus-map" className="quick-action-btn justify-center text-center">
           <Compass size={15} />
           <span>Launch Campus GIS Map</span>
         </Link>
 
-        <a href="#digital-twin" className="quick-action-btn">
+        <a href="#digital-twin" className="quick-action-btn justify-center text-center">
           <Activity size={15} />
           <span>Inspect Digital Twin</span>
         </a>
 
-        <Link to="/auth" className="quick-action-btn">
+        <Link to="/auth" className="quick-action-btn justify-center text-center">
           <Users size={15} />
           <span>Student &amp; Staff Login</span>
         </Link>
       </div>
 
       {/* 7. UNIVERSITY FOOTER */}
-      <footer style={{ backgroundColor: '#0B1329', color: '#CBD5E1', padding: '56px 32px 32px 32px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+      <footer className="bg-[#0B1329] text-[#CBD5E1] py-10 px-4 md:py-14 md:px-8 border-t border-white/10">
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '36px', marginBottom: '48px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
             {/* Column 1: University Identity */}
             <div>
               <div style={{ color: '#FFFFFF', fontWeight: 900, fontSize: '18px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
