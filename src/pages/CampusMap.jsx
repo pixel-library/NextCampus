@@ -2074,8 +2074,8 @@ export const CampusMap = () => {
             type="button"
             onClick={handleOpenNavPanel}
             title="Open Campus Directory & Routes"
-            className="absolute top-3 left-3 md:top-4 md:left-4 bg-white/98 backdrop-blur-md rounded-full border border-[var(--border-subtle)] shadow-md px-3.5 py-2 md:px-4 md:py-2 flex items-center gap-2 text-xs font-bold text-[var(--text-primary)] cursor-pointer hover:bg-white transition-all"
-            style={{ zIndex: 500 }}
+            className="absolute top-3 left-3 md:top-4 md:left-4 bg-white rounded-full border border-[var(--border-subtle)] shadow-md px-3.5 py-2 md:px-4 md:py-2 flex items-center gap-2 text-xs font-bold text-[var(--text-primary)] cursor-pointer hover:bg-white transition-all"
+            style={{ zIndex: 500, backgroundColor: '#FFFFFF' }}
           >
             <Search size={14} style={{ color: 'var(--brand-primary)' }} />
             <span><span className="hidden xs:inline">Campus </span>Directory &amp; Routes</span>
@@ -2097,35 +2097,68 @@ export const CampusMap = () => {
 
         {/* LEFT COLLAPSIBLE CAMPUS DIRECTORY & NAVIGATION DRAWER (Slide-over on Desktop, Bottom Sheet on Mobile) */}
         <div
-          className={`absolute transition-all duration-300 ease-out flex flex-col overflow-hidden bg-white/98 backdrop-blur-md
+          className={`absolute transition-all duration-300 ease-out flex flex-col overflow-hidden bg-white
             md:top-4 md:bottom-4 md:w-[390px] md:max-w-[calc(100vw-32px)] md:rounded-2xl md:border md:border-[var(--border-subtle)] md:shadow-lg md:h-auto md:max-h-none md:inset-x-auto md:right-auto
             inset-x-0 bottom-0 top-auto w-full max-w-full rounded-t-2xl border-t border-[var(--border-subtle)] shadow-2xl max-h-[80vh] h-[80vh]
             ${isNavPanelOpen ? 'md:left-4 translate-y-0 pointer-events-auto' : 'md:-left-[430px] translate-y-full md:translate-y-0 pointer-events-none'}
           `}
-          style={{ zIndex: 500 }}
+          style={{
+            zIndex: 500,
+            backgroundColor: '#FFFFFF',
+            boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(15, 23, 42, 0.08)',
+          }}
         >
           {/* Mobile Drag Handle */}
           <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto my-2 md:hidden shrink-0" />
 
           {/* Card Header row: Title & Collapse Button */}
-          <div style={{ padding: '10px 16px 8px 16px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Compass size={17} style={{ color: 'var(--brand-primary)' }} />
-              <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
-                Campus GIS Navigator
-              </span>
+          <div
+            style={{
+              padding: '12px 16px',
+              borderBottom: '1px solid #E2E8F0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              backgroundColor: '#FFFFFF',
+              flexShrink: 0,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '8px',
+                  backgroundColor: '#EAF5EF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#168567',
+                  flexShrink: 0,
+                }}
+              >
+                <Compass size={18} />
+              </div>
+              <div>
+                <div style={{ fontSize: '14px', fontWeight: 800, color: '#0F172A', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
+                  Campus GIS Navigator
+                </div>
+                <div style={{ fontSize: '11px', color: '#64748B', fontWeight: 500 }}>
+                  Wayfinding &amp; Internal Routes
+                </div>
+              </div>
             </div>
             <button
               type="button"
               onClick={() => setIsNavPanelOpen(false)}
               title="Collapse Panel (Maximize Map)"
               style={{
-                width: '28px',
-                height: '28px',
-                borderRadius: '7px',
-                border: '1px solid var(--border-subtle)',
-                backgroundColor: 'var(--bg-surface-subtle)',
-                color: 'var(--text-secondary)',
+                width: '30px',
+                height: '30px',
+                borderRadius: '8px',
+                border: '1px solid #E2E8F0',
+                backgroundColor: '#F8FAFC',
+                color: '#475569',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -2139,28 +2172,38 @@ export const CampusMap = () => {
           </div>
 
           {/* Mode Tabs: Directory vs Directions */}
-          <div style={{ display: 'flex', padding: '10px 14px 6px 14px', gap: '6px', backgroundColor: '#FFFFFF' }}>
+          <div
+            style={{
+              display: 'flex',
+              padding: '10px 14px',
+              gap: '8px',
+              backgroundColor: '#FFFFFF',
+              borderBottom: '1px solid #F1F5F9',
+              flexShrink: 0,
+            }}
+          >
             <button
               type="button"
               onClick={() => setPanelMode('directory')}
               style={{
                 flex: 1,
-                padding: '7px 10px',
+                padding: '8px 12px',
                 borderRadius: '8px',
-                border: 'none',
-                fontSize: '11.5px',
+                border: panelMode === 'directory' ? '1px solid #168567' : '1px solid #E2E8F0',
+                fontSize: '12px',
                 fontWeight: 700,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '6px',
-                backgroundColor: panelMode === 'directory' ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
-                color: panelMode === 'directory' ? '#FFFFFF' : 'var(--text-secondary)',
+                backgroundColor: panelMode === 'directory' ? '#168567' : '#F8FAFC',
+                color: panelMode === 'directory' ? '#FFFFFF' : '#475569',
+                boxShadow: panelMode === 'directory' ? '0 2px 4px rgba(22, 133, 103, 0.2)' : 'none',
                 transition: 'all 0.15s ease',
               }}
             >
-              <Building size={13} />
+              <Building size={14} />
               <span>Campus Directory</span>
             </button>
             <button
@@ -2168,43 +2211,54 @@ export const CampusMap = () => {
               onClick={() => setPanelMode('directions')}
               style={{
                 flex: 1,
-                padding: '7px 10px',
+                padding: '8px 12px',
                 borderRadius: '8px',
-                border: 'none',
-                fontSize: '11.5px',
+                border: panelMode === 'directions' ? '1px solid #168567' : '1px solid #E2E8F0',
+                fontSize: '12px',
                 fontWeight: 700,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '6px',
-                backgroundColor: panelMode === 'directions' ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
-                color: panelMode === 'directions' ? '#FFFFFF' : 'var(--text-secondary)',
+                backgroundColor: panelMode === 'directions' ? '#168567' : '#F8FAFC',
+                color: panelMode === 'directions' ? '#FFFFFF' : '#475569',
+                boxShadow: panelMode === 'directions' ? '0 2px 4px rgba(22, 133, 103, 0.2)' : 'none',
                 transition: 'all 0.15s ease',
               }}
             >
-              <Navigation size={13} />
+              <Navigation size={14} />
               <span>Directions &amp; Route</span>
             </button>
           </div>
 
           {/* PANEL MODE 1: CAMPUS DIRECTORY (FACILITIES LIST & SEARCH) */}
           {panelMode === 'directory' && (
-            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, backgroundColor: '#FFFFFF' }}>
               {/* Search & Category Filter Row */}
-              <div style={{ padding: '8px 14px 10px 14px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div
+                style={{
+                  padding: '10px 14px',
+                  borderBottom: '1px solid #E2E8F0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                  backgroundColor: '#FFFFFF',
+                  flexShrink: 0,
+                }}
+              >
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
-                    backgroundColor: 'var(--bg-surface-subtle)',
-                    padding: '7px 12px',
+                    backgroundColor: '#F8FAFC',
+                    padding: '8px 12px',
                     borderRadius: '8px',
-                    border: '1px solid var(--border-subtle)',
+                    border: '1px solid #E2E8F0',
                   }}
                 >
-                  <Search size={14} style={{ color: 'var(--text-muted)' }} />
+                  <Search size={14} style={{ color: '#64748B' }} />
                   <input
                     type="text"
                     placeholder="Search campus buildings, labs, hostels..."
@@ -2215,36 +2269,37 @@ export const CampusMap = () => {
                       background: 'none',
                       border: 'none',
                       fontSize: '12px',
-                      color: 'var(--text-primary)',
+                      color: '#0F172A',
                       outline: 'none',
+                      fontWeight: 600,
                     }}
                   />
                   {facilitySearch && (
                     <button
                       type="button"
                       onClick={() => setFacilitySearch('')}
-                      style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0 }}
+                      style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer', padding: 0 }}
                     >
                       <X size={13} />
                     </button>
                   )}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px' }}>
-                  <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
-                    Showing <strong>{filteredBuildingList.length}</strong> locations
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11.5px' }}>
+                  <span style={{ color: '#64748B', fontWeight: 600 }}>
+                    Showing <strong style={{ color: '#0F172A' }}>{filteredBuildingList.length}</strong> campus locations
                   </span>
                   <select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
                     style={{
-                      backgroundColor: 'transparent',
-                      border: '1px solid var(--border-subtle)',
+                      backgroundColor: '#F8FAFC',
+                      border: '1px solid #CBD5E1',
                       borderRadius: '6px',
-                      padding: '3px 8px',
+                      padding: '4px 10px',
                       fontSize: '11px',
                       fontWeight: 700,
-                      color: 'var(--text-primary)',
+                      color: '#0F172A',
                       cursor: 'pointer',
                       outline: 'none',
                     }}
@@ -2258,9 +2313,19 @@ export const CampusMap = () => {
               </div>
 
               {/* Scrollable Facility List */}
-              <div style={{ flex: 1, overflowY: 'auto', padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div
+                style={{
+                  flex: 1,
+                  overflowY: 'auto',
+                  padding: '12px 14px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                  backgroundColor: '#F8FAFC',
+                }}
+              >
                 {filteredBuildingList.length === 0 ? (
-                  <div style={{ padding: '30px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>
+                  <div style={{ padding: '36px 16px', textAlign: 'center', color: '#64748B', fontSize: '12.5px', backgroundColor: '#FFFFFF', borderRadius: '10px', border: '1px dashed #CBD5E1' }}>
                     No campus facilities matching "{facilitySearch}"
                   </div>
                 ) : (
@@ -2276,32 +2341,53 @@ export const CampusMap = () => {
                         className={`campus-wayfinding-card ${isSelected ? 'active' : ''}`}
                         onClick={() => handleSelectBuilding(bldg.id, false)}
                         style={{
-                          backgroundColor: isSelected ? 'var(--brand-soft-bg)' : '#FFFFFF',
-                          borderColor: isSelected ? 'var(--brand-primary)' : 'var(--border-subtle)',
+                          backgroundColor: isSelected ? '#F0FDF4' : '#FFFFFF',
+                          border: isSelected ? '1.5px solid #168567' : '1px solid #E2E8F0',
+                          borderRadius: '10px',
+                          padding: '10px 12px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                          boxShadow: isSelected ? '0 4px 12px rgba(22, 133, 103, 0.12)' : '0 1px 3px rgba(15, 23, 42, 0.04)',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease',
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '18px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div
+                              style={{
+                                fontSize: '18px',
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '8px',
+                                backgroundColor: isSelected ? '#DCFCE7' : '#F1F5F9',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                              }}
+                            >
                               {CAMPUS_GIS_LOCATIONS[bldg.id]?.icon || '🏛️'}
-                            </span>
+                            </div>
                             <div>
-                              <div style={{ fontSize: '12.5px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.25 }}>
+                              <div style={{ fontSize: '13px', fontWeight: 800, color: '#0F172A', lineHeight: 1.25 }}>
                                 {bldg.shortName || bldg.name}
                               </div>
-                              <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                              <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px', fontWeight: 500 }}>
                                 {bldg.dept}
                               </div>
                             </div>
                           </div>
                           <span
                             style={{
-                              fontSize: '9.5px',
+                              fontSize: '10px',
                               fontWeight: 800,
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              backgroundColor: isSelected ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
-                              color: isSelected ? '#FFFFFF' : 'var(--text-secondary)',
+                              padding: '2px 7px',
+                              borderRadius: '5px',
+                              backgroundColor: isSelected ? '#168567' : '#F1F5F9',
+                              color: isSelected ? '#FFFFFF' : '#475569',
+                              border: isSelected ? 'none' : '1px solid #E2E8F0',
                               fontFamily: 'var(--font-mono)',
                             }}
                           >
@@ -2310,20 +2396,31 @@ export const CampusMap = () => {
                         </div>
 
                         {/* Telemetry info row */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '10.5px', color: 'var(--text-secondary)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px', color: '#64748B' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <span style={{ color: '#16A34A', fontWeight: 700 }}>● Open</span>
                             <span>•</span>
-                            <span>{bldg.occupancy} Occupancy</span>
+                            <span style={{ fontWeight: 500 }}>{bldg.occupancy} Occupancy</span>
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--brand-primary)', fontWeight: 700 }}>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              color: '#168567',
+                              fontWeight: 700,
+                              backgroundColor: '#EAF5EF',
+                              padding: '2px 8px',
+                              borderRadius: '9999px',
+                            }}
+                          >
                             <Footprints size={12} />
                             <span>{bldgDist} m (~{bldgEta} min)</span>
                           </div>
                         </div>
 
                         {/* Action buttons inside card */}
-                        <div style={{ display: 'flex', gap: '6px', paddingTop: '4px', borderTop: '1px solid var(--border-subtle)' }}>
+                        <div style={{ display: 'flex', gap: '8px', paddingTop: '6px', borderTop: '1px solid #F1F5F9' }}>
                           <button
                             type="button"
                             onClick={(e) => {
@@ -2332,21 +2429,22 @@ export const CampusMap = () => {
                             }}
                             style={{
                               flex: 1,
-                              padding: '5px 10px',
-                              borderRadius: '6px',
-                              backgroundColor: 'var(--brand-primary)',
+                              padding: '6px 12px',
+                              borderRadius: '7px',
+                              backgroundColor: '#168567',
                               color: '#FFFFFF',
                               border: 'none',
-                              fontSize: '11px',
+                              fontSize: '11.5px',
                               fontWeight: 700,
                               cursor: 'pointer',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              gap: '4px',
+                              gap: '5px',
+                              boxShadow: '0 2px 4px rgba(22, 133, 103, 0.2)',
                             }}
                           >
-                            <Navigation size={11} />
+                            <Navigation size={12} />
                             <span>Navigate</span>
                           </button>
                           <button
@@ -2356,12 +2454,12 @@ export const CampusMap = () => {
                               handleSelectBuilding(bldg.id, true);
                             }}
                             style={{
-                              padding: '5px 10px',
-                              borderRadius: '6px',
-                              backgroundColor: 'var(--bg-surface-subtle)',
-                              color: 'var(--text-secondary)',
-                              border: '1px solid var(--border-subtle)',
-                              fontSize: '11px',
+                              padding: '6px 14px',
+                              borderRadius: '7px',
+                              backgroundColor: '#FFFFFF',
+                              color: '#334155',
+                              border: '1px solid #CBD5E1',
+                              fontSize: '11.5px',
                               fontWeight: 700,
                               cursor: 'pointer',
                             }}
@@ -2379,24 +2477,34 @@ export const CampusMap = () => {
 
           {/* PANEL MODE 2: DIRECTIONS & ROUTE PLANNING */}
           {panelMode === 'directions' && (
-            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, backgroundColor: '#FFFFFF' }}>
               {/* Route Planning Inputs (Origin & Destination) */}
-              <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '8px', backgroundColor: '#F8FAFC' }}>
+              <div
+                style={{
+                  padding: '12px 14px',
+                  borderBottom: '1px solid #E2E8F0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                  backgroundColor: '#FFFFFF',
+                  flexShrink: 0,
+                }}
+              >
                 {/* Origin Row */}
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
-                    backgroundColor: '#FFFFFF',
-                    padding: '6px 10px',
+                    backgroundColor: '#F8FAFC',
+                    padding: '8px 12px',
                     borderRadius: '8px',
-                    border: '1px solid var(--border-subtle)',
+                    border: '1px solid #E2E8F0',
                   }}
                 >
                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#3478B8', flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '9px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                    <div style={{ fontSize: '9px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                       Starting Point
                     </div>
                     <select
@@ -2426,9 +2534,9 @@ export const CampusMap = () => {
                         width: '100%',
                         background: 'none',
                         border: 'none',
-                        fontSize: '11.5px',
+                        fontSize: '12px',
                         fontWeight: 700,
-                        color: 'var(--text-primary)',
+                        color: '#0F172A',
                         outline: 'none',
                         cursor: 'pointer',
                         padding: 0,
@@ -2451,14 +2559,19 @@ export const CampusMap = () => {
                     onClick={handleSwapRoute}
                     title="Swap Origin and Destination"
                     style={{
-                      padding: '4px',
-                      background: 'none',
-                      border: 'none',
-                      color: 'var(--text-muted)',
+                      width: '26px',
+                      height: '26px',
+                      borderRadius: '6px',
+                      backgroundColor: '#FFFFFF',
+                      border: '1px solid #E2E8F0',
+                      color: '#475569',
                       cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                   >
-                    <ArrowUpDown size={14} />
+                    <ArrowUpDown size={13} />
                   </button>
                 </div>
 
@@ -2468,20 +2581,20 @@ export const CampusMap = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
-                    backgroundColor: customDestination ? 'var(--brand-soft-bg)' : '#FFFFFF',
-                    padding: '6px 10px',
+                    backgroundColor: customDestination ? '#F0FDF4' : '#F8FAFC',
+                    padding: '8px 12px',
                     borderRadius: '8px',
-                    border: customDestination ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-interactive)',
+                    border: customDestination ? '1.5px solid #168567' : '1px solid #E2E8F0',
                   }}
                 >
-                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--brand-primary)', flexShrink: 0 }} />
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#168567', flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '9px', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase' }}>
+                    <div style={{ fontSize: '9px', fontWeight: 800, color: '#168567', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                       {customDestination ? '📍 Marked Destination' : 'Destination'}
                     </div>
                     {customDestination ? (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                        <div style={{ fontSize: '11.5px', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <div style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {customDestination.name}
                         </div>
                         <button
@@ -2491,8 +2604,8 @@ export const CampusMap = () => {
                             padding: '1px 6px',
                             borderRadius: '4px',
                             backgroundColor: '#FFFFFF',
-                            border: '1px solid var(--border-subtle)',
-                            color: 'var(--brand-primary)',
+                            border: '1px solid #CBD5E1',
+                            color: '#168567',
                             fontSize: '10px',
                             fontWeight: 800,
                             cursor: 'pointer',
@@ -2511,9 +2624,10 @@ export const CampusMap = () => {
                           border: 'none',
                           fontSize: '12px',
                           fontWeight: 700,
-                          color: 'var(--text-primary)',
+                          color: '#0F172A',
                           outline: 'none',
                           cursor: 'pointer',
+                          padding: 0,
                         }}
                       >
                         {Object.entries(buildings).map(([key, bldg]) => (
@@ -2527,20 +2641,21 @@ export const CampusMap = () => {
                 </div>
 
                 {/* Mobility Mode Selector Pills */}
-                <div style={{ display: 'flex', gap: '4px', backgroundColor: 'var(--bg-surface-subtle)', padding: '2px', borderRadius: '8px' }}>
+                <div style={{ display: 'flex', gap: '4px', backgroundColor: '#F1F5F9', border: '1px solid #E2E8F0', padding: '3px', borderRadius: '8px' }}>
                   <button
                     type="button"
                     onClick={() => setMobilityMode('walk')}
                     style={{
                       flex: 1,
-                      padding: '5px 8px',
+                      padding: '6px 8px',
                       borderRadius: '6px',
                       border: 'none',
                       fontSize: '11px',
                       fontWeight: 700,
                       cursor: 'pointer',
-                      backgroundColor: mobilityMode === 'walk' ? 'var(--brand-primary)' : 'transparent',
-                      color: mobilityMode === 'walk' ? '#FFFFFF' : 'var(--text-secondary)',
+                      backgroundColor: mobilityMode === 'walk' ? '#168567' : 'transparent',
+                      color: mobilityMode === 'walk' ? '#FFFFFF' : '#475569',
+                      boxShadow: mobilityMode === 'walk' ? '0 1px 3px rgba(22, 133, 103, 0.2)' : 'none',
                       transition: 'all 0.15s ease',
                     }}
                   >
@@ -2551,14 +2666,15 @@ export const CampusMap = () => {
                     onClick={() => setMobilityMode('wheelchair')}
                     style={{
                       flex: 1,
-                      padding: '5px 8px',
+                      padding: '6px 8px',
                       borderRadius: '6px',
                       border: 'none',
                       fontSize: '11px',
                       fontWeight: 700,
                       cursor: 'pointer',
-                      backgroundColor: mobilityMode === 'wheelchair' ? 'var(--brand-primary)' : 'transparent',
-                      color: mobilityMode === 'wheelchair' ? '#FFFFFF' : 'var(--text-secondary)',
+                      backgroundColor: mobilityMode === 'wheelchair' ? '#168567' : 'transparent',
+                      color: mobilityMode === 'wheelchair' ? '#FFFFFF' : '#475569',
+                      boxShadow: mobilityMode === 'wheelchair' ? '0 1px 3px rgba(22, 133, 103, 0.2)' : 'none',
                       transition: 'all 0.15s ease',
                     }}
                   >
@@ -2569,14 +2685,15 @@ export const CampusMap = () => {
                     onClick={() => setMobilityMode('shuttle')}
                     style={{
                       flex: 1,
-                      padding: '5px 8px',
+                      padding: '6px 8px',
                       borderRadius: '6px',
                       border: 'none',
                       fontSize: '11px',
                       fontWeight: 700,
                       cursor: 'pointer',
-                      backgroundColor: mobilityMode === 'shuttle' ? 'var(--brand-primary)' : 'transparent',
-                      color: mobilityMode === 'shuttle' ? '#FFFFFF' : 'var(--text-secondary)',
+                      backgroundColor: mobilityMode === 'shuttle' ? '#168567' : 'transparent',
+                      color: mobilityMode === 'shuttle' ? '#FFFFFF' : '#475569',
+                      boxShadow: mobilityMode === 'shuttle' ? '0 1px 3px rgba(22, 133, 103, 0.2)' : 'none',
                       transition: 'all 0.15s ease',
                     }}
                   >
@@ -2586,85 +2703,86 @@ export const CampusMap = () => {
               </div>
 
               {/* Active Route Guidance HUD Banner */}
-              <div
-                style={{
-                  backgroundColor: 'var(--brand-soft-bg)',
-                  borderBottom: '1px solid var(--brand-soft-border)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  position: 'relative',
-                }}
-              >
-                {/* Real-time Walking Progress Bar */}
-                <div style={{ height: '3px', width: '100%', backgroundColor: '#D1FAE5', overflow: 'hidden' }}>
-                  <div
-                    style={{
-                      height: '100%',
-                      width: `${isSimulatingWalk ? simulationProgress : Math.min(100, Math.max(10, ((activeStepIndex + 1) / Math.max(1, currentBldg?.steps?.length || 3)) * 100))}%`,
-                      backgroundColor: 'var(--brand-primary)',
-                      transition: 'width 0.3s ease',
-                    }}
-                  />
-                </div>
+              {(() => {
+                const stepsArr = currentBldg?.steps || [
+                  { num: 1, text: 'Depart Main Campus Gate (NH-48)', sub: 'Turnstiles & Security Outpost', dist: '0 m' },
+                  { num: 2, text: `Walk along campus avenue towards ${currentBldg?.shortName || 'Destination'}`, sub: 'Direct paved pathway', dist: `${navigationStats.distanceMeters} m` },
+                ];
+                const activeStep = stepsArr[Math.min(activeStepIndex, stepsArr.length - 1)] || stepsArr[0];
+                const isLast = activeStepIndex === stepsArr.length - 1;
 
-                <div style={{ padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--brand-primary)', animation: 'pulse 1.8s infinite' }} />
-                      <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                        Live Route Telemetry
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', gap: '6px', fontSize: '11.5px', fontWeight: 800, color: 'var(--brand-primary)' }}>
-                      <span>{navigationStats.distanceMeters} m</span>
-                      <span>•</span>
-                      <span>~{navigationStats.etaMinutes} min</span>
-                    </div>
-                  </div>
+                const getManeuverIcon = (text = '', num = 1) => {
+                  if (isLast) return <CheckCircle2 size={16} style={{ color: '#168567' }} />;
+                  const l = text.toLowerCase();
+                  if (l.includes('depart') || l.includes('gate') || num === 1) return <Footprints size={16} style={{ color: '#3478B8' }} />;
+                  if (l.includes('right')) return <CornerUpRight size={16} style={{ color: '#168567' }} />;
+                  if (l.includes('left')) return <CornerUpLeft size={16} style={{ color: '#168567' }} />;
+                  if (l.includes('lift') || l.includes('stairs') || l.includes('floor') || l.includes('ascend')) return <Layers size={16} style={{ color: '#7C3AED' }} />;
+                  if (l.includes('arrive') || l.includes('room')) return <CheckCircle2 size={16} style={{ color: '#168567' }} />;
+                  return <MoveUp size={16} style={{ color: '#168567' }} />;
+                };
 
-                  {/* Maneuver Navigation Card */}
-                  {(() => {
-                    const stepsArr = currentBldg?.steps || [
-                      { num: 1, text: 'Depart Main Campus Gate (NH-48)', sub: 'Turnstiles & Security Outpost', dist: '0 m' },
-                      { num: 2, text: `Walk along campus avenue towards ${currentBldg?.shortName}`, sub: 'Direct paved pathway', dist: `${navigationStats.distanceMeters} m` },
-                    ];
-                    const activeStep = stepsArr[Math.min(activeStepIndex, stepsArr.length - 1)] || stepsArr[0];
-                    const isLast = activeStepIndex === stepsArr.length - 1;
+                return (
+                  <>
+                    <div
+                      style={{
+                        backgroundColor: '#F0FDF4',
+                        borderBottom: '1px solid #BBF7D0',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        position: 'relative',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {/* Real-time Walking Progress Bar */}
+                      <div style={{ height: '3px', width: '100%', backgroundColor: '#DCFCE7', overflow: 'hidden' }}>
+                        <div
+                          style={{
+                            height: '100%',
+                            width: `${isSimulatingWalk ? simulationProgress : Math.min(100, Math.max(10, ((activeStepIndex + 1) / Math.max(1, stepsArr.length)) * 100))}%`,
+                            backgroundColor: '#168567',
+                            transition: 'width 0.3s ease',
+                          }}
+                        />
+                      </div>
 
-                    const getManeuverIcon = (text = '', num = 1) => {
-                      if (isLast) return <CheckCircle2 size={16} style={{ color: 'var(--brand-primary)' }} />;
-                      const l = text.toLowerCase();
-                      if (l.includes('depart') || l.includes('gate') || num === 1) return <Footprints size={16} style={{ color: '#3478B8' }} />;
-                      if (l.includes('right')) return <CornerUpRight size={16} style={{ color: 'var(--brand-primary)' }} />;
-                      if (l.includes('left')) return <CornerUpLeft size={16} style={{ color: 'var(--brand-primary)' }} />;
-                      if (l.includes('lift') || l.includes('stairs') || l.includes('floor') || l.includes('ascend')) return <Layers size={16} style={{ color: '#7C3AED' }} />;
-                      if (l.includes('arrive') || l.includes('room')) return <CheckCircle2 size={16} style={{ color: 'var(--brand-primary)' }} />;
-                      return <MoveUp size={16} style={{ color: 'var(--brand-primary)' }} />;
-                    };
+                      <div style={{ padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#168567', animation: 'pulse 1.8s infinite' }} />
+                            <span style={{ fontSize: '10.5px', fontWeight: 800, color: '#168567', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                              Live Route Telemetry
+                            </span>
+                          </div>
+                          <div style={{ display: 'flex', gap: '6px', fontSize: '12px', fontWeight: 800, color: '#168567' }}>
+                            <span>{navigationStats.distanceMeters} m</span>
+                            <span>•</span>
+                            <span>~{navigationStats.etaMinutes} min</span>
+                          </div>
+                        </div>
 
-                    return (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        {/* Maneuver Navigation Card */}
                         <div
                           style={{
                             backgroundColor: '#FFFFFF',
-                            border: '1px solid var(--brand-soft-border)',
+                            border: '1px solid #BBF7D0',
                             borderRadius: '10px',
-                            padding: '9px 12px',
+                            padding: '10px 12px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             gap: '10px',
-                            boxShadow: 'var(--shadow-xs)',
+                            boxShadow: '0 2px 4px rgba(22, 133, 103, 0.08)',
                           }}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
                             <div
                               style={{
-                                width: '32px',
-                                height: '32px',
+                                width: '34px',
+                                height: '34px',
                                 borderRadius: '8px',
-                                backgroundColor: 'var(--brand-soft-bg)',
-                                border: '1px solid var(--brand-soft-border)',
+                                backgroundColor: '#EAF5EF',
+                                border: '1px solid #CBE2D4',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
@@ -2675,19 +2793,19 @@ export const CampusMap = () => {
                             </div>
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <span style={{ fontSize: '9.5px', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase' }}>
+                                <span style={{ fontSize: '9.5px', fontWeight: 800, color: '#168567', textTransform: 'uppercase' }}>
                                   Maneuver {activeStep.num} of {stepsArr.length}
                                 </span>
                                 {activeStep.dist && (
-                                  <span style={{ fontSize: '9.5px', color: 'var(--text-muted)', fontWeight: 600 }}>
+                                  <span style={{ fontSize: '9.5px', color: '#64748B', fontWeight: 600 }}>
                                     • {activeStep.dist}
                                   </span>
                                 )}
                               </div>
-                              <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              <div style={{ fontSize: '12px', fontWeight: 800, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 {activeStep.text}
                               </div>
-                              <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              <div style={{ fontSize: '10.5px', color: '#64748B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 {activeStep.sub}
                               </div>
                             </div>
@@ -2700,12 +2818,12 @@ export const CampusMap = () => {
                               disabled={activeStepIndex === 0}
                               onClick={() => setActiveStepIndex((prev) => Math.max(0, prev - 1))}
                               style={{
-                                width: '26px',
-                                height: '26px',
+                                width: '28px',
+                                height: '28px',
                                 borderRadius: '6px',
-                                backgroundColor: activeStepIndex === 0 ? 'var(--bg-surface-subtle)' : 'var(--brand-soft-bg)',
-                                color: activeStepIndex === 0 ? 'var(--text-muted)' : 'var(--brand-primary)',
-                                border: '1px solid var(--brand-soft-border)',
+                                backgroundColor: activeStepIndex === 0 ? '#F1F5F9' : '#EAF5EF',
+                                color: activeStepIndex === 0 ? '#94A3B8' : '#168567',
+                                border: '1px solid #CBD5E1',
                                 cursor: activeStepIndex === 0 ? 'not-allowed' : 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -2719,12 +2837,12 @@ export const CampusMap = () => {
                               disabled={activeStepIndex >= stepsArr.length - 1}
                               onClick={() => setActiveStepIndex((prev) => Math.min(stepsArr.length - 1, prev + 1))}
                               style={{
-                                width: '26px',
-                                height: '26px',
+                                width: '28px',
+                                height: '28px',
                                 borderRadius: '6px',
-                                backgroundColor: activeStepIndex >= stepsArr.length - 1 ? 'var(--bg-surface-subtle)' : 'var(--brand-soft-bg)',
-                                color: activeStepIndex >= stepsArr.length - 1 ? 'var(--text-muted)' : 'var(--brand-primary)',
-                                border: '1px solid var(--brand-soft-border)',
+                                backgroundColor: activeStepIndex >= stepsArr.length - 1 ? '#F1F5F9' : '#EAF5EF',
+                                color: activeStepIndex >= stepsArr.length - 1 ? '#94A3B8' : '#168567',
+                                border: '1px solid #CBD5E1',
                                 cursor: activeStepIndex >= stepsArr.length - 1 ? 'not-allowed' : 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -2743,9 +2861,9 @@ export const CampusMap = () => {
                           style={{
                             background: 'none',
                             border: 'none',
-                            fontSize: '10.5px',
+                            fontSize: '11px',
                             fontWeight: 700,
-                            color: 'var(--brand-primary)',
+                            color: '#168567',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
@@ -2756,65 +2874,147 @@ export const CampusMap = () => {
                         >
                           <span>{showAllManeuvers ? 'Hide Maneuver Steps ▲' : `View All ${stepsArr.length} Maneuver Steps ▼`}</span>
                         </button>
+                      </div>
+                    </div>
 
-                        {showAllManeuvers && (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginTop: '2px', maxHeight: '160px', overflowY: 'auto' }}>
-                            {stepsArr.map((st, sIdx) => {
-                              const isActive = sIdx === activeStepIndex;
-                              return (
-                                <div
-                                  key={st.num}
-                                  onClick={() => setActiveStepIndex(sIdx)}
+                    {/* Middle Scrollable Wayfinding Guidance & Step Area (Fills void cleanly!) */}
+                    <div
+                      style={{
+                        flex: 1,
+                        overflowY: 'auto',
+                        padding: '12px 14px',
+                        backgroundColor: '#F8FAFC',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px',
+                      }}
+                    >
+                      {/* Expanded Turn-by-Turn Maneuvers List */}
+                      {showAllManeuvers && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <div style={{ fontSize: '11px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                            Turn-by-Turn Navigation Steps ({stepsArr.length})
+                          </div>
+                          {stepsArr.map((st, sIdx) => {
+                            const isActive = sIdx === activeStepIndex;
+                            return (
+                              <div
+                                key={st.num}
+                                onClick={() => setActiveStepIndex(sIdx)}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'flex-start',
+                                  gap: '10px',
+                                  padding: '8px 10px',
+                                  borderRadius: '8px',
+                                  backgroundColor: isActive ? '#F0FDF4' : '#FFFFFF',
+                                  border: isActive ? '1.5px solid #168567' : '1px solid #E2E8F0',
+                                  cursor: 'pointer',
+                                  boxShadow: '0 1px 2px rgba(15, 23, 42, 0.03)',
+                                  transition: 'all 0.15s ease',
+                                }}
+                              >
+                                <span
                                   style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    borderRadius: '50%',
+                                    backgroundColor: isActive ? '#168567' : '#F1F5F9',
+                                    color: isActive ? '#FFFFFF' : '#475569',
+                                    fontSize: '10px',
+                                    fontWeight: 800,
                                     display: 'flex',
-                                    alignItems: 'flex-start',
-                                    gap: '8px',
-                                    padding: '6px 8px',
-                                    borderRadius: '6px',
-                                    backgroundColor: isActive ? 'var(--brand-soft-bg)' : '#FFFFFF',
-                                    border: isActive ? '1px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
-                                    cursor: 'pointer',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flexShrink: 0,
+                                    marginTop: '1px',
                                   }}
                                 >
-                                  <span
-                                    style={{
-                                      width: '18px',
-                                      height: '18px',
-                                      borderRadius: '50%',
-                                      backgroundColor: isActive ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
-                                      color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
-                                      fontSize: '9.5px',
-                                      fontWeight: 800,
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      flexShrink: 0,
-                                      marginTop: '1px',
-                                    }}
-                                  >
-                                    {st.num}
-                                  </span>
-                                  <div style={{ flex: 1, minWidth: 0 }}>
-                                    <div style={{ fontSize: '11px', fontWeight: isActive ? 800 : 600, color: isActive ? 'var(--brand-primary)' : 'var(--text-primary)' }}>
-                                      {st.text}
-                                    </div>
-                                    <div style={{ fontSize: '9.5px', color: 'var(--text-muted)' }}>
-                                      {st.sub} • {st.dist}
-                                    </div>
+                                  {st.num}
+                                </span>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <div style={{ fontSize: '11.5px', fontWeight: isActive ? 800 : 600, color: isActive ? '#168567' : '#0F172A' }}>
+                                    {st.text}
+                                  </div>
+                                  <div style={{ fontSize: '10px', color: '#64748B', marginTop: '2px' }}>
+                                    {st.sub} • {st.dist}
                                   </div>
                                 </div>
-                              );
-                            })}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Campus Route Insights Card */}
+                      <div
+                        style={{
+                          backgroundColor: '#FFFFFF',
+                          borderRadius: '10px',
+                          border: '1px solid #E2E8F0',
+                          padding: '12px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                          boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                          <Compass size={14} style={{ color: '#168567' }} />
+                          <span style={{ fontSize: '11.5px', fontWeight: 800, color: '#0F172A' }}>
+                            Campus Navigation Guidance
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '11px', color: '#475569' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span>🛣️</span>
+                            <span><strong>Surface:</strong> Paved Campus Avenues &amp; Corridors</span>
                           </div>
-                        )}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span>♿</span>
+                            <span><strong>Accessibility:</strong> Ramp-equipped &amp; step-free navigation</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span>⚡</span>
+                            <span><strong>Estimated Speed:</strong> ~1.2 m/s standard pedestrian pace</span>
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            backgroundColor: '#F0FDF4',
+                            borderRadius: '6px',
+                            padding: '6px 8px',
+                            fontSize: '10.5px',
+                            color: '#168567',
+                            fontWeight: 600,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            marginTop: '2px',
+                          }}
+                        >
+                          <span>✓</span>
+                          <span>Follow glowing green pathline on GIS map</span>
+                        </div>
                       </div>
-                    );
-                  })()}
-                </div>
-              </div>
+                    </div>
+                  </>
+                );
+              })()}
 
               {/* Navigation Action Buttons: Hardware GPS & Simulation */}
-              <div style={{ padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid var(--border-subtle)', marginTop: 'auto' }}>
+              <div
+                style={{
+                  padding: '12px 14px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                  borderTop: '1px solid #E2E8F0',
+                  backgroundColor: '#FFFFFF',
+                  flexShrink: 0,
+                  boxShadow: '0 -4px 12px rgba(15, 23, 42, 0.04)',
+                }}
+              >
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button
                     type="button"
@@ -2823,9 +3023,9 @@ export const CampusMap = () => {
                       flex: 1,
                       padding: '8px 12px',
                       borderRadius: '8px',
-                      border: '1px solid var(--border-subtle)',
-                      backgroundColor: isLiveGpsActive ? 'var(--brand-primary)' : '#FFFFFF',
-                      color: isLiveGpsActive ? '#FFFFFF' : 'var(--text-primary)',
+                      border: isLiveGpsActive ? '1px solid #168567' : '1px solid #CBD5E1',
+                      backgroundColor: isLiveGpsActive ? '#168567' : '#FFFFFF',
+                      color: isLiveGpsActive ? '#FFFFFF' : '#0F172A',
                       fontSize: '11.5px',
                       fontWeight: 700,
                       cursor: 'pointer',
@@ -2833,11 +3033,11 @@ export const CampusMap = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '6px',
-                      boxShadow: 'var(--shadow-xs)',
+                      boxShadow: isLiveGpsActive ? '0 2px 4px rgba(22, 133, 103, 0.2)' : '0 1px 2px rgba(15, 23, 42, 0.05)',
                       transition: 'all 0.15s ease',
                     }}
                   >
-                    <Compass size={13} />
+                    <Compass size={14} />
                     <span>{isLiveGpsActive ? 'Stop Live GPS' : 'Enable Live GPS'}</span>
                   </button>
 
@@ -2849,7 +3049,7 @@ export const CampusMap = () => {
                       padding: '8px 12px',
                       borderRadius: '8px',
                       border: 'none',
-                      backgroundColor: isSimulatingWalk ? '#B7791F' : 'var(--brand-primary)',
+                      backgroundColor: isSimulatingWalk ? '#D97706' : '#168567',
                       color: '#FFFFFF',
                       fontSize: '11.5px',
                       fontWeight: 700,
@@ -2858,17 +3058,29 @@ export const CampusMap = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '6px',
-                      boxShadow: 'var(--shadow-xs)',
+                      boxShadow: '0 2px 4px rgba(22, 133, 103, 0.2)',
                       transition: 'all 0.15s ease',
                     }}
                   >
-                    {isSimulatingWalk ? <Pause size={13} /> : <Play size={13} />}
+                    {isSimulatingWalk ? <Pause size={14} /> : <Play size={14} />}
                     <span>{isSimulatingWalk ? 'Pause Walk' : 'Simulate Walk'}</span>
                   </button>
                 </div>
 
                 {gpsError && (
-                  <div style={{ fontSize: '10.5px', color: 'var(--status-danger)', backgroundColor: 'var(--status-danger-bg)', padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--status-danger-border)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div
+                    style={{
+                      fontSize: '10.5px',
+                      color: '#DC2626',
+                      backgroundColor: '#FEF2F2',
+                      padding: '6px 10px',
+                      borderRadius: '6px',
+                      border: '1px solid #FECACA',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                  >
                     <AlertCircle size={13} />
                     <span>{gpsError}</span>
                   </div>
@@ -3398,11 +3610,13 @@ export const CampusMap = () => {
         {/* SELECTED BUILDING DETAIL DRAWER (Right Slide-over on Desktop, Bottom Sheet on Mobile) */}
         {drawerOpen && currentBldg && (
           <aside
-            className="absolute bg-white backdrop-blur-md transition-all duration-300 ease-out flex flex-col overflow-hidden
+            className="absolute bg-white transition-all duration-300 ease-out flex flex-col overflow-hidden
               md:top-4 md:bottom-4 md:right-4 md:w-[360px] md:max-w-[calc(100vw-32px)] md:rounded-2xl md:border md:border-[var(--border-subtle)] md:shadow-lg md:h-auto md:max-h-none md:inset-x-auto md:left-auto
               inset-x-0 bottom-0 top-auto w-full max-w-full rounded-t-2xl border-t border-[var(--border-subtle)] shadow-2xl max-h-[82vh] h-[82vh]"
             style={{
               zIndex: 500,
+              backgroundColor: '#FFFFFF',
+              boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(15, 23, 42, 0.08)',
               animation: 'fadeIn 0.2s ease',
             }}
           >

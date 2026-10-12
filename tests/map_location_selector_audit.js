@@ -35,7 +35,7 @@ console.log('✅ Check 2 Passed: Names show cleanly on hover for both polygons a
 
 // Check 3: Directory and Routes drawer & floating pill z-index and visibility
 console.log('\n[Check 3/5] Verifying Directory & Routes drawer and pill visibility (zIndex: 500)...');
-const hasDrawerZIndex = campusMapContent.includes('style={{ zIndex: 500 }}');
+const hasDrawerZIndex = campusMapContent.includes('zIndex: 500');
 const hasPillZIndex = campusMapContent.includes('Open Campus Directory & Routes') && campusMapContent.includes('zIndex: 500');
 if (!hasDrawerZIndex || !hasPillZIndex) {
   console.error('❌ Check 3 Failed: Directory & Routes drawer or pill missing zIndex: 500');

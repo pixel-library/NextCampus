@@ -1773,7 +1773,8 @@ export const CampusGisMap = ({
 
       {/* FLOATING TOP-RIGHT LAYER SWITCHER */}
       <div
-        className="absolute top-2.5 right-2.5 md:top-4 md:right-4 z-30 bg-white/96 backdrop-blur-md rounded-xl border border-[var(--border-subtle)] shadow-md p-1 flex gap-1"
+        className="absolute top-2.5 right-2.5 md:top-4 md:right-4 z-30 bg-white rounded-xl border border-[var(--border-subtle)] shadow-md p-1 flex gap-1"
+        style={{ backgroundColor: '#FFFFFF' }}
       >
         <button
           type="button"
@@ -1958,8 +1959,8 @@ export const CampusGisMap = ({
       {/* FLOATING MAP LEGEND (COLLAPSIBLE) */}
       {showLegend && (
         <div
-          className="absolute bottom-16 right-3 md:bottom-20 md:right-16 bg-white/98 backdrop-blur-md rounded-xl border border-[var(--border-subtle)] shadow-xl p-3.5 sm:p-4 min-w-[210px] max-w-[calc(100vw-24px)] flex flex-col gap-2.5 animate-fadeIn"
-          style={{ zIndex: 450 }}
+          className="absolute bottom-16 right-3 md:bottom-20 md:right-16 bg-white rounded-xl border border-[var(--border-subtle)] shadow-xl p-3.5 sm:p-4 min-w-[210px] max-w-[calc(100vw-24px)] flex flex-col gap-2.5 animate-fadeIn"
+          style={{ zIndex: 450, backgroundColor: '#FFFFFF' }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
