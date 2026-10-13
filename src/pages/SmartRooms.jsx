@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   DoorOpen,
@@ -45,399 +45,714 @@ import api from '../services/api';
 // DATA: Comprehensive Campus Rooms & Architectural CAD Metadata
 // ============================================================================
 const INITIAL_ROOMS = [
-  // --- Block ENG-02 (Faculty of Engineering & Technology) - Level 2 ---
+  // --- Block ADM-01 (Maharana Pratap Main Academic Block) - Ground Floor ---
   {
-    id: 'B-204',
-    roomNumber: 'B-204',
-    name: 'Multi-Media Lecture Theatre & AI Hub',
-    type: 'Lecture Theatres',
-    building: 'Faculty of Engineering & Technology (Block ENG-02)',
-    buildingCode: 'ENG-02',
-    floor: 'Level 2',
-    capacity: 60,
-    currentOccupancy: 18,
-    status: 'available',
-    statusText: 'Open (Free Till 1:00 PM)',
-    nextClass: 'CS-301 Operating Systems at 1:00 PM',
-    co2: 410,
-    co2Status: 'Pristine Clean Air',
-    temp: 21.8,
-    tempTarget: 22.0,
-    humidity: 44,
-    noiseDb: 34,
-    noiseStatus: 'Whisper Quiet (<35dB)',
-    wifiSpeed: '820 Mbps',
-    wifiLatency: '3 ms',
-    wifiDevices: 18,
-    features: [
-      'Dual 4K Laser Projection + Spatial Rig',
-      'Motorized Lectern (USB-C Thunderbolt 4)',
-      'Wi-Fi 7 Enterprise Core AP',
-      'ADA Front Row & Hearing Loop',
-      'HVAC HEPA Air Purification',
-    ],
-    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80',
-    has4kLaser: true,
-    hasGpu: false,
-    hasInteractive: true,
-    isAda: true,
-    cadBox: { x: 260, y: 340, w: 180, h: 160, door: { x: 350, y: 340 } },
-    routeSteps: [
-      { step: '1. Cross Level 2 Skybridge', desc: 'Enter Alan Turing Hall through automatic glass sliding doors (0m)' },
-      { step: '2. Continue down North Main Corridor', desc: 'Walk straight past Restrooms and West Lifts (25m)' },
-      { step: '3. Turn Left at Student Lounge', desc: 'Follow illuminated directional wayfinding (15m)' },
-      { step: '4. Arrive at Room B-204', desc: 'On your right side. Double acoustic doors with NFC smart lock (8m)' },
-    ],
-    routeDistance: '48 meters (1.2 min walk)',
-    slots: [
-      { id: 'b204-1', start: '08:00', end: '09:30', title: 'Data Structures (CS-201)', lecturer: 'Prof. Sharma', status: 'past', isBookable: false },
-      { id: 'b204-2', start: '09:30', end: '11:30', title: 'Algorithm Lab Section A', lecturer: 'Dr. Verma', status: 'occupied', isBookable: false },
-      { id: 'b204-3', start: '11:30', end: '13:00', title: 'Open Collaborative Lab Access', lecturer: 'Unassigned', status: 'available', isBookable: true },
-      { id: 'b204-4', start: '13:00', end: '14:30', title: 'CS-301 Operating Systems', lecturer: 'Dr. Verma', status: 'reserved', isBookable: false },
-      { id: 'b204-5', start: '14:30', end: '16:30', title: 'Open Team Project Study Slot', lecturer: 'Open Access', status: 'available', isBookable: true },
-      { id: 'b204-6', start: '16:30', end: '18:30', title: 'Evening Capstone Lab Access', lecturer: 'Open Access', status: 'available', isBookable: true },
-    ],
-  },
-  {
-    id: 'B-203',
-    roomNumber: 'B-203',
-    name: 'Distributed Systems & Cloud Lab',
-    type: 'Computer Labs',
-    building: 'Faculty of Engineering & Technology (Block ENG-02)',
-    buildingCode: 'ENG-02',
-    floor: 'Level 2',
-    capacity: 40,
-    currentOccupancy: 10,
-    status: 'available',
-    statusText: 'Open Now (30 Desks Free)',
-    nextClass: 'Cloud Distributed Systems at 3:00 PM',
-    co2: 425,
-    co2Status: 'Optimal (Fresh Intake)',
-    temp: 20.4,
-    tempTarget: 20.5,
-    humidity: 42,
-    noiseDb: 38,
-    noiseStatus: 'Low Hum (Workstation Active)',
-    wifiSpeed: '950 Mbps',
-    wifiLatency: '2 ms',
-    wifiDevices: 12,
-    features: [
-      '30x RTX 4090 AI Workstations',
-      '10GbE SFP+ Fiber Network Drop',
-      'Dual 4K OLED Color-Accurate Monitors',
-      'ADA Workstation #1 (Motorized Height)',
-      'Touchless NFC Access Controller',
-    ],
-    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80',
-    has4kLaser: false,
-    hasGpu: true,
-    hasInteractive: true,
-    isAda: true,
-    cadBox: { x: 70, y: 340, w: 160, h: 160, door: { x: 150, y: 340 } },
-    routeSteps: [
-      { step: '1. Enter Level 2 Corridor', desc: 'Exit West Lift Bank and head west (0m)' },
-      { step: '2. Head West down Main Hallway', desc: 'Pass Amphitheatre entrance on left (30m)' },
-      { step: '3. Arrive at Room B-203', desc: 'Door on the left side with dual NFC biometric terminal (10m)' },
-    ],
-    routeDistance: '40 meters (1.0 min walk)',
-    slots: [
-      { id: 'b203-1', start: '08:30', end: '10:00', title: 'Network Protocols Lab', lecturer: 'Dr. Sengupta', status: 'past', isBookable: false },
-      { id: 'b203-2', start: '10:00', end: '13:30', title: 'Open GPU Cluster Work Time', lecturer: 'Open Lab', status: 'available', isBookable: true },
-      { id: 'b203-3', start: '13:30', end: '15:00', title: 'Autonomous Systems Sim', lecturer: 'Prof. Mehta', status: 'reserved', isBookable: false },
-      { id: 'b203-4', start: '15:00', end: '17:00', title: 'Distributed Systems Practical', lecturer: 'Dr. Sengupta', status: 'reserved', isBookable: false },
-      { id: 'b203-5', start: '17:00', end: '19:00', title: 'Evening Open AI Hackathon Desks', lecturer: 'Student Club', status: 'available', isBookable: true },
-    ],
-  },
-  {
-    id: 'B-201',
-    roomNumber: 'B-201',
-    name: 'Main Academic Amphitheatre',
-    type: 'Lecture Theatres',
-    building: 'Faculty of Engineering & Technology (Block ENG-02)',
-    buildingCode: 'ENG-02',
-    floor: 'Level 2',
+    id: "MN-G-LIB",
+    roomNumber: "MN-G-01",
+    name: "Central Library",
+    type: "Library",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
     capacity: 120,
-    currentOccupancy: 120,
-    status: 'occupied',
-    statusText: 'In Session (CS-204 Algorithms)',
-    nextClass: 'Free at 1:00 PM for Guest Keynote',
-    co2: 520,
-    co2Status: 'Elevated (Air Handling at 100%)',
-    temp: 23.1,
-    tempTarget: 22.0,
-    humidity: 50,
-    noiseDb: 64,
-    noiseStatus: 'Lecture in Progress',
-    wifiSpeed: '650 Mbps',
-    wifiLatency: '6 ms',
-    wifiDevices: 124,
-    features: [
-      'Tiered Acoustic Auditoria Seating',
-      'Dual 4K Christie Laser Projectors',
-      'Array Ceiling Mics & Live Webcast Hub',
-      'ADA Hearing Assist Loop + Ramp Entry',
-    ],
-    image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80',
-    has4kLaser: true,
-    hasGpu: false,
-    hasInteractive: false,
-    isAda: true,
-    cadBox: { x: 70, y: 120, w: 160, h: 160, door: { x: 150, y: 280 } },
+    currentOccupancy: 45,
+    status: "available",
+    statusText: "75 Seats Open",
+    nextClass: "Open Study All Day",
+    co2: 385, co2Status: "Pristine Clean Air", temp: 21.0, tempTarget: 21.0, humidity: 42, noiseDb: 26, noiseStatus: "Silent Zone (<28dB)",
+    wifiSpeed: "900 Mbps", wifiLatency: "3 ms", wifiDevices: 45,
+    features: ["Reading Desks & Carrels", "Digital Catalogue Terminals", "Wi-Fi Coverage", "AC & Ventilation", "ADA Accessible Aisles"],
+    image: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
+    cadBox: { x: 135, y: 140, w: 290, h: 155, door: { x: 180, y: 310 } },
     routeSteps: [
-      { step: '1. Exit West Lifts', desc: 'Turn left into Central Concourse (5m)' },
-      { step: '2. Arrive at Amphitheatre B-201', desc: 'Main acoustic double doors on south wall (15m)' },
+      { step: "1. Enter Central Hall", desc: "Start from main reception hall (0m)" },
+      { step: "2. Head North-West along Path", desc: "Enter Central Library via south gate (40m)" },
     ],
-    routeDistance: '20 meters (0.5 min walk)',
+    routeDistance: "40 meters (0.8 min walk)",
     slots: [
-      { id: 'b201-1', start: '09:00', end: '10:30', title: 'Discrete Mathematics', lecturer: 'Prof. Joshi', status: 'past', isBookable: false },
-      { id: 'b201-2', start: '10:30', end: '13:00', title: 'Algorithms (CS-204)', lecturer: 'Prof. R. Sen', status: 'occupied', isBookable: false },
-      { id: 'b201-3', start: '13:00', end: '15:00', title: 'Tech Speaker Series Keynote', lecturer: 'Guest Faculty', status: 'reserved', isBookable: false },
-      { id: 'b201-4', start: '15:00', end: '17:00', title: 'Open Revision & Problem Solving', lecturer: 'TA Session', status: 'available', isBookable: true },
+      { id: "lib-1", start: "08:00", end: "12:00", title: "Morning Study Hours", lecturer: "Open", status: "available", isBookable: true },
+      { id: "lib-2", start: "12:00", end: "17:00", title: "Afternoon Study Hours", lecturer: "Open", status: "available", isBookable: true },
+      { id: "lib-3", start: "17:00", end: "20:00", title: "Evening Study Hours", lecturer: "Open", status: "available", isBookable: true },
     ],
   },
   {
-    id: 'B-202',
-    roomNumber: 'B-202',
-    name: 'Faculty Seminar Suite',
-    type: 'Smart Classrooms',
-    building: 'Faculty of Engineering & Technology (Block ENG-02)',
-    buildingCode: 'ENG-02',
-    floor: 'Level 2',
-    capacity: 35,
-    currentOccupancy: 35,
-    status: 'reserved',
-    statusText: 'Reserved (Faculty Council 2PM)',
-    nextClass: 'Faculty Council at 2:00 PM',
-    co2: 390,
-    co2Status: 'Pristine Clean Air',
-    temp: 21.0,
-    tempTarget: 21.0,
-    humidity: 43,
-    noiseDb: 32,
-    noiseStatus: 'Whisper Quiet',
-    wifiSpeed: '780 Mbps',
-    wifiLatency: '4 ms',
-    wifiDevices: 6,
-    features: [
-      'Interactive Smart Touchboard 85"',
-      'Conference AI Auto-Framing Camera',
-      'Modular Acoustic Glass Collaboration Pods',
-    ],
-    image: 'https://images.unsplash.com/photo-1577412647305-991150c7d163?auto=format&fit=crop&w=800&q=80',
-    has4kLaser: false,
-    hasGpu: false,
-    hasInteractive: true,
-    isAda: false,
-    cadBox: { x: 730, y: 120, w: 160, h: 160, door: { x: 810, y: 280 } },
+    id: "MN-G-SS",
+    roomNumber: "MN-G-02",
+    name: "Student Section",
+    type: "Student Services",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 80, currentOccupancy: 30, status: "available", statusText: "Open Now",
+    nextClass: "Open 09:00 AM – 05:00 PM",
+    co2: 400, co2Status: "Good Air Quality", temp: 22.0, tempTarget: 22.0, humidity: 44, noiseDb: 42, noiseStatus: "Normal Activity",
+    wifiSpeed: "800 Mbps", wifiLatency: "4 ms", wifiDevices: 30,
+    features: ["Student Help Desk", "Fee Counter", "Form Submission", "Notice Board", "Seating Area"],
+    image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
+    cadBox: { x: 432, y: 140, w: 310, h: 125, door: { x: 585, y: 290 } },
     routeSteps: [
-      { step: '1. Exit East Lifts', desc: 'Turn right into East Corridor (5m)' },
-      { step: '2. Arrive at B-202', desc: 'Glass entry door on right (12m)' },
+      { step: "1. Enter Central Hall", desc: "Start from central hall (0m)" },
+      { step: "2. Head North directly to Gate", desc: "Student Section gate directly connected to Hall (25m)" },
     ],
-    routeDistance: '17 meters (0.4 min walk)',
+    routeDistance: "25 meters (0.5 min walk)",
     slots: [
-      { id: 'b202-1', start: '09:00', end: '11:00', title: 'Department Curriculum Review', lecturer: 'HOD CSE', status: 'past', isBookable: false },
-      { id: 'b202-2', start: '11:00', end: '13:30', title: 'Open Faculty Desk Time', lecturer: 'Faculty Only', status: 'available', isBookable: true },
-      { id: 'b202-3', start: '14:00', end: '16:00', title: 'Faculty Council Session', lecturer: 'Dean Academic', status: 'reserved', isBookable: false },
+      { id: "ss-1", start: "09:00", end: "13:00", title: "Morning Service Hours", lecturer: "Admin Staff", status: "available", isBookable: false },
+      { id: "ss-2", start: "14:00", end: "17:00", title: "Afternoon Service Hours", lecturer: "Admin Staff", status: "available", isBookable: false },
     ],
   },
   {
-    id: 'B-205',
-    roomNumber: 'B-205',
-    name: 'AI & Robotics Prototyping Lab',
-    type: 'Computer Labs',
-    building: 'Faculty of Engineering & Technology (Block ENG-02)',
-    buildingCode: 'ENG-02',
-    floor: 'Level 2',
-    capacity: 28,
-    currentOccupancy: 28,
-    status: 'occupied',
-    statusText: 'In Session (Autonomous Drones)',
-    nextClass: 'Free at 4:00 PM',
-    co2: 440,
-    co2Status: 'Optimal Clean Air',
-    temp: 22.0,
-    tempTarget: 21.5,
-    humidity: 46,
-    noiseDb: 52,
-    noiseStatus: 'Robotics Motors Active',
-    wifiSpeed: '900 Mbps',
-    wifiLatency: '2 ms',
-    wifiDevices: 32,
-    features: [
-      'NVIDIA Jetson AI Prototyping Benches',
-      'Indoor Drone Flight Netting Enclosure',
-      'ESD Soldering & 3D Print Farm',
-      'ADA Ergonomic Height Workstation',
-    ],
-    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80',
-    has4kLaser: false,
-    hasGpu: true,
-    hasInteractive: true,
-    isAda: true,
-    cadBox: { x: 540, y: 340, w: 180, h: 160, door: { x: 630, y: 340 } },
+    id: "MN-G-CANT",
+    roomNumber: "MN-G-03",
+    name: "Canteen",
+    type: "Facility",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 60, currentOccupancy: 25, status: "available", statusText: "Open Now",
+    nextClass: "Serving 07:00 AM – 08:00 PM",
+    co2: 430, co2Status: "Good (Kitchen Ventilated)", temp: 24.0, tempTarget: 23.0, humidity: 48, noiseDb: 55, noiseStatus: "Active",
+    wifiSpeed: "500 Mbps", wifiLatency: "5 ms", wifiDevices: 25,
+    features: ["Hot Meals Counter", "Snacks & Beverages", "Seating Tables", "Digital Display Menu", "CCTV Monitored"],
+    image: "https://images.unsplash.com/photo-1567521464027-f127ff144326?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
+    cadBox: { x: 748, y: 140, w: 150, h: 155, door: { x: 825, y: 310 } },
     routeSteps: [
-      { step: '1. Main Concourse', desc: 'Walk past Student Lounge east (20m)' },
-      { step: '2. Arrive at B-205', desc: 'Entry on south side with RFID lock (10m)' },
+      { step: "1. Enter Central Hall", desc: "Head towards North-East wing (0m)" },
+      { step: "2. Enter Canteen Gate", desc: "South facing gate along north path (45m)" },
     ],
-    routeDistance: '30 meters (0.8 min walk)',
+    routeDistance: "45 meters (0.9 min walk)",
     slots: [
-      { id: 'b205-1', start: '09:00', end: '12:00', title: 'Robotics Sensors Lab', lecturer: 'Dr. Chauhan', status: 'past', isBookable: false },
-      { id: 'b205-2', start: '12:00', end: '16:00', title: 'Autonomous Drones Flight Test', lecturer: 'Robotics Guild', status: 'occupied', isBookable: false },
-      { id: 'b205-3', start: '16:00', end: '19:00', title: 'Open Maker Bench Access', lecturer: 'Open Lab', status: 'available', isBookable: true },
+      { id: "cant-1", start: "07:00", end: "11:00", title: "Breakfast Service", lecturer: "Open", status: "available", isBookable: false },
+      { id: "cant-2", start: "11:00", end: "15:00", title: "Lunch Service", lecturer: "Open", status: "occupied", isBookable: false },
+      { id: "cant-3", start: "15:00", end: "20:00", title: "Evening Snacks", lecturer: "Open", status: "available", isBookable: false },
     ],
   },
   {
-    id: 'B-206',
-    roomNumber: 'B-206',
-    name: 'Silent Acoustic Study Pods',
-    type: 'Study Pods',
-    building: 'Faculty of Engineering & Technology (Block ENG-02)',
-    buildingCode: 'ENG-02',
-    floor: 'Level 2',
-    capacity: 16,
-    currentOccupancy: 12,
-    status: 'available',
-    statusText: '4 Pods Available Now',
-    nextClass: 'Instant Tap-In / 24/7 Access',
-    co2: 400,
-    co2Status: 'Pristine Clean Air',
-    temp: 21.5,
-    tempTarget: 21.5,
-    humidity: 43,
-    noiseDb: 28,
-    noiseStatus: 'Acoustic Soundproof (<30dB)',
-    wifiSpeed: '850 Mbps',
-    wifiLatency: '3 ms',
-    wifiDevices: 12,
-    features: [
-      '16x Frameless ANC Acoustic Glass Pods',
-      'Dual 100W USB-C PD Superchargers',
-      'Adjustable Circadian Lighting Strip',
-      'Touchless QR / NFC Pass Unlock',
-    ],
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
-    has4kLaser: false,
-    hasGpu: false,
-    hasInteractive: false,
-    isAda: true,
-    cadBox: { x: 740, y: 340, w: 150, h: 160, door: { x: 815, y: 340 } },
+    id: "MN-G-EXM",
+    roomNumber: "MN-G-04",
+    name: "Central Examination Room",
+    type: "Examination Hall",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 100, currentOccupancy: 0, status: "available", statusText: "No Exam Scheduled",
+    nextClass: "Available for Booking",
+    co2: 390, co2Status: "Pristine Clean Air", temp: 22.5, tempTarget: 22.0, humidity: 43, noiseDb: 28, noiseStatus: "Silent — Exam Ready",
+    wifiSpeed: "600 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Individual Exam Desks", "CCTV Surveillance", "Strict Silent Zone", "AC & Lighting", "Invigilator Desk"],
+    image: "https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
+    cadBox: { x: 902, y: 140, w: 158, h: 155, door: { x: 980, y: 310 } },
     routeSteps: [
-      { step: '1. East Corridor', desc: 'Walk straight past East Lifts (25m)' },
-      { step: '2. Arrive at B-206 Pods', desc: 'Acoustic glass bay on south end (15m)' },
+      { step: "1. From Central Hall", desc: "Walk down North-East path (0m)" },
+      { step: "2. Far North-East Corner", desc: "Examination Room entrance at far right of north wing (65m)" },
     ],
-    routeDistance: '40 meters (1.0 min walk)',
+    routeDistance: "65 meters (1.3 min walk)",
     slots: [
-      { id: 'b206-1', start: '08:00', end: '10:00', title: 'Early Bird Deep Study', lecturer: 'Open Access', status: 'past', isBookable: false },
-      { id: 'b206-2', start: '10:00', end: '12:00', title: 'Reserved Pods 1-8', lecturer: 'Peer Booking', status: 'occupied', isBookable: false },
-      { id: 'b206-3', start: '12:00', end: '14:00', title: 'Open Pod Slot A', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
-      { id: 'b206-4', start: '14:00', end: '16:00', title: 'Open Pod Slot B', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
-      { id: 'b206-5', start: '16:00', end: '18:00', title: 'Open Pod Slot C', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
-      { id: 'b206-6', start: '18:00', end: '20:00', title: 'Night Focus Slot', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
-    ],
-  },
-
-  // --- Block LIB-03 (Swami Vivekananda Central Library) - Level 2 ---
-  {
-    id: 'LIB-201',
-    roomNumber: 'LIB-201',
-    name: 'Swami Vivekananda Quiet Focus Bay',
-    type: 'Study Pods',
-    building: 'Swami Vivekananda Central Library (Block LIB-03)',
-    buildingCode: 'LIB-03',
-    floor: 'Level 2',
-    capacity: 40,
-    currentOccupancy: 14,
-    status: 'available',
-    statusText: '26 Desks Open Now',
-    nextClass: 'Open Study All Day',
-    co2: 385,
-    co2Status: 'Pristine Clean Air',
-    temp: 21.0,
-    tempTarget: 21.0,
-    humidity: 42,
-    noiseDb: 26,
-    noiseStatus: 'Strict Silent Zone (<28dB)',
-    wifiSpeed: '900 Mbps',
-    wifiLatency: '3 ms',
-    wifiDevices: 14,
-    features: [
-      'Single Carrels with Acoustic Felt Partitions',
-      'Individual Reading Task LED (4000K)',
-      '100W USB-C & Universal AC Sockets',
-      'ADA Compliant Wide Aisles',
-    ],
-    image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80',
-    has4kLaser: false,
-    hasGpu: false,
-    hasInteractive: false,
-    isAda: true,
-    cadBox: { x: 120, y: 150, w: 280, h: 260, door: { x: 260, y: 410 } },
-    routeSteps: [
-      { step: '1. Enter Library Central Atrium', desc: 'Pass RFID security turnstiles (10m)' },
-      { step: '2. Take Central Glass Elevator to Level 2', desc: 'Exit onto Quiet Floor landing (15m)' },
-      { step: '3. Turn North to Focus Bay', desc: 'Acoustic glass automatic doors on left (20m)' },
-    ],
-    routeDistance: '45 meters (1.1 min walk)',
-    slots: [
-      { id: 'lib201-1', start: '08:00', end: '12:00', title: 'Morning Focus Period', lecturer: 'Open Study', status: 'available', isBookable: true },
-      { id: 'lib201-2', start: '12:00', end: '16:00', title: 'Afternoon Silent Session', lecturer: 'Open Study', status: 'available', isBookable: true },
-      { id: 'lib201-3', start: '16:00', end: '20:00', title: 'Evening Research Hours', lecturer: 'Open Study', status: 'available', isBookable: true },
+      { id: "exm-1", start: "09:00", end: "12:00", title: "Morning Exam Slot", lecturer: "Exam Cell", status: "available", isBookable: true },
+      { id: "exm-2", start: "14:00", end: "17:00", title: "Afternoon Exam Slot", lecturer: "Exam Cell", status: "available", isBookable: true },
     ],
   },
   {
-    id: 'LIB-202',
-    roomNumber: 'LIB-202',
-    name: 'Acoustic Soundproof Solo Pods (1-8)',
-    type: 'Study Pods',
-    building: 'Swami Vivekananda Central Library (Block LIB-03)',
-    buildingCode: 'LIB-03',
-    floor: 'Level 2',
-    capacity: 8,
-    currentOccupancy: 5,
-    status: 'available',
-    statusText: '3 Solo Pods Free',
-    nextClass: 'Instant QR Reservation',
-    co2: 390,
-    co2Status: 'Pristine Clean Air',
-    temp: 21.2,
-    tempTarget: 21.0,
-    humidity: 40,
-    noiseDb: 24,
-    noiseStatus: 'Soundproofed Isolation Pod',
-    wifiSpeed: '850 Mbps',
-    wifiLatency: '3 ms',
-    wifiDevices: 5,
-    features: [
-      'Double Glazed ANC Soundproof Pod Glass',
-      'Air Ventilation HEPA System (6 ACH)',
-      'Digital "In-Use" Status Beacon',
-      'Mobile App Bluetooth / NFC Pass Reader',
-    ],
-    image: 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80',
-    has4kLaser: false,
-    hasGpu: false,
-    hasInteractive: false,
-    isAda: true,
-    cadBox: { x: 520, y: 150, w: 260, h: 260, door: { x: 650, y: 410 } },
+    id: "MN-G-FLIB",
+    roomNumber: "MN-G-05",
+    name: "Farmacy Library",
+    type: "Library",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 40, currentOccupancy: 12, status: "available", statusText: "28 Seats Open",
+    nextClass: "Open 08:00 AM – 06:00 PM",
+    co2: 382, co2Status: "Excellent Air Quality", temp: 21.0, tempTarget: 21.0, humidity: 41, noiseDb: 24, noiseStatus: "Strict Silent Zone",
+    wifiSpeed: "850 Mbps", wifiLatency: "3 ms", wifiDevices: 12,
+    features: ["Pharmacy Reference Books", "Research Journals", "Study Desks", "Digital Catalogue", "Quiet Reading Zone"],
+    image: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
+    cadBox: { x: 1062, y: 295, w: 120, h: 170, door: { x: 1055, y: 380 } },
     routeSteps: [
-      { step: '1. Level 2 Library Landing', desc: 'Proceed straight past Information Desk (10m)' },
-      { step: '2. Turn Right to West Wing Pod Row', desc: 'Glass pods numbered 1 through 8 (18m)' },
+      { step: "1. Enter East Path", desc: "Head east from Central Hall (0m)" },
+      { step: "2. Farmacy Wing Entrance", desc: "Teal library wing projecting eastward (50m)" },
     ],
-    routeDistance: '28 meters (0.7 min walk)',
+    routeDistance: "50 meters (1.0 min walk)",
     slots: [
-      { id: 'lib202-1', start: '09:00', end: '11:00', title: 'Reserved Pod #2', lecturer: 'Student Booking', status: 'occupied', isBookable: false },
-      { id: 'lib202-2', start: '11:00', end: '13:00', title: 'Available Pod #4', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
-      { id: 'lib202-3', start: '13:00', end: '15:00', title: 'Available Pod #7', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
-      { id: 'lib202-4', start: '15:00', end: '17:00', title: 'Available Pod #1', lecturer: 'Instant Reserve', status: 'available', isBookable: true },
+      { id: "flib-1", start: "08:00", end: "13:00", title: "Morning Study", lecturer: "Open", status: "available", isBookable: true },
+      { id: "flib-2", start: "13:00", end: "18:00", title: "Afternoon Study", lecturer: "Open", status: "available", isBookable: true },
     ],
+  },
+  {
+    id: "MN-G-CRW01",
+    roomNumber: "MN-G-W01",
+    name: "Classroom (West Outer 1)",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 50, currentOccupancy: 0, status: "available", statusText: "Available Now",
+    nextClass: "Free till 12:00 PM",
+    co2: 395, co2Status: "Good Air Quality", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 28, noiseStatus: "Quiet",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector & Screen", "Student Desks", "AC & Ventilation"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
+    cadBox: { x: 35, y: 295, w: 105, h: 115, door: { x: 145, y: 350 } },
+    routeSteps: [{ step: "1. West Outer Wing", desc: "Access via West Path corridor (65m)" }],
+    routeDistance: "65 meters (1.3 min walk)",
+    slots: [
+      { id: "w01-1", start: "09:00", end: "11:00", title: "Morning Lecture", lecturer: "Faculty", status: "available", isBookable: true },
+      { id: "w01-2", start: "14:00", end: "16:00", title: "Afternoon Session", lecturer: "Faculty", status: "available", isBookable: true },
+    ],
+  },
+  {
+    id: "MN-G-CRW02",
+    roomNumber: "MN-G-W02",
+    name: "Classroom (West Outer 2)",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 50, currentOccupancy: 42, status: "occupied", statusText: "In Session",
+    nextClass: "Free at 1:00 PM",
+    co2: 450, co2Status: "Elevated", temp: 23.0, tempTarget: 22.0, humidity: 48, noiseDb: 56, noiseStatus: "Lecture",
+    wifiSpeed: "680 Mbps", wifiLatency: "4 ms", wifiDevices: 42,
+    features: ["Projector & Whiteboard", "Student Desks", "AC & Fans"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
+    cadBox: { x: 35, y: 415, w: 105, h: 115, door: { x: 145, y: 470 } },
+    routeSteps: [{ step: "1. West Outer Wing", desc: "Lower room along West Path (70m)" }],
+    routeDistance: "70 meters (1.4 min walk)",
+    slots: [
+      { id: "w02-1", start: "09:00", end: "13:00", title: "Civil Eng. Class", lecturer: "Prof. Singh", status: "occupied", isBookable: false },
+      { id: "w02-2", start: "14:00", end: "16:00", title: "Tutorial Slot", lecturer: "TBD", status: "available", isBookable: true },
+    ],
+  },
+  {
+    id: "MN-G-CR01",
+    roomNumber: "MN-G-CR01",
+    name: "Classroom 1",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 45, currentOccupancy: 0, status: "available", statusText: "Available Now",
+    nextClass: "Free All Morning",
+    co2: 390, co2Status: "Good Air Quality", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 28, noiseStatus: "Quiet",
+    wifiSpeed: "720 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector", "Desks & Whiteboard", "AC & Ventilation"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 185, y: 380, w: 75, h: 70, door: { x: 175, y: 415 } },
+    routeSteps: [{ step: "1. West Inner Concourse", desc: "Top classroom of inner west row (45m)" }],
+    routeDistance: "45 meters (0.9 min walk)",
+    slots: [
+      { id: "cr1-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true },
+    ],
+  },
+  {
+    id: "MN-G-CR02",
+    roomNumber: "MN-G-CR02",
+    name: "Classroom 2",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 45, currentOccupancy: 40, status: "occupied", statusText: "In Session",
+    nextClass: "Free at 12:00 PM",
+    co2: 440, co2Status: "Good Air Quality", temp: 23.0, tempTarget: 22.0, humidity: 47, noiseDb: 55, noiseStatus: "Lecture",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 40,
+    features: ["Projector", "Desks & Whiteboard", "AC & Fans"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 185, y: 455, w: 75, h: 70, door: { x: 175, y: 490 } },
+    routeSteps: [{ step: "1. West Inner Concourse", desc: "Middle classroom (50m)" }],
+    routeDistance: "50 meters (1.0 min walk)",
+    slots: [
+      { id: "cr2-1", start: "09:00", end: "12:00", title: "Maths Class", lecturer: "Dr. Sharma", status: "occupied", isBookable: false },
+    ],
+  },
+  {
+    id: "MN-G-CR03",
+    roomNumber: "MN-G-CR03",
+    name: "Classroom 3",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 45, currentOccupancy: 0, status: "available", statusText: "Available Now",
+    nextClass: "Free All Day",
+    co2: 388, co2Status: "Pristine Air", temp: 22.0, tempTarget: 22.0, humidity: 42, noiseDb: 25, noiseStatus: "Quiet",
+    wifiSpeed: "750 Mbps", wifiLatency: "3 ms", wifiDevices: 0,
+    features: ["Projector", "Desks & Whiteboard", "AC"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 185, y: 530, w: 75, h: 70, door: { x: 175, y: 565 } },
+    routeSteps: [{ step: "1. West Inner Concourse", desc: "Lower classroom (55m)" }],
+    routeDistance: "55 meters (1.1 min walk)",
+    slots: [
+      { id: "cr3-1", start: "10:00", end: "12:00", title: "Open Study", lecturer: "Open", status: "available", isBookable: true },
+    ],
+  },
+  {
+    id: "MN-G-OFF",
+    roomNumber: "MN-G-06",
+    name: "Office",
+    type: "Office",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 15, currentOccupancy: 8, status: "available", statusText: "Open Now",
+    nextClass: "09:00 AM – 05:00 PM (Mon–Sat)",
+    co2: 395, co2Status: "Good Air Quality", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 38, noiseStatus: "Office Activity",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 8,
+    features: ["Admin Desks", "Document Storage", "CCTV Monitored", "Printer & Scanner", "AC & Ventilation"],
+    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 265, y: 380, w: 90, h: 90, door: { x: 310, y: 365 } },
+    routeSteps: [{ step: "1. Inner West Wing", desc: "Beside West Classrooms, gate facing north (40m)" }],
+    routeDistance: "40 meters (0.8 min walk)",
+    slots: [
+      { id: "off-1", start: "09:00", end: "17:00", title: "General Administration", lecturer: "Staff", status: "available", isBookable: false },
+    ],
+  },
+  {
+    id: "MN-G-STAFF",
+    roomNumber: "MN-G-07",
+    name: "Staff Room",
+    type: "Office",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 20, currentOccupancy: 9, status: "available", statusText: "Faculty Available",
+    nextClass: "Consultation 10:00 AM – 04:00 PM",
+    co2: 395, co2Status: "Pristine Clean Air", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 32, noiseStatus: "Quiet Work Space",
+    wifiSpeed: "850 Mbps", wifiLatency: "3 ms", wifiDevices: 12,
+    features: ["Faculty Workstations", "Meeting Table", "Tea/Coffee Dispenser", "High-Speed Wi-Fi", "AC & Ergonomic Seating"],
+    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
+    cadBox: { x: 360, y: 380, w: 85, h: 90, door: { x: 400, y: 365 } },
+    routeSteps: [{ step: "1. Inner West Wing", desc: "Beside Office, dual gates to north path and hall (35m)" }],
+    routeDistance: "35 meters (0.7 min walk)",
+    slots: [
+      { id: "stf-1", start: "10:00", end: "16:00", title: "Consultation Hours", lecturer: "Faculty", status: "available", isBookable: false },
+    ],
+  },
+  {
+    id: "MN-G-CR04",
+    roomNumber: "MN-G-CR04",
+    name: "Classroom 4",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 45, currentOccupancy: 0, status: "available", statusText: "Available Now",
+    nextClass: "Free All Day",
+    co2: 390, co2Status: "Good Air Quality", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 28, noiseStatus: "Quiet",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector", "Desks & Whiteboard", "AC"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 288, y: 540, w: 55, h: 80, door: { x: 315, y: 635 } },
+    routeSteps: [{ step: "1. Inner West Row", desc: "First room below Office (50m)" }],
+    routeDistance: "50 meters (1.0 min walk)",
+    slots: [{ id: "cr4-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
+  },
+  {
+    id: "MN-G-CR05",
+    roomNumber: "MN-G-CR05",
+    name: "Classroom 5",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 45, currentOccupancy: 0, status: "available", statusText: "Available Now",
+    nextClass: "Free All Day",
+    co2: 390, co2Status: "Good Air Quality", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 28, noiseStatus: "Quiet",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector", "Desks & Whiteboard", "AC"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 348, y: 540, w: 55, h: 80, door: { x: 375, y: 635 } },
+    routeSteps: [{ step: "1. Inner West Row", desc: "Middle room below Office (55m)" }],
+    routeDistance: "55 meters (1.1 min walk)",
+    slots: [{ id: "cr5-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
+  },
+  {
+    id: "MN-G-CR06",
+    roomNumber: "MN-G-CR06",
+    name: "Classroom 6",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 45, currentOccupancy: 38, status: "occupied", statusText: "In Session",
+    nextClass: "Free at 1:00 PM",
+    co2: 445, co2Status: "Elevated", temp: 23.0, tempTarget: 22.0, humidity: 49, noiseDb: 54, noiseStatus: "Class Active",
+    wifiSpeed: "680 Mbps", wifiLatency: "4 ms", wifiDevices: 38,
+    features: ["Projector", "Desks & Whiteboard", "AC"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 408, y: 540, w: 55, h: 80, door: { x: 435, y: 635 } },
+    routeSteps: [{ step: "1. Inner West Row", desc: "Right room below Staff Room (50m)" }],
+    routeDistance: "50 meters (1.0 min walk)",
+    slots: [{ id: "cr6-1", start: "09:00", end: "13:00", title: "Elective Class", lecturer: "Prof. Joshi", status: "occupied", isBookable: false }],
+  },
+  {
+    id: "MN-G-MEETN",
+    roomNumber: "MN-G-12",
+    name: "Room (Meeting / North)",
+    type: "Conference",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 30, currentOccupancy: 0, status: "available", statusText: "Available Now",
+    nextClass: "Free Till 3:00 PM",
+    co2: 388, co2Status: "Pristine Clean Air", temp: 21.5, tempTarget: 21.5, humidity: 42, noiseDb: 25, noiseStatus: "Silent Zone",
+    wifiSpeed: "900 Mbps", wifiLatency: "2 ms", wifiDevices: 0,
+    features: ["Conference Video Bar 4K", "Smart Interactive Display", "Wireless Screen Sharing", "Executive Chairs", "Acoustic Wall Panels"],
+    image: "https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: true, hasGpu: false, hasInteractive: true, isAda: true,
+    cadBox: { x: 670, y: 405, w: 155, h: 55, door: { x: 710, y: 395 } },
+    routeSteps: [{ step: "1. North-East Inner Wing", desc: "Above Badminton Court, gate facing north path (45m)" }],
+    routeDistance: "45 meters (0.9 min walk)",
+    slots: [{ id: "mtn-1", start: "11:00", end: "15:00", title: "Open Conference Booking", lecturer: "Open", status: "available", isBookable: true }],
+  },
+  {
+    id: "MN-G-MEETE",
+    roomNumber: "MN-G-13",
+    name: "Room (Faculty / East)",
+    type: "Office",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 20, currentOccupancy: 6, status: "available", statusText: "Open Now",
+    nextClass: "Open 09:00 AM – 05:00 PM",
+    co2: 395, co2Status: "Good Air Quality", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 30, noiseStatus: "Quiet",
+    wifiSpeed: "750 Mbps", wifiLatency: "3 ms", wifiDevices: 6,
+    features: ["Faculty Desks", "Wi-Fi 6", "AC & Natural Daylight"],
+    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
+    cadBox: { x: 890, y: 405, w: 80, h: 55, door: { x: 885, y: 430 } },
+    routeSteps: [{ step: "1. North-East Inner Wing", desc: "Beside North Meeting Room, gate facing east path (50m)" }],
+    routeDistance: "50 meters (1.0 min walk)",
+    slots: [{ id: "mte-1", start: "09:00", end: "17:00", title: "Faculty Hours", lecturer: "Faculty", status: "available", isBookable: false }],
+  },
+  {
+    id: "MN-G-BADN",
+    roomNumber: "MN-G-10",
+    name: "Badminton Court (North)",
+    type: "Sports",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 10, currentOccupancy: 8, status: "occupied", statusText: "Match in Progress",
+    nextClass: "Free at 12:00 PM",
+    co2: 400, co2Status: "Good Air Quality", temp: 25.5, tempTarget: 25.0, humidity: 52, noiseDb: 62, noiseStatus: "Match Active",
+    wifiSpeed: "600 Mbps", wifiLatency: "5 ms", wifiDevices: 8,
+    features: ["Standard Badminton Court (Green)", "Official Net & Posts", "Marked Boundary Lines", "Ventilated Indoor Hall"],
+    image: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 670, y: 462, w: 155, h: 42, door: { x: 835, y: 480 } },
+    routeSteps: [{ step: "1. East Inner Arena", desc: "North court with green tournament floor (50m)" }],
+    routeDistance: "50 meters (1.0 min walk)",
+    slots: [
+      { id: "badn-1", start: "08:00", end: "12:00", title: "Tournament Practice", lecturer: "Booked", status: "occupied", isBookable: false },
+      { id: "badn-2", start: "14:00", end: "18:00", title: "Student Free Play", lecturer: "Open", status: "available", isBookable: true },
+    ],
+  },
+  {
+    id: "MN-G-BADS",
+    roomNumber: "MN-G-11",
+    name: "Badminton Court (South)",
+    type: "Sports",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 10, currentOccupancy: 0, status: "available", statusText: "Court Free",
+    nextClass: "Open 06:00 AM – 08:00 PM",
+    co2: 380, co2Status: "Fresh Air", temp: 25.0, tempTarget: 25.0, humidity: 50, noiseDb: 35, noiseStatus: "Quiet",
+    wifiSpeed: "600 Mbps", wifiLatency: "5 ms", wifiDevices: 0,
+    features: ["Standard Badminton Court (Dark)", "Official Net & Posts", "Court Markings", "Direct Internal Path Access"],
+    image: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 670, y: 550, w: 155, h: 36, door: { x: 835, y: 565 } },
+    routeSteps: [{ step: "1. East Inner Arena", desc: "South court adjacent to vertical path (55m)" }],
+    routeDistance: "55 meters (1.1 min walk)",
+    slots: [
+      { id: "bads-1", start: "06:00", end: "12:00", title: "Morning Play", lecturer: "Open", status: "available", isBookable: true },
+      { id: "bads-2", start: "14:00", end: "19:00", title: "Afternoon Play", lecturer: "Open", status: "available", isBookable: true },
+    ],
+  },
+  {
+    id: "MN-G-MGMT",
+    roomNumber: "MN-G-09",
+    name: "Management Room",
+    type: "Office",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 20, currentOccupancy: 10, status: "available", statusText: "Open Now",
+    nextClass: "09:00 AM – 05:00 PM",
+    co2: 400, co2Status: "Good Air Quality", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 36, noiseStatus: "Office Activity",
+    wifiSpeed: "720 Mbps", wifiLatency: "4 ms", wifiDevices: 10,
+    features: ["Management Desks", "Conference Table", "CCTV Monitored", "Printer & Scanner", "AC"],
+    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 885, y: 465, w: 85, h: 160, door: { x: 880, y: 610 } },
+    routeSteps: [{ step: "1. East Wing Interior", desc: "Beside internal path and badminton court, gate facing west (55m)" }],
+    routeDistance: "55 meters (1.1 min walk)",
+    slots: [
+      { id: "mgmt-1", start: "09:00", end: "13:00", title: "Management Hours", lecturer: "Management", status: "available", isBookable: false },
+      { id: "mgmt-2", start: "14:00", end: "17:00", title: "Meetings", lecturer: "Management", status: "available", isBookable: false },
+    ],
+  },
+  {
+    id: "MN-G-CR07",
+    roomNumber: "MN-G-CR07",
+    name: "Classroom 7",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 45, currentOccupancy: 0, status: "available", statusText: "Available Now",
+    nextClass: "Free All Day",
+    co2: 390, co2Status: "Good Air Quality", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 29, noiseStatus: "Quiet",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector", "Desks & Whiteboard", "AC & Fans"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 670, y: 590, w: 75, h: 60, door: { x: 705, y: 660 } },
+    routeSteps: [{ step: "1. Below Badminton Arena", desc: "Left room along south path (55m)" }],
+    routeDistance: "55 meters (1.1 min walk)",
+    slots: [{ id: "cr7-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
+  },
+  {
+    id: "MN-G-CR08",
+    roomNumber: "MN-G-CR08",
+    name: "Classroom 8",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 45, currentOccupancy: 0, status: "available", statusText: "Available Now",
+    nextClass: "Free All Day",
+    co2: 390, co2Status: "Good Air Quality", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 29, noiseStatus: "Quiet",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector", "Desks & Whiteboard", "AC & Fans"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 750, y: 590, w: 75, h: 60, door: { x: 785, y: 660 } },
+    routeSteps: [{ step: "1. Below Badminton Arena", desc: "Right room along south path (60m)" }],
+    routeDistance: "60 meters (1.2 min walk)",
+    slots: [{ id: "cr8-1", start: "14:00", end: "16:00", title: "Afternoon Slot", lecturer: "Open", status: "available", isBookable: true }],
+  },
+  {
+    id: "MN-G-KTCH",
+    roomNumber: "MN-G-08",
+    name: "Kitchen Room",
+    type: "Facility",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 25, currentOccupancy: 8, status: "available", statusText: "Open & Active",
+    nextClass: "Catering 07:00 AM – 09:00 PM",
+    co2: 440, co2Status: "Good (Exhaust Active)", temp: 24.5, tempTarget: 23.0, humidity: 50, noiseDb: 52, noiseStatus: "Kitchen Prep",
+    wifiSpeed: "500 Mbps", wifiLatency: "5 ms", wifiDevices: 8,
+    features: ["Food Prep Station", "Commercial Refrigeration", "Water Purifier RO", "Fire Suppression Rig", "Ventilation Exhaust"],
+    image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
+    cadBox: { x: 670, y: 735, w: 60, h: 65, door: { x: 700, y: 725 } },
+    routeSteps: [{ step: "1. South Corridor", desc: "East of central exit, gate facing north path (60m)" }],
+    routeDistance: "60 meters (1.2 min walk)",
+    slots: [{ id: "ktch-1", start: "07:00", end: "20:00", title: "Kitchen Prep & Catering", lecturer: "Staff", status: "occupied", isBookable: false }],
+  },
+  {
+    id: "MN-G-CRS01",
+    roomNumber: "MN-G-S01",
+    name: "Classroom (South 1)",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 50, currentOccupancy: 0, status: "available", statusText: "Available",
+    nextClass: "Free All Day",
+    co2: 390, co2Status: "Good Air", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 28, noiseStatus: "Quiet",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector", "Desks", "AC"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 135, y: 735, w: 55, h: 65, door: { x: 160, y: 725 } },
+    routeSteps: [{ step: "1. South-West Row", desc: "Next to West Washroom (75m)" }],
+    routeDistance: "75 meters (1.5 min walk)",
+    slots: [{ id: "s01-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
+  },
+  {
+    id: "MN-G-CRS02",
+    roomNumber: "MN-G-S02",
+    name: "Classroom (South 2)",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 50, currentOccupancy: 0, status: "available", statusText: "Available",
+    nextClass: "Free All Day",
+    co2: 390, co2Status: "Good Air", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 28, noiseStatus: "Quiet",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector", "Desks", "AC"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 195, y: 735, w: 55, h: 65, door: { x: 220, y: 725 } },
+    routeSteps: [{ step: "1. South-West Row", desc: "Beside West Exit (70m)" }],
+    routeDistance: "70 meters (1.4 min walk)",
+    slots: [{ id: "s02-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
+  },
+  {
+    id: "MN-G-CRS03",
+    roomNumber: "MN-G-S03",
+    name: "Classroom (South 3)",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 50, currentOccupancy: 0, status: "available", statusText: "Available",
+    nextClass: "Free All Day",
+    co2: 390, co2Status: "Good Air", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 28, noiseStatus: "Quiet",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector", "Desks", "AC"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 280, y: 735, w: 55, h: 65, door: { x: 305, y: 725 } },
+    routeSteps: [{ step: "1. South Central-West Row", desc: "First of 3 rooms (65m)" }],
+    routeDistance: "65 meters (1.3 min walk)",
+    slots: [{ id: "s03-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
+  },
+  {
+    id: "MN-G-CRS04",
+    roomNumber: "MN-G-S04",
+    name: "Classroom (South 4)",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 50, currentOccupancy: 45, status: "occupied", statusText: "In Session",
+    nextClass: "Free at 1:00 PM",
+    co2: 450, co2Status: "Elevated", temp: 23.0, tempTarget: 22.0, humidity: 48, noiseDb: 55, noiseStatus: "Class",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 45,
+    features: ["Projector", "Desks", "AC"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 345, y: 735, w: 55, h: 65, door: { x: 370, y: 725 } },
+    routeSteps: [{ step: "1. South Central-West Row", desc: "Middle room (60m)" }],
+    routeDistance: "60 meters (1.2 min walk)",
+    slots: [{ id: "s04-1", start: "09:00", end: "13:00", title: "Lecture", lecturer: "Faculty", status: "occupied", isBookable: false }],
+  },
+  {
+    id: "MN-G-CRS05",
+    roomNumber: "MN-G-S05",
+    name: "Classroom (South 5)",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 50, currentOccupancy: 0, status: "available", statusText: "Available",
+    nextClass: "Free All Day",
+    co2: 390, co2Status: "Good Air", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 28, noiseStatus: "Quiet",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector", "Desks", "AC"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 410, y: 735, w: 55, h: 65, door: { x: 435, y: 725 } },
+    routeSteps: [{ step: "1. South Central-West Row", desc: "Right room beside main exit (55m)" }],
+    routeDistance: "55 meters (1.1 min walk)",
+    slots: [{ id: "s05-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
+  },
+  {
+    id: "MN-G-CRS06",
+    roomNumber: "MN-G-S06",
+    name: "Classroom (South 6)",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 50, currentOccupancy: 0, status: "available", statusText: "Available",
+    nextClass: "Free All Day",
+    co2: 390, co2Status: "Good Air", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 28, noiseStatus: "Quiet",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector", "Desks", "AC"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 735, y: 735, w: 55, h: 65, door: { x: 760, y: 725 } },
+    routeSteps: [{ step: "1. South Central-East Row", desc: "Beside Kitchen Room (65m)" }],
+    routeDistance: "65 meters (1.3 min walk)",
+    slots: [{ id: "s06-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
+  },
+  {
+    id: "MN-G-CRS07",
+    roomNumber: "MN-G-S07",
+    name: "Classroom (South 7)",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 50, currentOccupancy: 0, status: "available", statusText: "Available",
+    nextClass: "Free All Day",
+    co2: 390, co2Status: "Good Air", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 28, noiseStatus: "Quiet",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector", "Desks", "AC"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 800, y: 735, w: 60, h: 65, door: { x: 830, y: 725 } },
+    routeSteps: [{ step: "1. South Central-East Row", desc: "Beside East Exit (70m)" }],
+    routeDistance: "70 meters (1.4 min walk)",
+    slots: [{ id: "s07-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
+  },
+  {
+    id: "MN-G-CRS08",
+    roomNumber: "MN-G-S08",
+    name: "Classroom (South 8)",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 50, currentOccupancy: 0, status: "available", statusText: "Available",
+    nextClass: "Free All Day",
+    co2: 390, co2Status: "Good Air", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 28, noiseStatus: "Quiet",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector", "Desks", "AC"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 895, y: 735, w: 75, h: 65, door: { x: 930, y: 725 } },
+    routeSteps: [{ step: "1. South-East Row", desc: "Right of East Exit (75m)" }],
+    routeDistance: "75 meters (1.5 min walk)",
+    slots: [{ id: "s08-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
+  },
+  {
+    id: "MN-G-CRS09",
+    roomNumber: "MN-G-S09",
+    name: "Classroom (South 9)",
+    type: "Classroom",
+    building: "Maharana Pratap Main Academic Block (Block ADM-01)",
+    buildingCode: "ADM-01",
+    floor: "Ground",
+    capacity: 50, currentOccupancy: 0, status: "available", statusText: "Available",
+    nextClass: "Free All Day",
+    co2: 390, co2Status: "Good Air", temp: 22.0, tempTarget: 22.0, humidity: 43, noiseDb: 28, noiseStatus: "Quiet",
+    wifiSpeed: "700 Mbps", wifiLatency: "4 ms", wifiDevices: 0,
+    features: ["Projector", "Desks", "AC"],
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
+    cadBox: { x: 980, y: 735, w: 75, h: 65, door: { x: 1015, y: 725 } },
+    routeSteps: [{ step: "1. South-East Row", desc: "Beside East Washroom (80m)" }],
+    routeDistance: "80 meters (1.6 min walk)",
+    slots: [{ id: "s09-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
   },
 ];
 
 // Buildings directory
 const BUILDINGS = [
-  { id: 'ENG-02', name: 'Faculty of Engineering & Technology (Block ENG-02)', floors: ['Ground', 'Level 1', 'Level 2', 'Level 3'] },
-  { id: 'LIB-03', name: 'Swami Vivekananda Central Library (Block LIB-03)', floors: ['Ground', 'Level 1', 'Level 2'] },
-  { id: 'ADM-01', name: 'Maharana Pratap Main Academic Block (Block ADM-01)', floors: ['Ground', 'Level 1', 'Level 2'] },
+  { id: "ADM-01", name: "Maharana Pratap Main Academic Block (Block ADM-01)", floors: ["Ground", "Level 1", "Level 2"] },
+  { id: "ENG-02", name: "Faculty of Engineering & Technology (Block ENG-02)", floors: ["Ground", "Level 1", "Level 2", "Level 3"] },
+  { id: "LIB-03", name: "Swami Vivekananda Central Library (Block LIB-03)", floors: ["Ground", "Level 1", "Level 2"] },
 ];
 
 export function SmartRooms() {
@@ -445,11 +760,11 @@ export function SmartRooms() {
 
   // Core State
   const [rooms, setRooms] = useState(INITIAL_ROOMS);
-  const [selectedBuilding, setSelectedBuilding] = useState('Faculty of Engineering & Technology (Block ENG-02)');
-  const [selectedFloor, setSelectedFloor] = useState('Level 2');
+  const [selectedBuilding, setSelectedBuilding] = useState('Maharana Pratap Main Academic Block (Block ADM-01)');
+  const [selectedFloor, setSelectedFloor] = useState('Ground');
   const [selectedType, setSelectedType] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRoomId, setSelectedRoomId] = useState('B-204');
+  const [selectedRoomId, setSelectedRoomId] = useState('MN-G-LIB');
   const [activeFilters, setActiveFilters] = useState({
     availableNow: true,
     laser4k: false,
@@ -461,6 +776,68 @@ export function SmartRooms() {
   // CAD Viewer Interactive Pan & Zoom
   const [cadZoom, setCadZoom] = useState(1);
   const [isAdaRoute, setIsAdaRoute] = useState(false);
+  const [hoveredRoomId, setHoveredRoomId] = useState(null);
+  const [navToast, setNavToast] = useState(null);
+  const svgRef = useRef(null);
+
+  // Robust room selector & navigator
+  const handleSelectRoom = (roomId) => {
+    const room = rooms.find((r) => r.id === roomId);
+    if (room) {
+      if (room.building !== selectedBuilding) {
+        setSelectedBuilding(room.building);
+      }
+      setSelectedRoomId(roomId);
+      setNavToast(`Navigating to ${room.name} (${room.roomNumber})`);
+      setTimeout(() => setNavToast(null), 3500);
+    }
+  };
+
+  // Canvas-level SVG coordinate click resolver
+  const handleCanvasClick = (e) => {
+    if (!svgRef.current) return;
+    const svg = svgRef.current;
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX;
+    pt.y = e.clientY;
+    const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+
+    // 1. Direct hit inside cadBox with generous 14px tolerance
+    const directHit = buildingFilteredRooms.find((r) => {
+      if (!r.cadBox) return false;
+      const { x, y, w, h } = r.cadBox;
+      return (
+        svgP.x >= x - 14 &&
+        svgP.x <= x + w + 14 &&
+        svgP.y >= y - 14 &&
+        svgP.y <= y + h + 14
+      );
+    });
+
+    if (directHit) {
+      handleSelectRoom(directHit.id);
+      return;
+    }
+
+    // 2. Proximity fallback: nearest room center within 90 units
+    let closestRoom = null;
+    let minDist = 90;
+    buildingFilteredRooms.forEach((r) => {
+      if (!r.cadBox) return;
+      const { x, y, w, h } = r.cadBox;
+      const centerX = x + w / 2;
+      const centerY = y + h / 2;
+      const dist = Math.hypot(svgP.x - centerX, svgP.y - centerY);
+      if (dist < minDist) {
+        minDist = dist;
+        closestRoom = r;
+      }
+    });
+
+    if (closestRoom) {
+      handleSelectRoom(closestRoom.id);
+    }
+  };
 
   // Time-Scrubber State (Hours from 08:00 to 20:00)
   const [currentTimeHour, setCurrentTimeHour] = useState('11:30 AM');
@@ -480,9 +857,9 @@ export function SmartRooms() {
   const [isMyPassesOpen, setIsMyPassesOpen] = useState(false);
   const [savedPasses, setSavedPasses] = useState([
     {
-      passId: 'NC-POD-7741',
-      roomNumber: 'B-206',
-      roomName: 'Silent Acoustic Study Pods',
+      passId: 'NC-LIB-7741',
+      roomNumber: 'MN-G-01',
+      roomName: 'Central Library',
       slotTime: '11:30 AM - 01:00 PM',
       date: 'Today',
       studentRoll: 'MU/CSE/2024/0482',
@@ -751,8 +1128,22 @@ export function SmartRooms() {
               id="roomSearchInput"
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search room code (e.g. B-204, B-206), hardware (RTX 4090, 4K Laser), or features..."
+              onChange={(e) => {
+                const val = e.target.value;
+                setSearchQuery(val);
+                if (val.trim()) {
+                  const q = val.toLowerCase();
+                  const matched = rooms.find(
+                    (r) =>
+                      r.name.toLowerCase().includes(q) ||
+                      r.roomNumber.toLowerCase().includes(q)
+                  );
+                  if (matched) {
+                    handleSelectRoom(matched.id);
+                  }
+                }
+              }}
+              placeholder="Search room (e.g. Student Section, Canteen, Central Library, MN-G-01)..."
               className="w-full h-11 pl-10 pr-12 rounded-xl bg-[var(--bg-canvas)] hover:bg-white focus:bg-white text-[var(--text-primary)] placeholder:text-[var(--text-placeholder)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-soft-border)] focus:border-[var(--brand-primary)] border border-[#E4EAE5] transition-all"
             />
             {searchQuery && (
@@ -807,10 +1198,12 @@ export function SmartRooms() {
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0">
             {[
               { label: 'All Spaces', val: 'All' },
-              { label: 'Lecture Theatres', val: 'Lecture Theatres' },
-              { label: 'Computer Labs', val: 'Computer Labs' },
-              { label: 'Study Pods', val: 'Study Pods' },
-              { label: 'Smart Classrooms', val: 'Smart Classrooms' },
+              { label: 'Classrooms', val: 'Classroom' },
+              { label: 'Library', val: 'Library' },
+              { label: 'Sports', val: 'Sports' },
+              { label: 'Exam Hall', val: 'Examination Hall' },
+              { label: 'Facilities', val: 'Facility' },
+              { label: 'Office', val: 'Office' },
             ].map((tp) => (
               <button
                 key={tp.val}
@@ -906,10 +1299,28 @@ export function SmartRooms() {
               <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-xl bg-white/95 border border-[#E4EAE5] shadow-md backdrop-blur-md text-[10px] sm:text-xs text-[var(--text-primary)]">
                 <span className="w-2 h-2 rounded-full bg-[var(--brand-primary)] animate-ping"></span>
                 <span className="hidden sm:inline text-[var(--text-muted)] font-medium">Vector Path:</span>
-                <span className="font-semibold text-[var(--text-primary)] truncate max-w-[100px] sm:max-w-none">Skybridge Arrival</span>
+                <span className="font-semibold text-[var(--text-primary)] truncate max-w-[100px] sm:max-w-none">Central Hall</span>
                 <ArrowRight className="w-3 h-3 text-[var(--text-muted)] shrink-0" />
-                <span className="font-bold text-[var(--brand-primary)]">Room {selectedRoom.roomNumber}</span>
+                <span className="font-bold text-[var(--brand-primary)]">{selectedRoom.roomNumber}</span>
                 <span className="text-[var(--text-secondary)] font-mono text-[9px] sm:text-[11px]">({selectedRoom.routeDistance})</span>
+              </div>
+
+              {/* Quick Destination Dropdown */}
+              <div className="pointer-events-auto flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/95 border border-[#E4EAE5] shadow-md backdrop-blur-md text-xs">
+                <Navigation className="w-3.5 h-3.5 text-[var(--brand-primary)] shrink-0" />
+                <span className="hidden md:inline text-[11px] font-semibold text-[var(--text-muted)]">Navigate to:</span>
+                <select
+                  value={selectedRoomId}
+                  onChange={(e) => handleSelectRoom(e.target.value)}
+                  className="bg-transparent font-bold text-[var(--text-primary)] text-xs focus:outline-none cursor-pointer max-w-[140px] sm:max-w-[200px] truncate"
+                  aria-label="Select Destination Room to Navigate"
+                >
+                  {buildingFilteredRooms.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name} ({r.roomNumber})
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Viewport Scale & Route Manipulation Tools */}
@@ -955,188 +1366,146 @@ export function SmartRooms() {
               </div>
             </div>
 
-            {/* SVG Vector 2D CAD Canvas */}
-            <div className="w-full h-[340px] sm:h-[480px] xl:h-[580px] bg-[#0A0F1D] relative overflow-hidden select-none flex items-center justify-center">
-              {/* CAD Precision Blueprint Grid */}
-              <svg className="absolute inset-0 w-full h-full opacity-20 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+            {/* Floating Navigation Feedback Toast */}
+            {navToast && (
+              <div className="absolute top-14 left-1/2 -translate-x-1/2 z-30 px-4 py-1.5 rounded-full bg-slate-900/95 text-emerald-400 border border-emerald-500/50 shadow-2xl backdrop-blur-md text-xs font-semibold flex items-center gap-2 pointer-events-none animate-in fade-in slide-in-from-top-2">
+                <Navigation className="w-3.5 h-3.5 animate-pulse text-emerald-400" />
+                <span>{navToast}</span>
+              </div>
+            )}
+
+            {/* Architectural Ground Floor Blueprint Canvas with Exact SVG Reference */}
+            <div className="w-full h-[380px] sm:h-[540px] xl:h-[680px] bg-[#0A0F1D] relative overflow-hidden select-none flex items-center justify-center rounded-2xl border border-[#1E293B] shadow-2xl">
+              {/* Precision Background Blueprint Grid */}
+              <svg className="absolute inset-0 w-full h-full opacity-15 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <pattern id="cadGridDark" width="36" height="36" patternUnits="userSpaceOnUse">
-                    <path d="M 36 0 L 0 0 0 36" fill="none" stroke="#168567" strokeWidth="0.5" strokeDasharray="1 3" />
-                    <circle cx="0" cy="0" r="1" fill="#168567" />
+                    <path d="M 36 0 L 0 0 0 36" fill="none" stroke="#10B981" strokeWidth="0.5" strokeDasharray="1 3" />
                   </pattern>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#cadGridDark)" />
               </svg>
 
-              {/* Vector Geometry with Pan & Zoom transform */}
+              {/* Exact Vector Geometry with Pan & Zoom transform */}
               <svg
-                className="w-full h-full p-4 relative z-10 transition-transform duration-300 ease-out"
-                viewBox="0 0 960 620"
+                ref={svgRef}
+                onClick={handleCanvasClick}
+                className="w-full h-full p-2 sm:p-4 relative z-10 transition-transform duration-300 ease-out cursor-pointer"
+                viewBox="0 0 1200 896"
+                preserveAspectRatio="xMidYMid meet"
                 style={{ transform: `scale(${cadZoom})` }}
               >
                 <defs>
                   {/* Glowing Filter for Selected Vector Route */}
                   <filter id="emeraldRouteGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#10B981" floodOpacity="0.85" />
+                    <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#10B981" floodOpacity="0.9" />
+                  </filter>
+                  <filter id="textGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="#000000" floodOpacity="0.95" />
                   </filter>
                 </defs>
 
-                {/* Outer Wall Architectural Double-Line Envelope */}
-                <polygon
-                  points="36,86 280,86 320,36 680,36 720,86 924,86 924,534 36,534"
-                  fill="#0B132B"
-                  stroke="#1E293B"
-                  strokeWidth="8"
-                />
-                <polygon
-                  points="40,90 280,90 320,40 680,40 720,90 920,90 920,530 40,530"
-                  fill="#0F172A"
-                  stroke="#334155"
-                  strokeWidth="2"
+                {/* Base Ground Floor Map Image — Exact architectural plan from ground_floor_map.svg */}
+                <image
+                  href="/ground_floor_map.svg"
+                  x="0"
+                  y="0"
+                  width="1200"
+                  height="896"
+                  preserveAspectRatio="xMidYMid meet"
+                  style={{ pointerEvents: 'none' }}
                 />
 
-                {/* Main Architectural Corridors (Concourse & Crossways) */}
-                <path d="M 120,310 L 840,310" fill="none" stroke="#1E293B" strokeWidth="60" strokeLinecap="round" />
-                <path d="M 480,90 L 480,510" fill="none" stroke="#1E293B" strokeWidth="54" strokeLinecap="round" />
-                <path d="M 120,310 L 840,310" fill="none" stroke="#334155" strokeWidth="1" strokeDasharray="4 6" />
-
-                {/* Skybridge Arrival Point (From Central Library) */}
-                <rect x="420" y="10" width="120" height="70" rx="8" fill="#1E293B" stroke="#168567" strokeWidth="1.5" />
-                <text x="480" y="36" textAnchor="middle" fill="#34D399" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="700" letterSpacing="1">
-                  NORTH SKYBRIDGE
-                </text>
-                <text x="480" y="52" textAnchor="middle" fill="#94A3B8" fontFamily="Inter, sans-serif" fontSize="8">
-                  Conn: Central Library LIB-03
-                </text>
-                <circle cx="480" cy="68" r="6" fill="#10B981" />
-                <circle cx="480" cy="68" r="12" fill="#10B981" fillOpacity="0.25" className="animate-ping" />
-
-                {/* Vertical Transport: West Lifts & East Lifts */}
-                <g>
-                  <rect x="250" y="120" width="70" height="70" rx="6" fill="#1E293B" stroke="#475569" strokeWidth="1.5" />
-                  <text x="285" y="150" textAnchor="middle" fill="#38BDF8" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="700">
-                    LIFTS W
-                  </text>
-                  <text x="285" y="165" textAnchor="middle" fill="#64748B" fontFamily="Inter, sans-serif" fontSize="8">
-                    Floor 1 - 4
-                  </text>
-
-                  <rect x="640" y="120" width="70" height="70" rx="6" fill="#1E293B" stroke="#475569" strokeWidth="1.5" />
-                  <text x="675" y="150" textAnchor="middle" fill="#38BDF8" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="700">
-                    LIFTS E
-                  </text>
-                  <text x="675" y="165" textAnchor="middle" fill="#64748B" fontFamily="Inter, sans-serif" fontSize="8">
-                    Floor 1 - 4
-                  </text>
-                </g>
-
-                {/* Restrooms & Service Hub */}
-                <rect x="440" y="330" width="80" height="60" rx="6" fill="#1E293B" stroke="#475569" strokeWidth="1" />
-                <text x="480" y="365" textAnchor="middle" fill="#94A3B8" fontFamily="Inter, sans-serif" fontSize="9" fontWeight="600">
-                  RESTROOMS
-                </text>
-
-                {/* Emergency Stairs Exits */}
-                <rect x="42" y="500" width="60" height="26" fill="#3B0764" stroke="#A855F7" strokeWidth="1" strokeDasharray="2 2" />
-                <text x="72" y="516" textAnchor="middle" fill="#E9D5FF" fontFamily="Inter, sans-serif" fontSize="8" fontWeight="700">
-                  FIRE EXIT A
-                </text>
-                <rect x="858" y="500" width="60" height="26" fill="#3B0764" stroke="#A855F7" strokeWidth="1" strokeDasharray="2 2" />
-                <text x="888" y="516" textAnchor="middle" fill="#E9D5FF" fontFamily="Inter, sans-serif" fontSize="8" fontWeight="700">
-                  FIRE EXIT B
-                </text>
-
-                {/* Dynamic Rendering of Floor Rooms */}
+                {/* Interactive Clickable Room Overlay Regions */}
                 {buildingFilteredRooms
                   .filter((r) => r.cadBox)
                   .map((room) => {
                     const isSelected = room.id === selectedRoomId;
+                    const isHovered = room.id === hoveredRoomId;
                     const { x, y, w, h } = room.cadBox;
-                    const statusColor =
-                      room.status === 'available'
-                        ? '#10B981'
-                        : room.status === 'reserved'
-                        ? '#B7791F'
-                        : '#C43D4B';
 
                     return (
                       <g
                         key={room.id}
                         className="cursor-pointer group"
-                        onClick={() => setSelectedRoomId(room.id)}
+                        style={{ pointerEvents: 'all' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedRoomId(room.id);
+                          handleSelectRoom(room.id);
+                        }}
+                        onMouseEnter={() => setHoveredRoomId(room.id)}
+                        onMouseLeave={() => setHoveredRoomId(null)}
                       >
-                        {/* Room Boundary Rect */}
+                        {/* Interactive overlay bounding box */}
                         <rect
                           x={x}
                           y={y}
                           width={w}
                           height={h}
-                          rx="10"
-                          fill={isSelected ? '#132338' : '#0B132B'}
-                          stroke={isSelected ? '#10B981' : '#334155'}
-                          strokeWidth={isSelected ? '2.5' : '1.5'}
-                          className="transition-colors duration-200"
+                          rx="6"
+                          style={{ pointerEvents: 'all', cursor: 'pointer' }}
+                          fill={
+                            isSelected
+                              ? "rgba(16, 185, 129, 0.28)"
+                              : isHovered
+                              ? "rgba(16, 185, 129, 0.16)"
+                              : "rgba(0, 0, 0, 0.001)"
+                          }
+                          stroke={
+                            isSelected
+                              ? "#10B981"
+                              : isHovered
+                              ? "rgba(16, 185, 129, 0.9)"
+                              : "rgba(16, 185, 129, 0.22)"
+                          }
+                          strokeWidth={isSelected ? "3" : isHovered ? "2.5" : "1.2"}
+                          strokeDasharray={isSelected ? "none" : "4 3"}
+                          className="transition-all duration-200"
                         />
 
-                        {/* Room Header Strip */}
-                        <rect
-                          x={x + 8}
-                          y={y + 8}
-                          width={w - 16}
-                          height="24"
-                          rx="4"
-                          fill={isSelected ? '#10B981' : '#1E293B'}
-                        />
-                        <text
-                          x={x + 16}
-                          y={y + 24}
-                          fill={isSelected ? '#022C22' : '#F8FAFC'}
-                          fontFamily="Inter, sans-serif"
-                          fontSize="11"
-                          fontWeight="700"
-                        >
-                          {room.roomNumber} • {room.name.split(' ')[0]}
-                        </text>
-                        {/* Status Beacon */}
-                        <circle cx={x + w - 20} cy={y + 20} r="4" fill={statusColor} />
-
-                        {/* Room Subtext Details */}
-                        <text
-                          x={x + 16}
-                          y={y + 54}
-                          fill={isSelected ? '#34D399' : '#94A3B8'}
-                          fontFamily="Inter, sans-serif"
-                          fontSize="10"
-                          fontWeight="600"
-                        >
-                          {room.capacity} Desks • {room.statusText}
-                        </text>
-
-                        {/* Environmental Sensor Tag in CAD */}
-                        <text
-                          x={x + 16}
-                          y={y + 74}
-                          fill="#64748B"
-                          fontFamily="Inter, sans-serif"
-                          fontSize="9"
-                        >
-                          CO₂: {room.co2} ppm • {room.temp}°C
-                        </text>
-
-                        {/* Target Node Badge when Selected */}
+                        {/* Selected Target Badge */}
                         {isSelected && (
-                          <g transform={`translate(${x + w / 2}, ${y + h - 22})`}>
-                            <rect x="-45" y="-12" width="90" height="20" rx="10" fill="#10B981" />
+                          <g transform={`translate(${x + w / 2}, ${y + Math.min(22, h / 2)})`}>
+                            <rect x="-42" y="-11" width="84" height="20" rx="10" fill="#10B981" />
                             <text
                               x="0"
-                              y="2"
+                              y="3"
                               textAnchor="middle"
                               fill="#022C22"
                               fontFamily="Inter, sans-serif"
-                              fontSize="9"
+                              fontSize="9.5"
                               fontWeight="800"
+                              letterSpacing="0.5"
                             >
-                              TARGET NODE
+                              SELECTED
+                            </text>
+                          </g>
+                        )}
+
+                        {/* Interactive Hover Tooltip Badge */}
+                        {!isSelected && isHovered && (
+                          <g transform={`translate(${x + w / 2}, ${y + Math.min(18, h / 2)})`}>
+                            <rect
+                              x="-56"
+                              y="-10"
+                              width="112"
+                              height="20"
+                              rx="6"
+                              fill="#022C22"
+                              stroke="#10B981"
+                              strokeWidth="1"
+                            />
+                            <text
+                              x="0"
+                              y="3"
+                              textAnchor="middle"
+                              fill="#34D399"
+                              fontFamily="Inter, sans-serif"
+                              fontSize="9"
+                              fontWeight="700"
+                            >
+                              Click to Navigate
                             </text>
                           </g>
                         )}
@@ -1145,10 +1514,18 @@ export function SmartRooms() {
                   })}
 
                 {/* DYNAMIC ANIMATED VECTOR PATH TO SELECTED ROOM */}
-                {selectedRoom.cadBox && (
+                {selectedRoom?.cadBox?.door && (
                   <>
                     <path
-                      d={`M 480,72 L 480,310 L ${selectedRoom.cadBox.door.x},310 L ${selectedRoom.cadBox.door.x},${selectedRoom.cadBox.door.y}`}
+                      d={
+                        selectedRoom.cadBox.door.y < 350
+                          ? `M 570,520 L 570,330 L ${selectedRoom.cadBox.door.x},330 L ${selectedRoom.cadBox.door.x},${selectedRoom.cadBox.door.y}`
+                          : selectedRoom.cadBox.door.y > 680
+                          ? `M 570,520 L 570,680 L ${selectedRoom.cadBox.door.x},680 L ${selectedRoom.cadBox.door.x},${selectedRoom.cadBox.door.y}`
+                          : selectedRoom.cadBox.door.x < 450
+                          ? `M 570,520 L 450,520 L 450,${selectedRoom.cadBox.door.y} L ${selectedRoom.cadBox.door.x},${selectedRoom.cadBox.door.y}`
+                          : `M 570,520 L 670,520 L 670,${selectedRoom.cadBox.door.y} L ${selectedRoom.cadBox.door.x},${selectedRoom.cadBox.door.y}`
+                      }
                       fill="none"
                       stroke="#10B981"
                       strokeWidth="5"
@@ -1160,18 +1537,22 @@ export function SmartRooms() {
                     />
                     {/* Destination Door Beacon */}
                     <g transform={`translate(${selectedRoom.cadBox.door.x}, ${selectedRoom.cadBox.door.y})`}>
-                      <circle cx="0" cy="0" r="7" fill="#10B981" />
-                      <circle cx="0" cy="0" r="14" fill="#10B981" fillOpacity="0.3" className="animate-ping" />
+                      <circle cx="0" cy="0" r="8" fill="#10B981" />
+                      <circle cx="0" cy="0" r="16" fill="#10B981" fillOpacity="0.35" className="animate-ping" />
+                      <text x="14" y="4" fill="#34D399" fontFamily="Inter, sans-serif" fontSize="11" fontWeight="800" filter="url(#textGlow)">
+                        {selectedRoom.roomNumber}
+                      </text>
                     </g>
                   </>
                 )}
 
-                {/* Departure Marker */}
-                <g transform="translate(480, 72)">
-                  <circle cx="0" cy="0" r="6" fill="#10B981" />
-                  <circle cx="0" cy="0" r="12" fill="none" stroke="#34D399" strokeWidth="1.5" />
-                  <text x="14" y="4" fill="#34D399" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="700">
-                    START (Skybridge Arrival)
+                {/* Central Hall Departure Marker */}
+                <g transform="translate(570, 520)">
+                  <circle cx="0" cy="0" r="10" fill="#10B981" fillOpacity="0.25" />
+                  <circle cx="0" cy="0" r="5" fill="#10B981" />
+                  <circle cx="0" cy="0" r="18" fill="#10B981" fillOpacity="0.15" className="animate-ping" />
+                  <text x="14" y="4" fill="#34D399" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="800" filter="url(#textGlow)">
+                    START (Central Hall)
                   </text>
                 </g>
               </svg>
@@ -1323,17 +1704,17 @@ export function SmartRooms() {
               <span className="text-xs text-[var(--text-secondary)]">Click any card to inspect telemetry &amp; route</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {filteredRooms.slice(0, 3).map((r) => {
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {(filteredRooms.length > 0 ? filteredRooms.slice(0, 9) : buildingFilteredRooms.slice(0, 9)).map((r) => {
                 const isSelected = r.id === selectedRoomId;
                 return (
                   <div
                     key={r.id}
-                    onClick={() => setSelectedRoomId(r.id)}
-                    className={`cursor-pointer p-4 rounded-xl flex flex-col justify-between transition-all bg-white ${
+                    onClick={() => handleSelectRoom(r.id)}
+                    className={`cursor-pointer p-4 rounded-xl flex flex-col justify-between transition-all bg-white hover:scale-[1.01] ${
                       isSelected
                         ? 'border-2 border-[var(--brand-primary)] shadow-md ring-2 ring-[var(--brand-soft-border)]'
-                        : 'border border-[#E4EAE5] hover:border-slate-300 hover:shadow-xs'
+                        : 'border border-[#E4EAE5] hover:border-emerald-300 hover:shadow-xs'
                     }`}
                   >
                     <div>
@@ -1369,9 +1750,20 @@ export function SmartRooms() {
                         <Users className="w-3.5 h-3.5 text-[var(--text-muted)]" />
                         <span>{r.currentOccupancy}/{r.capacity} Occ</span>
                       </span>
-                      <span className={isSelected ? 'text-[var(--brand-primary)] font-semibold' : 'text-[var(--text-muted)]'}>
-                        {isSelected ? 'Inspecting ✓' : 'Select →'}
-                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectRoom(r.id);
+                        }}
+                        className={`font-semibold flex items-center gap-1 transition-colors ${
+                          isSelected
+                            ? 'text-[var(--brand-primary)]'
+                            : 'text-[var(--brand-primary)] hover:underline'
+                        }`}
+                      >
+                        <Navigation className="w-3 h-3 text-current" />
+                        <span>{isSelected ? 'Navigating ✓' : 'Navigate →'}</span>
+                      </button>
                     </div>
                   </div>
                 );
@@ -1566,7 +1958,15 @@ export function SmartRooms() {
               </button>
 
               <button
-                onClick={() => navigate(`/campus-map?bldg=eng&room=${selectedRoom.roomNumber}`)}
+                onClick={() => handleSelectRoom(selectedRoom.id)}
+                className="w-full py-2.5 px-4 rounded-xl bg-[var(--brand-soft-bg)] hover:bg-[var(--brand-primary)] hover:text-white text-[var(--brand-primary)] text-xs font-bold flex items-center justify-center gap-2 border border-[var(--brand-soft-border)] transition-all cursor-pointer"
+              >
+                <Navigation className="w-3.5 h-3.5 text-current animate-pulse" />
+                <span>Follow Live Walking Route on Map</span>
+              </button>
+
+              <button
+                onClick={() => navigate(`/campus-map?bldg=admin&room=${selectedRoom.roomNumber}`)}
                 className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[var(--bg-canvas)] text-[var(--text-primary)] text-xs font-semibold flex items-center justify-center gap-2 border border-[#E4EAE5] transition-all cursor-pointer"
               >
                 <Navigation className="w-3.5 h-3.5 text-[var(--brand-primary)]" />

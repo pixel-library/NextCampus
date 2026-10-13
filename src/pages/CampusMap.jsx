@@ -1287,11 +1287,15 @@ export const CampusMap = () => {
     hours: '08:00 AM – 09:00 PM',
   });
 
-  // Sync selected building when URL search params change
+  // Sync selected building and room when URL search params change
   useEffect(() => {
     const bldgFromUrl = searchParams.get('bldg');
     if (bldgFromUrl && buildings[bldgFromUrl]) {
       setSelectedBldg(bldgFromUrl);
+    }
+    const roomFromUrl = searchParams.get('room');
+    if (roomFromUrl) {
+      setSelectedRoomId(roomFromUrl);
     }
   }, [searchParams, buildings]);
 
