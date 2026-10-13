@@ -182,7 +182,7 @@ export const LandingPage = () => {
         id="hero"
         className="relative min-h-[460px] md:min-h-[580px] flex items-center justify-center text-center px-4 py-12 md:py-20 md:px-8"
         style={{
-          backgroundImage: 'linear-gradient(180deg, rgba(15, 23, 42, 0.78) 0%, rgba(15, 23, 42, 0.92) 100%), url("/campus_aerial_hero.png")',
+          backgroundImage: 'linear-gradient(180deg, rgba(15, 23, 42, 0.62) 0%, rgba(15, 23, 42, 0.84) 100%), url("/mewar_campus_front.png")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
