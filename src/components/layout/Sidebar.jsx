@@ -13,6 +13,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   X,
+  Compass,
 } from 'lucide-react';
 import Logo from '../common/Logo';
 import { useAuth } from '../../hooks/useAuth';
@@ -35,7 +36,7 @@ export const Sidebar = ({ onClose, isCollapsed = false, onToggleCollapse }) => {
           title: 'Campus Operations',
           items: [
             { label: 'Interactive Map', path: '/campus-map', icon: MapPin },
-            { label: 'SmartRooms & Space', path: '/smartroom', icon: DoorOpen },
+            { label: 'Indoor Navigation', path: '/smartroom', icon: Compass },
             { label: 'Campus Directory', path: '/directory', icon: Users },
           ],
         },
@@ -50,7 +51,7 @@ export const Sidebar = ({ onClose, isCollapsed = false, onToggleCollapse }) => {
           items: [
             { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
             { label: 'Interactive Map', path: '/campus-map', icon: MapPin, badge: 'GIS' },
-            { label: 'SmartRooms IoT', path: '/smartroom', icon: DoorOpen },
+            { label: 'Indoor Navigation', path: '/smartroom', icon: Compass },
             { label: 'Helpdesk & Care', path: '/complaints', icon: LifeBuoy },
             { label: 'Campus Directory', path: '/directory', icon: Users },
           ],

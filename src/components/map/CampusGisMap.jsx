@@ -12,6 +12,7 @@ import {
   Layers,
   Building,
   Maximize2,
+  Minimize2,
   Target,
   Locate,
   Info,
@@ -1271,6 +1272,13 @@ export const CampusGisMap = ({
   const [mapLayerStyle, setMapLayerStyle] = useState('satellite');
   // Toggleable Map Legend
   const [showLegend, setShowLegend] = useState(false);
+  // Minimizable active destination card
+  const [isDestinationCardMinimized, setIsDestinationCardMinimized] = useState(false);
+
+  // Restore destination card when destination changes
+  useEffect(() => {
+    setIsDestinationCardMinimized(false);
+  }, [selectedBuildingKey, customDestination]);
 
   // Active target destination (either custom clicked point or selected building)
   const activeDestination = customDestination
@@ -1771,32 +1779,6 @@ export const CampusGisMap = ({
       {/* Map Canvas Mount */}
       <div ref={mapContainerRef} style={{ width: '100%', height: '100%', zIndex: 1 }} />
 
-      {/* FLOATING TOP-RIGHT LAYER SWITCHER */}
-      <div
-        className="absolute top-2.5 right-2.5 md:top-4 md:right-4 z-30 bg-white rounded-xl border border-[var(--border-subtle)] shadow-md p-1 flex gap-1"
-        style={{ backgroundColor: '#FFFFFF' }}
-      >
-        <button
-          type="button"
-          onClick={() => setMapLayerStyle('satellite')}
-          className={`px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[11px] font-bold cursor-pointer flex items-center gap-1.5 transition-all ${
-            mapLayerStyle === 'satellite' ? 'bg-[var(--brand-primary)] text-white' : 'bg-transparent text-[var(--text-secondary)]'
-          }`}
-        >
-          <Layers size={13} />
-          <span><span className="hidden sm:inline">Satellite </span>Aerial</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setMapLayerStyle('streets')}
-          className={`px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[11px] font-bold cursor-pointer flex items-center gap-1.5 transition-all ${
-            mapLayerStyle === 'streets' ? 'bg-[var(--brand-primary)] text-white' : 'bg-transparent text-[var(--text-secondary)]'
-          }`}
-        >
-          <Building size={13} />
-          <span><span className="hidden sm:inline">Street </span>Map</span>
-        </button>
-      </div>
 
       {/* FLOATING CAMPUS BOUNDARY LOCKED BADGE */}
       <div
@@ -1828,25 +1810,33 @@ export const CampusGisMap = ({
 
       {/* FLOATING CAMPUS DESTINATION CARD ON MAP (Shown when right drawer is closed) */}
       {activeDestination && !isDrawerOpen && (
-        <div
-          className="campus-map-floating-card absolute bottom-3 inset-x-3 md:bottom-auto md:top-16 md:right-4 md:inset-x-auto flex flex-col gap-2.5"
-          style={{ zIndex: 450 }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        isDestinationCardMinimized ? (
+          <div
+            className="campus-map-floating-card absolute bottom-3 inset-x-3 md:bottom-auto md:top-16 md:right-4 md:inset-x-auto flex items-center justify-between gap-3 animate-fadeIn"
+            style={{
+              zIndex: 450,
+              padding: '8px 12px',
+              minWidth: '220px',
+              maxWidth: '320px',
+              cursor: 'pointer',
+            }}
+            onClick={() => setIsDestinationCardMinimized(false)}
+            title="Click to expand destination card"
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
               <div
                 style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '10px',
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '8px',
                   backgroundColor: activeDestination.color || '#168567',
                   color: '#FFFFFF',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 800,
-                  fontSize: '16px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                  fontSize: '13px',
+                  flexShrink: 0,
                   position: 'relative',
                 }}
               >
@@ -1854,21 +1844,32 @@ export const CampusGisMap = ({
                 <span
                   style={{
                     position: 'absolute',
-                    bottom: -2,
-                    right: -2,
-                    width: '10px',
-                    height: '10px',
+                    bottom: -1,
+                    right: -1,
+                    width: '8px',
+                    height: '8px',
                     borderRadius: '50%',
                     backgroundColor: '#10B981',
-                    border: '2px solid #FFFFFF',
+                    border: '1.5px solid #FFFFFF',
                   }}
                 />
               </div>
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.25, fontFamily: 'var(--font-heading)' }}>
+              <div style={{ minWidth: 0 }}>
+                <div
+                  style={{
+                    fontSize: '12.5px',
+                    fontWeight: 800,
+                    color: 'var(--text-primary)',
+                    lineHeight: 1.2,
+                    fontFamily: 'var(--font-heading)',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
                   {activeDestination.shortName || activeDestination.name}
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--brand-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                <div style={{ fontSize: '10.5px', color: 'var(--brand-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <span>● Open</span>
                   <span style={{ color: 'var(--text-muted)' }}>•</span>
                   <span style={{ color: 'var(--text-secondary)' }}>{activeDestination.code || 'Campus Zone'}</span>
@@ -1876,84 +1877,203 @@ export const CampusGisMap = ({
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={handleFitRoute}
-              title="Recenter Camera on Route"
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '8px',
-                backgroundColor: 'var(--bg-surface-subtle)',
-                border: '1px solid var(--border-subtle)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--text-secondary)',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              <Crosshair size={14} />
-            </button>
-          </div>
-
-          {/* Department / Zone */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', fontSize: '11.5px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-            <MapPin size={13} style={{ color: 'var(--brand-primary)', flexShrink: 0, marginTop: '2px' }} />
-            <span>{activeDestination.dept || 'Mewar University Academic Zone'}</span>
-          </div>
-
-          {/* Action Row */}
-          <div style={{ display: 'flex', gap: '6px', marginTop: '2px' }}>
-            <button
-              type="button"
-              onClick={handleFitRoute}
-              style={{
-                flex: 1,
-                padding: '8px 12px',
-                backgroundColor: 'var(--brand-primary)',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '11.5px',
-                fontWeight: 700,
-                color: '#FFFFFF',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '5px',
-                boxShadow: 'var(--shadow-brand-glow)',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              <Navigation size={12} />
-              <span>Fit Route</span>
-            </button>
-            {onOpenDetails && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
               <button
                 type="button"
-                onClick={onOpenDetails}
+                onClick={handleFitRoute}
+                title="Recenter Camera on Route"
+                aria-label="Recenter Camera"
                 style={{
-                  padding: '8px 12px',
-                  backgroundColor: 'var(--brand-soft-bg)',
-                  border: '1px solid var(--brand-soft-border)',
-                  borderRadius: '8px',
-                  fontSize: '11.5px',
-                  fontWeight: 700,
-                  color: 'var(--brand-primary)',
-                  cursor: 'pointer',
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '7px',
+                  backgroundColor: 'var(--bg-surface-subtle)',
+                  border: '1px solid var(--border-subtle)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  justifyContent: 'center',
+                  color: 'var(--text-secondary)',
+                  cursor: 'pointer',
                   transition: 'all 0.15s ease',
                 }}
               >
-                <span>Details</span>
+                <Crosshair size={13} />
               </button>
-            )}
+              <button
+                type="button"
+                onClick={() => setIsDestinationCardMinimized(false)}
+                title="Expand Destination Card"
+                aria-label="Expand Destination Card"
+                style={{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '7px',
+                  backgroundColor: 'var(--brand-soft-bg)',
+                  border: '1px solid var(--brand-soft-border)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--brand-primary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <Maximize2 size={13} />
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div
+            className="campus-map-floating-card absolute bottom-3 inset-x-3 md:bottom-auto md:top-16 md:right-4 md:inset-x-auto flex flex-col gap-2.5 animate-fadeIn"
+            style={{ zIndex: 450 }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '10px',
+                    backgroundColor: activeDestination.color || '#168567',
+                    color: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 800,
+                    fontSize: '16px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                    position: 'relative',
+                  }}
+                >
+                  <span>{activeDestination.icon || (activeDestination.shortName ? activeDestination.shortName.charAt(0) : '🏛️')}</span>
+                  <span
+                    style={{
+                      position: 'absolute',
+                      bottom: -2,
+                      right: -2,
+                      width: '10px',
+                      height: '10px',
+                      borderRadius: '50%',
+                      backgroundColor: '#10B981',
+                      border: '2px solid #FFFFFF',
+                    }}
+                  />
+                </div>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.25, fontFamily: 'var(--font-heading)' }}>
+                    {activeDestination.shortName || activeDestination.name}
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--brand-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                    <span>● Open</span>
+                    <span style={{ color: 'var(--text-muted)' }}>•</span>
+                    <span style={{ color: 'var(--text-secondary)' }}>{activeDestination.code || 'Campus Zone'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <button
+                  type="button"
+                  onClick={handleFitRoute}
+                  title="Recenter Camera on Route"
+                  aria-label="Recenter Camera on Route"
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    border: '1px solid var(--border-subtle)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--text-secondary)',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <Crosshair size={14} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsDestinationCardMinimized(true)}
+                  title="Minimize Destination Card"
+                  aria-label="Minimize Destination Card"
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--bg-surface-subtle)',
+                    border: '1px solid var(--border-subtle)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--text-secondary)',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <Minimize2 size={14} />
+                </button>
+              </div>
+            </div>
+
+            {/* Department / Zone */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', fontSize: '11.5px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+              <MapPin size={13} style={{ color: 'var(--brand-primary)', flexShrink: 0, marginTop: '2px' }} />
+              <span>{activeDestination.dept || 'Mewar University Academic Zone'}</span>
+            </div>
+
+            {/* Action Row */}
+            <div style={{ display: 'flex', gap: '6px', marginTop: '2px' }}>
+              <button
+                type="button"
+                onClick={handleFitRoute}
+                style={{
+                  flex: 1,
+                  padding: '8px 12px',
+                  backgroundColor: 'var(--brand-primary)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '11.5px',
+                  fontWeight: 700,
+                  color: '#FFFFFF',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '5px',
+                  boxShadow: 'var(--shadow-brand-glow)',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <Navigation size={12} />
+                <span>Fit Route</span>
+              </button>
+              {onOpenDetails && (
+                <button
+                  type="button"
+                  onClick={onOpenDetails}
+                  style={{
+                    padding: '8px 12px',
+                    backgroundColor: 'var(--brand-soft-bg)',
+                    border: '1px solid var(--brand-soft-border)',
+                    borderRadius: '8px',
+                    fontSize: '11.5px',
+                    fontWeight: 700,
+                    color: 'var(--brand-primary)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <span>Details</span>
+                </button>
+              )}
+            </div>
+          </div>
+        )
       )}
 
       {/* FLOATING MAP LEGEND (COLLAPSIBLE) */}

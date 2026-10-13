@@ -38,6 +38,7 @@ import {
   CornerUpRight,
   Cpu,
   RefreshCw,
+  Compass,
 } from 'lucide-react';
 import api from '../services/api';
 
@@ -882,21 +883,12 @@ export function SmartRooms() {
   const [rooms, setRooms] = useState(INITIAL_ROOMS);
   const [selectedBuilding, setSelectedBuilding] = useState('Maharana Pratap Main Academic Block (Block ADM-01)');
   const [selectedFloor, setSelectedFloor] = useState('Ground');
-  const [selectedType, setSelectedType] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRoomId, setSelectedRoomId] = useState('MN-G-LIB');
   const [startLocationId, setStartLocationId] = useState('HALL');
-  const [activeFilters, setActiveFilters] = useState({
-    availableNow: true,
-    laser4k: false,
-    gpuCluster: false,
-    interactiveBoard: false,
-    ada: false,
-  });
 
   // CAD Viewer Interactive Pan & Zoom
   const [cadZoom, setCadZoom] = useState(1);
-  const [isAdaRoute, setIsAdaRoute] = useState(false);
   const [hoveredRoomId, setHoveredRoomId] = useState(null);
   const [navToast, setNavToast] = useState(null);
   const svgRef = useRef(null);
@@ -960,35 +952,6 @@ export function SmartRooms() {
     }
   };
 
-  // Time-Scrubber State (Hours from 08:00 to 20:00)
-  const [currentTimeHour, setCurrentTimeHour] = useState('11:30 AM');
-
-  // Instant Reservation & Pass Generator Modal
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [slotToBook, setSlotToBook] = useState(null);
-  const [bookingPurpose, setBookingPurpose] = useState('Capstone Project Team Collab');
-  const [studentRoll, setStudentRoll] = useState('MU/CSE/2024/0482');
-  const [studentName, setStudentName] = useState('Aarav Mehta');
-  const [bookingConflictMsg, setBookingConflictMsg] = useState('');
-  const [activePass, setActivePass] = useState(null);
-  const [hasCopiedPassId, setHasCopiedPassId] = useState(false);
-  const [simulatedUnlockSuccess, setSimulatedUnlockSuccess] = useState(false);
-
-  // My Passes Drawer
-  const [isMyPassesOpen, setIsMyPassesOpen] = useState(false);
-  const [savedPasses, setSavedPasses] = useState([
-    {
-      passId: 'NC-LIB-7741',
-      roomNumber: 'MN-G-01',
-      roomName: 'Central Library',
-      slotTime: '11:30 AM - 01:00 PM',
-      date: 'Today',
-      studentRoll: 'MU/CSE/2024/0482',
-      purpose: 'Deep Focus Coding',
-      status: 'Active Pass',
-    },
-  ]);
-
   // Attempt to sync room status with backend if available
   useEffect(() => {
     api.get('/smartrooms/rooms')
@@ -1014,23 +977,6 @@ export function SmartRooms() {
         // Fallback gracefully to verified in-memory dataset
       });
   }, []);
-
-  // Keyboard Escape listener for accessible modal dismissal
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        if (isBookingModalOpen) {
-          setIsBookingModalOpen(false);
-          setActivePass(null);
-        }
-        if (isMyPassesOpen) {
-          setIsMyPassesOpen(false);
-        }
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isBookingModalOpen, isMyPassesOpen]);
 
   // Selected Room Object
   const selectedRoom = useMemo(() => {
@@ -1117,46 +1063,6 @@ export function SmartRooms() {
     };
   }, [activeWaypoints, startLocation, selectedRoom]);
 
-  // Filtered rooms list
-  const filteredRooms = useMemo(() => {
-    return buildingFilteredRooms.filter((r) => {
-      if (selectedFloor !== 'All' && r.floor !== selectedFloor) return false;
-      if (selectedType !== 'All' && r.type !== selectedType) return false;
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchName = r.name.toLowerCase().includes(q);
-        const matchNum = r.roomNumber.toLowerCase().includes(q);
-        const matchFeat = r.features.some((f) => f.toLowerCase().includes(q));
-        if (!matchName && !matchNum && !matchFeat) return false;
-      }
-      if (activeFilters.availableNow && r.status === 'occupied') return false;
-      if (activeFilters.laser4k && !r.has4kLaser) return false;
-      if (activeFilters.gpuCluster && !r.hasGpu) return false;
-      if (activeFilters.interactiveBoard && !r.hasInteractive) return false;
-      if (activeFilters.ada && !r.isAda) return false;
-      return true;
-    });
-  }, [buildingFilteredRooms, selectedFloor, selectedType, searchQuery, activeFilters]);
-
-  // Summary Metrics
-  const summaryMetrics = useMemo(() => {
-    const totalDesks = rooms.reduce((acc, r) => acc + (r.capacity || 0), 0);
-    const occupiedDesks = rooms.reduce((acc, r) => acc + (r.currentOccupancy || 0), 0);
-    const availableDesks = Math.max(0, totalDesks - occupiedDesks);
-    const activeRooms = rooms.filter((r) => r.status === 'occupied').length;
-    const avgCo2 = Math.round(rooms.reduce((acc, r) => acc + (r.co2 || 400), 0) / Math.max(1, rooms.length));
-    const occupancyPercent = totalDesks > 0 ? Math.round((occupiedDesks / totalDesks) * 100) : 0;
-
-    return {
-      totalRooms: rooms.length,
-      totalDesks,
-      availableDesks,
-      activeRooms,
-      avgCo2,
-      occupancyPercent,
-    };
-  }, [rooms]);
-
   // Handle building change
   const handleBuildingChange = (bldgName) => {
     setSelectedBuilding(bldgName);
@@ -1167,89 +1073,18 @@ export function SmartRooms() {
     }
   };
 
-  const handleToggleFilter = (key) => {
-    setActiveFilters((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  // Open booking modal for a specific slot
-  const handleOpenBooking = (slot) => {
-    if (slot.status === 'occupied') {
-      setBookingConflictMsg(`Slot Conflict: "${slot.title}" is currently in session. Cannot reserve occupied academic hours.`);
-    } else if (slot.status === 'past') {
-      setBookingConflictMsg(`Time Expired: This slot was earlier today and is no longer bookable.`);
-    } else {
-      setBookingConflictMsg('');
-    }
-    setSlotToBook(slot);
-    setSimulatedUnlockSuccess(false);
-    setIsBookingModalOpen(true);
-  };
-
-  // Confirm reservation and generate digital pass
-  const handleConfirmReservation = () => {
-    if (!slotToBook || !slotToBook.isBookable) return;
-
-    const newPassId = `NC-PASS-${Math.floor(1000 + Math.random() * 9000)}`;
-    const newPass = {
-      passId: newPassId,
-      roomNumber: selectedRoom.roomNumber,
-      roomName: selectedRoom.name,
-      building: selectedRoom.building,
-      floor: selectedRoom.floor,
-      slotTime: `${slotToBook.start} - ${slotToBook.end}`,
-      date: 'Today',
-      studentRoll,
-      studentName,
-      purpose: bookingPurpose,
-      status: 'Active Pass',
-    };
-
-    // Update room slot status in state
-    setRooms((prev) =>
-      prev.map((r) => {
-        if (r.id !== selectedRoom.id) return r;
-        return {
-          ...r,
-          currentOccupancy: Math.min(r.capacity, r.currentOccupancy + 1),
-          slots: r.slots.map((s) =>
-            s.id === slotToBook.id
-              ? { ...s, status: 'reserved', title: `Reserved: ${bookingPurpose}`, isBookable: false }
-              : s
-          ),
-        };
-      })
-    );
-
-    setActivePass(newPass);
-    setSavedPasses((prev) => [newPass, ...prev]);
-  };
-
-  // Simulate NFC door unlock
-  const handleSimulateUnlock = () => {
-    setSimulatedUnlockSuccess(true);
-    setTimeout(() => {
-      setSimulatedUnlockSuccess(false);
-    }, 4000);
-  };
-
-  const copyPassId = (id) => {
-    navigator.clipboard?.writeText?.(id);
-    setHasCopiedPassId(true);
-    setTimeout(() => setHasCopiedPassId(false), 2000);
-  };
-
   return (
     <div style={{ backgroundColor: 'var(--bg-canvas)', minHeight: '100%' }} className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* =========================================================================
-          TOP INSTITUTIONAL HEADER & COMPACT METRICS HIERARCHY
+          TOP INSTITUTIONAL HEADER & BREADCRUMBS
           ========================================================================= */}
       <div className="flex flex-col gap-4 pb-6 border-b border-[#E4EAE5]">
-        {/* Breadcrumb & Live Mesh Status */}
+        {/* Breadcrumb & Navigation Mode */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs font-mono text-[var(--text-secondary)]">
             <span className="px-2.5 py-1 rounded-full bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold flex items-center gap-1.5 shadow-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] animate-pulse"></span>
-              IoT Mesh Live
+              <Compass className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
+              Indoor Navigation CAD
             </span>
             <span className="hidden sm:inline text-[var(--text-muted)]">• Mewar University Gangrar</span>
             <span className="text-[var(--border-subtle)]">/</span>
@@ -1257,58 +1092,21 @@ export function SmartRooms() {
             <span className="text-[var(--border-subtle)]">/</span>
             <span className="text-[var(--brand-primary)] font-semibold">{selectedFloor} Architectural CAD</span>
           </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setIsMyPassesOpen(true)}
-              className="px-3.5 py-1.5 rounded-xl bg-white border border-[#E4EAE5] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)] text-xs font-semibold text-[var(--text-primary)] flex items-center gap-2 transition-all shadow-xs cursor-pointer"
-            >
-              <QrCode className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
-              <span>My Active Passes</span>
-              {savedPasses.length > 0 && (
-                <span className="px-1.5 py-0.5 rounded-full bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] text-[10px] font-bold border border-[var(--brand-soft-border)]">
-                  {savedPasses.length}
-                </span>
-              )}
-            </button>
-          </div>
         </div>
 
-        {/* Page Title & Compact Summary Hierarchy */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-heading">
-                SmartRooms &amp; Space Intelligence
-              </h1>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-white text-[var(--text-secondary)] border border-[#E4EAE5] font-mono font-medium">
-                CAD BIM v2.4
-              </span>
-            </div>
-            <p className="text-sm text-[var(--text-secondary)] max-w-2xl mt-1">
-              Real-time room occupancy, indoor CAD floor plans, verified environmental telemetry, and clash-free slot bookings across campus.
-            </p>
+        {/* Page Title & Purpose */}
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight font-heading">
+              Indoor Navigation &amp; Floor Maps
+            </h1>
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-white text-[var(--text-secondary)] border border-[#E4EAE5] font-mono font-medium">
+              CAD BIM v2.4
+            </span>
           </div>
-
-          {/* Compact Verified Metrics Grid */}
-          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2.5 w-full sm:w-auto">
-            <div className="px-3.5 py-2 rounded-xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">Monitored</span>
-              <span className="text-lg font-bold text-[var(--text-primary)] font-heading">{summaryMetrics.totalRooms} Spaces</span>
-            </div>
-            <div className="px-3.5 py-2 rounded-xl bg-[var(--brand-soft-bg)] border border-[var(--brand-soft-border)] shadow-xs flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--brand-primary)] font-bold">Available Desks</span>
-              <span className="text-lg font-bold text-[var(--brand-primary)] font-heading">{summaryMetrics.availableDesks} Free</span>
-            </div>
-            <div className="px-3.5 py-2 rounded-xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">Occupancy</span>
-              <span className="text-lg font-bold text-[var(--text-primary)] font-heading">{summaryMetrics.occupancyPercent}% Active</span>
-            </div>
-            <div className="px-3.5 py-2 rounded-xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col min-w-[95px]">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">Avg CO₂</span>
-              <span className="text-lg font-bold text-[var(--text-primary)] font-heading">{summaryMetrics.avgCo2} ppm</span>
-            </div>
-          </div>
+          <p className="text-sm text-[var(--text-secondary)] max-w-2xl mt-1">
+            Interactive CAD architectural floor plans, indoor corridor wayfinding, and room directory across campus buildings.
+          </p>
         </div>
       </div>
 
@@ -1368,9 +1166,9 @@ export function SmartRooms() {
           </div>
         </div>
 
-        {/* Row 2: Floor Switcher & Category Pills */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2 border-t border-[#E4EAE5]">
-          {/* Floor Segmented Control */}
+        {/* Row 2: Building Floor Level Switcher */}
+        <div className="flex items-center gap-2 pt-2 border-t border-[#E4EAE5]">
+          <span className="text-xs font-mono uppercase font-bold text-[var(--text-muted)]">Floor Level:</span>
           <div className="flex items-center gap-1 p-1 bg-[var(--bg-canvas)] rounded-xl border border-[#E4EAE5] overflow-x-auto">
             {['Ground', 'Level 1', 'Level 2', 'Level 3'].map((fl) => {
               const isActive = selectedFloor === fl;
@@ -1389,96 +1187,6 @@ export function SmartRooms() {
               );
             })}
           </div>
-
-          {/* Room Category Filter Chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0">
-            {[
-              { label: 'All Spaces', val: 'All' },
-              { label: 'Classrooms', val: 'Classroom' },
-              { label: 'Library', val: 'Library' },
-              { label: 'Sports', val: 'Sports' },
-              { label: 'Exam Hall', val: 'Examination Hall' },
-              { label: 'Facilities', val: 'Facility' },
-              { label: 'Office', val: 'Office' },
-            ].map((tp) => (
-              <button
-                key={tp.val}
-                onClick={() => setSelectedType(tp.val)}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                  selectedType === tp.val
-                    ? 'bg-[var(--brand-primary)] text-white font-bold shadow-xs'
-                    : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:bg-white hover:text-[var(--text-primary)] border border-[#E4EAE5]'
-                }`}
-              >
-                {tp.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Row 3: Feature Filters Multi-Select */}
-        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#E4EAE5]">
-          <span className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-wider mr-1">Filter Hardware:</span>
-
-          <button
-            onClick={() => handleToggleFilter('availableNow')}
-            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
-              activeFilters.availableNow
-                ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold'
-                : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:bg-white border border-[#E4EAE5]'
-            }`}
-          >
-            <CheckCircle2 className="w-3 h-3 text-[var(--brand-primary)]" />
-            Available Now
-          </button>
-
-          <button
-            onClick={() => handleToggleFilter('laser4k')}
-            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
-              activeFilters.laser4k
-                ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold'
-                : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:bg-white border border-[#E4EAE5]'
-            }`}
-          >
-            <Sparkles className="w-3 h-3 text-[var(--brand-primary)]" />
-            4K Laser Projector
-          </button>
-
-          <button
-            onClick={() => handleToggleFilter('gpuCluster')}
-            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
-              activeFilters.gpuCluster
-                ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold'
-                : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:bg-white border border-[#E4EAE5]'
-            }`}
-          >
-            <Cpu className="w-3 h-3 text-[var(--brand-primary)]" />
-            RTX 4090 GPU Rig
-          </button>
-
-          <button
-            onClick={() => handleToggleFilter('interactiveBoard')}
-            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
-              activeFilters.interactiveBoard
-                ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold'
-                : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:bg-white border border-[#E4EAE5]'
-            }`}
-          >
-            <Sliders className="w-3 h-3 text-[var(--brand-primary)]" />
-            Interactive Touchboard
-          </button>
-
-          <button
-            onClick={() => handleToggleFilter('ada')}
-            className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
-              activeFilters.ada
-                ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold'
-                : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:bg-white border border-[#E4EAE5]'
-            }`}
-          >
-            <DoorOpen className="w-3 h-3 text-[var(--brand-primary)]" />
-            ADA Step-Free / Loop
-          </button>
         </div>
       </div>
 
@@ -1591,20 +1299,6 @@ export function SmartRooms() {
                   aria-label="Reset CAD Zoom to 100%"
                 >
                   {Math.round(cadZoom * 100)}%
-                </button>
-                <div className="w-px h-4 bg-[#E4EAE5] mx-0.5"></div>
-                <button
-                  onClick={() => setIsAdaRoute(!isAdaRoute)}
-                  className={`px-2 py-1 min-h-[32px] sm:min-h-0 flex items-center gap-1 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer ${
-                    isAdaRoute
-                      ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)]'
-                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-canvas)]'
-                  }`}
-                  title="Toggle Step-Free ADA Elevator Route"
-                  aria-label="Toggle Step-Free ADA Route"
-                >
-                  <DoorOpen className="w-3 h-3" />
-                  <span>{isAdaRoute ? 'Elevator Routing' : 'Step-Free'}</span>
                 </button>
               </div>
             </div>
@@ -1774,27 +1468,6 @@ export function SmartRooms() {
                 }
               `}</style>
 
-              {/* Floating Blueprint Legend */}
-              <div className="absolute bottom-3 left-3 p-2.5 px-3.5 rounded-xl bg-white/95 backdrop-blur-md text-[var(--text-primary)] border border-[#E4EAE5] shadow-md z-20 flex flex-wrap items-center gap-3 text-xs">
-                <span className="font-bold text-[var(--text-muted)] uppercase tracking-wider text-[10px]">CAD Legend:</span>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                  <span className="font-medium text-[var(--text-secondary)]">Available</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
-                  <span className="font-medium text-[var(--text-secondary)]">In Session</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-                  <span className="font-medium text-[var(--text-secondary)]">Reserved</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
-                  <span className="font-medium text-[var(--text-secondary)]">Elevator Lift</span>
-                </div>
-              </div>
-
               {/* Wayfinding Duration Chip */}
               <div className="absolute bottom-3 right-3 p-2.5 px-3.5 rounded-xl bg-white/95 backdrop-blur-md border border-[#E4EAE5] shadow-md z-20 flex items-center gap-2">
                 <Navigation className="w-4 h-4 text-[var(--brand-primary)]" />
@@ -1805,186 +1478,10 @@ export function SmartRooms() {
               </div>
             </div>
           </div>
-
-          {/* =====================================================================
-              VISUAL TIME-SCRUBBER TIMELINE & INSTANT RESERVATION SCHEDULE
-              ===================================================================== */}
-          <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <h3 className="text-base font-bold text-[var(--text-primary)] font-heading flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[var(--brand-primary)]" />
-                  <span>Room {selectedRoom.roomNumber} Today's Schedule &amp; Clash-Free Booking</span>
-                </h3>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-                  Select any available block below to reserve instantly and generate your verified NFC pass.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-[var(--bg-canvas)] text-[11px] font-mono font-medium text-[var(--text-secondary)] border border-[#E4EAE5]">
-                  Current Time: {currentTimeHour}
-                </span>
-              </div>
-            </div>
-
-            {/* Visual Schedule Slot Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {selectedRoom.slots.map((slot) => {
-                const isPast = slot.status === 'past';
-                const isOccupied = slot.status === 'occupied';
-                const isReserved = slot.status === 'reserved';
-                const isAvailable = slot.status === 'available';
-
-                return (
-                  <div
-                    key={slot.id}
-                    className={`p-3.5 rounded-xl border flex flex-col justify-between transition-all ${
-                      isAvailable
-                        ? 'bg-white border-[var(--brand-soft-border)] hover:border-[var(--brand-primary)] hover:shadow-md'
-                        : isOccupied
-                        ? 'bg-red-50/50 border-red-200/70 opacity-90'
-                        : isReserved
-                        ? 'bg-amber-50/50 border-amber-200/70 opacity-90'
-                        : 'bg-[var(--bg-canvas)] border-[#E4EAE5] opacity-60'
-                    }`}
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-1 mb-1.5">
-                        <span className="text-xs font-mono font-bold text-[var(--text-primary)]">
-                          {slot.start} - {slot.end}
-                        </span>
-                        <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            isAvailable
-                              ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)]'
-                              : isOccupied
-                              ? 'bg-red-50 text-red-700 border border-red-200'
-                              : isReserved
-                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                              : 'bg-slate-200/70 text-slate-500'
-                          }`}
-                        >
-                          {isAvailable
-                            ? 'Bookable'
-                            : isOccupied
-                            ? 'Class In-Session'
-                            : isReserved
-                            ? 'Reserved'
-                            : 'Completed'}
-                        </span>
-                      </div>
-
-                      <h4 className="text-xs font-semibold text-[var(--text-primary)] leading-tight line-clamp-1">
-                        {slot.title}
-                      </h4>
-                      <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
-                        {slot.lecturer}
-                      </p>
-                    </div>
-
-                    <div className="pt-3 mt-3 border-t border-[#E4EAE5] flex items-center justify-between">
-                      {isAvailable ? (
-                        <button
-                          onClick={() => handleOpenBooking(slot)}
-                          className="w-full py-1.5 px-3 rounded-lg bg-[var(--brand-soft-bg)] hover:bg-[var(--brand-primary)] hover:text-white text-[var(--brand-primary)] border border-[var(--brand-soft-border)] text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer"
-                        >
-                          <QrCode className="w-3.5 h-3.5 text-current" />
-                          <span>Reserve Slot</span>
-                        </button>
-                      ) : (
-                        <span className="text-[11px] text-[var(--text-muted)] italic">
-                          {isOccupied ? 'Clash: Timetable Lock' : isReserved ? 'Reserved by Peer' : 'Slot Concluded'}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* =====================================================================
-              RAPID ROOM SWITCHER CAROUSEL (Key Spaces in Block)
-              ===================================================================== */}
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wider font-mono">
-                {selectedFloor} Spaces in {selectedRoom.buildingCode}
-              </h3>
-              <span className="text-xs text-[var(--text-secondary)]">Click any card to inspect telemetry &amp; route</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {(filteredRooms.length > 0 ? filteredRooms.slice(0, 9) : buildingFilteredRooms.slice(0, 9)).map((r) => {
-                const isSelected = r.id === selectedRoomId;
-                return (
-                  <div
-                    key={r.id}
-                    onClick={() => handleSelectRoom(r.id)}
-                    className={`cursor-pointer p-4 rounded-xl flex flex-col justify-between transition-all bg-white hover:scale-[1.01] ${
-                      isSelected
-                        ? 'border-2 border-[var(--brand-primary)] shadow-md ring-2 ring-[var(--brand-soft-border)]'
-                        : 'border border-[#E4EAE5] hover:border-emerald-300 hover:shadow-xs'
-                    }`}
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span
-                          className={`px-2 py-0.5 rounded text-xs font-mono font-bold ${
-                            isSelected ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)]' : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)]'
-                          }`}
-                        >
-                          {r.roomNumber}
-                        </span>
-                        <span
-                          className={`text-xs font-medium flex items-center gap-1 ${
-                            r.status === 'available' ? 'text-[var(--brand-primary)]' : 'text-red-600'
-                          }`}
-                        >
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full ${
-                              r.status === 'available' ? 'bg-[var(--brand-primary)]' : 'bg-red-500'
-                            }`}
-                          ></span>
-                          {r.statusText}
-                        </span>
-                      </div>
-                      <h4 className="text-sm font-bold text-[var(--text-primary)] line-clamp-1">{r.name}</h4>
-                      <p className="text-xs text-[var(--text-muted)] mt-1 line-clamp-1">
-                        {r.capacity} Seats • {r.features[0]}
-                      </p>
-                    </div>
-
-                    <div className="pt-3 mt-3 border-t border-[#E4EAE5] flex items-center justify-between text-xs text-[var(--text-secondary)]">
-                      <span className="flex items-center gap-1">
-                        <Users className="w-3.5 h-3.5 text-[var(--text-muted)]" />
-                        <span>{r.currentOccupancy}/{r.capacity} Occ</span>
-                      </span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSelectRoom(r.id);
-                        }}
-                        className={`font-semibold flex items-center gap-1 transition-colors ${
-                          isSelected
-                            ? 'text-[var(--brand-primary)]'
-                            : 'text-[var(--brand-primary)] hover:underline'
-                        }`}
-                      >
-                        <Navigation className="w-3 h-3 text-current" />
-                        <span>{isSelected ? 'Navigating ✓' : 'Navigate →'}</span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
         </div>
 
         {/* =========================================================================
-            RIGHT COLUMN: IOT TELEMETRY DIALS & ROOM WAYFINDING INSPECTOR
+            RIGHT COLUMN: ROOM WAYFINDING INSPECTOR & SPACE SPECIFICATIONS
             ========================================================================= */}
         <div className="xl:col-span-4 flex flex-col gap-5">
           <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col gap-5">
@@ -1996,18 +1493,18 @@ export function SmartRooms() {
                   <span>•</span>
                   <span>{selectedRoom.floor}</span>
                   <span>•</span>
-                  <span>Wing A</span>
+                  <span>{selectedRoom.type}</span>
                 </div>
                 <h2 className="text-xl font-extrabold text-[var(--text-primary)] tracking-tight font-heading mt-0.5">
                   Room {selectedRoom.roomNumber}: {selectedRoom.name}
                 </h2>
               </div>
               <span className="px-2.5 py-0.5 rounded-full bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] text-xs font-bold border border-[var(--brand-soft-border)] shrink-0">
-                Active Node
+                Destination
               </span>
             </div>
 
-            {/* Room Photo Preview with Live Tag */}
+            {/* Room Photo Preview */}
             <div className="relative w-full h-44 rounded-xl overflow-hidden bg-slate-100 border border-[#E4EAE5]">
               <img
                 src={selectedRoom.image}
@@ -2020,107 +1517,27 @@ export function SmartRooms() {
                   {selectedRoom.type}
                 </span>
                 <span className="px-2 py-1 rounded-md bg-[var(--brand-primary)] backdrop-blur-md text-white font-bold shadow-xs">
-                  {selectedRoom.capacity - selectedRoom.currentOccupancy} Desks Open
+                  {selectedRoom.capacity} Seats Capacity
                 </span>
               </div>
             </div>
 
-            {/* ===================================================================
-                IOT ENVIRONMENTAL TELEMETRY GAUGES & SENSOR DIALS
-                =================================================================== */}
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-bold flex items-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
-                  Live IoT Sensor Dials
-                </span>
-                <span className="text-[10px] text-[var(--brand-primary)] font-mono font-medium">Calibrated 1s ago</span>
+            {/* Space Specifications */}
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="p-3 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex flex-col">
+                <span className="text-[10px] font-mono uppercase text-[var(--text-muted)] font-semibold">Total Capacity</span>
+                <span className="text-base font-bold text-[var(--text-primary)] font-heading mt-0.5">{selectedRoom.capacity} Desks / Seats</span>
               </div>
-
-              {/* Grid of Gauges */}
-              <div className="grid grid-cols-2 gap-2.5">
-                {/* 1. CO2 & Air Quality Dial */}
-                <div className="p-3 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-[var(--text-secondary)] mb-1">
-                    <span className="text-[10px] font-mono uppercase font-semibold">Air CO₂</span>
-                    <Wind className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
-                  </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-xl font-black text-[var(--text-primary)] font-heading">{selectedRoom.co2}</span>
-                    <span className="text-[11px] text-[var(--text-muted)]">ppm</span>
-                  </div>
-                  <div className="w-full bg-[#E4EAE5] h-1.5 rounded-full overflow-hidden mt-1.5">
-                    <div
-                      className="bg-[var(--brand-primary)] h-full rounded-full transition-all"
-                      style={{ width: `${Math.min(100, (selectedRoom.co2 / 800) * 100)}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-[10px] text-[var(--brand-primary)] font-medium mt-1">{selectedRoom.co2Status}</span>
-                </div>
-
-                {/* 2. Thermal Comfort Dial */}
-                <div className="p-3 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-[var(--text-secondary)] mb-1">
-                    <span className="text-[10px] font-mono uppercase font-semibold">HVAC Temp</span>
-                    <Thermometer className="w-3.5 h-3.5 text-sky-600" />
-                  </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-xl font-black text-[var(--text-primary)] font-heading">{selectedRoom.temp}°</span>
-                    <span className="text-[11px] text-[var(--text-muted)]">C</span>
-                  </div>
-                  <div className="w-full bg-[#E4EAE5] h-1.5 rounded-full overflow-hidden mt-1.5">
-                    <div
-                      className="bg-sky-500 h-full rounded-full transition-all"
-                      style={{ width: '68%' }}
-                    ></div>
-                  </div>
-                  <span className="text-[10px] text-[var(--text-muted)] mt-1">Target: {selectedRoom.tempTarget}°C • {selectedRoom.humidity}% RH</span>
-                </div>
-
-                {/* 3. Acoustic Sound Level Dial */}
-                <div className="p-3 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-[var(--text-secondary)] mb-1">
-                    <span className="text-[10px] font-mono uppercase font-semibold">Acoustics</span>
-                    <Volume2 className="w-3.5 h-3.5 text-amber-600" />
-                  </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-xl font-black text-[var(--text-primary)] font-heading">{selectedRoom.noiseDb}</span>
-                    <span className="text-[11px] text-[var(--text-muted)]">dB</span>
-                  </div>
-                  <div className="w-full bg-[#E4EAE5] h-1.5 rounded-full overflow-hidden mt-1.5">
-                    <div
-                      className="bg-amber-500 h-full rounded-full transition-all"
-                      style={{ width: `${Math.min(100, (selectedRoom.noiseDb / 80) * 100)}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-[10px] text-amber-700 font-medium mt-1">{selectedRoom.noiseStatus}</span>
-                </div>
-
-                {/* 4. Wi-Fi 7 Enterprise Telemetry */}
-                <div className="p-3 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-[var(--text-secondary)] mb-1">
-                    <span className="text-[10px] font-mono uppercase font-semibold">Wi-Fi 7 Core</span>
-                    <Wifi className="w-3.5 h-3.5 text-purple-600" />
-                  </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-xl font-black text-[var(--text-primary)] font-heading">{selectedRoom.wifiSpeed.split(' ')[0]}</span>
-                    <span className="text-[11px] text-[var(--text-muted)]">Mbps</span>
-                  </div>
-                  <div className="w-full bg-[#E4EAE5] h-1.5 rounded-full overflow-hidden mt-1.5">
-                    <div
-                      className="bg-purple-500 h-full rounded-full transition-all"
-                      style={{ width: '85%' }}
-                    ></div>
-                  </div>
-                  <span className="text-[10px] text-purple-700 font-medium mt-1">{selectedRoom.wifiLatency} ping • {selectedRoom.wifiDevices} nodes</span>
-                </div>
+              <div className="p-3 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex flex-col">
+                <span className="text-[10px] font-mono uppercase text-[var(--text-muted)] font-semibold">Door / Gate</span>
+                <span className="text-base font-bold text-[var(--brand-primary)] font-heading mt-0.5">GATE {selectedRoom.roomNumber}</span>
               </div>
             </div>
 
             {/* Room Features List */}
             <div className="flex flex-col gap-2">
               <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-bold">
-                Equipment &amp; Accessibility
+                Equipment &amp; Facilities
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {selectedRoom.features.map((feat, idx) => (
@@ -2160,19 +1577,8 @@ export function SmartRooms() {
             {/* Action Buttons */}
             <div className="flex flex-col gap-2.5 pt-2">
               <button
-                onClick={() => {
-                  const firstBookable = selectedRoom.slots.find((s) => s.isBookable) || selectedRoom.slots[0];
-                  handleOpenBooking(firstBookable);
-                }}
-                className="w-full py-3 px-4 rounded-xl bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] active:scale-[0.99] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
-              >
-                <QrCode className="w-4 h-4 text-white" />
-                <span>Instant Reserve &amp; Generate NFC Pass</span>
-              </button>
-
-              <button
                 onClick={() => handleSelectRoom(selectedRoom.id)}
-                className="w-full py-2.5 px-4 rounded-xl bg-[var(--brand-soft-bg)] hover:bg-[var(--brand-primary)] hover:text-white text-[var(--brand-primary)] text-xs font-bold flex items-center justify-center gap-2 border border-[var(--brand-soft-border)] transition-all cursor-pointer"
+                className="w-full py-2.5 px-4 rounded-xl bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
               >
                 <Navigation className="w-3.5 h-3.5 text-current animate-pulse" />
                 <span>Follow Live Walking Route on Map</span>
@@ -2189,302 +1595,6 @@ export function SmartRooms() {
           </div>
         </div>
       </div>
-
-      {/* =========================================================================
-          MODAL: INSTANT RESERVATION & VERIFIED QR/NFC PASS GENERATOR
-          ========================================================================= */}
-      {isBookingModalOpen && slotToBook && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="booking-modal-title"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setIsBookingModalOpen(false);
-              setActivePass(null);
-            }
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
-        >
-          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-4 sm:p-6 flex flex-col gap-5 text-[var(--text-primary)] max-h-[90dvh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-            {/* Modal Header */}
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="text-[11px] font-mono text-[var(--brand-primary)] font-bold uppercase tracking-wider">
-                  Clash-Free Room Reservation
-                </span>
-                <h3 id="booking-modal-title" className="text-xl font-bold text-[var(--text-primary)] font-heading mt-0.5">
-                  Book Room {selectedRoom.roomNumber} ({slotToBook.start} - {slotToBook.end})
-                </h3>
-              </div>
-              <button
-                type="button"
-                aria-label="Close booking modal"
-                onClick={() => {
-                  setIsBookingModalOpen(false);
-                  setActivePass(null);
-                }}
-                className="w-8 h-8 rounded-lg bg-[var(--bg-canvas)] hover:bg-slate-200 text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Error Message if Slot Conflict */}
-            {bookingConflictMsg ? (
-              <div className="p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-red-900">Timetable Conflict Detected</span>
-                  <span className="text-xs text-red-700 mt-0.5">{bookingConflictMsg}</span>
-                  <span className="text-[11px] text-[var(--text-muted)] mt-2">
-                    Tip: Look for slots labeled <span className="text-[var(--brand-primary)] font-semibold">"Bookable"</span> in the schedule timeline.
-                  </span>
-                </div>
-              </div>
-            ) : activePass ? (
-              /* ===================================================================
-                 VERIFIED NFC & DIGITAL QR ACCESS PASS BADGE
-                 =================================================================== */
-              <div className="flex flex-col gap-4">
-                <div className="p-5 rounded-2xl bg-white border-2 border-[var(--brand-primary)] shadow-lg flex flex-col gap-4 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--brand-soft-bg)] rounded-full blur-2xl pointer-events-none"></div>
-
-                  <div className="flex items-center justify-between border-b border-[#E4EAE5] pb-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-[var(--brand-soft-bg)] border border-[var(--brand-soft-border)] flex items-center justify-center">
-                        <ShieldCheck className="w-4 h-4 text-[var(--brand-primary)]" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-[var(--text-primary)]">Mewar University Digital Key</span>
-                        <span className="text-[10px] font-mono text-[var(--brand-primary)] font-semibold">NFC Smart Lock Authorized</span>
-                      </div>
-                    </div>
-                    <span className="text-xs font-mono font-bold text-[var(--text-secondary)]">{activePass.passId}</span>
-                  </div>
-
-                  {/* QR Graphic and Details */}
-                  <div className="flex items-center gap-4">
-                    {/* High-fidelity SVG QR Code */}
-                    <div className="w-28 h-28 p-2 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex items-center justify-center shrink-0 shadow-xs">
-                      <svg viewBox="0 0 100 100" className="w-full h-full">
-                        <rect x="0" y="0" width="100" height="100" fill="#F6F8F6" />
-                        {/* Position Markers */}
-                        <rect x="10" y="10" width="25" height="25" fill="#142D28" />
-                        <rect x="15" y="15" width="15" height="15" fill="#F6F8F6" />
-                        <rect x="18" y="18" width="9" height="9" fill="#168567" />
-
-                        <rect x="65" y="10" width="25" height="25" fill="#142D28" />
-                        <rect x="70" y="15" width="15" height="15" fill="#F6F8F6" />
-                        <rect x="73" y="18" width="9" height="9" fill="#168567" />
-
-                        <rect x="10" y="65" width="25" height="25" fill="#142D28" />
-                        <rect x="15" y="70" width="15" height="15" fill="#F6F8F6" />
-                        <rect x="18" y="73" width="9" height="9" fill="#168567" />
-
-                        {/* Data Pixels */}
-                        <rect x="40" y="12" width="6" height="6" fill="#142D28" />
-                        <rect x="52" y="15" width="6" height="6" fill="#142D28" />
-                        <rect x="42" y="30" width="6" height="6" fill="#142D28" />
-                        <rect x="54" y="38" width="6" height="6" fill="#142D28" />
-                        <rect x="68" y="44" width="6" height="6" fill="#142D28" />
-                        <rect x="40" y="55" width="6" height="6" fill="#142D28" />
-                        <rect x="50" y="65" width="6" height="6" fill="#142D28" />
-                        <rect x="62" y="75" width="6" height="6" fill="#142D28" />
-                        <rect x="75" y="62" width="6" height="6" fill="#142D28" />
-                        <rect x="85" y="80" width="6" height="6" fill="#142D28" />
-                        <circle cx="50" cy="50" r="5" fill="#168567" />
-                      </svg>
-                    </div>
-
-                    <div className="flex flex-col gap-1 text-xs">
-                      <span className="font-bold text-[var(--text-primary)] text-base font-heading">
-                        Room {activePass.roomNumber}
-                      </span>
-                      <span className="text-[var(--text-secondary)]">{activePass.roomName}</span>
-                      <span className="text-[var(--brand-primary)] font-mono font-semibold mt-1">
-                        Valid: {activePass.slotTime} ({activePass.date})
-                      </span>
-                      <span className="text-[var(--text-muted)]">
-                        Student: {activePass.studentName} ({activePass.studentRoll})
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* NFC Door Unlock Simulator */}
-                  <div className="pt-2 border-t border-[#E4EAE5] flex items-center justify-between">
-                    <button
-                      onClick={handleSimulateUnlock}
-                      className={`py-2 px-3.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-                        simulatedUnlockSuccess
-                          ? 'bg-[var(--brand-primary)] text-white'
-                          : 'bg-[var(--brand-soft-bg)] hover:bg-[var(--brand-soft-border)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)]'
-                      }`}
-                    >
-                      {simulatedUnlockSuccess ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
-                      <span>{simulatedUnlockSuccess ? 'Door Reader Unlocked! ✓' : 'Simulate NFC Tap to Unlock'}</span>
-                    </button>
-
-                    <button
-                      onClick={() => copyPassId(activePass.passId)}
-                      className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center gap-1 font-mono cursor-pointer"
-                    >
-                      {hasCopiedPassId ? <Check className="w-3.5 h-3.5 text-[var(--brand-primary)]" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{hasCopiedPassId ? 'Copied' : 'Copy ID'}</span>
-                    </button>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => setIsBookingModalOpen(false)}
-                  className="w-full py-2.5 rounded-xl bg-[var(--bg-canvas)] hover:bg-slate-200 text-[var(--text-primary)] text-xs font-semibold cursor-pointer border border-[#E4EAE5]"
-                >
-                  Close &amp; View Schedule
-                </button>
-              </div>
-            ) : (
-              /* Booking Configuration Form */
-              <div className="flex flex-col gap-4">
-                <div className="p-3.5 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] flex items-center justify-between">
-                  <div>
-                    <span className="text-[11px] text-[var(--text-muted)] font-mono">Slot Timing</span>
-                    <h4 className="text-sm font-bold text-[var(--text-primary)]">{slotToBook.start} - {slotToBook.end} Today</h4>
-                  </div>
-                  <span className="px-2.5 py-1 rounded-md bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] text-xs font-bold border border-[var(--brand-soft-border)]">
-                    No Conflicts
-                  </span>
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-[var(--text-secondary)]">Student Roll Number</label>
-                  <input
-                    type="text"
-                    value={studentRoll}
-                    onChange={(e) => setStudentRoll(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] text-sm text-[var(--text-primary)] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[var(--brand-soft-border)] focus:border-[var(--brand-primary)] font-mono"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-[var(--text-secondary)]">Reservation Purpose</label>
-                  <div className="flex flex-wrap gap-2 mb-1.5">
-                    {[
-                      'Capstone Project Team Collab',
-                      'Solo Deep Work Pod',
-                      'AI Model Training & Lab',
-                      'Peer Group Study',
-                    ].map((purp) => (
-                      <button
-                        key={purp}
-                        type="button"
-                        onClick={() => setBookingPurpose(purp)}
-                        className={`px-2.5 py-1 rounded-lg text-xs transition-colors cursor-pointer ${
-                          bookingPurpose === purp
-                            ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)] font-semibold'
-                            : 'bg-[var(--bg-canvas)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[#E4EAE5]'
-                        }`}
-                      >
-                        {purp}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-2 flex items-center justify-end gap-3 border-t border-[#E4EAE5]">
-                  <button
-                    onClick={() => setIsBookingModalOpen(false)}
-                    className="px-4 py-2 rounded-xl text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-canvas)] transition-colors cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleConfirmReservation}
-                    className="px-5 py-2.5 rounded-xl bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all cursor-pointer"
-                  >
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>Confirm &amp; Issue Digital Pass</span>
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* =========================================================================
-          SLIDE-OVER DRAWER: "MY ACTIVE PASSES"
-          ========================================================================= */}
-      {isMyPassesOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="my-passes-title"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setIsMyPassesOpen(false);
-          }}
-          className="fixed inset-0 z-50 flex justify-end bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200"
-        >
-          <div className="w-full max-w-md h-full bg-white border-l border-[#E4EAE5] p-4 sm:p-6 flex flex-col justify-between shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between pb-4 border-b border-[#E4EAE5]">
-                <div className="flex items-center gap-2">
-                  <QrCode className="w-5 h-5 text-[var(--brand-primary)]" />
-                  <h3 id="my-passes-title" className="text-base font-bold text-[var(--text-primary)] font-heading">My Active Campus Passes</h3>
-                </div>
-                <button
-                  type="button"
-                  aria-label="Close active passes drawer"
-                  onClick={() => setIsMyPassesOpen(false)}
-                  className="w-7 h-7 rounded-lg bg-[var(--bg-canvas)] text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center justify-center cursor-pointer"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {savedPasses.length === 0 ? (
-                <div className="py-12 flex flex-col items-center justify-center text-center text-[var(--text-muted)]">
-                  <QrCode className="w-10 h-10 mb-2 opacity-30 text-[var(--text-muted)]" />
-                  <p className="text-xs font-medium text-[var(--text-secondary)]">No active passes issued yet.</p>
-                  <p className="text-[11px] text-[var(--text-muted)] mt-1">Book any room slot to generate an NFC pass.</p>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-3 overflow-y-auto max-h-[70vh] pr-1">
-                  {savedPasses.map((p, idx) => (
-                    <div
-                      key={idx}
-                      className="p-4 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] hover:border-[var(--brand-soft-border)] flex flex-col gap-2.5 transition-all"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-mono font-bold text-[var(--brand-primary)]">{p.passId}</span>
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--brand-soft-bg)] text-[var(--brand-primary)] border border-[var(--brand-soft-border)]">
-                          {p.status}
-                        </span>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-bold text-[var(--text-primary)] font-heading">Room {p.roomNumber}</h4>
-                        <p className="text-xs text-[var(--text-secondary)]">{p.roomName}</p>
-                      </div>
-                      <div className="flex items-center justify-between pt-2 border-t border-[#E4EAE5] text-[11px] text-[var(--text-muted)]">
-                        <span>Time: {p.slotTime}</span>
-                        <span>{p.purpose}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="pt-4 border-t border-[#E4EAE5]">
-              <button
-                onClick={() => setIsMyPassesOpen(false)}
-                className="w-full py-2.5 rounded-xl bg-[var(--bg-canvas)] hover:bg-slate-200 text-xs font-semibold text-[var(--text-primary)] cursor-pointer border border-[#E4EAE5]"
-              >
-                Close Drawer
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

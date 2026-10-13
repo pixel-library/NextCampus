@@ -9,7 +9,8 @@ import {
   ShieldAlert,
   Sliders,
   Menu,
-  Users
+  Users,
+  Compass,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -28,7 +29,7 @@ export const MobileNav = ({ onOpenMore }) => {
     : [
         { label: 'Home', path: '/dashboard', icon: LayoutDashboard },
         { label: 'Map', path: '/campus-map', icon: MapPin },
-        { label: 'Rooms', path: '/smartroom', icon: DoorOpen },
+        { label: 'Indoor Map', path: '/smartroom', icon: Compass },
         { label: 'Care', path: '/complaints', icon: LifeBuoy },
         { label: 'Directory', path: '/directory', icon: Users },
       ];

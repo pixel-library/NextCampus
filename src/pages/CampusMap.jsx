@@ -1709,40 +1709,6 @@ export const CampusMap = () => {
 
             <div style={{ height: '20px', width: '1px', backgroundColor: 'var(--border-subtle)' }} />
 
-            {/* Quick Sub-Filter Tabs */}
-            <div className="flex items-center gap-1 overflow-x-auto" style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '3px', borderRadius: '8px' }}>
-              {[
-                { id: 'all', label: `All Facilities (${uniqueBuildingList.length})` },
-                { id: 'buildings', label: 'Academic Wings' },
-                { id: 'hostels', label: 'Hostels & Living' },
-                { id: 'amenities', label: 'Sports & Dining' },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => {
-                    setActiveTab(tab.id);
-                    if (!isNavPanelOpen) handleOpenNavPanel();
-                    setPanelMode('directory');
-                  }}
-                  style={{
-                    padding: '5px 11px',
-                    borderRadius: '6px',
-                    border: 'none',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    backgroundColor: activeTab === tab.id ? '#FFFFFF' : 'transparent',
-                    color: activeTab === tab.id ? 'var(--text-primary)' : 'var(--text-muted)',
-                    boxShadow: activeTab === tab.id ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
             {/* Toggle Directory & Routes Panel Button */}
             <button
               type="button"
@@ -1833,60 +1799,6 @@ export const CampusMap = () => {
             </div>
           </div>
 
-          {/* Center: View Engine Switcher */}
-          <div
-            style={{
-              display: 'flex',
-              backgroundColor: 'var(--bg-surface-subtle)',
-              padding: '3px',
-              borderRadius: '9px',
-              border: '1px solid var(--border-subtle)',
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => setViewEngine('gis')}
-              style={{
-                padding: '6px 13px',
-                borderRadius: '7px',
-                border: 'none',
-                fontSize: '11.5px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                backgroundColor: viewEngine === 'gis' ? 'var(--brand-primary)' : 'transparent',
-                color: viewEngine === 'gis' ? '#FFFFFF' : 'var(--text-secondary)',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              <Compass size={14} />
-              <span>Interactive Campus GIS</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewEngine('blueprint')}
-              style={{
-                padding: '6px 13px',
-                borderRadius: '7px',
-                border: 'none',
-                fontSize: '11.5px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                backgroundColor: viewEngine === 'blueprint' ? 'var(--brand-primary)' : 'transparent',
-                color: viewEngine === 'blueprint' ? '#FFFFFF' : 'var(--text-secondary)',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              <Layers size={14} />
-              <span>Indoor CAD Blueprint</span>
-            </button>
-          </div>
-
           {/* Right: Refresh & Admin Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <button
@@ -1952,34 +1864,6 @@ export const CampusMap = () => {
             </div>
 
             <div className="flex items-center gap-1.5">
-              {/* Compact View Switcher */}
-              <div className="flex bg-[var(--bg-surface-subtle)] p-0.5 rounded-lg border border-[var(--border-subtle)]">
-                <button
-                  type="button"
-                  onClick={() => setViewEngine('gis')}
-                  className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 ${
-                    viewEngine === 'gis'
-                      ? 'bg-[var(--brand-primary)] text-white shadow-xs'
-                      : 'text-[var(--text-secondary)]'
-                  }`}
-                >
-                  <Compass size={12} />
-                  <span>GIS</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewEngine('blueprint')}
-                  className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 ${
-                    viewEngine === 'blueprint'
-                      ? 'bg-[var(--brand-primary)] text-white shadow-xs'
-                      : 'text-[var(--text-secondary)]'
-                  }`}
-                >
-                  <Layers size={12} />
-                  <span>CAD</span>
-                </button>
-              </div>
-
               {/* Recenter Button */}
               <button
                 type="button"
@@ -3860,25 +3744,6 @@ export const CampusMap = () => {
                 </div>
               </div>
 
-              {/* Step Directions */}
-              <div>
-                <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
-                  Walking Route from Main Gate
-                </span>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {currentBldg.steps.map((st) => (
-                    <div key={st.num} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                      <span style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'var(--brand-primary)', color: '#FFFFFF', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        {st.num}
-                      </span>
-                      <div>
-                        <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>{st.text}</div>
-                        <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>{st.sub} ({st.dist})</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
           </aside>
         )}
