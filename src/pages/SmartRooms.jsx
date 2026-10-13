@@ -196,7 +196,7 @@ const INITIAL_ROOMS = [
     features: ["Projector & Screen", "Student Desks", "AC & Ventilation"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
-    cadBox: { x: 35, y: 295, w: 105, h: 115, door: { x: 145, y: 350 } },
+    cadBox: { x: 35, y: 285, w: 105, h: 120, door: { x: 140, y: 370 } },
     routeSteps: [{ step: "1. West Outer Wing", desc: "Access via West Path corridor (65m)" }],
     routeDistance: "65 meters (1.3 min walk)",
     slots: [
@@ -219,7 +219,7 @@ const INITIAL_ROOMS = [
     features: ["Projector & Whiteboard", "Student Desks", "AC & Fans"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
-    cadBox: { x: 35, y: 415, w: 105, h: 115, door: { x: 145, y: 470 } },
+    cadBox: { x: 35, y: 415, w: 105, h: 120, door: { x: 140, y: 510 } },
     routeSteps: [{ step: "1. West Outer Wing", desc: "Lower room along West Path (70m)" }],
     routeDistance: "70 meters (1.4 min walk)",
     slots: [
@@ -242,7 +242,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks & Whiteboard", "AC & Ventilation"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 185, y: 380, w: 75, h: 70, door: { x: 175, y: 415 } },
+    cadBox: { x: 188, y: 325, w: 75, h: 115, door: { x: 185, y: 375 } },
     routeSteps: [{ step: "1. West Inner Concourse", desc: "Top classroom of inner west row (45m)" }],
     routeDistance: "45 meters (0.9 min walk)",
     slots: [
@@ -264,7 +264,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks & Whiteboard", "AC & Fans"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 185, y: 455, w: 75, h: 70, door: { x: 175, y: 490 } },
+    cadBox: { x: 188, y: 445, w: 75, h: 115, door: { x: 185, y: 505 } },
     routeSteps: [{ step: "1. West Inner Concourse", desc: "Middle classroom (50m)" }],
     routeDistance: "50 meters (1.0 min walk)",
     slots: [
@@ -286,7 +286,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks & Whiteboard", "AC"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 185, y: 530, w: 75, h: 70, door: { x: 175, y: 565 } },
+    cadBox: { x: 188, y: 565, w: 75, h: 115, door: { x: 185, y: 630 } },
     routeSteps: [{ step: "1. West Inner Concourse", desc: "Lower classroom (55m)" }],
     routeDistance: "55 meters (1.1 min walk)",
     slots: [
@@ -308,7 +308,7 @@ const INITIAL_ROOMS = [
     features: ["Admin Desks", "Document Storage", "CCTV Monitored", "Printer & Scanner", "AC & Ventilation"],
     image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 265, y: 380, w: 90, h: 90, door: { x: 310, y: 365 } },
+    cadBox: { x: 265, y: 340, w: 90, h: 100, door: { x: 300, y: 340 } },
     routeSteps: [{ step: "1. Inner West Wing", desc: "Beside West Classrooms, gate facing north (40m)" }],
     routeDistance: "40 meters (0.8 min walk)",
     slots: [
@@ -330,7 +330,7 @@ const INITIAL_ROOMS = [
     features: ["Faculty Workstations", "Meeting Table", "Tea/Coffee Dispenser", "High-Speed Wi-Fi", "AC & Ergonomic Seating"],
     image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
-    cadBox: { x: 360, y: 380, w: 85, h: 90, door: { x: 400, y: 365 } },
+    cadBox: { x: 355, y: 340, w: 90, h: 100, door: { x: 415, y: 340 } },
     routeSteps: [{ step: "1. Inner West Wing", desc: "Beside Office, dual gates to north path and hall (35m)" }],
     routeDistance: "35 meters (0.7 min walk)",
     slots: [
@@ -352,7 +352,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks & Whiteboard", "AC"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 288, y: 540, w: 55, h: 80, door: { x: 315, y: 635 } },
+    cadBox: { x: 246, y: 535, w: 65, h: 95, door: { x: 280, y: 670 } },
     routeSteps: [{ step: "1. Inner West Row", desc: "First room below Office (50m)" }],
     routeDistance: "50 meters (1.0 min walk)",
     slots: [{ id: "cr4-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
@@ -372,7 +372,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks & Whiteboard", "AC"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 348, y: 540, w: 55, h: 80, door: { x: 375, y: 635 } },
+    cadBox: { x: 315, y: 535, w: 65, h: 95, door: { x: 345, y: 670 } },
     routeSteps: [{ step: "1. Inner West Row", desc: "Middle room below Office (55m)" }],
     routeDistance: "55 meters (1.1 min walk)",
     slots: [{ id: "cr5-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
@@ -392,7 +392,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks & Whiteboard", "AC"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 408, y: 540, w: 55, h: 80, door: { x: 435, y: 635 } },
+    cadBox: { x: 380, y: 535, w: 65, h: 95, door: { x: 415, y: 670 } },
     routeSteps: [{ step: "1. Inner West Row", desc: "Right room below Staff Room (50m)" }],
     routeDistance: "50 meters (1.0 min walk)",
     slots: [{ id: "cr6-1", start: "09:00", end: "13:00", title: "Elective Class", lecturer: "Prof. Joshi", status: "occupied", isBookable: false }],
@@ -412,7 +412,7 @@ const INITIAL_ROOMS = [
     features: ["Conference Video Bar 4K", "Smart Interactive Display", "Wireless Screen Sharing", "Executive Chairs", "Acoustic Wall Panels"],
     image: "https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&w=800&q=80",
     has4kLaser: true, hasGpu: false, hasInteractive: true, isAda: true,
-    cadBox: { x: 670, y: 405, w: 155, h: 55, door: { x: 710, y: 395 } },
+    cadBox: { x: 670, y: 340, w: 155, h: 65, door: { x: 710, y: 340 } },
     routeSteps: [{ step: "1. North-East Inner Wing", desc: "Above Badminton Court, gate facing north path (45m)" }],
     routeDistance: "45 meters (0.9 min walk)",
     slots: [{ id: "mtn-1", start: "11:00", end: "15:00", title: "Open Conference Booking", lecturer: "Open", status: "available", isBookable: true }],
@@ -432,7 +432,7 @@ const INITIAL_ROOMS = [
     features: ["Faculty Desks", "Wi-Fi 6", "AC & Natural Daylight"],
     image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
-    cadBox: { x: 890, y: 405, w: 80, h: 55, door: { x: 885, y: 430 } },
+    cadBox: { x: 890, y: 340, w: 80, h: 65, door: { x: 890, y: 370 } },
     routeSteps: [{ step: "1. North-East Inner Wing", desc: "Beside North Meeting Room, gate facing east path (50m)" }],
     routeDistance: "50 meters (1.0 min walk)",
     slots: [{ id: "mte-1", start: "09:00", end: "17:00", title: "Faculty Hours", lecturer: "Faculty", status: "available", isBookable: false }],
@@ -452,7 +452,7 @@ const INITIAL_ROOMS = [
     features: ["Standard Badminton Court (Green)", "Official Net & Posts", "Marked Boundary Lines", "Ventilated Indoor Hall"],
     image: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 670, y: 462, w: 155, h: 42, door: { x: 835, y: 480 } },
+    cadBox: { x: 670, y: 405, w: 155, h: 60, door: { x: 810, y: 435 } },
     routeSteps: [{ step: "1. East Inner Arena", desc: "North court with green tournament floor (50m)" }],
     routeDistance: "50 meters (1.0 min walk)",
     slots: [
@@ -475,7 +475,7 @@ const INITIAL_ROOMS = [
     features: ["Standard Badminton Court (Dark)", "Official Net & Posts", "Court Markings", "Direct Internal Path Access"],
     image: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 670, y: 550, w: 155, h: 36, door: { x: 835, y: 565 } },
+    cadBox: { x: 670, y: 535, w: 155, h: 55, door: { x: 810, y: 565 } },
     routeSteps: [{ step: "1. East Inner Arena", desc: "South court adjacent to vertical path (55m)" }],
     routeDistance: "55 meters (1.1 min walk)",
     slots: [
@@ -498,7 +498,7 @@ const INITIAL_ROOMS = [
     features: ["Management Desks", "Conference Table", "CCTV Monitored", "Printer & Scanner", "AC"],
     image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 885, y: 465, w: 85, h: 160, door: { x: 880, y: 610 } },
+    cadBox: { x: 885, y: 465, w: 85, h: 160, door: { x: 885, y: 670 } },
     routeSteps: [{ step: "1. East Wing Interior", desc: "Beside internal path and badminton court, gate facing west (55m)" }],
     routeDistance: "55 meters (1.1 min walk)",
     slots: [
@@ -521,7 +521,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks & Whiteboard", "AC & Fans"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 670, y: 590, w: 75, h: 60, door: { x: 705, y: 660 } },
+    cadBox: { x: 670, y: 590, w: 75, h: 60, door: { x: 705, y: 670 } },
     routeSteps: [{ step: "1. Below Badminton Arena", desc: "Left room along south path (55m)" }],
     routeDistance: "55 meters (1.1 min walk)",
     slots: [{ id: "cr7-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
@@ -541,7 +541,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks & Whiteboard", "AC & Fans"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 750, y: 590, w: 75, h: 60, door: { x: 785, y: 660 } },
+    cadBox: { x: 750, y: 590, w: 75, h: 60, door: { x: 785, y: 670 } },
     routeSteps: [{ step: "1. Below Badminton Arena", desc: "Right room along south path (60m)" }],
     routeDistance: "60 meters (1.2 min walk)",
     slots: [{ id: "cr8-1", start: "14:00", end: "16:00", title: "Afternoon Slot", lecturer: "Open", status: "available", isBookable: true }],
@@ -561,7 +561,7 @@ const INITIAL_ROOMS = [
     features: ["Food Prep Station", "Commercial Refrigeration", "Water Purifier RO", "Fire Suppression Rig", "Ventilation Exhaust"],
     image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: true,
-    cadBox: { x: 670, y: 735, w: 60, h: 65, door: { x: 700, y: 725 } },
+    cadBox: { x: 575, y: 735, w: 60, h: 65, door: { x: 585, y: 705 } },
     routeSteps: [{ step: "1. South Corridor", desc: "East of central exit, gate facing north path (60m)" }],
     routeDistance: "60 meters (1.2 min walk)",
     slots: [{ id: "ktch-1", start: "07:00", end: "20:00", title: "Kitchen Prep & Catering", lecturer: "Staff", status: "occupied", isBookable: false }],
@@ -581,7 +581,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks", "AC"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 135, y: 735, w: 55, h: 65, door: { x: 160, y: 725 } },
+    cadBox: { x: 115, y: 735, w: 60, h: 65, door: { x: 145, y: 705 } },
     routeSteps: [{ step: "1. South-West Row", desc: "Next to West Washroom (75m)" }],
     routeDistance: "75 meters (1.5 min walk)",
     slots: [{ id: "s01-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
@@ -601,7 +601,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks", "AC"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 195, y: 735, w: 55, h: 65, door: { x: 220, y: 725 } },
+    cadBox: { x: 180, y: 735, w: 60, h: 65, door: { x: 210, y: 705 } },
     routeSteps: [{ step: "1. South-West Row", desc: "Beside West Exit (70m)" }],
     routeDistance: "70 meters (1.4 min walk)",
     slots: [{ id: "s02-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
@@ -621,7 +621,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks", "AC"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 280, y: 735, w: 55, h: 65, door: { x: 305, y: 725 } },
+    cadBox: { x: 255, y: 735, w: 60, h: 65, door: { x: 285, y: 705 } },
     routeSteps: [{ step: "1. South Central-West Row", desc: "First of 3 rooms (65m)" }],
     routeDistance: "65 meters (1.3 min walk)",
     slots: [{ id: "s03-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
@@ -641,7 +641,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks", "AC"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 345, y: 735, w: 55, h: 65, door: { x: 370, y: 725 } },
+    cadBox: { x: 320, y: 735, w: 60, h: 65, door: { x: 350, y: 705 } },
     routeSteps: [{ step: "1. South Central-West Row", desc: "Middle room (60m)" }],
     routeDistance: "60 meters (1.2 min walk)",
     slots: [{ id: "s04-1", start: "09:00", end: "13:00", title: "Lecture", lecturer: "Faculty", status: "occupied", isBookable: false }],
@@ -661,7 +661,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks", "AC"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 410, y: 735, w: 55, h: 65, door: { x: 435, y: 725 } },
+    cadBox: { x: 385, y: 735, w: 60, h: 65, door: { x: 415, y: 705 } },
     routeSteps: [{ step: "1. South Central-West Row", desc: "Right room beside main exit (55m)" }],
     routeDistance: "55 meters (1.1 min walk)",
     slots: [{ id: "s05-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
@@ -681,7 +681,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks", "AC"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 735, y: 735, w: 55, h: 65, door: { x: 760, y: 725 } },
+    cadBox: { x: 635, y: 735, w: 55, h: 65, door: { x: 640, y: 705 } },
     routeSteps: [{ step: "1. South Central-East Row", desc: "Beside Kitchen Room (65m)" }],
     routeDistance: "65 meters (1.3 min walk)",
     slots: [{ id: "s06-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
@@ -701,7 +701,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks", "AC"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 800, y: 735, w: 60, h: 65, door: { x: 830, y: 725 } },
+    cadBox: { x: 690, y: 735, w: 60, h: 65, door: { x: 695, y: 705 } },
     routeSteps: [{ step: "1. South Central-East Row", desc: "Beside East Exit (70m)" }],
     routeDistance: "70 meters (1.4 min walk)",
     slots: [{ id: "s07-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
@@ -721,7 +721,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks", "AC"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 895, y: 735, w: 75, h: 65, door: { x: 930, y: 725 } },
+    cadBox: { x: 780, y: 735, w: 65, h: 65, door: { x: 785, y: 705 } },
     routeSteps: [{ step: "1. South-East Row", desc: "Right of East Exit (75m)" }],
     routeDistance: "75 meters (1.5 min walk)",
     slots: [{ id: "s08-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
@@ -741,7 +741,7 @@ const INITIAL_ROOMS = [
     features: ["Projector", "Desks", "AC"],
     image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
     has4kLaser: false, hasGpu: false, hasInteractive: false, isAda: false,
-    cadBox: { x: 980, y: 735, w: 75, h: 65, door: { x: 1015, y: 725 } },
+    cadBox: { x: 840, y: 735, w: 65, h: 65, door: { x: 845, y: 705 } },
     routeSteps: [{ step: "1. South-East Row", desc: "Beside East Washroom (80m)" }],
     routeDistance: "80 meters (1.6 min walk)",
     slots: [{ id: "s09-1", start: "09:00", end: "11:00", title: "Morning Slot", lecturer: "Open", status: "available", isBookable: true }],
@@ -755,6 +755,126 @@ const BUILDINGS = [
   { id: "LIB-03", name: "Swami Vivekananda Central Library (Block LIB-03)", floors: ["Ground", "Level 1", "Level 2"] },
 ];
 
+// Ground Floor Navigation Landmarks & Main Entrance Exits
+const START_LANDMARKS = [
+  { id: 'HALL', name: 'Central Hall (Main Lobby)', roomNumber: 'LOBBY', x: 570, y: 520 },
+  { id: 'EXIT_1', name: 'Main South Entrance / Exit 1', roomNumber: 'ENTRY-1', x: 515, y: 835 },
+  { id: 'EXIT_2', name: 'Main South Entrance / Exit 2', roomNumber: 'ENTRY-2', x: 625, y: 835 },
+];
+
+const WEST_CORRIDOR_X = 165;
+const EAST_FAR_CORRIDOR_X = 1010;
+const EAST_INNER_CORRIDOR_X = 855;
+const NORTH_CORRIDOR_Y = 335;
+const SOUTH_CORRIDOR_Y = 690;
+const HALL_CORE_X = 570;
+
+// Helper to project any room door or landmark onto the nearest architectural hallway centerline
+function getCorridorAnchor(pt) {
+  // 1. Direct North corridor gates (Library, Student Section, Canteen, Exam Room, Office, Staff Room, Meeting Room)
+  if (pt.y <= 360 && pt.x >= 120 && pt.x <= 950) {
+    return { x: pt.x, y: NORTH_CORRIDOR_Y, corridor: 'NORTH', isHorizontal: true };
+  }
+  if (pt.y <= 340) {
+    return { x: Math.min(EAST_FAR_CORRIDOR_X, Math.max(WEST_CORRIDOR_X, pt.x)), y: NORTH_CORRIDOR_Y, corridor: 'NORTH', isHorizontal: true };
+  }
+
+  // 2. Direct South corridor gates (South Classrooms 1-9, Classroom 4-6, Classroom 7-8, Kitchen, Management, Main Exits)
+  if (pt.y >= 650 && pt.x >= 120 && pt.x <= 950) {
+    return { x: pt.x, y: SOUTH_CORRIDOR_Y, corridor: 'SOUTH', isHorizontal: true };
+  }
+  if (pt.y >= 680) {
+    return { x: Math.min(EAST_FAR_CORRIDOR_X, Math.max(WEST_CORRIDOR_X, pt.x)), y: SOUTH_CORRIDOR_Y, corridor: 'SOUTH', isHorizontal: true };
+  }
+
+  // 3. West vertical corridor (Classroom 1-3 & West Outer 1-2)
+  if (pt.x <= 250) {
+    return { x: WEST_CORRIDOR_X, y: Math.min(SOUTH_CORRIDOR_Y, Math.max(NORTH_CORRIDOR_Y, pt.y)), corridor: 'WEST', isHorizontal: false };
+  }
+
+  // 4. Far East vertical corridor (Farmacy Library)
+  if (pt.x >= 950) {
+    return { x: EAST_FAR_CORRIDOR_X, y: Math.min(SOUTH_CORRIDOR_Y, Math.max(NORTH_CORRIDOR_Y, pt.y)), corridor: 'EAST_FAR', isHorizontal: false };
+  }
+
+  // 5. East Inner concourse (Badminton courts, Faculty room)
+  if (pt.x >= 800 && pt.x < 950) {
+    return { x: EAST_INNER_CORRIDOR_X, y: Math.min(SOUTH_CORRIDOR_Y, Math.max(NORTH_CORRIDOR_Y, pt.y)), corridor: 'EAST_INNER', isHorizontal: false };
+  }
+
+  // 6. Central Hall core aisle
+  return { x: HALL_CORE_X, y: Math.min(SOUTH_CORRIDOR_Y, Math.max(NORTH_CORRIDOR_Y, pt.y)), corridor: 'HALL', isHorizontal: false };
+}
+
+// Computes realistic walking route strictly following architectural hallway corridors (PATH)
+function calculateCorridorWaypoints(start, dest) {
+  const p1 = { x: start.x, y: start.y };
+  const p2 = { x: dest.x, y: dest.y };
+
+  const a1 = getCorridorAnchor(p1);
+  const a2 = getCorridorAnchor(p2);
+
+  let corridorPoints = [];
+
+  if (a1.corridor === a2.corridor) {
+    corridorPoints = [a1, a2];
+  } else if (a1.isHorizontal && !a2.isHorizontal) {
+    // a1 is horizontal (NORTH or SOUTH), a2 is vertical (WEST, EAST_FAR, EAST_INNER, HALL)
+    corridorPoints = [a1, { x: a2.x, y: a1.y }, a2];
+  } else if (!a1.isHorizontal && a2.isHorizontal) {
+    // a1 is vertical, a2 is horizontal
+    corridorPoints = [a1, { x: a1.x, y: a2.y }, a2];
+  } else if (a1.isHorizontal && a2.isHorizontal) {
+    // Both horizontal (NORTH <-> SOUTH): connect via Central Hall core aisle
+    corridorPoints = [a1, { x: HALL_CORE_X, y: a1.y }, { x: HALL_CORE_X, y: a2.y }, a2];
+  } else {
+    // Both vertical (WEST, EAST_FAR, EAST_INNER, HALL)
+    // Check if directly connected through Central Hall opening to EAST_INNER at y=505
+    const isDirectHallEast = (a1.corridor === 'HALL' && a2.corridor === 'EAST_INNER') ||
+                             (a1.corridor === 'EAST_INNER' && a2.corridor === 'HALL');
+    let junctionY;
+    if (isDirectHallEast && Math.abs(a1.y - 505) < 90 && Math.abs(a2.y - 505) < 90) {
+      junctionY = 505;
+    } else {
+      junctionY = (a1.y + a2.y < 1024) ? NORTH_CORRIDOR_Y : SOUTH_CORRIDOR_Y;
+    }
+    corridorPoints = [a1, { x: a1.x, y: junctionY }, { x: a2.x, y: junctionY }, a2];
+  }
+
+  // Combine entire chain
+  const rawChain = [p1, ...corridorPoints, p2];
+
+  // Filter consecutive duplicates
+  const cleaned = [];
+  for (let i = 0; i < rawChain.length; i++) {
+    const pt = rawChain[i];
+    const prev = cleaned[cleaned.length - 1];
+    if (!prev || prev.x !== pt.x || prev.y !== pt.y) {
+      cleaned.push(pt);
+    }
+  }
+
+  // Filter collinear redundancies
+  const simplified = [];
+  for (let i = 0; i < cleaned.length; i++) {
+    if (i === 0 || i === cleaned.length - 1) {
+      simplified.push(cleaned[i]);
+      continue;
+    }
+    const prev = simplified[simplified.length - 1];
+    const curr = cleaned[i];
+    const next = cleaned[i + 1];
+
+    const isCollinearX = prev.x === curr.x && curr.x === next.x;
+    const isCollinearY = prev.y === curr.y && curr.y === next.y;
+    if (!isCollinearX && !isCollinearY) {
+      simplified.push(curr);
+    }
+  }
+
+  return simplified;
+}
+
 export function SmartRooms() {
   const navigate = useNavigate();
 
@@ -765,6 +885,7 @@ export function SmartRooms() {
   const [selectedType, setSelectedType] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRoomId, setSelectedRoomId] = useState('MN-G-LIB');
+  const [startLocationId, setStartLocationId] = useState('HALL');
   const [activeFilters, setActiveFilters] = useState({
     availableNow: true,
     laser4k: false,
@@ -920,6 +1041,81 @@ export function SmartRooms() {
   const buildingFilteredRooms = useMemo(() => {
     return rooms.filter((r) => r.building === selectedBuilding);
   }, [rooms, selectedBuilding]);
+
+  // Dynamic Start Location Object (Landmarks or Rooms)
+  const startLocation = useMemo(() => {
+    const lm = START_LANDMARKS.find((l) => l.id === startLocationId);
+    if (lm) return { ...lm, isRoom: false };
+    const rm = rooms.find((r) => r.id === startLocationId);
+    if (rm && rm.cadBox?.door) {
+      return {
+        id: rm.id,
+        name: rm.name,
+        roomNumber: rm.roomNumber,
+        x: rm.cadBox.door.x,
+        y: rm.cadBox.door.y,
+        isRoom: true,
+      };
+    }
+    return { ...START_LANDMARKS[0], isRoom: false };
+  }, [startLocationId, rooms]);
+
+  // Compute realistic walking route strictly following architectural hallway corridors (PATH)
+  const activeWaypoints = useMemo(() => {
+    if (!selectedRoom?.cadBox?.door) return [];
+    return calculateCorridorWaypoints(startLocation, selectedRoom.cadBox.door);
+  }, [startLocation, selectedRoom]);
+
+  const activeRoutePathD = useMemo(() => {
+    if (!activeWaypoints || activeWaypoints.length < 2) return '';
+    return activeWaypoints.map((pt, i) => (i === 0 ? `M ${pt.x},${pt.y}` : `L ${pt.x},${pt.y}`)).join(' ');
+  }, [activeWaypoints]);
+
+  const { activeRouteDistanceMeters, activeRouteMinutes, activeDynamicSteps } = useMemo(() => {
+    if (!activeWaypoints || activeWaypoints.length < 2) {
+      return {
+        activeRouteDistanceMeters: 25,
+        activeRouteMinutes: 0.5,
+        activeDynamicSteps: selectedRoom.routeSteps,
+      };
+    }
+    let totalDist = 0;
+    for (let i = 1; i < activeWaypoints.length; i++) {
+      totalDist += Math.hypot(
+        activeWaypoints[i].x - activeWaypoints[i - 1].x,
+        activeWaypoints[i].y - activeWaypoints[i - 1].y
+      );
+    }
+    const meters = Math.max(10, Math.round(totalDist * 0.1));
+    const mins = Math.max(0.4, Math.round((meters / 55) * 10) / 10);
+
+    const steps = [
+      {
+        step: `1. Depart from ${startLocation.name}`,
+        desc: `Start at ${startLocation.roomNumber || 'departure node'} (0m)`,
+      },
+      {
+        step: '2. Follow Open Hallway (PATH)',
+        desc: 'Walk along the designated architectural corridor',
+      },
+    ];
+    if (activeWaypoints.length > 3) {
+      steps.push({
+        step: '3. Corridor Waypoint Turn',
+        desc: 'Follow hallway intersection turn directly toward destination wing',
+      });
+    }
+    steps.push({
+      step: `4. Arrive at ${selectedRoom.name} Gate`,
+      desc: `Step through marked entrance GATE (${meters}m total, ~${mins} min walk)`,
+    });
+
+    return {
+      activeRouteDistanceMeters: meters,
+      activeRouteMinutes: mins,
+      activeDynamicSteps: steps,
+    };
+  }, [activeWaypoints, startLocation, selectedRoom]);
 
   // Filtered rooms list
   const filteredRooms = useMemo(() => {
@@ -1293,34 +1489,81 @@ export function SmartRooms() {
         {/* LEFT / CENTER: ARCHITECTURAL CAD VECTOR VIEWER */}
         <div className="xl:col-span-8 flex flex-col gap-6">
           <div className="relative w-full rounded-2xl bg-white border border-[#E4EAE5] overflow-hidden shadow-sm">
-            {/* CAD Viewer Top Overlay Navigation */}
+            {/* CAD Viewer Top Overlay Navigation: Wayfinding Origin & Destination Selector */}
             <div className="absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 z-20 flex flex-wrap items-center justify-between gap-1.5 sm:gap-2 pointer-events-none">
-              {/* Active Route Wayfinding Badge */}
-              <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-xl bg-white/95 border border-[#E4EAE5] shadow-md backdrop-blur-md text-[10px] sm:text-xs text-[var(--text-primary)]">
-                <span className="w-2 h-2 rounded-full bg-[var(--brand-primary)] animate-ping"></span>
-                <span className="hidden sm:inline text-[var(--text-muted)] font-medium">Vector Path:</span>
-                <span className="font-semibold text-[var(--text-primary)] truncate max-w-[100px] sm:max-w-none">Central Hall</span>
-                <ArrowRight className="w-3 h-3 text-[var(--text-muted)] shrink-0" />
-                <span className="font-bold text-[var(--brand-primary)]">{selectedRoom.roomNumber}</span>
-                <span className="text-[var(--text-secondary)] font-mono text-[9px] sm:text-[11px]">({selectedRoom.routeDistance})</span>
-              </div>
+              {/* Wayfinding Origin -> Destination Control Bar */}
+              <div className="pointer-events-auto flex flex-wrap items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 rounded-xl bg-white/95 border border-[#E4EAE5] shadow-md backdrop-blur-md text-xs">
+                {/* Origin Selector */}
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                  <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">From:</span>
+                  <select
+                    value={startLocationId}
+                    onChange={(e) => setStartLocationId(e.target.value)}
+                    className="bg-transparent font-bold text-[var(--text-primary)] text-xs focus:outline-none cursor-pointer max-w-[110px] sm:max-w-[150px] truncate"
+                    aria-label="Select Starting Location"
+                  >
+                    <optgroup label="Central Areas & Exits">
+                      {START_LANDMARKS.map((lm) => (
+                        <option key={lm.id} value={lm.id}>
+                          {lm.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Ground Floor Rooms">
+                      {buildingFilteredRooms.map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.name} ({r.roomNumber})
+                        </option>
+                      ))}
+                    </optgroup>
+                  </select>
+                </div>
 
-              {/* Quick Destination Dropdown */}
-              <div className="pointer-events-auto flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/95 border border-[#E4EAE5] shadow-md backdrop-blur-md text-xs">
-                <Navigation className="w-3.5 h-3.5 text-[var(--brand-primary)] shrink-0" />
-                <span className="hidden md:inline text-[11px] font-semibold text-[var(--text-muted)]">Navigate to:</span>
-                <select
-                  value={selectedRoomId}
-                  onChange={(e) => handleSelectRoom(e.target.value)}
-                  className="bg-transparent font-bold text-[var(--text-primary)] text-xs focus:outline-none cursor-pointer max-w-[140px] sm:max-w-[200px] truncate"
-                  aria-label="Select Destination Room to Navigate"
+                {/* Quick Swap Origin & Destination Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentStart = startLocationId;
+                    const currentDest = selectedRoomId;
+                    if (rooms.some((r) => r.id === currentStart)) {
+                      setStartLocationId(currentDest);
+                      handleSelectRoom(currentStart);
+                    } else {
+                      setStartLocationId(currentDest);
+                      handleSelectRoom('MN-G-LIB');
+                    }
+                  }}
+                  className="p-1 rounded-lg hover:bg-slate-100 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+                  title="Swap Start & Destination"
+                  aria-label="Swap Start & Destination"
                 >
-                  {buildingFilteredRooms.map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {r.name} ({r.roomNumber})
-                    </option>
-                  ))}
-                </select>
+                  <RefreshCw className="w-3.5 h-3.5" />
+                </button>
+
+                {/* Destination Selector */}
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0"></span>
+                  <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">To:</span>
+                  <select
+                    value={selectedRoomId}
+                    onChange={(e) => handleSelectRoom(e.target.value)}
+                    className="bg-transparent font-bold text-[var(--brand-primary)] text-xs focus:outline-none cursor-pointer max-w-[110px] sm:max-w-[150px] truncate"
+                    aria-label="Select Destination Room to Navigate"
+                  >
+                    {buildingFilteredRooms.map((r) => (
+                      <option key={r.id} value={r.id}>
+                        {r.name} ({r.roomNumber})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Live Distance & Walking Time Badge */}
+                <div className="hidden sm:flex items-center gap-1 pl-1.5 border-l border-[#E4EAE5] text-[11px] font-mono text-[var(--text-secondary)]">
+                  <span className="font-bold text-[var(--brand-primary)]">{activeRouteDistanceMeters}m</span>
+                  <span>(~{activeRouteMinutes} min walk)</span>
+                </div>
               </div>
 
               {/* Viewport Scale & Route Manipulation Tools */}
@@ -1437,51 +1680,19 @@ export function SmartRooms() {
                         onMouseEnter={() => setHoveredRoomId(room.id)}
                         onMouseLeave={() => setHoveredRoomId(null)}
                       >
-                        {/* Interactive overlay bounding box */}
+                        {/* Interactive transparent overlay bounding box - NO colored box masking blueprint */}
                         <rect
                           x={x}
                           y={y}
                           width={w}
                           height={h}
-                          rx="6"
+                          rx="4"
                           style={{ pointerEvents: 'all', cursor: 'pointer' }}
-                          fill={
-                            isSelected
-                              ? "rgba(16, 185, 129, 0.28)"
-                              : isHovered
-                              ? "rgba(16, 185, 129, 0.16)"
-                              : "rgba(0, 0, 0, 0.001)"
-                          }
-                          stroke={
-                            isSelected
-                              ? "#10B981"
-                              : isHovered
-                              ? "rgba(16, 185, 129, 0.9)"
-                              : "rgba(16, 185, 129, 0.22)"
-                          }
-                          strokeWidth={isSelected ? "3" : isHovered ? "2.5" : "1.2"}
-                          strokeDasharray={isSelected ? "none" : "4 3"}
-                          className="transition-all duration-200"
+                          fill="rgba(0, 0, 0, 0.001)"
+                          stroke={isHovered ? "rgba(16, 185, 129, 0.6)" : "transparent"}
+                          strokeWidth={isHovered ? "1.5" : "0"}
+                          className="transition-all duration-150"
                         />
-
-                        {/* Selected Target Badge */}
-                        {isSelected && (
-                          <g transform={`translate(${x + w / 2}, ${y + Math.min(22, h / 2)})`}>
-                            <rect x="-42" y="-11" width="84" height="20" rx="10" fill="#10B981" />
-                            <text
-                              x="0"
-                              y="3"
-                              textAnchor="middle"
-                              fill="#022C22"
-                              fontFamily="Inter, sans-serif"
-                              fontSize="9.5"
-                              fontWeight="800"
-                              letterSpacing="0.5"
-                            >
-                              SELECTED
-                            </text>
-                          </g>
-                        )}
 
                         {/* Interactive Hover Tooltip Badge */}
                         {!isSelected && isHovered && (
@@ -1491,7 +1702,7 @@ export function SmartRooms() {
                               y="-10"
                               width="112"
                               height="20"
-                              rx="6"
+                              rx="5"
                               fill="#022C22"
                               stroke="#10B981"
                               strokeWidth="1"
@@ -1513,48 +1724,48 @@ export function SmartRooms() {
                     );
                   })}
 
-                {/* DYNAMIC ANIMATED VECTOR PATH TO SELECTED ROOM */}
-                {selectedRoom?.cadBox?.door && (
-                  <>
-                    <path
-                      d={
-                        selectedRoom.cadBox.door.y < 350
-                          ? `M 570,520 L 570,330 L ${selectedRoom.cadBox.door.x},330 L ${selectedRoom.cadBox.door.x},${selectedRoom.cadBox.door.y}`
-                          : selectedRoom.cadBox.door.y > 680
-                          ? `M 570,520 L 570,680 L ${selectedRoom.cadBox.door.x},680 L ${selectedRoom.cadBox.door.x},${selectedRoom.cadBox.door.y}`
-                          : selectedRoom.cadBox.door.x < 450
-                          ? `M 570,520 L 450,520 L 450,${selectedRoom.cadBox.door.y} L ${selectedRoom.cadBox.door.x},${selectedRoom.cadBox.door.y}`
-                          : `M 570,520 L 670,520 L 670,${selectedRoom.cadBox.door.y} L ${selectedRoom.cadBox.door.x},${selectedRoom.cadBox.door.y}`
-                      }
-                      fill="none"
-                      stroke="#10B981"
-                      strokeWidth="5"
-                      strokeDasharray="8 8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      filter="url(#emeraldRouteGlow)"
-                      className="animate-[dash_1.2s_linear_infinite]"
-                    />
-                    {/* Destination Door Beacon */}
-                    <g transform={`translate(${selectedRoom.cadBox.door.x}, ${selectedRoom.cadBox.door.y})`}>
-                      <circle cx="0" cy="0" r="8" fill="#10B981" />
-                      <circle cx="0" cy="0" r="16" fill="#10B981" fillOpacity="0.35" className="animate-ping" />
-                      <text x="14" y="4" fill="#34D399" fontFamily="Inter, sans-serif" fontSize="11" fontWeight="800" filter="url(#textGlow)">
-                        {selectedRoom.roomNumber}
-                      </text>
-                    </g>
-                  </>
+                {/* DYNAMIC ANIMATED VECTOR PATH ALONG ARCHITECTURAL CORRIDORS (PATH) */}
+                {activeRoutePathD && (
+                  <path
+                    d={activeRoutePathD}
+                    fill="none"
+                    stroke="#10B981"
+                    strokeWidth="4.5"
+                    strokeDasharray="8 8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    filter="url(#emeraldRouteGlow)"
+                    className="animate-[dash_1.2s_linear_infinite]"
+                  />
                 )}
 
-                {/* Central Hall Departure Marker */}
-                <g transform="translate(570, 520)">
-                  <circle cx="0" cy="0" r="10" fill="#10B981" fillOpacity="0.25" />
-                  <circle cx="0" cy="0" r="5" fill="#10B981" />
-                  <circle cx="0" cy="0" r="18" fill="#10B981" fillOpacity="0.15" className="animate-ping" />
-                  <text x="14" y="4" fill="#34D399" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="800" filter="url(#textGlow)">
-                    START (Central Hall)
-                  </text>
-                </g>
+                {/* Destination Door Beacon */}
+                {selectedRoom?.cadBox?.door && (
+                  <g transform={`translate(${selectedRoom.cadBox.door.x}, ${selectedRoom.cadBox.door.y})`}>
+                    <circle cx="0" cy="0" r="7" fill="#10B981" />
+                    <circle cx="0" cy="0" r="16" fill="#10B981" fillOpacity="0.35" className="animate-ping" />
+                    <g transform="translate(12, -10)">
+                      <rect x="0" y="0" width={Math.max(68, selectedRoom.roomNumber.length * 8 + 18)} height="20" rx="4" fill="#022C22" stroke="#10B981" strokeWidth="1" />
+                      <text x="7" y="14" fill="#34D399" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="800" filter="url(#textGlow)">
+                        GATE: {selectedRoom.roomNumber}
+                      </text>
+                    </g>
+                  </g>
+                )}
+
+                {/* Start Location Departure Marker */}
+                {startLocation && (
+                  <g transform={`translate(${startLocation.x}, ${startLocation.y})`}>
+                    <circle cx="0" cy="0" r="7" fill="#3B82F6" />
+                    <circle cx="0" cy="0" r="16" fill="#3B82F6" fillOpacity="0.3" className="animate-ping" />
+                    <g transform="translate(12, -10)">
+                      <rect x="0" y="0" width={startLocationId === 'HALL' ? 140 : Math.max(70, startLocation.name.length * 7 + 16)} height="20" rx="4" fill="#0F172A" stroke="#3B82F6" strokeWidth="1" />
+                      <text x="7" y="14" fill="#60A5FA" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="800" filter="url(#textGlow)">
+                        {startLocationId === 'HALL' ? 'START (Central Hall)' : `START (${startLocation.name})`}
+                      </text>
+                    </g>
+                  </g>
+                )}
               </svg>
 
               <style>{`
@@ -1923,17 +2134,19 @@ export function SmartRooms() {
               </div>
             </div>
 
-            {/* Walking Directions from Chosen Node */}
+            {/* Dynamic Walking Directions from User Chosen Node */}
             <div className="flex flex-col gap-2 pt-1 border-t border-[#E4EAE5]">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)] font-bold">
                   Walking Turn Directions
                 </span>
-                <span className="text-xs text-[var(--brand-primary)] font-semibold">{selectedRoom.routeDistance}</span>
+                <span className="text-xs text-[var(--brand-primary)] font-semibold">
+                  {activeRouteDistanceMeters}m (~{activeRouteMinutes} min)
+                </span>
               </div>
 
               <div className="flex flex-col gap-2.5 relative pl-3 border-l-2 border-[var(--brand-primary)] ml-1 mt-1">
-                {selectedRoom.routeSteps.map((st, i) => (
+                {activeDynamicSteps.map((st, i) => (
                   <div key={i} className="flex flex-col">
                     <span className="text-xs font-semibold text-[var(--text-primary)]">
                       {st.step}
