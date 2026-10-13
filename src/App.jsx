@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import AppLayout from './components/layout/AppLayout';
 
@@ -25,7 +25,7 @@ export function App() {
         <Routes>
           {/* Public Unauthenticated Entry Points */}
           <Route path="/" element={<LandingPage />} />
-          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/auth" element={<Navigate to="/?login=true" replace />} />
 
           {/* Authenticated Application Shell */}
           <Route element={<AppLayout />}>

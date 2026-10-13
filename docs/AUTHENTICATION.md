@@ -31,7 +31,7 @@ Signed using `HS256` with `JWT_SECRET` (default: `'nextcampus_dev_secret_key_202
 {
   "id": "usr_student_01",
   "role": "student",
-  "email": "rudra@nextcampus.edu",
+  "email": "rakesh@nextcampus.edu",
   "iat": 1791608318,
   "exp": 1792213118
 }
@@ -45,7 +45,7 @@ The system provides pre-seeded accounts with verified bcrypt hashes for offline 
 
 | Role | Email / Identifier | Password | Student / Staff ID | Primary Landing Route |
 | :--- | :--- | :--- | :--- | :--- |
-| **Student** | `rudra@nextcampus.edu` | `password123` | `MU2026001` | `/dashboard` |
+| **Student** | `rakesh@nextcampus.edu` | `password123` | `MUR2502101` | `/dashboard` |
 | **Administrator** | `admin@nextcampus.edu` | `adminpassword123` | `ADM-001` | `/admin` |
 
 ---

@@ -26,7 +26,7 @@
 
 ### `POST /auth/login`
 * **Access**: Public
-* **Payload**: `{ "email": "rudra@nextcampus.edu", "password": "password123" }` (or `"identifier"`).
+* **Payload**: `{ "email": "rakesh@nextcampus.edu", "password": "password123" }` (or `"identifier"`).
 * **Success (200)**: Returns `{ success: true, data: { user, token } }`.
 
 ### `GET /auth/me`

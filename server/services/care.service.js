@@ -26,10 +26,10 @@ let IN_MEMORY_COMPLAINTS = [
     roomNumber: 'B-204',
     studentId: {
       _id: 'student_1',
-      name: 'Rudra Sharma',
-      email: 'rudra@nextcampus.edu',
+      name: 'Rakesh Kumar',
+      email: 'rakesh@nextcampus.edu',
       department: 'Computer Science',
-      rollNumber: 'MU2026001',
+      rollNumber: 'MUR2502101',
       phone: '+91 98765 43210',
     },
     assignedToName: 'Marcus Vance',
@@ -41,7 +41,7 @@ let IN_MEMORY_COMPLAINTS = [
     updates: [
       {
         message: 'Ticket created via NextCampus Student Care App',
-        updatedBy: 'Rudra Sharma',
+        updatedBy: 'Rakesh Kumar',
         createdAt: new Date(Date.now() - 4 * 3600 * 1000),
       },
       {

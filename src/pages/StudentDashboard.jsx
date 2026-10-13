@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Calendar,
   Clock,
   MapPin,
   DoorOpen,
@@ -609,34 +608,6 @@ export function StudentDashboard() {
                 icon={Send}
               />
             </form>
-          </div>
-
-          {/* B. UPCOMING DEADLINES */}
-          <div className="bg-white rounded-2xl border border-[#E4EAE5] p-4.5 shadow-xs space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#65736B] flex items-center gap-2">
-              <Calendar size={14} className="text-[#168567]" />
-              <span>Upcoming Academic Deadlines</span>
-            </h3>
-
-            <div className="space-y-2">
-              <div className="p-3 rounded-xl bg-[#FEF8EC] border border-[#F6E3B8] flex flex-col gap-0.5">
-                <span className="text-[10px] font-bold text-[#B7791F] font-mono">TODAY • 11:59 PM</span>
-                <span className="text-xs font-bold text-[#202A27]">
-                  Distributed Systems Lab Practical #3
-                </span>
-                <span className="text-[11px] text-[#65736B]">CS-301 Git Commit tag: v0.3.1</span>
-              </div>
-
-              <div className="p-3 rounded-xl bg-[#EEF5FA] border border-[#C9DFEE] flex flex-col gap-0.5">
-                <span className="text-[10px] font-bold text-[#3478B8] font-mono">TOMORROW • 2:00 PM</span>
-                <span className="text-xs font-bold text-[#202A27]">
-                  Robotics Autonomous Drone Flight Review
-                </span>
-                <span className="text-[11px] text-[#65736B]">
-                  Room B-205 Flight Netting Enclosure
-                </span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

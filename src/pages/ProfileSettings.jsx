@@ -49,14 +49,14 @@ export const ProfileSettings = () => {
 
   // Form State initialized from user
   const [formData, setFormData] = useState({
-    name: 'Rudra Sharma',
-    preferredName: 'Rudra',
-    email: 'rudra@nextcampus.edu',
-    studentId: 'MU2026001',
+    name: 'Rakesh Kumar',
+    preferredName: 'Rakesh',
+    email: 'rakesh@nextcampus.edu',
+    studentId: 'MUR2502101',
     phone: '+91 98765 43210',
-    residence: 'Bhabha Boys Hostel • Room B-314',
-    emergencyContact: 'Alok Sharma - Father (+91 98111 22334)',
-    bio: 'Undergraduate CSE student working on distributed edge computing, ROS2 robotics stacks, and autonomous campus navigation telemetry.',
+    residence: 'Bhabha Residence Hall • Room B-208',
+    emergencyContact: 'Mr. Kumar - Parent (+91 98111 22334)',
+    bio: 'Undergraduate CSE student working on distributed edge computing, AI & ML, and smart campus spatial systems.',
     department: 'Department of Computer Science & Engineering (B.Tech CSE - AI & ML)',
     academicYear: 'Class of 2026',
     semester: '3rd Year • Semester 5',
@@ -155,14 +155,14 @@ export const ProfileSettings = () => {
   useEffect(() => {
     if (user) {
       const merged = {
-        name: user.name || 'Rudra Sharma',
-        preferredName: user.preferredName || user.name?.split(' ')[0] || 'Rudra',
-        email: user.email || 'rudra@nextcampus.edu',
-        studentId: user.studentId || user.enrollmentNumber || 'MU2026001',
+        name: user.name || 'Rakesh Kumar',
+        preferredName: user.preferredName || user.name?.split(' ')[0] || 'Rakesh',
+        email: user.email || 'rakesh@nextcampus.edu',
+        studentId: user.studentId || user.enrollmentNumber || 'MUR2502101',
         phone: user.phone || '+91 98765 43210',
-        residence: user.residence || 'Bhabha Boys Hostel • Room B-314',
-        emergencyContact: user.emergencyContact || 'Alok Sharma - Father (+91 98111 22334)',
-        bio: user.bio || 'Undergraduate CSE student working on distributed edge computing, ROS2 robotics stacks, and autonomous campus navigation telemetry.',
+        residence: user.residence || 'Bhabha Residence Hall • Room B-208',
+        emergencyContact: user.emergencyContact || 'Mr. Kumar - Parent (+91 98111 22334)',
+        bio: user.bio || 'Undergraduate CSE student working on distributed edge computing, AI & ML, and smart campus spatial systems.',
         department: user.department || 'Department of Computer Science & Engineering (B.Tech CSE - AI & ML)',
         academicYear: user.academicYear || 'Class of 2026',
         semester: user.semester || '3rd Year • Semester 5',

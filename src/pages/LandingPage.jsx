@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import AuthModal from '../components/auth/AuthModal';
 import {
   Compass,
   MapPin,
@@ -28,6 +29,24 @@ import { useAuth } from '../hooks/useAuth';
 export const LandingPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('login') === 'true' || searchParams.get('auth') === 'true') {
+      setIsAuthModalOpen(true);
+    }
+  }, [searchParams]);
+
+  const handleCloseAuthModal = () => {
+    setIsAuthModalOpen(false);
+    if (searchParams.get('login') || searchParams.get('auth')) {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('login');
+      nextParams.delete('auth');
+      setSearchParams(nextParams, { replace: true });
+    }
+  };
 
   return (
     <div style={{ width: '100%', minHeight: '100vh', backgroundColor: 'var(--bg-canvas)', color: 'var(--text-secondary)' }}>
@@ -58,10 +77,35 @@ export const LandingPage = () => {
             <span>Toll-Free Helpline: 1800-3070-7398</span>
           </span>
           <span style={{ color: '#1B382D' }}>|</span>
-          <Link to="/auth" style={{ color: '#F1F5F9', fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <GraduationCap size={13} className="text-amber-400" />
-            <span>{user ? `Welcome, ${user.name}` : 'Student & Faculty Portal'}</span>
-          </Link>
+          {user ? (
+            <Link
+              to={user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard'}
+              style={{ color: '#F1F5F9', fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+            >
+              <GraduationCap size={13} className="text-amber-400" />
+              <span>Welcome, {user.name}</span>
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsAuthModalOpen(true)}
+              style={{
+                color: '#F1F5F9',
+                fontWeight: 700,
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+                font: 'inherit',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              <GraduationCap size={13} className="text-amber-400" />
+              <span>Student &amp; Faculty Portal</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -151,7 +195,7 @@ export const LandingPage = () => {
             </div>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/auth')}>
+              <Button variant="ghost" size="sm" onClick={() => setIsAuthModalOpen(true)}>
                 Portal Login
               </Button>
               <Link to="/campus-map" style={{ textDecoration: 'none' }}>
@@ -219,14 +263,27 @@ export const LandingPage = () => {
               <span>Indoor CAD Navigation</span>
             </Link>
 
-            <Link
-              to="/auth"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 text-white rounded-xl font-bold text-xs sm:text-[13.5px] bg-white/12 hover:bg-white/20 border border-white/30 backdrop-blur-md transition-all text-center no-underline"
-            >
-              <GraduationCap size={16} className="text-amber-300" />
-              <span>Student &amp; Faculty Portal</span>
-              <ChevronRight size={15} />
-            </Link>
+            {user ? (
+              <Button
+                variant="primary"
+                size="md"
+                icon={ArrowRight}
+                onClick={() => navigate(user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard')}
+                className="w-full sm:w-auto px-5 py-3.5"
+              >
+                {user.role === 'admin' || user.role === 'care_admin' ? 'Open Admin Console' : 'Open My Workspace'}
+              </Button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsAuthModalOpen(true)}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 text-white rounded-xl font-bold text-xs sm:text-[13.5px] bg-white/12 hover:bg-white/20 border border-white/30 backdrop-blur-md transition-all text-center cursor-pointer shadow-md"
+              >
+                <GraduationCap size={16} className="text-amber-300" />
+                <span>Student &amp; Faculty Portal</span>
+                <ChevronRight size={15} />
+              </button>
+            )}
           </div>
         </div>
       </section>
@@ -419,10 +476,14 @@ export const LandingPage = () => {
         </Link>
 
 
-        <Link to="/auth" className="quick-action-btn justify-center text-center">
+        <button
+          type="button"
+          onClick={() => (user ? navigate(user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard') : setIsAuthModalOpen(true))}
+          className="quick-action-btn justify-center text-center cursor-pointer"
+        >
           <Users size={15} />
-          <span>Student &amp; Staff Login</span>
-        </Link>
+          <span>{user ? 'My Workspace' : 'Student & Staff Login'}</span>
+        </button>
       </div>
 
       {/* 7. FORMAL UNIVERSITY FOOTER */}
@@ -476,8 +537,9 @@ export const LandingPage = () => {
               <p style={{ fontSize: '12.5px', color: '#9FB3A8', lineHeight: 1.5, marginBottom: '14px' }}>
                 Official portal for student course schedules, examination timetables, smart bookings, and academic notices.
               </p>
-              <Link
-                to="/auth"
+              <button
+                type="button"
+                onClick={() => (user ? navigate(user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard') : setIsAuthModalOpen(true))}
                 style={{
                   display: 'inline-block',
                   width: '100%',
@@ -486,15 +548,16 @@ export const LandingPage = () => {
                   backgroundColor: '#168567',
                   color: '#FFFFFF',
                   borderRadius: '8px',
-                  textDecoration: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
                   fontSize: '12px',
                   fontWeight: 800,
                   textTransform: 'uppercase',
                   letterSpacing: '0.04em',
                 }}
               >
-                Student &amp; Faculty Login
-              </Link>
+                {user ? 'Open Student Portal' : 'Student & Faculty Login'}
+              </button>
             </div>
           </div>
 
@@ -520,11 +583,33 @@ export const LandingPage = () => {
               <span style={{ color: '#1B382D' }}>•</span>
               <Link to="/smartroom" style={{ color: '#9FB3A8', textDecoration: 'none' }}>Indoor Navigation</Link>
               <span style={{ color: '#1B382D' }}>•</span>
-              <Link to="/auth" style={{ color: '#9FB3A8', textDecoration: 'none' }}>University Portal</Link>
+              <button
+                type="button"
+                onClick={() => (user ? navigate(user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard') : setIsAuthModalOpen(true))}
+                style={{
+                  color: '#9FB3A8',
+                  textDecoration: 'none',
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  font: 'inherit',
+                  fontSize: 'inherit',
+                }}
+              >
+                University Portal
+              </button>
             </div>
           </div>
         </div>
       </footer>
+
+      {/* IN-PLACE LOGIN MODAL ON LANDING PAGE */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={handleCloseAuthModal}
+        initialTab="signin"
+      />
     </div>
   );
 };

@@ -202,7 +202,7 @@ export const AuthPage = () => {
     // Demonstrating transparent compliance: do not claim external email delivery is live unless SMTP is active
     setForgotFeedback({
       type: 'info',
-      text: 'Institutional Identity Protocol: Automated outbound SMTP service is currently in mock deployment mode. Please use your standard credentials (e.g., rudra@nextcampus.edu / password123) or contact the Campus Registrar helpdesk.',
+      text: 'Institutional Identity Protocol: Automated outbound SMTP service is currently in mock deployment mode. Please use your standard credentials (e.g., rakesh@nextcampus.edu / password123) or contact the Campus Registrar helpdesk.',
     });
   };
 
@@ -722,7 +722,7 @@ export const AuthPage = () => {
                         type="text"
                         value={signInIdentifier}
                         onChange={(e) => setSignInIdentifier(e.target.value)}
-                        placeholder="e.g. rudra@nextcampus.edu or MU2026001"
+                        placeholder="e.g. rakesh@nextcampus.edu or MUR2502101"
                         required
                         style={{
                           width: '100%',
@@ -898,7 +898,7 @@ export const AuthPage = () => {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                     <button
                       type="button"
-                      onClick={() => fillCredentials('rudra@nextcampus.edu', 'password123')}
+                      onClick={() => fillCredentials('rakesh@nextcampus.edu', 'password123')}
                       style={{
                         padding: '8px 10px',
                         borderRadius: '8px',
@@ -911,8 +911,8 @@ export const AuthPage = () => {
                         boxShadow: 'var(--shadow-sm)',
                       }}
                     >
-                      <div style={{ fontWeight: 700, color: 'var(--brand-primary)' }}>Student Node</div>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '10px' }}>rudra@nextcampus.edu</div>
+                      <div style={{ fontWeight: 700, color: 'var(--brand-primary)' }}>Student Node (Rakesh)</div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '10px' }}>rakesh@nextcampus.edu</div>
                     </button>
                     <button
                       type="button"
@@ -965,7 +965,7 @@ export const AuthPage = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <button
                     type="button"
-                    onClick={() => fillCredentials('rudra@nextcampus.edu', 'password123')}
+                    onClick={() => fillCredentials('rakesh@nextcampus.edu', 'password123')}
                     style={{
                       padding: '10px 14px',
                       borderRadius: '10px',
@@ -1476,7 +1476,7 @@ export const AuthPage = () => {
                   type="email"
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
-                  placeholder="e.g. rudra@nextcampus.edu"
+                  placeholder="e.g. rakesh@nextcampus.edu"
                   style={{
                     width: '100%',
                     padding: '10px 14px',

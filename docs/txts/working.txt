@@ -453,7 +453,7 @@ npm run test:python
 
 5. Seed Credentials for Local Testing:
 - Student Account:
-  * Email: `rudra@nextcampus.edu`
+  * Email: `rakesh@nextcampus.edu`
   * Password: `password123`
 - Administrator Account:
   * Email: `admin@nextcampus.edu`

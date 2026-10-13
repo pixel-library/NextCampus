@@ -13,14 +13,14 @@ let IN_MEMORY_PROJECTS = [
     status: 'recruiting',
     leadStudent: {
       _id: 'usr_student_01',
-      name: 'Rudra Sharma',
+      name: 'Rakesh Kumar',
       department: 'Computer Science & Engineering',
     },
     membersNeeded: 3,
     currentMembers: [
       {
         _id: 'usr_student_01',
-        name: 'Rudra Sharma',
+        name: 'Rakesh Kumar',
         department: 'Computer Science & Engineering',
       },
     ],

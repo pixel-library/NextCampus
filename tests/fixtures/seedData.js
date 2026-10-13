@@ -4,11 +4,11 @@
 
 export const seedUsers = [
   {
-    name: 'Rudra Pratap',
-    email: 'rudra@nextcampus.edu',
+    name: 'Rakesh Kumar',
+    email: 'rakesh@nextcampus.edu',
     password: 'password123',
     role: 'student',
-    studentId: 'STU-2026-001',
+    studentId: 'MUR2502101',
     department: 'Computer Science & Engineering',
   },
   {
