@@ -11,9 +11,17 @@ import {
   Shield,
   Activity,
   Users,
+  GraduationCap,
+  BookOpen,
+  Award,
+  Layers,
+  Building2,
+  CheckCircle2,
+  Calendar,
+  Clock,
+  Laptop,
 } from 'lucide-react';
 import Button from '../components/common/Button';
-import Badge from '../components/common/Badge';
 import Logo from '../components/common/Logo';
 import { useAuth } from '../hooks/useAuth';
 
@@ -21,102 +29,57 @@ export const LandingPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Interactive Digital Twin State
-  const [selectedNode, setSelectedNode] = useState('block-a');
-
-  // Node details for Interactive Digital Twin section
-  const nodeDetails = {
-    'block-a': {
-      title: 'Faculty of Engineering & Technology',
-      dept: 'Dept. of Computer Science & Engineering (AI & ML)',
-      status: 'Open (Active)',
-      temp: '21.5°C Optimal',
-      seats: '18 / 60 Desk Pods',
-      accessibility: 'Elevator & Step-Free Ramps',
-      lecture: 'CS402: Distributed Systems Architecture',
-      instructor: 'Prof. Ananya Roy • 42 Students',
-      code: 'ENG-02',
-      bldgId: 'eng',
-    },
-    library: {
-      title: 'Swami Vivekananda Central Library',
-      dept: 'Digital Reference & Learning Commons',
-      status: 'Open (Quiet Zone)',
-      temp: '22.0°C Silent',
-      seats: '142 / 400 Study Pods',
-      accessibility: 'Ramps & Tactile Paths',
-      lecture: 'Quiet Research & Reference Hours',
-      instructor: 'Circulation Desk Active',
-      code: 'LIB-03',
-      bldgId: 'library',
-    },
-    innovation: {
-      title: 'Innovation Center & Robotics Lab',
-      dept: 'Robotics & Embedded AI Hardware Labs',
-      status: 'Open (Lab Active)',
-      temp: '20.8°C Climate Controlled',
-      seats: '12 / 30 Workbenches',
-      accessibility: 'Accessible Ground Floor',
-      lecture: 'Autonomous Navigation & Drone Testing',
-      instructor: 'Dr. K. Venkatesh • 28 Researchers',
-      code: 'INN-HUB-01',
-      bldgId: 'eng',
-    },
-    activity: {
-      title: 'Student Activity Center & Arena',
-      dept: 'Clubs, Recreation & Event Commons',
-      status: 'Open (High Activity)',
-      temp: '23.1°C Ambient',
-      seats: '85 Open Lounge Seats',
-      accessibility: 'Full Wheelchair Ramp',
-      lecture: 'Student Tech Club Hackathon Meetup',
-      instructor: 'Student Welfare Council',
-      code: 'SAC-MAIN',
-      bldgId: 'admin',
-    },
-  };
-
-  const activeDigitalData = nodeDetails[selectedNode] || nodeDetails['block-a'];
-
   return (
     <div style={{ width: '100%', minHeight: '100vh', backgroundColor: 'var(--bg-canvas)', color: 'var(--text-secondary)' }}>
-      {/* 1. TOP UTILITY STATUS BAR */}
+      {/* 1. TOP INSTITUTIONAL ACCREDITATION & UTILITY BANNER */}
       <div
-        className="hidden sm:flex items-center justify-between py-1.5 px-4 md:px-8 text-[11.5px] bg-[#0F172A] text-[#94A3B8] border-b border-white/10 z-50 relative"
+        className="hidden sm:flex items-center justify-between py-2 px-4 md:px-8 text-[11.5px] bg-[#0A1A15] text-[#9FB3A8] border-b border-emerald-900/40 z-50 relative"
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#E2E8F0', fontWeight: 600 }}>
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981' }} />
-            Mewar University Smart Campus • Session 2026–27 Active
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#E2ECE6', fontWeight: 700 }}>
+            <Award size={13} className="text-amber-400" />
+            <span>NAAC Grade &lsquo;A&rsquo; Accredited • UGC Recognized University</span>
           </span>
-          <span style={{ color: '#334155' }}>|</span>
-          <Link to="/campus-map" style={{ color: '#38BDF8', fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Compass size={12} /> Live Campus GIS Map (Mewar Grounds Only)
+          <span style={{ color: '#1B382D' }}>|</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#9FB3A8' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981', display: 'inline-block' }} />
+            <span>Academic Session 2026–27 Active</span>
+          </span>
+          <span style={{ color: '#1B382D' }}>|</span>
+          <Link to="/campus-map" style={{ color: '#34D399', fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Compass size={12} />
+            <span>Live Campus GIS Map (30-Acre Grounds)</span>
           </Link>
-          <span style={{ color: '#334155' }}>|</span>
-          <a href="#digital-twin" style={{ color: '#94A3B8', textDecoration: 'none' }}>
-            Classroom IoT Telemetry
-          </a>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <Phone size={12} /> Campus Helpline: 1800-3070-7398
+          <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#9FB3A8' }}>
+            <Phone size={12} className="text-emerald-400" />
+            <span>Toll-Free Helpline: 1800-3070-7398</span>
           </span>
-          <span style={{ color: '#334155' }}>|</span>
-          <Link to="/auth" style={{ color: '#F8FAFC', fontWeight: 700, textDecoration: 'none' }}>
-            {user ? `Logged in: ${user.name}` : 'Student & Staff Login'}
+          <span style={{ color: '#1B382D' }}>|</span>
+          <Link to="/auth" style={{ color: '#F1F5F9', fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <GraduationCap size={13} className="text-amber-400" />
+            <span>{user ? `Welcome, ${user.name}` : 'Student & Faculty Portal'}</span>
           </Link>
         </div>
       </div>
 
-      {/* 2. STICKY HEADER NAVIGATION */}
+      {/* 2. STICKY INSTITUTIONAL HEADER NAVIGATION */}
       <header
-        className="w-full h-[72px] bg-white border-b border-[#E4EAE5] sticky top-0 z-50 flex items-center justify-between px-4 md:px-8 shadow-xs"
+        className="w-full h-[76px] bg-white border-b border-[#E2E8F0] sticky top-0 z-50 flex items-center justify-between px-4 md:px-8 shadow-xs"
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
-          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
             <Logo size="md" showText={true} />
+            <div className="hidden lg:flex flex-col border-l border-slate-200 pl-3">
+              <span className="text-[12px] font-black text-slate-800 tracking-tight uppercase leading-tight font-heading">
+                Mewar University
+              </span>
+              <span className="text-[10px] font-semibold text-emerald-700 tracking-wider">
+                Gangrar, Chittorgarh (Rajasthan)
+              </span>
+            </div>
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
@@ -132,18 +95,42 @@ export const LandingPage = () => {
                 gap: '6px',
               }}
             >
-              <Compass size={14} />
-              <span>Live Campus Map</span>
-              <span style={{ fontSize: '10px', backgroundColor: '#ECFDF5', color: '#059669', padding: '1px 6px', borderRadius: '9999px', fontWeight: 800 }}>
-                GIS LIVE
+              <Compass size={15} />
+              <span>Campus GIS Map</span>
+              <span style={{ fontSize: '10px', backgroundColor: '#ECFDF5', color: '#047857', padding: '1px 6px', borderRadius: '9999px', fontWeight: 800 }}>
+                LIVE
               </span>
             </Link>
-            <a href="#digital-twin" style={{ color: 'var(--text-secondary)', fontSize: '13.5px', fontWeight: 600, textDecoration: 'none' }}>
-              Digital Twin &amp; IoT
-            </a>
-            <a href="#spotlight" style={{ color: 'var(--text-secondary)', fontSize: '13.5px', fontWeight: 600, textDecoration: 'none' }}>
-              Student Life
-            </a>
+            <Link
+              to="/smartroom"
+              style={{
+                color: 'var(--text-secondary)',
+                fontSize: '13.5px',
+                fontWeight: 600,
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+              }}
+            >
+              <Layers size={14} className="text-slate-500" />
+              <span>Indoor Navigation</span>
+            </Link>
+            <Link
+              to="/complaints"
+              style={{
+                color: 'var(--text-secondary)',
+                fontSize: '13.5px',
+                fontWeight: 600,
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+              }}
+            >
+              <Shield size={14} className="text-slate-500" />
+              <span>Campus Care</span>
+            </Link>
           </nav>
         </div>
 
@@ -165,7 +152,7 @@ export const LandingPage = () => {
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Button variant="ghost" size="sm" onClick={() => navigate('/auth')}>
-                Sign In
+                Portal Login
               </Button>
               <Link to="/campus-map" style={{ textDecoration: 'none' }}>
                 <Button variant="primary" size="sm" icon={Compass}>
@@ -177,12 +164,12 @@ export const LandingPage = () => {
         </div>
       </header>
 
-      {/* 3. CINEMATIC HERO SECTION */}
+      {/* 3. CINEMATIC HERO SECTION WITH VERIFIED MEWAR UNIVERSITY ARCHITECTURE */}
       <section
         id="hero"
         className="relative min-h-[460px] md:min-h-[580px] flex items-center justify-center text-center px-4 py-12 md:py-20 md:px-8"
         style={{
-          backgroundImage: 'linear-gradient(180deg, rgba(15, 23, 42, 0.62) 0%, rgba(15, 23, 42, 0.84) 100%), url("/mewar_campus_front.png")',
+          backgroundImage: 'linear-gradient(180deg, rgba(8, 28, 22, 0.72) 0%, rgba(10, 26, 21, 0.88) 100%), url("/mewar_campus_front.png")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
@@ -190,7 +177,7 @@ export const LandingPage = () => {
       >
         <div
           style={{
-            maxWidth: '860px',
+            maxWidth: '920px',
             margin: '0 auto',
             width: '100%',
             display: 'flex',
@@ -199,19 +186,10 @@ export const LandingPage = () => {
             color: '#FFFFFF',
           }}
         >
-          {/* Campus Spatial Badge */}
-          <div
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4.5 sm:py-1.5 rounded-full bg-white/12 backdrop-blur-md border border-white/25 mb-5 md:mb-6"
-          >
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10B981', flexShrink: 0 }} />
-            <span className="text-[10px] sm:text-[11px] font-extrabold tracking-wider text-white uppercase">
-              SPATIAL SMART CAMPUS • MEWAR UNIVERSITY, GANGRAR
-            </span>
-          </div>
 
           {/* Inspiring Headline */}
           <h1
-            className="text-3xl sm:text-5xl md:text-6xl font-black leading-tight text-white mb-4 md:mb-5 tracking-tight"
+            className="text-3xl sm:text-5xl md:text-6xl font-black leading-tight text-white mb-4 md:mb-5 tracking-tight font-heading"
           >
             Smarter Navigation.{' '}
             <span style={{ color: '#FB923C', display: 'block', textShadow: '0 2px 14px rgba(249, 115, 22, 0.4)' }}>
@@ -219,247 +197,150 @@ export const LandingPage = () => {
             </span>
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed mb-6 md:mb-8">
-            NextCampus connects Mewar University&apos;s 30-acre campus with precision turn-by-turn GIS pedestrian wayfinding, real-time classroom telemetry, study pod availability, and unified student services.
+          <p className="text-sm sm:text-base md:text-lg text-slate-200 max-w-2xl mx-auto leading-relaxed mb-6 md:mb-8 font-medium">
+            Welcome to NextCampus — Mewar University&apos;s authoritative smart spatial ecosystem connecting our 30-acre campus with precision GIS pedestrian wayfinding, indoor blueprint navigation, live classroom telemetry, and unified student services.
           </p>
 
           {/* Primary Action Buttons */}
           <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 items-center justify-center w-full max-w-md sm:max-w-none">
             <Link
               to="/campus-map"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[var(--brand-primary)] text-white rounded-lg font-extrabold text-xs sm:text-[13.5px] uppercase tracking-wider shadow-lg shadow-[#9E153E]/40 hover:opacity-95 transition-all text-center no-underline"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#168567] hover:bg-[#0f6b52] text-white rounded-xl font-extrabold text-xs sm:text-[13.5px] uppercase tracking-wider shadow-xl shadow-emerald-950/40 transition-all text-center no-underline border border-emerald-400/30"
             >
               <Compass size={17} />
               <span>Explore Interactive Map</span>
             </Link>
 
-            <a
-              href="#digital-twin"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-slate-900 rounded-lg font-extrabold text-xs sm:text-[13.5px] uppercase tracking-wider shadow-md hover:bg-slate-50 transition-all text-center no-underline"
+            <Link
+              to="/smartroom"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-slate-900 rounded-xl font-extrabold text-xs sm:text-[13.5px] uppercase tracking-wider shadow-md hover:bg-slate-50 transition-all text-center no-underline"
             >
-              <Activity size={16} />
-              <span>Inspect Digital Twin</span>
-            </a>
+              <Layers size={16} className="text-[#168567]" />
+              <span>Indoor CAD Navigation</span>
+            </Link>
 
             <Link
               to="/auth"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 text-white rounded-lg font-bold text-xs sm:text-[13.5px] bg-white/10 hover:bg-white/20 border border-white/25 transition-all text-center no-underline"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 text-white rounded-xl font-bold text-xs sm:text-[13.5px] bg-white/12 hover:bg-white/20 border border-white/30 backdrop-blur-md transition-all text-center no-underline"
             >
-              <span>Student Portal</span>
+              <GraduationCap size={16} className="text-amber-300" />
+              <span>Student &amp; Faculty Portal</span>
               <ChevronRight size={15} />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* 4. INTERACTIVE SPATIAL DIGITAL TWIN SHOWCASE */}
-      <section id="digital-twin" className="py-10 px-4 md:py-18 md:px-8 bg-slate-50 border-y border-[var(--border-subtle)]">
+
+      {/* UNIVERSITY PILLARS OF EXCELLENCE */}
+      <section className="py-12 md:py-16 px-4 md:px-8 bg-white">
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
-          <div className="flex justify-between items-end flex-wrap gap-4 sm:gap-5 mb-6 md:mb-8">
-            <div>
-              <span className="text-[11px] font-extrabold tracking-wider text-[var(--brand-primary)] uppercase">
-                CAMPUS DIGITAL TWIN
-              </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[var(--text-primary)] mt-1">
-                Inspect Live Facilities &amp; Environmental Telemetry
-              </h2>
-            </div>
-            <p className="text-[var(--text-secondary)] max-w-md text-xs sm:text-[13px] leading-relaxed">
-              Tap any facility node to view real-time occupancy, climate controls, active lecture timetables, and direct routing paths.
+          <div className="text-center max-w-2xl mx-auto mb-10 md:mb-12">
+            <span className="text-xs font-extrabold tracking-wider text-[#168567] uppercase">
+              SMART CAMPUS INFRASTRUCTURE
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-1 font-heading">
+              Four Core Spatial Pillars for Modern Campus Life
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-sm mt-2 leading-relaxed">
+              Designed specifically for students, faculty, visiting parents, and researchers navigating Mewar University.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-6">
-            {/* Interactive Vector Map Graphic */}
-            <div
-              style={{
-                backgroundColor: '#FFFFFF',
-                borderRadius: '16px',
-                padding: '20px',
-                border: '1px solid var(--border-subtle)',
-                boxShadow: '0 4px 16px rgba(15, 23, 42, 0.04)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Pillar 1 */}
+            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 hover:shadow-lg transition-all flex flex-col justify-between group">
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Badge status="active">Mewar University Quadrangle</Badge>
-                  <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>Interactive Vector View</span>
+                <div className="w-12 h-12 rounded-xl bg-emerald-100 text-[#168567] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                  <Compass size={24} />
                 </div>
-
-                {/* Mobile Quick-Pill Node Selector (Touch Friendly) */}
-                <div className="flex md:hidden items-center gap-1.5 overflow-x-auto pb-1 pt-3 mb-1 scrollbar-none">
-                  {[
-                    { id: 'block-a', label: 'ENG-02 Engineering', icon: '🏛️' },
-                    { id: 'library', label: 'LIB-03 Library', icon: '📚' },
-                    { id: 'innovation', label: 'INN Robotics Lab', icon: '🤖' },
-                    { id: 'activity', label: 'SAC Student Arena', icon: '⚽' },
-                  ].map((node) => {
-                    const isSelected = selectedNode === node.id;
-                    return (
-                      <button
-                        key={node.id}
-                        type="button"
-                        onClick={() => setSelectedNode(node.id)}
-                        className={`shrink-0 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                          isSelected
-                            ? 'bg-[var(--brand-primary)] text-white shadow-xs'
-                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                        }`}
-                      >
-                        <span>{node.icon}</span>
-                        <span>{node.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Vector SVG Graphic */}
-                <div className="my-3.5 relative w-full h-[240px] sm:h-[280px] bg-[#F1F5F9] rounded-xl border border-[var(--border-subtle)] overflow-hidden">
-                  <svg width="100%" height="100%" viewBox="0 0 800 450" fill="none">
-                    <pattern id="campusGridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
-                      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0, 0, 0, 0.05)" strokeWidth="1" />
-                    </pattern>
-                    <rect width="800" height="450" fill="url(#campusGridPattern)" />
-
-                    {/* Pathways */}
-                    <path d="M 50 210 L 260 100 L 520 230 L 750 120" stroke="#CBD5E1" strokeWidth="12" strokeLinecap="round" />
-                    <path d="M 260 100 L 380 280 L 640 280" stroke="#CBD5E1" strokeWidth="10" strokeLinecap="round" />
-                    <path d="M 190 145 C 230 190, 310 180, 420 195" stroke="#059669" strokeWidth="4" strokeDasharray="8 8" />
-
-                    {/* Library Node */}
-                    <g onClick={() => setSelectedNode('library')} style={{ cursor: 'pointer' }}>
-                      <polygon points="140,80 200,110 200,165 140,135" fill={selectedNode === 'library' ? '#9E153E' : '#64748B'} />
-                      <polygon points="140,80 80,110 80,165 140,135" fill="#475569" />
-                      <polygon points="140,80 200,110 140,140 80,110" fill="#E11D48" opacity="0.8" />
-                      <circle cx="140" cy="110" r="15" fill="#9E153E" />
-                      <text x="140" y="114" fill="#FFF" fontSize="10" textAnchor="middle" fontWeight="bold">LIB</text>
-                    </g>
-
-                    {/* Faculty of Engineering Node */}
-                    <g onClick={() => setSelectedNode('block-a')} style={{ cursor: 'pointer' }}>
-                      <polygon points="430,150 510,190 510,260 430,220" fill={selectedNode === 'block-a' ? '#9E153E' : '#64748B'} />
-                      <polygon points="430,150 350,190 350,260 430,220" fill="#475569" />
-                      <polygon points="430,150 510,190 430,230 350,190" fill="#E11D48" opacity="0.8" />
-                      <circle cx="430" cy="190" r="17" fill="#9E153E" />
-                      <text x="430" y="195" fill="#FFF" fontSize="11" textAnchor="middle" fontWeight="bold">ENG</text>
-                    </g>
-
-                    {/* Innovation Center Node */}
-                    <g onClick={() => setSelectedNode('innovation')} style={{ cursor: 'pointer' }}>
-                      <polygon points="620,80 680,110 680,170 620,140" fill={selectedNode === 'innovation' ? '#9E153E' : '#64748B'} />
-                      <polygon points="620,80 560,110 560,170 620,140" fill="#475569" />
-                      <polygon points="620,80 680,110 620,140 560,110" fill="#E11D48" opacity="0.7" />
-                      <circle cx="620" cy="110" r="14" fill="#059669" />
-                      <text x="620" y="114" fill="#FFF" fontSize="9" textAnchor="middle" fontWeight="bold">INN</text>
-                    </g>
-
-                    {/* Activity Center Node */}
-                    <g onClick={() => setSelectedNode('activity')} style={{ cursor: 'pointer' }}>
-                      <polygon points="450,280 510,310 510,360 450,330" fill={selectedNode === 'activity' ? '#9E153E' : '#64748B'} />
-                      <polygon points="450,280 390,310 390,360 450,330" fill="#475569" />
-                      <polygon points="450,280 510,310 450,340 390,310" fill="#94A3B8" />
-                      <circle cx="450" cy="310" r="14" fill="#2563EB" />
-                      <text x="450" y="314" fill="#FFF" fontSize="9" textAnchor="middle" fontWeight="bold">SAC</text>
-                    </g>
-                  </svg>
-                </div>
+                <h3 className="text-base font-black text-slate-900 mb-2 font-heading">
+                  Interactive GIS Wayfinding
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                  Turn-by-turn pedestrian pathfinding across academic blocks, football grounds, administrative pavilion, and hostel sectors.
+                </p>
               </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: 'var(--text-muted)' }}>
-                <span>Tap any node above to inspect telemetry</span>
-                <Link to="/campus-map" style={{ color: 'var(--brand-primary)', fontWeight: 700 }}>
-                  Open Full GIS Map →
-                </Link>
-              </div>
+              <Link to="/campus-map" className="inline-flex items-center gap-1.5 text-xs font-bold text-[#168567] hover:text-emerald-700 no-underline">
+                <span>Open GIS Map</span>
+                <ChevronRight size={14} />
+              </Link>
             </div>
 
-            {/* Dynamic Telemetry Panel */}
-            <div
-              style={{
-                backgroundColor: '#FFFFFF',
-                borderRadius: '16px',
-                padding: '20px',
-                border: '1px solid var(--border-subtle)',
-                boxShadow: '0 4px 16px rgba(15, 23, 42, 0.04)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
+            {/* Pillar 2 */}
+            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 hover:shadow-lg transition-all flex flex-col justify-between group">
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <Badge status="active">Active Node Telemetry</Badge>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace', fontWeight: 700 }}>
-                    NODE: {activeDigitalData.code}
-                  </span>
+                <div className="w-12 h-12 rounded-xl bg-emerald-100 text-[#168567] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                  <Layers size={24} />
                 </div>
-
-                <h3 style={{ fontSize: '1.3rem', color: 'var(--text-primary)', margin: 0, fontWeight: 800 }}>
-                  {activeDigitalData.title}
+                <h3 className="text-base font-black text-slate-900 mb-2 font-heading">
+                  Indoor CAD Blueprint Navigation
                 </h3>
-                <p style={{ fontSize: '12.5px', color: 'var(--text-secondary)', marginBottom: '16px', marginTop: '4px' }}>
-                  {activeDigitalData.dept}
+                <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                  Architectural floor plans connecting Central Hall to lecture theatres, Central Library, and examination rooms with door-to-door routing.
                 </p>
-
-                {/* Metrics Grid */}
-                <div className="grid grid-cols-2 gap-2 sm:gap-2.5 mb-4">
-                  <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '9px 11px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-                    <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>Operational Status</div>
-                    <div style={{ fontSize: '12.5px', fontWeight: 700, color: '#059669', marginTop: '2px' }}>{activeDigitalData.status}</div>
-                  </div>
-                  <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '9px 11px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-                    <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>HVAC Climate</div>
-                    <div style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{activeDigitalData.temp}</div>
-                  </div>
-                  <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '9px 11px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-                    <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>Seating Capacity</div>
-                    <div style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{activeDigitalData.seats}</div>
-                  </div>
-                  <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '9px 11px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-                    <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>Step-Free Access</div>
-                    <div style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--brand-accent)', marginTop: '2px' }}>{activeDigitalData.accessibility}</div>
-                  </div>
-                </div>
-
-                {/* Session Card */}
-                <div style={{ backgroundColor: '#F8FAFC', padding: '12px 14px', borderRadius: '10px', border: '1px solid var(--border-subtle)', marginBottom: '18px' }}>
-                  <div style={{ fontSize: '10.5px', fontWeight: 700, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    Active Lecture Session
-                  </div>
-                  <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}>
-                    {activeDigitalData.lecture}
-                  </div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    {activeDigitalData.instructor}
-                  </div>
-                </div>
               </div>
+              <Link to="/smartroom" className="inline-flex items-center gap-1.5 text-xs font-bold text-[#168567] hover:text-emerald-700 no-underline">
+                <span>View Floor Plans</span>
+                <ChevronRight size={14} />
+              </Link>
+            </div>
 
-              <Link to={`/campus-map?bldg=${activeDigitalData.bldgId || 'eng'}`} style={{ textDecoration: 'none' }}>
-                <Button variant="primary" style={{ width: '100%' }} icon={Navigation}>
-                  Navigate to {activeDigitalData.code} in Campus Map
-                </Button>
+            {/* Pillar 3 */}
+            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 hover:shadow-lg transition-all flex flex-col justify-between group">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-emerald-100 text-[#168567] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                  <Activity size={24} />
+                </div>
+                <h3 className="text-base font-black text-slate-900 mb-2 font-heading">
+                  Live Classroom Telemetry
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                  Real-time occupancy rates, environmental sensor telemetry, active timetable schedules, and available quiet study desks.
+                </p>
+              </div>
+              <Link to="/smartroom" className="inline-flex items-center gap-1.5 text-xs font-bold text-[#168567] hover:text-emerald-700 no-underline">
+                <span>View Live Spaces</span>
+                <ChevronRight size={14} />
+              </Link>
+            </div>
+
+            {/* Pillar 4 */}
+            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-emerald-300 hover:shadow-lg transition-all flex flex-col justify-between group">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-emerald-100 text-[#168567] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                  <Shield size={24} />
+                </div>
+                <h3 className="text-base font-black text-slate-900 mb-2 font-heading">
+                  Campus Care &amp; Support
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                  Direct grievance redressal, hostel maintenance ticketing, and automated administrative resolution tracking.
+                </p>
+              </div>
+              <Link to="/complaints" className="inline-flex items-center gap-1.5 text-xs font-bold text-[#168567] hover:text-emerald-700 no-underline">
+                <span>File Grievance</span>
+                <ChevronRight size={14} />
               </Link>
             </div>
           </div>
         </div>
       </section>
 
+
+
       {/* 5. STUDENT SPOTLIGHT & CAMPUS CULTURE */}
       <section id="spotlight" className="relative overflow-hidden">
         <div
           className="min-h-[380px] md:min-h-[440px] flex items-center px-4 py-10 md:py-16 md:px-8"
           style={{
-            backgroundImage: 'linear-gradient(90deg, rgba(15, 23, 42, 0.94) 0%, rgba(15, 23, 42, 0.72) 55%, rgba(15, 23, 42, 0.4) 100%), url("/student_spotlight.png")',
+            backgroundImage: 'linear-gradient(90deg, rgba(8, 28, 22, 0.94) 0%, rgba(10, 26, 21, 0.78) 55%, rgba(15, 23, 42, 0.5) 100%), url("/student_spotlight.png")',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
         >
-          <div style={{ maxWidth: '1240px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 10 }}>
-            <div style={{ maxWidth: '620px', color: '#FFFFFF' }}>
+          <div style={{ maxWidth: '1240px', margin: '0 auto' , width: '100%', position: 'relative', zIndex: 10 }}>
+            <div style={{ maxWidth: '640px', color: '#FFFFFF' }}>
               <div
                 style={{
                   display: 'inline-flex',
@@ -467,9 +348,9 @@ export const LandingPage = () => {
                   gap: '6px',
                   padding: '4px 12px',
                   borderRadius: '9999px',
-                  backgroundColor: 'rgba(225, 29, 72, 0.25)',
-                  border: '1px solid rgba(225, 29, 72, 0.5)',
-                  color: '#FECDD3',
+                  backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                  border: '1px solid rgba(245, 158, 11, 0.45)',
+                  color: '#FDE68A',
                   fontSize: '11px',
                   fontWeight: 800,
                   marginBottom: '16px',
@@ -482,12 +363,10 @@ export const LandingPage = () => {
               </div>
 
               <blockquote
-                className="text-lg sm:text-xl md:text-2xl font-bold leading-relaxed text-white mb-5"
-                style={{
-                  fontStyle: 'normal',
-                }}
+                className="text-lg sm:text-xl md:text-2xl font-bold leading-relaxed text-white mb-5 font-heading"
+                style={{ fontStyle: 'normal' }}
               >
-                &ldquo;NextCampus changed how we navigate our daily university routine. Having real-time lab room telemetry, instant pedestrian wayfinding, and connected student care in one place makes Mewar University feel truly intelligent.&rdquo;
+                &ldquo;NextCampus has transformed our day-to-day life at Mewar University. Having verified indoor routing to lecture halls, live study pod occupancy, and seamless spatial wayfinding gives us a truly smart university experience.&rdquo;
               </blockquote>
 
               <div style={{ marginBottom: '24px' }}>
@@ -503,7 +382,7 @@ export const LandingPage = () => {
                 <Link
                   to="/campus-map"
                   style={{
-                    backgroundColor: '#059669',
+                    backgroundColor: '#168567',
                     color: '#FFFFFF',
                     padding: '11px 22px',
                     borderRadius: '8px',
@@ -515,7 +394,7 @@ export const LandingPage = () => {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '6px',
-                    boxShadow: '0 4px 14px rgba(5, 150, 105, 0.4)',
+                    boxShadow: '0 4px 14px rgba(22, 133, 103, 0.4)',
                   }}
                 >
                   <Compass size={15} />
@@ -534,10 +413,11 @@ export const LandingPage = () => {
           <span>Launch Campus GIS Map</span>
         </Link>
 
-        <a href="#digital-twin" className="quick-action-btn justify-center text-center">
-          <Activity size={15} />
-          <span>Inspect Digital Twin</span>
-        </a>
+        <Link to="/smartroom" className="quick-action-btn justify-center text-center">
+          <Layers size={15} />
+          <span>Indoor CAD Navigation</span>
+        </Link>
+
 
         <Link to="/auth" className="quick-action-btn justify-center text-center">
           <Users size={15} />
@@ -545,8 +425,8 @@ export const LandingPage = () => {
         </Link>
       </div>
 
-      {/* 7. UNIVERSITY FOOTER */}
-      <footer className="bg-[#0B1329] text-[#CBD5E1] py-10 px-4 md:py-14 md:px-8 border-t border-white/10">
+      {/* 7. FORMAL UNIVERSITY FOOTER */}
+      <footer className="bg-[#0A1A15] text-[#CBD5E1] py-12 px-4 md:py-16 md:px-8 border-t border-emerald-900/40">
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
             {/* Column 1: University Identity */}
@@ -554,48 +434,47 @@ export const LandingPage = () => {
               <div style={{ color: '#FFFFFF', fontWeight: 900, fontSize: '18px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span>NextCampus • Mewar University</span>
               </div>
-              <p style={{ fontSize: '12.5px', lineHeight: 1.6, color: '#94A3B8', marginBottom: '14px' }}>
+              <p style={{ fontSize: '12.5px', lineHeight: 1.6, color: '#9FB3A8', marginBottom: '14px' }}>
                 NH-48, Gangrar, Chittorgarh, Rajasthan 312901, India.<br />
-                Recognized by University Grants Commission (UGC) &amp; NAAC Grade-A Accredited.
+                Established by Govt. of Rajasthan &amp; Recognized by UGC under section 2(f) of the UGC Act, 1956. NAAC Grade &lsquo;A&rsquo; Accredited.
               </p>
-              <div style={{ fontSize: '12.5px', color: '#E2E8F0', fontWeight: 600 }}>
+              <div style={{ fontSize: '12.5px', color: '#E2ECE6', fontWeight: 700 }}>
                 📞 Campus Toll-Free: 1800-3070-7398
               </div>
             </div>
 
-            {/* Column 2: Digital Services */}
+            {/* Column 2: Digital Spatial Services */}
             <div>
               <h4 style={{ color: '#FFFFFF', fontSize: '13.5px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>
-                Campus Spatial Services
+                Spatial Navigation
               </h4>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
-                <li><Link to="/campus-map" style={{ color: '#38BDF8', fontWeight: 700, textDecoration: 'none' }}>Live Campus Map (GIS Wayfinding)</Link></li>
-                <li><a href="#digital-twin" style={{ color: '#94A3B8', textDecoration: 'none' }}>Real-Time IoT Digital Twin</a></li>
-                <li><Link to="/smartroom" style={{ color: '#94A3B8', textDecoration: 'none' }}>SmartRooms &amp; Study Pods</Link></li>
-                <li><Link to="/complaints" style={{ color: '#94A3B8', textDecoration: 'none' }}>Campus Care &amp; Helpdesk</Link></li>
+                <li><Link to="/campus-map" style={{ color: '#34D399', fontWeight: 700, textDecoration: 'none' }}>Live Campus Map (GIS Wayfinding)</Link></li>
+                <li><Link to="/smartroom" style={{ color: '#9FB3A8', textDecoration: 'none' }}>Indoor CAD Floor Plans</Link></li>
+                <li><Link to="/complaints" style={{ color: '#9FB3A8', textDecoration: 'none' }}>Campus Care &amp; Grievance Helpdesk</Link></li>
               </ul>
             </div>
 
-            {/* Column 3: Academic Zones */}
+            {/* Column 3: Academic Faculties */}
             <div>
               <h4 style={{ color: '#FFFFFF', fontSize: '13.5px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>
                 Academic Infrastructure
               </h4>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
-                <li><Link to="/campus-map?bldg=eng" style={{ color: '#94A3B8', textDecoration: 'none' }}>Faculty of Engineering &amp; AI Labs</Link></li>
-                <li><Link to="/campus-map?bldg=library" style={{ color: '#94A3B8', textDecoration: 'none' }}>Swami Vivekananda Central Library</Link></li>
-                <li><Link to="/campus-map?bldg=admin" style={{ color: '#94A3B8', textDecoration: 'none' }}>Maharana Pratap Admin Secretariat</Link></li>
-                <li><Link to="/campus-map?bldg=cafeteria" style={{ color: '#94A3B8', textDecoration: 'none' }}>Food Court &amp; Student Canteen</Link></li>
+                <li><Link to="/campus-map?bldg=eng" style={{ color: '#9FB3A8', textDecoration: 'none' }}>Faculty of Engineering &amp; AI Labs</Link></li>
+                <li><Link to="/campus-map?bldg=library" style={{ color: '#9FB3A8', textDecoration: 'none' }}>Swami Vivekananda Central Library</Link></li>
+                <li><Link to="/campus-map?bldg=admin" style={{ color: '#9FB3A8', textDecoration: 'none' }}>Maharana Pratap Admin Secretariat</Link></li>
+                <li><Link to="/campus-map?bldg=cafeteria" style={{ color: '#9FB3A8', textDecoration: 'none' }}>Food Court &amp; Student Canteen</Link></li>
               </ul>
             </div>
 
-            {/* Column 4: Quick Portals */}
+            {/* Column 4: Institutional Portals */}
             <div>
               <h4 style={{ color: '#FFFFFF', fontSize: '13.5px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>
                 Campus Portals
               </h4>
-              <p style={{ fontSize: '12.5px', color: '#94A3B8', lineHeight: 1.5, marginBottom: '14px' }}>
-                Access courses, examination timetables, smart room bookings, and campus welfare.
+              <p style={{ fontSize: '12.5px', color: '#9FB3A8', lineHeight: 1.5, marginBottom: '14px' }}>
+                Official portal for student course schedules, examination timetables, smart bookings, and academic notices.
               </p>
               <Link
                 to="/auth"
@@ -603,14 +482,15 @@ export const LandingPage = () => {
                   display: 'inline-block',
                   width: '100%',
                   textAlign: 'center',
-                  padding: '10px 16px',
-                  backgroundColor: 'var(--brand-primary)',
+                  padding: '11px 16px',
+                  backgroundColor: '#168567',
                   color: '#FFFFFF',
-                  borderRadius: '6px',
+                  borderRadius: '8px',
                   textDecoration: 'none',
                   fontSize: '12px',
                   fontWeight: 800,
                   textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
                 }}
               >
                 Student &amp; Faculty Login
@@ -622,7 +502,7 @@ export const LandingPage = () => {
           <div
             style={{
               paddingTop: '24px',
-              borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -636,11 +516,11 @@ export const LandingPage = () => {
               © 2026 NextCampus Intelligent Spatial Platform • Mewar University. All rights reserved.
             </div>
             <div style={{ display: 'flex', gap: '16px' }}>
-              <Link to="/campus-map" style={{ color: '#64748B', textDecoration: 'none' }}>Campus Map</Link>
-              <span style={{ color: '#334155' }}>•</span>
-              <a href="#digital-twin" style={{ color: '#64748B', textDecoration: 'none' }}>Digital Twin</a>
-              <span style={{ color: '#334155' }}>•</span>
-              <Link to="/auth" style={{ color: '#64748B', textDecoration: 'none' }}>Portal</Link>
+              <Link to="/campus-map" style={{ color: '#9FB3A8', textDecoration: 'none' }}>Campus Map</Link>
+              <span style={{ color: '#1B382D' }}>•</span>
+              <Link to="/smartroom" style={{ color: '#9FB3A8', textDecoration: 'none' }}>Indoor Navigation</Link>
+              <span style={{ color: '#1B382D' }}>•</span>
+              <Link to="/auth" style={{ color: '#9FB3A8', textDecoration: 'none' }}>University Portal</Link>
             </div>
           </div>
         </div>

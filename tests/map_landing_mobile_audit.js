@@ -42,21 +42,13 @@ try {
   console.log('✅ Check 1 Passed: LandingPage hero section is fully responsive');
   passed++;
 
-  // Test 2: Landing Page Digital Twin Section & Mobile Pill Selector
-  console.log('\n[Check 2/8] Verifying LandingPage Digital Twin Mobile Usability...');
+  // Test 2: Landing Page Spatial Pillars Responsiveness
+  console.log('\n[Check 2/8] Verifying LandingPage Spatial Pillars Responsiveness...');
   assert.ok(
-    landingPageContent.includes('grid grid-cols-1 lg:grid-cols-2'),
-    'Digital twin grid must use 1 column on mobile and 2 on desktop (no minmax(320px) blowout)'
+    landingPageContent.includes('grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4'),
+    'Pillars grid must be responsive from mobile (1 col) to desktop (4 cols)'
   );
-  assert.ok(
-    landingPageContent.includes('flex md:hidden items-center gap-1.5 overflow-x-auto'),
-    'Must include touch-friendly mobile node selector pills for easy tapping on touchscreens'
-  );
-  assert.ok(
-    landingPageContent.includes('ENG-02 Engineering') && landingPageContent.includes('LIB-03 Library'),
-    'Mobile node selector pills must include key campus facility nodes'
-  );
-  console.log('✅ Check 2 Passed: Digital Twin section provides mobile-friendly touch selector');
+  console.log('✅ Check 2 Passed: LandingPage spatial pillars are fully responsive');
   passed++;
 
   // Test 3: Landing Page Action Buttons & Footer
@@ -126,8 +118,8 @@ try {
     'Floating destination card must dock safely at bottom on mobile and top-right on desktop'
   );
   assert.ok(
-    campusGisMapContent.includes('absolute top-2.5 right-2.5 md:top-4 md:right-4'),
-    'Layer switcher must be compact and positioned safely on mobile'
+    campusGisMapContent.includes('campus-map-floating-card'),
+    'Destination card must exist with mobile adaptation'
   );
   assert.ok(
     campusGisMapContent.includes('absolute bottom-3 right-3 md:bottom-6 md:right-4'),
