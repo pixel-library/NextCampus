@@ -155,7 +155,7 @@ async def publish(
             detail="Explicit administrator confirmation is required before publication.",
         )
 
-    raw_menus = [m.dict() for m in body.menus]
+    raw_menus = [m.model_dump() if hasattr(m, "model_dump") else m.dict() for m in body.menus]
     result = await mess_service.publish_mess_menu(
         facility=body.facility or "Central Mess / Aravalli & Meera Bai Dining Hall",
         menus=raw_menus,

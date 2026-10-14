@@ -135,7 +135,7 @@ async def publish(
         "effectiveFrom": body.effectiveFrom,
     }
 
-    raw_entries = [e.dict() for e in body.entries]
+    raw_entries = [e.model_dump() if hasattr(e, "model_dump") else e.dict() for e in body.entries]
     result = await timetable_service.publish_timetable(
         scope=scope,
         entries=raw_entries,

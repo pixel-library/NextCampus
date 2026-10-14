@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     DB_NAME: str = "nextcampus"
     
     # Authentication & JWT
-    JWT_SECRET: str = "nextcampus_dev_secret_key_2026"
+    JWT_SECRET: str = "nextcampus_dev_secret_key_2026_super_secure"
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRES_IN: str = "7d"  # Parsed in security module to timedelta
     JWT_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
