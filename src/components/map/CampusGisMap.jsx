@@ -20,6 +20,10 @@ import {
   Check,
   X,
   Footprints,
+  Bus,
+  Zap,
+  Clock,
+  Users,
 } from 'lucide-react';
 
 // Exact Centroid of Mewar University, Gangrar, Chittorgarh (Rajasthan, India)
@@ -192,6 +196,60 @@ export const MEWAR_CAMPUS_ROADS = [
   ],
 ];
 
+
+// Authentic Mewar University Campus EV Shuttle Transit Routes & Waypoints
+export const SHUTTLE_DATA = [
+  {
+    id: 'shuttle-1',
+    code: 'EV-01',
+    name: 'EV-01 Campus Express',
+    routeLabel: 'Main Gate 1 ➔ Admin Block ➔ Library ➔ Engineering',
+    color: '#2563EB',
+    tag: 'Academic Arterial',
+    stops: ['Main Campus Gate 1', 'Maharana Pratap Admin Block', 'Central Library', 'Faculty of Engineering'],
+    waypoints: [
+      [25.031923, 74.635568],
+      [25.032583, 74.635492],
+      [25.032817, 74.635477],
+      [25.032776, 74.635674],
+      [25.032549, 74.635781],
+      [25.032143, 74.636623],
+      [25.032583, 74.636486],
+      [25.032858, 74.636388],
+      [25.032583, 74.636486],
+      [25.032143, 74.636623],
+      [25.032074, 74.636327],
+      [25.031951, 74.635872],
+    ],
+    speed: 18.5,
+    occupancy: '14 / 20 Seats',
+    battery: 88,
+  },
+  {
+    id: 'shuttle-2',
+    code: 'EV-02',
+    name: 'EV-02 Hostel & Sports Loop',
+    routeLabel: 'Hostel Village ➔ Cafeteria ➔ Sports Complex ➔ Hospital',
+    color: '#059669',
+    tag: 'Residential Loop',
+    stops: ['Aravalli / Meera Hostels', 'Dining Mess & Cafeteria', 'Sports Arena', 'Mewar Hospital'],
+    waypoints: [
+      [25.034260, 74.636213],
+      [25.034247, 74.635948],
+      [25.033587, 74.636130],
+      [25.033463, 74.635492],
+      [25.033367, 74.635341],
+      [25.033958, 74.635037],
+      [25.034398, 74.635022],
+      [25.034645, 74.635151],
+      [25.034247, 74.635219],
+      [25.034260, 74.635606],
+    ],
+    speed: 16.2,
+    occupancy: '16 / 20 Seats',
+    battery: 94,
+  },
+];
 
 // Official Real-World Buildings & Footprints of Mewar University, Gangrar
 // Accurate annotations matching campus satellite landmarks and user ground-truth
@@ -1267,13 +1325,28 @@ export const CampusGisMap = ({
   const tileLayerRef = useRef(null);
   const perimeterLayerRef = useRef(null);
   const roadsLayerRef = useRef([]);
+  const shuttleMarkersRef = useRef({});
+  const shuttlePathLayersRef = useRef({});
 
   // Map Tile Style: 'satellite' | 'streets'
   const [mapLayerStyle, setMapLayerStyle] = useState('satellite');
   // Toggleable Map Legend
   const [showLegend, setShowLegend] = useState(false);
+  // Campus EV Shuttles Live Tracker State
+  const [showShuttles, setShowShuttles] = useState(true);
+  const [activeShuttlePanel, setActiveShuttlePanel] = useState(false);
+  const [trackedShuttleId, setTrackedShuttleId] = useState(null);
+  const [liveShuttles, setLiveShuttles] = useState(SHUTTLE_DATA);
   // Minimizable active destination card
   const [isDestinationCardMinimized, setIsDestinationCardMinimized] = useState(false);
+
+  // Auto-open shuttle drawer if mobilityMode is 'shuttle'
+  useEffect(() => {
+    if (mobilityMode === 'shuttle') {
+      setActiveShuttlePanel(true);
+      setShowShuttles(true);
+    }
+  }, [mobilityMode]);
 
   // Restore destination card when destination changes
   useEffect(() => {
@@ -1396,6 +1469,128 @@ export const CampusGisMap = ({
     map.removeLayer(tileLayerRef.current);
     tileLayerRef.current = createTileLayer(mapLayerStyle).addTo(map);
   }, [mapLayerStyle]);
+
+  // Live EV Campus Shuttle Real-Time Tracking & Dynamic Path Interpolation Loop
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    if (!showShuttles) {
+      Object.values(shuttleMarkersRef.current).forEach((m) => {
+        try { map.removeLayer(m); } catch {}
+      });
+      shuttleMarkersRef.current = {};
+      Object.values(shuttlePathLayersRef.current).forEach((p) => {
+        try { map.removeLayer(p); } catch {}
+      });
+      shuttlePathLayersRef.current = {};
+      return;
+    }
+
+    // Render subtle dashed transit route paths on map
+    SHUTTLE_DATA.forEach((shuttle) => {
+      if (!shuttlePathLayersRef.current[shuttle.id]) {
+        const polyline = L.polyline(shuttle.waypoints, {
+          color: shuttle.color,
+          weight: 3,
+          opacity: 0.55,
+          dashArray: '6, 8',
+          interactive: false,
+        }).addTo(map);
+        shuttlePathLayersRef.current[shuttle.id] = polyline;
+      }
+    });
+
+    let stepCounter = 0;
+    const interval = setInterval(() => {
+      stepCounter += 1;
+
+      setLiveShuttles((prevShuttles) =>
+        prevShuttles.map((shuttle, sIdx) => {
+          const waypoints = shuttle.waypoints;
+          const totalPoints = waypoints.length;
+          // Offset each shuttle slightly so they don't sync exactly
+          const effectiveStep = (stepCounter + sIdx * 5) % (totalPoints * 10);
+          const currIndex = Math.floor(effectiveStep / 10) % totalPoints;
+          const nextIndex = (currIndex + 1) % totalPoints;
+          const fraction = (effectiveStep % 10) / 10;
+
+          const p1 = waypoints[currIndex];
+          const p2 = waypoints[nextIndex];
+          const lat = p1[0] + (p2[0] - p1[0]) * fraction;
+          const lng = p1[1] + (p2[1] - p1[1]) * fraction;
+
+          // Next stop prediction
+          const nextStopName = shuttle.stops[(currIndex + 1) % shuttle.stops.length] || shuttle.stops[0];
+          const nextEtaMins = Math.max(1, Math.round((1 - fraction) * 3));
+
+          // Update Leaflet marker
+          if (!shuttleMarkersRef.current[shuttle.id]) {
+            const shuttleIcon = L.divIcon({
+              className: 'custom-shuttle-marker',
+              html: `
+                <div style="position:relative; display:flex; flex-direction:column; align-items:center; transform:translate(-50%, -50%); cursor:pointer;">
+                  <div style="background:${shuttle.color}; color:#FFFFFF; font-size:10px; font-weight:800; font-family:monospace; padding:3px 7px; border-radius:999px; box-shadow:0 3px 8px rgba(0,0,0,0.35); border:1.5px solid #FFFFFF; display:flex; align-items:center; gap:3px; white-space:nowrap;">
+                    <span>🚐</span>
+                    <span>${shuttle.code}</span>
+                    <span style="opacity:0.85; font-size:9px;">${shuttle.speed}km/h</span>
+                  </div>
+                  <div style="width:14px; height:14px; border-radius:50%; background:${shuttle.color}; border:2.5px solid #FFFFFF; box-shadow:0 0 10px ${shuttle.color}; margin-top:2px;"></div>
+                </div>
+              `,
+              iconSize: [80, 40],
+              iconAnchor: [40, 20],
+            });
+
+            const marker = L.marker([lat, lng], { icon: shuttleIcon, zIndexOffset: 850 }).addTo(map);
+
+            marker.bindPopup(`
+              <div style="font-family:system-ui, sans-serif; font-size:12px; min-width:210px; padding:2px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; border-bottom:1px solid #E2E8F0; padding-bottom:4px;">
+                  <span style="font-weight:800; color:${shuttle.color}; font-size:13px;">🚐 ${shuttle.name}</span>
+                  <span style="font-size:10px; font-family:monospace; background:${shuttle.color}15; color:${shuttle.color}; padding:2px 6px; border-radius:4px; font-weight:bold;">LIVE GPS</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:4px; color:#475569; font-size:11px;">
+                  <div>Route: <strong style="color:#0F172A;">${shuttle.routeLabel}</strong></div>
+                  <div>Next Stop: <strong style="color:#168567;">${nextStopName}</strong> (~${nextEtaMins} min)</div>
+                  <div>Live Speed: <strong>${shuttle.speed} km/h</strong> • EV Battery: <strong style="color:#059669;">${shuttle.battery}%</strong></div>
+                  <div>Capacity: <strong>${shuttle.occupancy}</strong></div>
+                </div>
+              </div>
+            `);
+
+            shuttleMarkersRef.current[shuttle.id] = marker;
+          } else {
+            shuttleMarkersRef.current[shuttle.id].setLatLng([lat, lng]);
+          }
+
+          if (trackedShuttleId === shuttle.id) {
+            map.panTo([lat, lng], { animate: true, duration: 0.8 });
+          }
+
+          return {
+            ...shuttle,
+            currentLat: lat,
+            currentLng: lng,
+            nextStop: nextStopName,
+            nextEta: `${nextEtaMins} mins`,
+          };
+        })
+      );
+    }, 1200);
+
+    return () => {
+      clearInterval(interval);
+      Object.values(shuttleMarkersRef.current).forEach((m) => {
+        try { map.removeLayer(m); } catch {}
+      });
+      shuttleMarkersRef.current = {};
+      Object.values(shuttlePathLayersRef.current).forEach((p) => {
+        try { map.removeLayer(p); } catch {}
+      });
+      shuttlePathLayersRef.current = {};
+    };
+  }, [showShuttles, trackedShuttleId]);
 
   // Render Highlighted Building Footprint Polygons & Markers
   useEffect(() => {
@@ -2122,11 +2317,140 @@ export const CampusGisMap = ({
         </div>
       )}
 
-      {/* FLOATING BOTTOM-RIGHT QUICK ACTIONS (LOCATE, FIT ROUTE, RECENTER & LEGEND) */}
+      {/* FLOATING CAMPUS TRANSIT & EV SHUTTLE TRACKER PANEL */}
+      {activeShuttlePanel && (
+        <div
+          className="absolute bottom-16 right-3 md:bottom-20 md:right-16 bg-white rounded-xl border border-[var(--border-subtle)] shadow-2xl p-4 min-w-[290px] max-w-[340px] flex flex-col gap-3 animate-fadeIn"
+          style={{ zIndex: 450, backgroundColor: '#FFFFFF' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div style={{ width: '24px', height: '24px', borderRadius: '6px', backgroundColor: '#EFF6FF', color: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Bus size={14} />
+              </div>
+              <div>
+                <span style={{ fontSize: '12px', fontWeight: 800, color: '#0F172A', display: 'block' }}>
+                  Live Campus EV Shuttles
+                </span>
+                <span style={{ fontSize: '10px', color: '#059669', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#059669', display: 'inline-block' }} />
+                  2 Shuttles Active • Zero Emission
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setActiveShuttlePanel(false)}
+              aria-label="Close campus transit panel"
+              style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer', padding: '2px' }}
+            >
+              <X size={15} />
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {liveShuttles.map((shuttle) => (
+              <div
+                key={shuttle.id}
+                style={{
+                  padding: '10px',
+                  borderRadius: '10px',
+                  backgroundColor: trackedShuttleId === shuttle.id ? `${shuttle.color}0D` : '#F8FAFC',
+                  border: trackedShuttleId === shuttle.id ? `1.5px solid ${shuttle.color}` : '1px solid #E2E8F0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '6px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 800, color: shuttle.color }}>
+                      🚐 {shuttle.code}
+                    </span>
+                    <span style={{ fontSize: '9px', fontWeight: 700, backgroundColor: `${shuttle.color}15`, color: shuttle.color, padding: '2px 5px', borderRadius: '4px' }}>
+                      {shuttle.tag}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setTrackedShuttleId(trackedShuttleId === shuttle.id ? null : shuttle.id)}
+                    style={{
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      padding: '3px 8px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      backgroundColor: trackedShuttleId === shuttle.id ? shuttle.color : '#0F172A',
+                      color: '#FFFFFF',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {trackedShuttleId === shuttle.id ? 'Tracking ✓' : 'Track on Map'}
+                  </button>
+                </div>
+
+                <div style={{ fontSize: '11px', color: '#334155', fontWeight: 500, lineHeight: 1.3 }}>
+                  {shuttle.routeLabel}
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', fontSize: '10px', color: '#64748B', backgroundColor: '#FFFFFF', padding: '6px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
+                  <div>Next: <strong style={{ color: '#0F172A' }}>{shuttle.nextStop || shuttle.stops[0]}</strong></div>
+                  <div>ETA: <strong style={{ color: '#168567' }}>{shuttle.nextEta || '< 2 mins'}</strong></div>
+                  <div>Speed: <strong style={{ color: '#0F172A' }}>{shuttle.speed} km/h</strong></div>
+                  <div>EV Battery: <strong style={{ color: '#059669' }}>{shuttle.battery}%</strong></div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border-subtle)', paddingTop: '6px' }}>
+            <span style={{ fontSize: '10.5px', color: '#64748B' }}>Show Routes on Map</span>
+            <button
+              type="button"
+              onClick={() => setShowShuttles(!showShuttles)}
+              style={{
+                fontSize: '10.5px',
+                fontWeight: 700,
+                color: showShuttles ? '#2563EB' : '#94A3B8',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              {showShuttles ? 'Routes Visible ✓' : 'Hidden'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* FLOATING BOTTOM-RIGHT QUICK ACTIONS (LOCATE, FIT ROUTE, RECENTER, SHUTTLES & LEGEND) */}
       <div
         className="absolute bottom-3 right-3 md:bottom-6 md:right-4 flex flex-col gap-2"
         style={{ zIndex: 450 }}
       >
+        <button
+          type="button"
+          onClick={() => setActiveShuttlePanel(!activeShuttlePanel)}
+          title="Campus EV Transit & Live Shuttle Tracker"
+          aria-label="Campus EV Transit & Live Shuttle Tracker"
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '11px',
+            backgroundColor: activeShuttlePanel ? '#2563EB' : 'rgba(255, 255, 255, 0.96)',
+            color: activeShuttlePanel ? '#FFFFFF' : '#2563EB',
+            border: '1px solid var(--border-subtle)',
+            boxShadow: 'var(--shadow-md)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.15s ease',
+          }}
+        >
+          <Bus size={18} />
+        </button>
+
         <button
           type="button"
           onClick={() => setShowLegend(!showLegend)}

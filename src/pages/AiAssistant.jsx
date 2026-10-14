@@ -33,7 +33,12 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   HelpCircle,
-  FileText
+  FileText,
+  Volume2,
+  VolumeX,
+  Calendar,
+  Utensils,
+  BookOpen
 } from 'lucide-react';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
@@ -146,13 +151,32 @@ export function AiAssistant() {
   const [activeSessionId, setActiveSessionId] = useState('h-1');
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [showMobileHistory, setShowMobileHistory] = useState(false);
+  const [speakingMsgId, setSpeakingMsgId] = useState(null);
+  const [voiceTranscript, setVoiceTranscript] = useState('');
 
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
+
+  // Clean up Speech & TTS on unmount
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch {
+          // Ignore abort errors
+        }
+      }
+    };
+  }, []);
 
   const handleStartNewChat = () => {
     setMessages([
@@ -297,13 +321,118 @@ export function AiAssistant() {
   };
 
   const handleToggleVoice = () => {
-    setIsVoiceActive(!isVoiceActive);
-    if (!isVoiceActive) {
+    const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
+
+    if (isVoiceActive) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
+      setIsVoiceActive(false);
+      if (inputValue.trim()) {
+        handleSendMessage();
+      }
+      return;
+    }
+
+    if (!SpeechRecognition) {
+      // Fallback if browser lacks Web Speech API
+      setIsVoiceActive(true);
+      setVoiceTranscript('Listening... (Speech Recognition API not supported, using simulated speech-to-text)');
       setTimeout(() => {
         setIsVoiceActive(false);
-        handleSendMessage('How do I reach the Central Library from Engineering Block?');
-      }, 3500);
+        setVoiceTranscript('');
+        handleSendMessage('When is mid-term exam week?');
+      }, 3000);
+      return;
     }
+
+    try {
+      if (recognitionRef.current) {
+        try { recognitionRef.current.abort(); } catch {}
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        setIsVoiceActive(true);
+        setVoiceTranscript('');
+        setErrorMessage('');
+      };
+
+      recognition.onresult = (event) => {
+        let interimTranscript = '';
+        let finalTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
+        }
+
+        const currentText = finalTranscript || interimTranscript;
+        setVoiceTranscript(currentText);
+        setInputValue(currentText);
+      };
+
+      recognition.onerror = (event) => {
+        setIsVoiceActive(false);
+        if (event.error !== 'no-speech') {
+          setErrorMessage(`Microphone error: ${event.error}`);
+        }
+      };
+
+      recognition.onend = () => {
+        setIsVoiceActive(false);
+        if (inputRef.current?.value?.trim()) {
+          handleSendMessage(inputRef.current.value.trim());
+        }
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch {
+      setIsVoiceActive(false);
+      setErrorMessage('Could not activate microphone. Please check browser permissions.');
+    }
+  };
+
+  const handleSpeakMessage = (msgId, text) => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      setErrorMessage('Audio speech synthesis is not supported on this device/browser.');
+      return;
+    }
+
+    if (speakingMsgId === msgId) {
+      window.speechSynthesis.cancel();
+      setSpeakingMsgId(null);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    // Clean markdown and emojis for smooth voice dictation
+    const cleanSpeech = text
+      .replace(/[*#_~`[\]()]/g, '')
+      .replace(/•/g, ', ')
+      .replace(/⚡|📌|👉|🏛️|✨/g, '')
+      .trim();
+
+    const utterance = new SpeechSynthesisUtterance(cleanSpeech);
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = () => setSpeakingMsgId(msgId);
+    utterance.onend = () => setSpeakingMsgId(null);
+    utterance.onerror = () => setSpeakingMsgId(null);
+
+    window.speechSynthesis.speak(utterance);
   };
 
   const handleRetry = () => {
@@ -528,6 +657,31 @@ export function AiAssistant() {
                                     <span>Category: <strong className="text-[#168567]">{card.category}</strong></span>
                                     <span className="text-[11px] text-slate-500">{card.priority}</span>
                                   </div>
+                                ) : card.type === 'academic_calendar' ? (
+                                  <div className="flex flex-col gap-1.5 text-xs text-slate-600">
+                                    <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-[#168567]" /> <span>Mid-Terms: <strong className="text-slate-900">{card.midTerm}</strong></span></span>
+                                    <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-amber-600" /> <span>Practicals: <strong className="text-slate-900">{card.practicals}</strong></span></span>
+                                    <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-rose-600" /> <span>Finals: <strong className="text-rose-700 font-bold">{card.finals}</strong></span></span>
+                                  </div>
+                                ) : card.type === 'mess_menu' ? (
+                                  <div className="flex flex-col gap-1 text-xs text-slate-600">
+                                    <span>🍳 Breakfast: <strong className="text-slate-800">{card.breakfast}</strong></span>
+                                    <span>🍛 Lunch: <strong className="text-slate-800">{card.lunch}</strong></span>
+                                    <span>☕ Snacks: <strong className="text-slate-800">{card.snacks}</strong></span>
+                                    <span>🍲 Dinner: <strong className="text-[#168567] font-bold">{card.dinner}</strong></span>
+                                  </div>
+                                ) : card.type === 'library_policy' ? (
+                                  <div className="flex flex-col gap-1 text-xs text-slate-600">
+                                    <span>📚 Book Quota: <strong className="text-slate-900">{card.quota}</strong></span>
+                                    <span>⏱️ Overdue Fine: <strong className="text-rose-600">{card.fine}</strong></span>
+                                    <span className="text-[11px] text-[#168567] font-semibold">🏛️ {card.readingHours}</span>
+                                  </div>
+                                ) : card.type === 'academic_policy' ? (
+                                  <div className="flex flex-col gap-1 text-xs text-slate-600">
+                                    <span>📊 Aggregate: <strong className="text-rose-600">{card.standard}</strong></span>
+                                    <span>🏥 Medical Limit: <strong className="text-slate-800">{card.medical}</strong></span>
+                                    <span className="text-[11px] text-slate-500 font-mono">{card.hospital}</span>
+                                  </div>
                                 ) : (
                                   <div className="text-xs text-slate-600">{card.room}</div>
                                 )}
@@ -546,7 +700,22 @@ export function AiAssistant() {
                         </div>
                       )}
 
-                      <span className="text-[10px] font-mono text-slate-400">{msg.time}</span>
+                      <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 mt-1">
+                        <span>{msg.time}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleSpeakMessage(msg.id, msg.text)}
+                          className={`p-1 px-2.5 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
+                            speakingMsgId === msg.id
+                              ? 'bg-[#168567] text-white animate-pulse shadow-xs font-semibold'
+                              : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                          }`}
+                          title={speakingMsgId === msg.id ? 'Stop audio' : 'Listen with Speech Synthesis (TTS)'}
+                        >
+                          {speakingMsgId === msg.id ? <VolumeX size={13} className="text-white" /> : <Volume2 size={13} className="text-[#168567]" />}
+                          <span>{speakingMsgId === msg.id ? 'Stop Speech' : 'Listen Audio'}</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -561,7 +730,7 @@ export function AiAssistant() {
                 </div>
                 <div className="p-3 px-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#168567] animate-ping"></span>
-                  <span>Synthesizing spatial graph &amp; live room telemetries...</span>
+                  <span>Synthesizing campus knowledge base &amp; live room telemetries...</span>
                 </div>
               </div>
             )}
@@ -590,21 +759,35 @@ export function AiAssistant() {
 
           {/* Voice Visualizer Banner */}
           {isVoiceActive && (
-            <div className="p-3 bg-[#EAF5EF] border-t border-[#168567]/20 flex items-center justify-between px-4 animate-in fade-in duration-200">
+            <div className="p-3 bg-[#EAF5EF] border-t border-[#168567]/20 flex flex-col sm:flex-row items-center justify-between px-4 gap-2 animate-in fade-in duration-200">
               <div className="flex items-center gap-3">
-                <span className="w-3 h-3 rounded-full bg-[#168567] animate-ping"></span>
-                <span className="text-xs font-mono font-bold text-[#168567]">
-                  Listening for voice query... Speak now ("How do I reach the library?")
-                </span>
+                <span className="w-3 h-3 rounded-full bg-[#168567] animate-ping shrink-0"></span>
+                <div className="flex flex-col">
+                  <span className="text-xs font-mono font-bold text-[#168567]">
+                    Speech Recognition Active • Speak Clearly
+                  </span>
+                  <span className="text-[11px] text-slate-600 italic">
+                    {voiceTranscript || 'Listening to your microphone... e.g. "When is mid-term exam week?"'}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                {[12, 24, 16, 28, 20, 32, 14, 22].map((h, i) => (
-                  <div
-                    key={i}
-                    className="w-1 bg-[#168567] rounded-full animate-pulse"
-                    style={{ height: `${h}px`, animationDelay: `${i * 0.1}s` }}
-                  ></div>
-                ))}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 mr-2">
+                  {[12, 24, 16, 28, 20, 32, 14, 22].map((h, i) => (
+                    <div
+                      key={i}
+                      className="w-1 bg-[#168567] rounded-full animate-pulse"
+                      style={{ height: `${h}px`, animationDelay: `${i * 0.1}s` }}
+                    ></div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleToggleVoice}
+                  className="px-3 py-1 rounded-lg bg-[#168567] text-white text-[11px] font-bold hover:bg-[#116951] cursor-pointer shadow-xs"
+                >
+                  Done Speaking
+                </button>
               </div>
             </div>
           )}
@@ -613,10 +796,12 @@ export function AiAssistant() {
           <div className="p-2.5 px-4 bg-slate-50/80 border-t border-slate-100 flex items-center gap-2 overflow-x-auto scrollbar-none">
             <span className="text-[11px] font-mono uppercase text-slate-400 font-bold shrink-0">Try Asking:</span>
             {[
-              'Are there quiet study pods free in Central Library?',
+              'When is mid-term exam week?',
+              "What is today's hostel dinner menu?",
+              'Central Library book borrowing rules?',
+              'Minimum 75% attendance policy?',
               'How to reach Room B-204 from Main Campus Gate?',
-              'Report projector glitch in B-204',
-              'When are Prof. Roy office hours?',
+              'Are there quiet study pods free in Central Library?',
               'What is the EV shuttle schedule today?'
             ].map((chip, i) => (
               <button
