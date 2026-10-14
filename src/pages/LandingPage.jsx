@@ -32,6 +32,9 @@ export const LandingPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
+  const isAdminOrStaff = user?.role === 'admin' || user?.role === 'staff' || user?.role === 'care_admin';
+  const targetDashboard = isAdminOrStaff ? '/admin' : '/dashboard';
+
   useEffect(() => {
     if (searchParams.get('login') === 'true' || searchParams.get('auth') === 'true') {
       setIsAuthModalOpen(true);
@@ -79,11 +82,11 @@ export const LandingPage = () => {
           <span style={{ color: '#1B382D' }}>|</span>
           {user ? (
             <Link
-              to={user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard'}
+              to={targetDashboard}
               style={{ color: '#F1F5F9', fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
             >
               <GraduationCap size={13} className="text-amber-400" />
-              <span>Welcome, {user.name}</span>
+              <span>Welcome, {user.name} ({isAdminOrStaff ? 'Admin' : 'Student'})</span>
             </Link>
           ) : (
             <button
@@ -185,9 +188,9 @@ export const LandingPage = () => {
                 variant="primary"
                 size="sm"
                 icon={ArrowRight}
-                onClick={() => navigate(user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard')}
+                onClick={() => navigate(targetDashboard)}
               >
-                {user.role === 'admin' || user.role === 'care_admin' ? 'Admin Console' : 'My Workspace'}
+                {isAdminOrStaff ? 'Admin Console' : 'My Workspace'}
               </Button>
               <Button variant="ghost" size="sm" onClick={logout}>
                 Sign Out
@@ -268,10 +271,10 @@ export const LandingPage = () => {
                 variant="primary"
                 size="md"
                 icon={ArrowRight}
-                onClick={() => navigate(user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard')}
+                onClick={() => navigate(targetDashboard)}
                 className="w-full sm:w-auto px-5 py-3.5"
               >
-                {user.role === 'admin' || user.role === 'care_admin' ? 'Open Admin Console' : 'Open My Workspace'}
+                {isAdminOrStaff ? 'Open Admin Console' : 'Open My Workspace'}
               </Button>
             ) : (
               <button
@@ -478,11 +481,11 @@ export const LandingPage = () => {
 
         <button
           type="button"
-          onClick={() => (user ? navigate(user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard') : setIsAuthModalOpen(true))}
+          onClick={() => (user ? navigate(targetDashboard) : setIsAuthModalOpen(true))}
           className="quick-action-btn justify-center text-center cursor-pointer"
         >
           <Users size={15} />
-          <span>{user ? 'My Workspace' : 'Student & Staff Login'}</span>
+          <span>{user ? (isAdminOrStaff ? 'Admin Console' : 'My Workspace') : 'Student & Staff Login'}</span>
         </button>
       </div>
 
@@ -539,7 +542,7 @@ export const LandingPage = () => {
               </p>
               <button
                 type="button"
-                onClick={() => (user ? navigate(user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard') : setIsAuthModalOpen(true))}
+                onClick={() => (user ? navigate(targetDashboard) : setIsAuthModalOpen(true))}
                 style={{
                   display: 'inline-block',
                   width: '100%',
@@ -585,7 +588,7 @@ export const LandingPage = () => {
               <span style={{ color: '#1B382D' }}>•</span>
               <button
                 type="button"
-                onClick={() => (user ? navigate(user.role === 'admin' || user.role === 'care_admin' ? '/admin' : '/dashboard') : setIsAuthModalOpen(true))}
+                onClick={() => (user ? navigate(targetDashboard) : setIsAuthModalOpen(true))}
                 style={{
                   color: '#9FB3A8',
                   textDecoration: 'none',

@@ -7,6 +7,9 @@ from backend.app.api.routes.skill import router as skill_router
 from backend.app.api.routes.sustainability import router as sustainability_router
 from backend.app.api.routes.ai import router as ai_router
 from backend.app.api.routes.admin import router as admin_router
+from backend.app.api.routes.timetable import router as timetable_router
+from backend.app.api.routes.mess import router as mess_router
+from backend.app.api.routes.gatepass import router as gatepass_router
 
 def create_api_router() -> APIRouter:
     """Create unified router grouping all functional sub-routers."""
@@ -21,4 +24,8 @@ def create_api_router() -> APIRouter:
     api_router.include_router(sustainability_router, prefix="/sustainability")
     api_router.include_router(ai_router, prefix="/ai")
     api_router.include_router(admin_router, prefix="/admin")
+    api_router.include_router(timetable_router, prefix="/timetable")
+    api_router.include_router(mess_router, prefix="/mess")
+    api_router.include_router(gatepass_router, prefix="/gatepass")
     return api_router
+

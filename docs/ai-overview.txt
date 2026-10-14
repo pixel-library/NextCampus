@@ -1,0 +1,75 @@
+================================================================================
+NEXTCAMPUS AI ASSISTANT: SYSTEM OVERVIEW & CAPABILITIES SPECIFICATION
+================================================================================
+Document: docs/ai-overview.txt
+Campus Node: Mewar University (Gangrar, Chittorgarh, Rajasthan, India)
+Runtime Status: IMPLEMENTED, VERIFIED & FULLY INTEGRATED
+Primary Backend: Python 3.11 FastAPI (Port 5000)
+Frontend Tier: React 18 + Vite (Port 5173 / 3000)
+================================================================================
+
+1. EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+NextCampus AI is an institutional campus copilot engineered specifically for
+Mewar University students, faculty, and administrative staff. Unlike generic,
+unconstrained chatbots that hallucinate schedules and policies, NextCampus AI
+is strictly grounded in verified database records (MongoDB + Motor, with resilient
+in-memory fallbacks) and authoritative university ordinances.
+
+The assistant delivers direct, truthful, and context-aware responses across 12
+campus domains, resolving natural conversational follow-ups, relative dates in the
+Asia/Kolkata timezone, and multilingual interactions in English, Hindi, and Hinglish.
+
+
+2. CORE CAPABILITIES
+--------------------------------------------------------------------------------
+A. Academic Timetable Intelligence:
+   - Full schedule lookup by department, course, semester, section, and weekday.
+   - Next lecture determination based on current Indian Standard Time (Asia/Kolkata).
+   - Classroom locations with building codes and instructor assignments.
+   - Zero hallucination: states clearly when a schedule or lecture is unrecorded.
+
+B. Hostel Dining & Mess Menu System:
+   - 7-day cyclical dining roster for Central Mess and hostel dining wings.
+   - Distinct meal services: Breakfast (07:30–09:15), Lunch (12:30–14:30),
+     Evening Snacks (17:00–18:15), and Dinner (19:45–21:45).
+   - Distinguishes broad queries ("today mess menu") from specific meals ("today's lunch").
+   - Resolves relative day names ("tomorrow", "kal", "Monday", "this weekend").
+
+C. Campus Spatial Navigation & GIS Wayfinding:
+   - Step-by-step turn-by-turn routing based on authentic satellite coordinates.
+   - ADA-compliant step-free routing across skybridges and ramps.
+   - Covers all key facilities: Alan Turing Hall (ENG-02), Maharana Pratap Block (ADM-01),
+     Central Library (LIB-03), Central Mess (CAF-05), Gate 1 (NH-48), Gate 2,
+     Mewar Campus Temple & Meditation Shrine, Parking Zone, Football Ground, Hostels.
+
+D. University Policies & Academic Ordinances:
+   - Attendance Ordinance §4.1: Mandatory 75% rule, medical condonation procedures
+     (65%–74.9% via Mewar University Hospital certificates), detention threshold (<65%).
+   - Central Library Ordinance §2.4: 4 books (UG) / 6 books (PG), 14-day loan duration,
+     ₹2/day overdue fine, 24/7 reading commons.
+   - Academic Calendar & Datesheets: Mid-Term Theory (Oct 20–25), Practical Vivas (Nov 24–28),
+     End-Term Examinations (Dec 1–15), Winter Break (Dec 18–Jan 4).
+   - Zero-Emission Electric Campus Shuttle Transit: Route A & B stops, 10–15 min frequency.
+
+E. Administrative Updates & Safe Publishing Workflow:
+   - File ingestion supporting Excel (.xlsx via openpyxl), CSV (.csv), and PDF (.pdf).
+   - Automated conflict detection: catches overlapping rooms, duplicate times, and format errors.
+   - Validation preview before changes take effect.
+   - Atomic publication with explicit confirmation requirement.
+   - Complete version history with instant rollback capability.
+   - Immutable audit logging tracking who updated what, when, and from what version.
+   - Strict Role-Based Access Control (RBAC): Write operations restricted to admin role.
+
+
+3. RESPONSE DESIGN & BEHAVIORAL POLICY
+--------------------------------------------------------------------------------
+- Tone: Professional, direct, respectful, and helpful.
+- Adaptive Length: Single-paragraph concise answers for simple factual questions;
+  structured markdown bulleted summaries for complex policies or timetables.
+- No Artificial Fluff: Omits repetitive robotic greetings on every message turn.
+- Multilingual Naturality: Speaks the user's language (English, Hindi, or Hinglish)
+  without broken translation artifacts.
+- Interactive Rich Cards: Returns structured JSON cards (route, timetable, mess menu,
+  policy, care ticket) that render natively in the NextCampus React chat workspace.
+================================================================================

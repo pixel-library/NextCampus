@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 import {
@@ -7,38 +7,20 @@ import {
   Layers,
   DoorOpen,
   Sliders,
-  Wrench,
-  Zap,
-  Thermometer,
-  Lock,
-  Unlock,
-  ShieldCheck,
   CheckCircle2,
   AlertTriangle,
-  Trash2,
-  Edit3,
   Plus,
   Search,
   Download,
   RefreshCw,
-  Activity,
-  ArrowRight,
+  Compass,
+  Edit3,
+  Trash2,
   X,
   Check,
-  Compass,
-  FileText,
-  Flame,
-  Radio,
-  MapPin,
-  Users,
-  Eye,
-  SlidersHorizontal,
-  Lightbulb
+  Users
 } from 'lucide-react';
 
-// ============================================================================
-// DATA: Comprehensive Mewar University Campus Facilities & Spatial Nodes
-// ============================================================================
 const INITIAL_MEWAR_BUILDINGS = [
   {
     _id: 'bldg-eng02',
@@ -47,18 +29,13 @@ const INITIAL_MEWAR_BUILDINGS = [
     precinct: 'North Academic Promenade',
     totalFloors: 4,
     departments: ['School of Computing', 'Autonomous Systems', 'Robotics & AI Lab', 'VLSI Design'],
-    grossFloorArea: 14200,
-    powerSubstation: 'North 11kV Substation',
-    loadPercentage: 84,
-    status: 'open',
-    commissionedYear: 2018,
     category: 'academic',
-    image: 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80',
-    floors: [
-      { floorNumber: 'Level 2', name: 'Cybernetics & High-Perf Computing Labs', cadVersion: 'CAD v2.4', roomsCount: 16 },
-      { floorNumber: 'Level 1', name: 'Undergraduate Laboratories & Hardware', cadVersion: 'CAD v2.2', roomsCount: 14 },
-      { floorNumber: 'Level 3', name: 'Faculty Research Suites & AI Farm', cadVersion: 'CAD v2.1', roomsCount: 12 },
-      { floorNumber: 'Ground', name: 'Foyer, Main Atrium & Lecture Theatres', cadVersion: 'CAD v2.0', roomsCount: 8 }
+    status: 'open',
+    rooms: [
+      { roomNumber: 'B-204', name: 'Multi-Media Lecture Theatre', type: 'Lecture Theatre', capacity: 60, status: 'in-use', amenities: ['Laser Projector', 'Smart Board', 'Audio System'] },
+      { roomNumber: 'B-203', name: 'Distributed Systems & Cloud Lab', type: 'Computer Lab', capacity: 40, status: 'available', amenities: ['40 Workstations', 'Gigabit Ethernet', 'AC'] },
+      { roomNumber: 'ENG-101', name: 'Main Engineering Lecture Hall', type: 'Lecture Theatre', capacity: 120, status: 'in-use', amenities: ['Dual Projectors', 'Wireless Mic', 'Tiered Seating'] },
+      { roomNumber: 'ENG-305', name: 'AI Research & Robotics Suite', type: 'Research Lab', capacity: 25, status: 'available', amenities: ['GPU Cluster Access', 'Workbenches', 'Soldering Stations'] }
     ]
   },
   {
@@ -68,17 +45,12 @@ const INITIAL_MEWAR_BUILDINGS = [
     precinct: 'Central Administrative Plaza',
     totalFloors: 3,
     departments: ['Vice Chancellor Secretariat', 'Academic Affairs', 'Examination Registry', 'Accounts'],
-    grossFloorArea: 12500,
-    powerSubstation: 'Main Grid Feed 33kV',
-    loadPercentage: 62,
-    status: 'open',
-    commissionedYear: 2012,
     category: 'academic',
-    image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80',
-    floors: [
-      { floorNumber: 'Ground', name: 'Student Services Registry & Council', cadVersion: 'CAD v1.8', roomsCount: 10 },
-      { floorNumber: 'Level 1', name: 'Deans Office & Syndicate Boardroom', cadVersion: 'CAD v1.9', roomsCount: 8 },
-      { floorNumber: 'Level 2', name: 'Conference Auditorium & Archives', cadVersion: 'CAD v1.9', roomsCount: 6 }
+    status: 'open',
+    rooms: [
+      { roomNumber: 'ADM-101', name: 'Registrar & Student Affairs', type: 'Administrative Office', capacity: 20, status: 'in-use', amenities: ['Helpdesk Counters', 'Waiting Area'] },
+      { roomNumber: 'ADM-201', name: 'Syndicate & Board Room', type: 'Conference Hall', capacity: 35, status: 'available', amenities: ['Video Conferencing', 'Display Screens'] },
+      { roomNumber: 'ADM-205', name: 'Examination Evaluation Wing', type: 'Secure Archive', capacity: 30, status: 'in-use', amenities: ['Biometric Access', 'Lockers'] }
     ]
   },
   {
@@ -87,37 +59,27 @@ const INITIAL_MEWAR_BUILDINGS = [
     code: 'LIB-03',
     precinct: 'East Knowledge Commons',
     totalFloors: 3,
-    departments: ['Central Lending Stacks', 'Digital Media Archive', 'Acoustic Study Pods', 'Reference Wing'],
-    grossFloorArea: 16800,
-    powerSubstation: 'East 11kV Substation',
-    loadPercentage: 48,
-    status: 'open',
-    commissionedYear: 2016,
+    departments: ['Central Lending Stacks', 'Digital Media Archive', 'Study Commons', 'Reference Wing'],
     category: 'facility',
-    image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80',
-    floors: [
-      { floorNumber: 'Ground', name: 'Main Stacks & Turnstile Ingest', cadVersion: 'CAD v2.1', roomsCount: 12 },
-      { floorNumber: 'Level 1', name: 'Periodicals, E-Resource Centre', cadVersion: 'CAD v2.1', roomsCount: 10 },
-      { floorNumber: 'Level 2', name: 'Acoustic Solo Pods & Quiet Bays', cadVersion: 'CAD v2.4', roomsCount: 14 }
+    status: 'open',
+    rooms: [
+      { roomNumber: 'LIB-G01', name: 'Lending Stacks & Turnstile Ingest', type: 'Open Library', capacity: 150, status: 'in-use', amenities: ['RFID Self-Checkout', 'OPAC Terminals'] },
+      { roomNumber: 'LIB-102', name: 'Digital Periodicals & E-Resources', type: 'Computer Commons', capacity: 50, status: 'available', amenities: ['50 Desktop Terminals', 'High-Speed Wi-Fi'] },
+      { roomNumber: 'LIB-206', name: 'Quiet Study Bays & Pods', type: 'Study Pods', capacity: 40, status: 'available', amenities: ['Acoustic Partitioning', 'Power Outlets'] }
     ]
   },
   {
-    _id: 'bldg-aud04',
-    name: 'Mewar University Central Auditorium',
-    code: 'AUD-04',
-    precinct: 'South Convocation Grounds',
+    _id: 'bldg-caf05',
+    name: 'Central Dining Hall & Cafeteria',
+    code: 'CAF-05',
+    precinct: 'Central Services Wing',
     totalFloors: 2,
-    departments: ['Cultural Arts Guild', 'Convocation Grand Stage', 'Acoustic Projection Suites'],
-    grossFloorArea: 9400,
-    powerSubstation: 'South Transformer 11kV',
-    loadPercentage: 20,
-    status: 'open',
-    commissionedYear: 2019,
+    departments: ['Hostel Mess Ground Floor', 'Executive Dining Wing', 'Student Food Court'],
     category: 'facility',
-    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80',
-    floors: [
-      { floorNumber: 'Ground', name: '1200-Seat Tiered Auditorium Hall', cadVersion: 'CAD v2.0', roomsCount: 4 },
-      { floorNumber: 'Level 1', name: 'Balcony Tier & AV Broadcast Rig', cadVersion: 'CAD v2.0', roomsCount: 4 }
+    status: 'open',
+    rooms: [
+      { roomNumber: 'CAF-G01', name: 'Hostel Dining Hall (Ground)', type: 'Dining Commons', capacity: 350, status: 'in-use', amenities: ['Buffet Service Counters', 'Handwash Stations'] },
+      { roomNumber: 'CAF-101', name: 'First Floor Student Food Court', type: 'Cafeteria', capacity: 120, status: 'available', amenities: ['Kiosks', 'Air Conditioning'] }
     ]
   }
 ];
@@ -126,117 +88,37 @@ export function CampusManagement() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext) || {};
 
-  // Data states
   const [buildings, setBuildings] = useState(INITIAL_MEWAR_BUILDINGS);
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [successToast, setSuccessToast] = useState('');
-
-  // Selected entities
   const [selectedFacilityCode, setSelectedFacilityCode] = useState('ENG-02');
-  const [selectedFloor, setSelectedFloor] = useState('Level 2');
-  const [activeTab, setActiveTab] = useState('buildings'); // buildings, depts, floors, rooms, assets
-
-  // Filters & Search
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('load');
-  const [selectedBuildingIds, setSelectedBuildingIds] = useState(['ENG-02']);
+  const [successToast, setSuccessToast] = useState('');
 
-  // Modals & Panels
+  // Modals
   const [showAddBuildingModal, setShowAddBuildingModal] = useState(false);
-  const [editingBuilding, setEditingBuilding] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(null);
-  const [confirmCascade, setConfirmCascade] = useState(false);
-  const [deleteError, setDeleteError] = useState('');
   const [showAddRoomModal, setShowAddRoomModal] = useState(false);
-
-  // Building Form
   const [buildingForm, setBuildingForm] = useState({
     name: '',
     code: '',
-    precinct: 'North Academic Promenade',
-    totalFloors: 4,
+    precinct: '',
+    totalFloors: 3,
     departments: '',
-    grossFloorArea: 14200,
-    cadSchema: 'Auto-Import from Revit Cloud (IFC4)',
     category: 'academic'
   });
-
-  // Room Quick Configuration Editor State (with IoT Overrides)
-  const [roomConfig, setRoomConfig] = useState({
-    _id: 'rm-b204',
-    roomNumber: 'B-204',
-    name: 'Multi-Media Lecture Theatre',
-    type: 'Multi-Media Theatre',
-    capacity: 60,
-    status: 'occupied',
-    building: 'Faculty of Engineering & Technology',
-    floor: 'Level 2',
-    temperature: 21.8,
-    isLockSecured: true,
-    lightingMode: 'Lecture Presentation (Dimmable)',
-    hvacEcoMode: true,
-    features: ['Dual 4K Laser Projector', 'CO2 & Air Quality', 'NFC Smart Lock', 'Spatial Mic Array'],
-    timetableRule: 'Automated live lock sync via Mewar Timetable Core API'
-  });
-
-  const [newEquipmentTag, setNewEquipmentTag] = useState('');
-  const [showTagInput, setShowTagInput] = useState(false);
-
-  // New Room Form State
-  const [newRoomForm, setNewRoomForm] = useState({
+  const [roomForm, setRoomForm] = useState({
     roomNumber: '',
     name: '',
-    type: 'Smart Classrooms',
+    type: 'Classroom',
     capacity: 40,
     status: 'available',
-    features: 'Dual 4K Laser Projector, NFC Smart Lock'
+    amenities: 'Projector, Whiteboard'
   });
-
-  useEffect(() => {
-    fetchCampusData();
-  }, []);
-
-  // Keyboard accessibility: Escape to dismiss facility modal
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && showAddBuildingModal) {
-        setShowAddBuildingModal(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showAddBuildingModal]);
-
-  const fetchCampusData = async () => {
-    setLoading(true);
-    try {
-      const [bldRes, rmRes] = await Promise.all([
-        api.get('/campus/locations').catch(() => null),
-        api.get('/smartrooms/rooms').catch(() => null)
-      ]);
-
-      if (bldRes && bldRes.success && Array.isArray(bldRes.data) && bldRes.data.length > 0) {
-        setBuildings(bldRes.data);
-      }
-      if (rmRes && rmRes.success && Array.isArray(rmRes.data)) {
-        setRooms(rmRes.data);
-      }
-    } catch {
-      // Fallback in memory
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const showToast = (msg) => {
     setSuccessToast(msg);
     setTimeout(() => setSuccessToast(''), 3500);
   };
 
-  // Active facility object
   const activeFacility = useMemo(() => {
     return (
       buildings.find((b) => b.code === selectedFacilityCode || b._id === selectedFacilityCode) ||
@@ -244,175 +126,75 @@ export function CampusManagement() {
     );
   }, [buildings, selectedFacilityCode]);
 
-  // Rooms for active facility and floor
-  const activeFacilityRooms = useMemo(() => {
-    return rooms.filter((r) => {
-      const bMatch =
-        r.buildingCode === activeFacility?.code ||
-        r.building?.toLowerCase().includes(activeFacility?.name?.toLowerCase().slice(0, 6));
-      const fMatch = !selectedFloor || r.floor?.toLowerCase() === selectedFloor?.toLowerCase();
-      return bMatch && fMatch;
-    });
-  }, [rooms, activeFacility, selectedFloor]);
-
-  // Filtered & sorted buildings list
   const filteredBuildings = useMemo(() => {
-    return buildings
-      .filter((b) => {
-        const q = searchQuery.toLowerCase();
-        const matchesSearch =
-          !q ||
-          b.name.toLowerCase().includes(q) ||
-          b.code.toLowerCase().includes(q) ||
-          (b.departments && b.departments.some((d) => d.toLowerCase().includes(q))) ||
-          (b.precinct && b.precinct.toLowerCase().includes(q));
+    return buildings.filter((b) => {
+      const matchSearch =
+        b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        b.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (b.precinct && b.precinct.toLowerCase().includes(searchQuery.toLowerCase()));
 
-        const matchesCategory =
-          categoryFilter === 'all' ||
-          (categoryFilter === 'academic' && (b.category === 'academic' || b.category === 'research')) ||
-          (categoryFilter === 'facility' && (b.category === 'facility' || b.category === 'library')) ||
-          b.category === categoryFilter;
+      const matchCategory =
+        categoryFilter === 'all' || b.category === categoryFilter;
 
-        const matchesStatus =
-          statusFilter === 'all' ||
-          (statusFilter === 'active' && b.status === 'open') ||
-          (statusFilter === 'high' && (b.loadPercentage || 70) > 75) ||
-          (statusFilter === 'maint' && b.status === 'under_maintenance');
+      return matchSearch && matchCategory;
+    });
+  }, [buildings, searchQuery, categoryFilter]);
 
-        return matchesSearch && matchesCategory && matchesStatus;
-      })
-      .sort((a, b) => {
-        if (sortBy === 'floors') return (b.totalFloors || 4) - (a.totalFloors || 4);
-        if (sortBy === 'load') return (b.loadPercentage || 70) - (a.loadPercentage || 70);
-        if (sortBy === 'code') return a.code.localeCompare(b.code);
-        return a.name.localeCompare(b.name);
-      });
-  }, [buildings, searchQuery, categoryFilter, statusFilter, sortBy]);
-
-  // Handle building selection
-  const handleSelectFacility = (code) => {
-    setSelectedFacilityCode(code);
-    const target = buildings.find((b) => b.code === code);
-    if (target?.floors && target.floors.length > 0) {
-      setSelectedFloor(target.floors[0].floorNumber);
-    }
-  };
-
-  // Open Building Modal for Create / Edit
-  const handleOpenAddBuilding = (buildingToEdit = null) => {
-    if (buildingToEdit) {
-      setEditingBuilding(buildingToEdit);
-      setBuildingForm({
-        name: buildingToEdit.name,
-        code: buildingToEdit.code,
-        precinct: buildingToEdit.precinct || 'North Academic Promenade',
-        totalFloors: buildingToEdit.totalFloors || 4,
-        departments: Array.isArray(buildingToEdit.departments)
-          ? buildingToEdit.departments.join(', ')
-          : buildingToEdit.departments || '',
-        grossFloorArea: buildingToEdit.grossFloorArea || 14200,
-        cadSchema: buildingToEdit.cadSchema || 'Auto-Import from Revit Cloud (IFC4)',
-        category: buildingToEdit.category || 'academic'
-      });
-    } else {
-      setEditingBuilding(null);
-      setBuildingForm({
-        name: '',
-        code: `ENG-0${buildings.length + 1}`,
-        precinct: 'North Academic Promenade',
-        totalFloors: 4,
-        departments: 'School of Advanced AI, High-Performance Computing',
-        grossFloorArea: 16500,
-        cadSchema: 'Auto-Import from Revit Cloud (IFC4)',
-        category: 'academic'
-      });
-    }
-    setShowAddBuildingModal(true);
-  };
-
-  // Save Building
-  const handleSaveBuilding = async (e) => {
+  const handleAddBuildingSubmit = (e) => {
     e.preventDefault();
-    if (!buildingForm.name.trim() || !buildingForm.code.trim()) {
-      alert('Building name and code are required.');
-      return;
-    }
+    if (!buildingForm.name.trim() || !buildingForm.code.trim()) return;
 
-    const payload = {
-      ...buildingForm,
-      departments: buildingForm.departments.split(',').map((d) => d.trim()).filter(Boolean)
+    const newBuilding = {
+      _id: `bldg-${Date.now()}`,
+      name: buildingForm.name.trim(),
+      code: buildingForm.code.trim().toUpperCase(),
+      precinct: buildingForm.precinct.trim() || 'Main Campus',
+      totalFloors: Number(buildingForm.totalFloors) || 3,
+      departments: buildingForm.departments ? buildingForm.departments.split(',').map((d) => d.trim()) : ['General'],
+      category: buildingForm.category,
+      status: 'open',
+      rooms: []
     };
 
-    if (editingBuilding) {
-      setBuildings((prev) =>
-        prev.map((b) => (b.code === editingBuilding.code ? { ...b, ...payload } : b))
-      );
-      showToast(`Building ${payload.name} updated successfully.`);
-    } else {
-      const newBldg = {
-        _id: `bldg-${Date.now()}`,
-        ...payload,
-        loadPercentage: 45,
-        status: 'open',
-        commissionedYear: 2026,
-        floors: [
-          { floorNumber: 'Ground', name: 'Main Lobby & Suites', cadVersion: 'CAD v2.0', roomsCount: 6 },
-          { floorNumber: 'Level 1', name: 'Academic Labs', cadVersion: 'CAD v2.0', roomsCount: 10 }
-        ]
-      };
-      setBuildings((prev) => [newBldg, ...prev]);
-      setSelectedFacilityCode(newBldg.code);
-      showToast(`Building ${payload.name} created and registered in GIS.`);
-    }
+    setBuildings((prev) => [...prev, newBuilding]);
+    setSelectedFacilityCode(newBuilding.code);
     setShowAddBuildingModal(false);
+    setBuildingForm({ name: '', code: '', precinct: '', totalFloors: 3, departments: '', category: 'academic' });
+    showToast(`Added ${newBuilding.name} (${newBuilding.code}) to campus registry.`);
   };
 
-  // Trigger Rapid Maintenance Dispatch directly from room inspector
-  const handleTriggerMaintenanceDispatch = (room) => {
-    navigate(
-      `/complaints#submitForm?room=${room.roomNumber}&building=${activeFacility.name}&priority=high`
-    );
-  };
-
-  // Save Quick Room Configuration
-  const handleSaveRoomConfig = (e) => {
+  const handleAddRoomSubmit = (e) => {
     e.preventDefault();
-    setRooms((prev) =>
-      prev.map((r) =>
-        r.roomNumber === roomConfig.roomNumber
-          ? {
-              ...r,
-              capacity: Number(roomConfig.capacity),
-              type: roomConfig.type,
-              status: roomConfig.status,
-              features: roomConfig.features
-            }
-          : r
+    if (!roomForm.roomNumber.trim() || !roomForm.name.trim()) return;
+
+    const newRoom = {
+      roomNumber: roomForm.roomNumber.trim().toUpperCase(),
+      name: roomForm.name.trim(),
+      type: roomForm.type,
+      capacity: Number(roomForm.capacity) || 40,
+      status: roomForm.status,
+      amenities: roomForm.amenities ? roomForm.amenities.split(',').map((a) => a.trim()) : ['Projector']
+    };
+
+    setBuildings((prev) =>
+      prev.map((b) =>
+        b.code === activeFacility.code
+          ? { ...b, rooms: [...(b.rooms || []), newRoom] }
+          : b
       )
     );
-    showToast(`SmartRoom ${roomConfig.roomNumber} parameters & IoT locks updated.`);
+
+    setShowAddRoomModal(false);
+    setRoomForm({ roomNumber: '', name: '', type: 'Classroom', capacity: 40, status: 'available', amenities: 'Projector, Whiteboard' });
+    showToast(`Added Room ${newRoom.roomNumber} to ${activeFacility.name}.`);
   };
 
-  // Toggle IoT NFC Lock
-  const handleToggleLock = () => {
-    setRoomConfig((prev) => ({
-      ...prev,
-      isLockSecured: !prev.isLockSecured
-    }));
-    showToast(
-      `Door reader for ${roomConfig.roomNumber}: ${
-        !roomConfig.isLockSecured ? 'NFC Lock Engaged (Secured)' : 'Unlocked (Open Access)'
-      }`
-    );
-  };
-
-  // Export Spatial Blueprint as CSV
-  const handleExportBlueprint = () => {
-    const csvHeader = 'Building Code,Building Name,Category,Precinct,Floors,GFA (m2),Congestion Load (%)\n';
+  const handleExportCSV = () => {
+    const csvHeader = 'Building Code,Building Name,Category,Precinct,Floors,Total Rooms\n';
     const csvRows = buildings
       .map(
         (b) =>
-          `"${b.code}","${b.name}","${b.category}","${b.precinct || ''}",${b.totalFloors || 4},${b.grossFloorArea || 14000},${b.loadPercentage || 75}`
+          `"${b.code}","${b.name}","${b.category}","${b.precinct || ''}",${b.totalFloors || 3},${b.rooms?.length || 0}`
       )
       .join('\n');
 
@@ -420,110 +202,76 @@ export function CampusManagement() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `Mewar_Spatial_Masterplan_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `Campus_Spaces_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('Mewar University spatial masterplan CSV downloaded successfully.');
+    showToast('Campus facilities exported to CSV.');
   };
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16 text-slate-800">
       {/* Toast Notification */}
       {successToast && (
-        <div className="fixed top-20 right-8 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 border border-slate-700 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="fixed top-20 right-8 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 border border-slate-700 animate-in fade-in duration-200">
           <CheckCircle2 className="w-5 h-5 text-emerald-400" />
           <span className="text-xs font-semibold">{successToast}</span>
         </div>
       )}
 
-      {/* Operational Header Kicker */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200/80">
-        <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-          <span className="text-[#9E153E] font-bold uppercase tracking-wider">
-            Facility Asset Inventory &amp; Spatial CAD Master Data
-          </span>
-          <span className="hidden sm:inline">• Mewar University • Node: MEWAR-CORE-V4.4</span>
-        </div>
-
-        <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
-          <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 shadow-xs flex items-center gap-1.5">
-            <Radio className="w-3.5 h-3.5 text-emerald-600" />
-            <span>LoRaWAN Mesh: 99.8% Nominal</span>
-          </span>
-          <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 shadow-xs flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-sky-600" />
-            <span>BIM / GIS Synced</span>
-          </span>
-        </div>
-      </div>
-
-      {/* Page Title & Action Bar */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      {/* Header Bar */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Campus Infrastructure &amp; Space Management
+              Campus Facilities &amp; Space Directory
             </h1>
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-50 text-[#9E153E] border border-rose-200 font-mono font-bold">
               Admin Ops
             </span>
           </div>
           <p className="text-sm text-slate-500 max-w-3xl mt-1">
-            Authoritative spatial directory of Mewar academic blocks, department floor topologies, capacity threshold heatmaps, and smart room IoT controls.
+            Authoritative registry of academic blocks, lecture halls, computer laboratories, and dining facilities.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 shrink-0">
           <button
-            onClick={() => showToast('BIM / GIS Synchronized with Revit Cloud & Campus LoRaWAN mesh (12ms latency).')}
+            onClick={handleExportCSV}
             className="px-3 py-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
           >
-            <RefreshCw className="w-3.5 h-3.5 text-[#9E153E]" />
-            <span>Sync BIM Mesh</span>
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>Export CSV</span>
           </button>
 
           <button
-            onClick={handleExportBlueprint}
-            className="px-3 py-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
-          >
-            <Download className="w-3.5 h-3.5 text-sky-600" />
-            <span>Export Masterplan CSV</span>
-          </button>
-
-          <button
-            onClick={() => handleOpenAddBuilding()}
+            onClick={() => setShowAddBuildingModal(true)}
             className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#9E153E] to-[#BE123C] hover:from-[#881337] hover:to-[#9E153E] text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all active:scale-[0.98] cursor-pointer"
           >
             <Plus className="w-4 h-4 text-white" />
-            <span>Add Facility Node</span>
+            <span>Add Building</span>
           </button>
         </div>
       </div>
 
-      {/* =========================================================================
-          QUICK KPI TILES & CAPACITY CONGESTION GAUGES
-          ========================================================================= */}
+      {/* Quick Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-slate-500 text-xs">
-            <span className="font-mono uppercase tracking-wider font-semibold">Registered Blocks</span>
+            <span className="font-mono uppercase tracking-wider font-semibold">Registered Buildings</span>
             <div className="w-7 h-7 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center">
               <Building2 className="w-4 h-4 text-[#9E153E]" />
             </div>
           </div>
           <div className="mt-3">
             <div className="text-3xl font-extrabold text-slate-900">{buildings.length}</div>
-            <div className="text-xs text-slate-500 mt-1 flex items-center gap-1.5">
-              <span className="text-[#9E153E] font-semibold">4 Academic</span> • <span>2 Residential</span>
-            </div>
+            <div className="text-xs text-slate-500 mt-1">Academic &amp; Student Facilities</div>
           </div>
         </div>
 
         <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-slate-500 text-xs">
-            <span className="font-mono uppercase tracking-wider font-semibold">Floor Plates Monitored</span>
+            <span className="font-mono uppercase tracking-wider font-semibold">Total Floors</span>
             <div className="w-7 h-7 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-center">
               <Layers className="w-4 h-4 text-sky-600" />
             </div>
@@ -532,465 +280,216 @@ export function CampusManagement() {
             <div className="text-3xl font-extrabold text-slate-900">
               {buildings.reduce((acc, b) => acc + (b.totalFloors || 3), 0)}
             </div>
-            <div className="text-xs text-sky-700 font-medium mt-1 flex items-center gap-1">
-              <span>100% 3D CAD Twin Coverage</span>
-            </div>
+            <div className="text-xs text-sky-700 font-medium mt-1">Across all registered blocks</div>
           </div>
         </div>
 
         <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-slate-500 text-xs">
-            <span className="font-mono uppercase tracking-wider font-semibold">SmartRooms Monitored</span>
-            <div className="w-7 h-7 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-center">
-              <DoorOpen className="w-4 h-4 text-purple-600" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-3xl font-extrabold text-slate-900">184</div>
-            <div className="text-xs text-slate-500 mt-1 flex items-center gap-1.5">
-              <span className="text-emerald-700 font-semibold">92 Available</span> • <span>92 Occupied</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-500 text-xs">
-            <span className="font-mono uppercase tracking-wider font-semibold">Gross Floor Area</span>
+            <span className="font-mono uppercase tracking-wider font-semibold">Cataloged Rooms</span>
             <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center">
-              <Activity className="w-4 h-4 text-emerald-600" />
+              <DoorOpen className="w-4 h-4 text-emerald-600" />
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-3xl font-extrabold text-slate-900">52,900 m²</div>
-            <div className="text-xs text-emerald-700 font-medium mt-1">
-              <span>88.2% Active Utilization</span>
+            <div className="text-3xl font-extrabold text-slate-900">
+              {buildings.reduce((acc, b) => acc + (b.rooms?.length || 0), 0)}
+            </div>
+            <div className="text-xs text-emerald-700 font-medium mt-1">Theatres, Labs &amp; Offices</div>
+          </div>
+        </div>
+
+        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-slate-500 text-xs">
+            <span className="font-mono uppercase tracking-wider font-semibold">Campus Map Sync</span>
+            <div className="w-7 h-7 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-center">
+              <Compass className="w-4 h-4 text-purple-600" />
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* =========================================================================
-          CONTROL & SEARCH BAR
-          ========================================================================= */}
-      <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col gap-3">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-          <div className="md:col-span-5 relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search facilities by name, code (ENG-02, ADM-01), lab..."
-              className="w-full h-10 pl-10 pr-4 rounded-xl bg-slate-50 hover:bg-slate-50/80 focus:bg-white border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E] transition-all"
-            />
-          </div>
-
-          <div className="md:col-span-3">
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-full h-10 px-3 rounded-xl bg-slate-50 hover:bg-slate-50/80 focus:bg-white border border-slate-200 text-xs text-slate-800 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E] transition-all font-medium"
-            >
-              <option value="all">Category: All Facilities</option>
-              <option value="academic">Academic &amp; Research</option>
-              <option value="facility">Library &amp; Commons</option>
-            </select>
-          </div>
-
-          <div className="md:col-span-3">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full h-10 px-3 rounded-xl bg-slate-50 hover:bg-slate-50/80 focus:bg-white border border-slate-200 text-xs text-slate-800 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E] transition-all font-medium"
-            >
-              <option value="load">Sort: Congestion Load (%) ↓</option>
-              <option value="floors">Sort: Floor Count ↓</option>
-              <option value="code">Sort: Facility Code (A-Z)</option>
-            </select>
-          </div>
-
-          <div className="md:col-span-1 flex justify-end">
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setCategoryFilter('all');
-                setSortBy('load');
-              }}
-              className="w-full h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border border-slate-200 flex items-center justify-center transition-colors cursor-pointer"
-              title="Reset Filters"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
+          <div className="mt-3">
+            <div className="text-2xl font-extrabold text-slate-900">Active GIS</div>
+            <div className="text-xs text-purple-700 font-medium mt-1">Grounded AI Navigation</div>
           </div>
         </div>
       </div>
 
-      {/* =========================================================================
-          PRIMARY WORKSPACE: FACILITIES REGISTRY & ACTIVE INSPECTOR
-          ========================================================================= */}
+      {/* Search & Filter */}
+      <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col sm:flex-row gap-3 items-center justify-between">
+        <div className="relative flex-1 w-full">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search buildings by name or code (e.g., ENG-02, ADM-01)..."
+            className="w-full h-10 pl-10 pr-4 rounded-xl bg-slate-50 focus:bg-white border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E] transition-all"
+          />
+        </div>
+
+        <div className="w-full sm:w-48">
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="w-full h-10 px-3 rounded-xl bg-slate-50 focus:bg-white border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E] transition-all font-medium cursor-pointer"
+          >
+            <option value="all">All Categories</option>
+            <option value="academic">Academic Blocks</option>
+            <option value="facility">Student Facilities &amp; Dining</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Main Workspace (Split Grid) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* LEFT COLUMN: MASTER FACILITIES REGISTRY (7 COLS) */}
-        <div className="lg:col-span-7 flex flex-col gap-4">
+        {/* Left: Buildings Registry (6 cols) */}
+        <div className="lg:col-span-6 flex flex-col gap-4">
           <div className="rounded-2xl bg-white border border-slate-200/90 shadow-xs overflow-hidden">
             <div className="p-4 bg-slate-50/70 border-b border-slate-200 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Building2 className="w-4 h-4 text-[#9E153E]" />
-                <h3 className="text-sm font-bold text-slate-900">Campus Facilities Master Registry</h3>
+                <h3 className="text-sm font-bold text-slate-900">Campus Buildings</h3>
                 <span className="px-2 py-0.5 rounded-full bg-rose-50 text-[#9E153E] text-[10px] font-bold border border-rose-200">
-                  {filteredBuildings.length} Nodes
+                  {filteredBuildings.length}
                 </span>
               </div>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50/50 text-slate-500 font-mono text-[11px] uppercase tracking-wider border-b border-slate-200">
-                    <th className="py-3 px-4">Building &amp; Precinct</th>
-                    <th className="py-3 px-3">Floors</th>
-                    <th className="py-3 px-3">Faculties / Depts</th>
-                    <th className="py-3 px-3">Congestion Heatmap</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {filteredBuildings.map((b) => {
-                    const isSelected = selectedFacilityCode === b.code || selectedFacilityCode === b._id;
-                    const load = b.loadPercentage || 60;
-                    const isHighLoad = load > 80;
-                    const isMedLoad = load >= 60 && load <= 80;
+            <div className="divide-y divide-slate-100">
+              {filteredBuildings.map((b) => {
+                const isSelected = selectedFacilityCode === b.code || selectedFacilityCode === b._id;
 
-                    return (
-                      <tr
-                        key={b.code || b._id}
-                        onClick={() => handleSelectFacility(b.code)}
-                        className={`transition-colors cursor-pointer ${
-                          isSelected
-                            ? 'bg-rose-50/40 border-l-4 border-l-[#9E153E]'
-                            : 'hover:bg-slate-50/70'
-                        }`}
-                      >
-                        <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center text-[#9E153E] font-bold font-mono shrink-0">
-                              {b.code.split('-')[0]}
-                            </div>
-                            <div>
-                              <div className="font-bold text-slate-900 flex items-center gap-1.5">
-                                <span>{b.name}</span>
-                                <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono text-[10px] border border-slate-200">
-                                  {b.code}
-                                </span>
-                              </div>
-                              <div className="text-[11px] text-slate-500 mt-0.5">
-                                {b.precinct} • {(b.grossFloorArea || 14000).toLocaleString()} m²
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-
-                        <td className="py-3.5 px-3">
-                          <span className="font-bold text-slate-800">{b.totalFloors || 3} Levels</span>
-                          <div className="text-[10px] text-slate-400">Ground + {(b.totalFloors || 3) - 1}</div>
-                        </td>
-
-                        <td className="py-3.5 px-3 max-w-[140px] truncate">
-                          <span className="text-slate-800 truncate block font-medium">
-                            {Array.isArray(b.departments) ? b.departments[0] : b.departments}
+                return (
+                  <div
+                    key={b.code || b._id}
+                    onClick={() => setSelectedFacilityCode(b.code)}
+                    className={`p-4 transition-colors cursor-pointer flex items-center justify-between ${
+                      isSelected
+                        ? 'bg-rose-50/50 border-l-4 border-l-[#9E153E]'
+                        : 'hover:bg-slate-50/70'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-[#9E153E] font-bold font-mono shrink-0">
+                        {b.code.split('-')[0]}
+                      </div>
+                      <div>
+                        <div className="font-bold text-slate-900 flex items-center gap-2">
+                          <span>{b.name}</span>
+                          <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono text-[10px] border border-slate-200">
+                            {b.code}
                           </span>
-                          <span className="text-[10px] text-slate-400 truncate block">
-                            {Array.isArray(b.departments) ? b.departments.slice(1).join(', ') : 'Computing, AI'}
-                          </span>
-                        </td>
+                        </div>
+                        <div className="text-xs text-slate-500 mt-0.5">
+                          {b.precinct} • {b.totalFloors || 3} Floors • {b.rooms?.length || 0} Rooms
+                        </div>
+                      </div>
+                    </div>
 
-                        {/* Capacity Congestion Heatmap Meter */}
-                        <td className="py-3.5 px-3">
-                          <div className="flex items-center gap-1.5 mb-1">
-                            <span
-                              className={`w-2 h-2 rounded-full ${
-                                isHighLoad
-                                  ? 'bg-rose-500 animate-pulse'
-                                  : isMedLoad
-                                  ? 'bg-amber-500'
-                                  : 'bg-emerald-500'
-                              }`}
-                            ></span>
-                            <span
-                              className={`font-mono text-xs font-bold ${
-                                isHighLoad ? 'text-rose-600' : isMedLoad ? 'text-amber-600' : 'text-emerald-600'
-                              }`}
-                            >
-                              {load}% Capacity
-                            </span>
-                          </div>
-                          <div className="w-24 bg-slate-100 h-1.5 rounded-full overflow-hidden border border-slate-200">
-                            <div
-                              className={`h-full rounded-full ${
-                                isHighLoad ? 'bg-rose-500' : isMedLoad ? 'bg-amber-500' : 'bg-emerald-500'
-                              }`}
-                              style={{ width: `${load}%` }}
-                            ></div>
-                          </div>
-                        </td>
-
-                        <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
-                          <div className="inline-flex items-center gap-1">
-                            <button
-                              onClick={() => navigate('/campus-map?bldg=eng')}
-                              className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
-                              title="Inspect CAD in Campus Map"
-                            >
-                              <Compass className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleOpenAddBuilding(b)}
-                              className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-[#9E153E] transition-colors cursor-pointer"
-                              title="Edit Building Attributes"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/campus-map?bldg=${b.code.toLowerCase()}`);
+                      }}
+                      className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors"
+                      title="View on Campus Map"
+                    >
+                      <Compass className="w-4 h-4" />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
 
-        {/* RIGHT COLUMN: ACTIVE FACILITY INSPECTOR & ROOM IOT OVERRIDES (5 COLS) */}
-        <div className="lg:col-span-5 flex flex-col gap-4">
-          {/* Active Facility Header Card */}
-          <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col gap-4">
+        {/* Right: Room & Space Inspector (6 cols) */}
+        <div className="lg:col-span-6 flex flex-col gap-4">
+          <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col gap-4">
             <div className="flex items-start justify-between pb-3 border-b border-slate-100">
               <div>
                 <span className="text-[11px] font-mono text-[#9E153E] font-bold uppercase tracking-wider">
-                  Active Inspector • {activeFacility?.code}
+                  Inspecting Building • {activeFacility?.code}
                 </span>
-                <h2 className="text-xl font-bold text-slate-900 mt-0.5">{activeFacility?.name}</h2>
-                <p className="text-xs text-slate-500">{activeFacility?.precinct}</p>
+                <h2 className="text-lg font-bold text-slate-900 mt-0.5">{activeFacility?.name}</h2>
+                <p className="text-xs text-slate-500">{activeFacility?.precinct} • {activeFacility?.totalFloors} Floors</p>
               </div>
 
-              <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-mono text-xs font-bold border border-slate-200">
-                {activeFacility?.loadPercentage}% Load
-              </span>
+              <button
+                onClick={() => setShowAddRoomModal(true)}
+                className="px-3 py-1.5 rounded-xl bg-[#9E153E] hover:bg-[#881337] text-white text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Room</span>
+              </button>
             </div>
 
-            {/* Schematic CAD Floor Plate Viewer */}
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-bold">
-                  Schematic Floor Plate: {selectedFloor}
-                </span>
-                <span className="text-[11px] font-mono text-emerald-700 font-medium">CAD v2.4 Vector</span>
-              </div>
+            {/* Room List in Active Facility */}
+            <div className="flex flex-col gap-2.5">
+              <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                Classrooms, Labs &amp; Facilities ({activeFacility?.rooms?.length || 0})
+              </h3>
 
-              <div className="relative w-full h-36 rounded-xl bg-[#0A0F1D] border border-slate-200 overflow-hidden flex items-center justify-center p-2">
-                <svg className="w-full h-full" viewBox="0 0 400 140">
-                  <rect x="20" y="10" width="360" height="120" rx="6" fill="#0B132B" stroke="#1E293B" strokeWidth="2" />
-                  <path d="M 60 70 L 340 70" fill="none" stroke="#334155" strokeWidth="2" strokeDasharray="4 4" />
-                  <path d="M 200 10 L 200 130" fill="none" stroke="#334155" strokeWidth="2" strokeDasharray="4 4" />
-
-                  {/* Room B-204 Highlight Target */}
-                  <rect
-                    x="30"
-                    y="20"
-                    width="70"
-                    height="40"
-                    rx="4"
-                    fill="#132338"
-                    stroke="#10B981"
-                    strokeWidth="2"
-                    className="cursor-pointer"
-                    onClick={() =>
-                      setRoomConfig((prev) => ({
-                        ...prev,
-                        roomNumber: 'B-204',
-                        name: 'Multi-Media Lecture Theatre',
-                        status: 'occupied',
-                        capacity: 60
-                      }))
-                    }
-                  />
-                  <text x="65" y="44" fill="#34D399" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="700" textAnchor="middle">
-                    B-204
-                  </text>
-                  <circle cx="88" cy="30" r="3" fill="#10B981" />
-
-                  {/* Room B-203 */}
-                  <rect
-                    x="110"
-                    y="20"
-                    width="70"
-                    height="40"
-                    rx="4"
-                    fill="#0F172A"
-                    stroke="#475569"
-                    strokeWidth="1.5"
-                    className="cursor-pointer"
-                    onClick={() =>
-                      setRoomConfig((prev) => ({
-                        ...prev,
-                        roomNumber: 'B-203',
-                        name: 'Distributed Systems Lab',
-                        status: 'available',
-                        capacity: 40
-                      }))
-                    }
-                  />
-                  <text x="145" y="44" fill="#F8FAFC" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="600" textAnchor="middle">
-                    B-203
-                  </text>
-
-                  {/* Room B-206 Study Pods */}
-                  <rect
-                    x="290"
-                    y="80"
-                    width="80"
-                    height="40"
-                    rx="4"
-                    fill="#0F172A"
-                    stroke="#475569"
-                    strokeWidth="1.5"
-                    className="cursor-pointer"
-                    onClick={() =>
-                      setRoomConfig((prev) => ({
-                        ...prev,
-                        roomNumber: 'B-206',
-                        name: 'Silent Acoustic Study Pods',
-                        status: 'available',
-                        capacity: 16
-                      }))
-                    }
-                  />
-                  <text x="330" y="104" fill="#F8FAFC" fontFamily="Inter, sans-serif" fontSize="10" fontWeight="600" textAnchor="middle">
-                    B-206 Pods
-                  </text>
-                </svg>
-
-                <div className="absolute bottom-2 right-2">
-                  <button
-                    onClick={() => navigate('/campus-map?bldg=eng')}
-                    className="px-2.5 py-1 rounded-lg bg-white/90 text-slate-800 border border-slate-200 text-[10px] font-bold flex items-center gap-1 shadow-xs cursor-pointer hover:bg-white"
-                  >
-                    <span>Inspect CAD Path →</span>
-                  </button>
+              {(!activeFacility?.rooms || activeFacility.rooms.length === 0) ? (
+                <div className="p-6 text-center text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                  No rooms cataloged for this facility yet. Click "Add Room" above.
                 </div>
-              </div>
-            </div>
+              ) : (
+                activeFacility.rooms.map((rm, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 hover:bg-slate-50 transition-colors flex flex-col gap-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded-lg bg-white border border-slate-200 font-mono font-bold text-xs text-slate-900">
+                          {rm.roomNumber}
+                        </span>
+                        <span className="text-xs font-bold text-slate-800">{rm.name}</span>
+                      </div>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        rm.status === 'available'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          : 'bg-slate-200 text-slate-700'
+                      }`}>
+                        {rm.status === 'available' ? 'Available' : 'In Session'}
+                      </span>
+                    </div>
 
-            {/* Quick Space Configuration & IoT Overrides */}
-            <div className="flex flex-col gap-3 pt-2 border-t border-slate-100">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 text-[#9E153E]" />
-                  <span>Room {roomConfig.roomNumber} IoT Override Controls</span>
-                </span>
-                <span className="text-[10px] font-mono text-emerald-700 font-semibold">Mesh Authenticated</span>
-              </div>
+                    <div className="flex items-center justify-between text-[11px] text-slate-500">
+                      <span>Type: <strong className="text-slate-700">{rm.type}</strong></span>
+                      <span>Capacity: <strong className="text-slate-700">{rm.capacity} seats</strong></span>
+                    </div>
 
-              {/* Hardware Toggles Grid */}
-              <div className="grid grid-cols-2 gap-2.5">
-                {/* 1. NFC Smart Lock Toggle */}
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-slate-500 mb-1">
-                    <span className="text-[10px] font-mono uppercase font-semibold">NFC Lock</span>
-                    {roomConfig.isLockSecured ? (
-                      <Lock className="w-3.5 h-3.5 text-emerald-600" />
-                    ) : (
-                      <Unlock className="w-3.5 h-3.5 text-amber-600" />
+                    {rm.amenities && rm.amenities.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {rm.amenities.map((am, aIdx) => (
+                          <span
+                            key={aIdx}
+                            className="px-2 py-0.5 rounded bg-white text-[10px] text-slate-600 border border-slate-200"
+                          >
+                            {am}
+                          </span>
+                        ))}
+                      </div>
                     )}
                   </div>
-                  <div className="text-sm font-bold text-slate-900">
-                    {roomConfig.isLockSecured ? 'Secured (Keycard)' : 'Unlocked (Open)'}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleToggleLock}
-                    className="mt-2 py-1 px-2 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
-                  >
-                    Toggle Lock
-                  </button>
-                </div>
-
-                {/* 2. HVAC Setpoint */}
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-slate-500 mb-1">
-                    <span className="text-[10px] font-mono uppercase font-semibold">Climate Temp</span>
-                    <Thermometer className="w-3.5 h-3.5 text-sky-600" />
-                  </div>
-                  <div className="text-sm font-bold text-slate-900 flex items-center justify-between">
-                    <span>{roomConfig.temperature}°C</span>
-                    <span className="text-[10px] text-emerald-700 font-mono font-semibold">Eco Active</span>
-                  </div>
-                  <div className="flex items-center gap-1 mt-2">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setRoomConfig((prev) => ({
-                          ...prev,
-                          temperature: Number((prev.temperature - 0.5).toFixed(1))
-                        }))
-                      }
-                      className="flex-1 py-1 rounded bg-white hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 cursor-pointer"
-                    >
-                      -
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setRoomConfig((prev) => ({
-                          ...prev,
-                          temperature: Number((prev.temperature + 0.5).toFixed(1))
-                        }))
-                      }
-                      className="flex-1 py-1 rounded bg-white hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 cursor-pointer"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* One-Click CAFM Maintenance Dispatch Trigger */}
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={() => handleTriggerMaintenanceDispatch(roomConfig)}
-                  className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#9E153E] to-[#BE123C] hover:from-[#881337] hover:to-[#9E153E] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-[0.98]"
-                >
-                  <Wrench className="w-3.5 h-3.5 text-white" />
-                  <span>Dispatch Rapid CAFM Ticket for Room {roomConfig.roomNumber}</span>
-                </button>
-              </div>
+                ))
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* =========================================================================
-          MODAL: ADD / EDIT BUILDING
-          ========================================================================= */}
+      {/* Add Building Modal */}
       {showAddBuildingModal && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="building-modal-title"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowAddBuildingModal(false);
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200"
-        >
-          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-slate-200 shadow-2xl p-6 flex flex-col gap-4 text-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-lg shadow-2xl space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 id="building-modal-title" className="text-lg font-bold text-slate-900">
-                {editingBuilding ? 'Edit Campus Facility' : 'Register New Campus Facility Node'}
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-[#9E153E]" />
+                <span>Add Campus Building</span>
               </h3>
               <button
-                type="button"
-                aria-label="Close facility node dialog"
                 onClick={() => setShowAddBuildingModal(false)}
                 className="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center cursor-pointer"
               >
@@ -998,56 +497,197 @@ export function CampusManagement() {
               </button>
             </div>
 
-            <form onSubmit={handleSaveBuilding} className="flex flex-col gap-3.5 text-xs">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label className="text-slate-700 font-semibold">Facility Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={buildingForm.name}
-                    onChange={(e) => setBuildingForm({ ...buildingForm, name: e.target.value })}
-                    placeholder="e.g. Marie Curie Biotechnology Pavilion"
-                    className="h-10 px-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-slate-700 font-semibold">Facility Code *</label>
-                  <input
-                    type="text"
-                    required
-                    value={buildingForm.code}
-                    onChange={(e) => setBuildingForm({ ...buildingForm, code: e.target.value })}
-                    placeholder="e.g. BIO-05"
-                    className="h-10 px-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-slate-700 font-semibold">Departments / Academic Units</label>
+            <form onSubmit={handleAddBuildingSubmit} className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Building Name *</label>
                 <input
                   type="text"
-                  value={buildingForm.departments}
-                  onChange={(e) => setBuildingForm({ ...buildingForm, departments: e.target.value })}
-                  placeholder="e.g. School of Computing, High-Performance Computing"
-                  className="h-10 px-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
+                  value={buildingForm.name}
+                  onChange={(e) => setBuildingForm({ ...buildingForm, name: e.target.value })}
+                  placeholder="e.g., School of Basic Sciences"
+                  className="w-full h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
+                  required
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Building Code *</label>
+                  <input
+                    type="text"
+                    value={buildingForm.code}
+                    onChange={(e) => setBuildingForm({ ...buildingForm, code: e.target.value })}
+                    placeholder="e.g., SCI-04"
+                    className="w-full h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Total Floors</label>
+                  <input
+                    type="number"
+                    value={buildingForm.totalFloors}
+                    onChange={(e) => setBuildingForm({ ...buildingForm, totalFloors: e.target.value })}
+                    min="1"
+                    max="10"
+                    className="w-full h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Campus Precinct</label>
+                <input
+                  type="text"
+                  value={buildingForm.precinct}
+                  onChange={(e) => setBuildingForm({ ...buildingForm, precinct: e.target.value })}
+                  placeholder="e.g., East Academic Quad"
+                  className="w-full h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Category</label>
+                <select
+                  value={buildingForm.category}
+                  onChange={(e) => setBuildingForm({ ...buildingForm, category: e.target.value })}
+                  className="w-full h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
+                >
+                  <option value="academic">Academic &amp; Research</option>
+                  <option value="facility">Student Facility &amp; Dining</option>
+                  <option value="residential">Hostel &amp; Residential</option>
+                </select>
+              </div>
+
+              <div className="pt-3 flex justify-end gap-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowAddBuildingModal(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#9E153E] hover:bg-[#881337] text-white font-bold cursor-pointer transition-all shadow-xs"
+                  className="px-5 py-2 rounded-xl bg-[#9E153E] hover:bg-[#881337] text-white text-xs font-bold shadow-sm cursor-pointer transition-colors"
                 >
-                  {editingBuilding ? 'Save Changes' : 'Create Facility Node'}
+                  Save Building
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Room Modal */}
+      {showAddRoomModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-lg shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <DoorOpen className="w-5 h-5 text-[#9E153E]" />
+                <span>Add Room to {activeFacility?.name}</span>
+              </h3>
+              <button
+                onClick={() => setShowAddRoomModal(false)}
+                className="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddRoomSubmit} className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Room Number *</label>
+                  <input
+                    type="text"
+                    value={roomForm.roomNumber}
+                    onChange={(e) => setRoomForm({ ...roomForm, roomNumber: e.target.value })}
+                    placeholder="e.g., C-302"
+                    className="w-full h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Seating Capacity</label>
+                  <input
+                    type="number"
+                    value={roomForm.capacity}
+                    onChange={(e) => setRoomForm({ ...roomForm, capacity: e.target.value })}
+                    min="1"
+                    max="500"
+                    className="w-full h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Room / Space Name *</label>
+                <input
+                  type="text"
+                  value={roomForm.name}
+                  onChange={(e) => setRoomForm({ ...roomForm, name: e.target.value })}
+                  placeholder="e.g., Computer Vision Laboratory"
+                  className="w-full h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Space Type</label>
+                  <select
+                    value={roomForm.type}
+                    onChange={(e) => setRoomForm({ ...roomForm, type: e.target.value })}
+                    className="w-full h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
+                  >
+                    <option value="Lecture Theatre">Lecture Theatre</option>
+                    <option value="Classroom">Classroom</option>
+                    <option value="Computer Lab">Computer Lab</option>
+                    <option value="Research Lab">Research Lab</option>
+                    <option value="Conference Hall">Conference Hall</option>
+                    <option value="Administrative Office">Administrative Office</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Initial Status</label>
+                  <select
+                    value={roomForm.status}
+                    onChange={(e) => setRoomForm({ ...roomForm, status: e.target.value })}
+                    className="w-full h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
+                  >
+                    <option value="available">Available</option>
+                    <option value="in-use">In Session</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Amenities (comma separated)</label>
+                <input
+                  type="text"
+                  value={roomForm.amenities}
+                  onChange={(e) => setRoomForm({ ...roomForm, amenities: e.target.value })}
+                  placeholder="e.g., Dual Projector, Smart Board, AC, Wi-Fi"
+                  className="w-full h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E]"
+                />
+              </div>
+
+              <div className="pt-3 flex justify-end gap-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddRoomModal(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-[#9E153E] hover:bg-[#881337] text-white text-xs font-bold shadow-sm cursor-pointer transition-colors"
+                >
+                  Save Room
                 </button>
               </div>
             </form>

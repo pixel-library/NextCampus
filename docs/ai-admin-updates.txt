@@ -1,0 +1,134 @@
+================================================================================
+NEXTCAMPUS AI: ADMINISTRATIVE UPDATE WORKFLOW & MANAGEMENT SYSTEM
+================================================================================
+Document: docs/ai-admin-updates.txt
+Component: Admin Updates Module (src/components/admin/AdminUpdatesModal.jsx)
+Backend Services: timetable_service.py, mess_service.py, audit_service.py
+Security Standard: Strict RBAC (Role-Based Access Control) + Immutable Audit Logs
+================================================================================
+
+1. ADMINISTRATIVE PERMISSIONS & ACCESS CONTROL
+--------------------------------------------------------------------------------
+NextCampus enforces strict Role-Based Access Control (RBAC) at the backend API gateway:
+- Student Role:
+  Read-only access to published timetables, mess menus, campus maps, and policies.
+  Any POST/PUT/DELETE request targeting administrative write routes returns
+  HTTP 403 Forbidden with an error: "Admin privileges required".
+- Faculty Role:
+  Standard read-only campus queries, unless granted an explicit administrative role.
+- Administrator Role:
+  Authenticated users possessing `role: "admin"` in their verified JWT payload.
+  Granted full authority to upload, preview, publish, version, and rollback
+  academic timetables and hostel mess menus.
+
+
+2. SUPPORTED FILE FORMATS & PARSING PIPELINE
+--------------------------------------------------------------------------------
+The backend parser supports three primary file formats:
+- Microsoft Excel (.xlsx / .xls):
+  Parsed via `openpyxl`. Reads column headers dynamically (case-insensitive):
+  `Day`, `Time` / `Slot`, `Subject`, `Code`, `Faculty` / `Instructor`, `Room` / `Venue`.
+- Comma-Separated Values (.csv):
+  Parsed using Python standard `csv.DictReader` with automatic dialect detection
+  and UTF-8-sig BOM stripping.
+- Portable Document Format (.pdf):
+  Parsed via `pypdf`. Extracts structured text tabular layouts line by line.
+
+File Safety & Sanitization:
+- Uploaded files are strictly treated as untrusted user input.
+- File size is capped to prevent memory exhaustion.
+- Malformed files that do not match expected column semantics are safely rejected
+  with structured error diagnostics indicating which lines or headers failed.
+
+
+3. TIMETABLE UPDATE WORKFLOW
+--------------------------------------------------------------------------------
+Step 1: Upload & Instruction Ingestion
+  - Admin uploads a file and enters natural-language instructions
+    (e.g., "Replace the CSE Semester 3 timetable effective starting Monday").
+  - Target parameters (Department, Semester, Section, Effective Date) are specified
+    or extracted from instructions.
+
+Step 2: Automated Validation & Conflict Detection
+  - The validation engine (`timetable_service.validate_entries`) performs comprehensive checks:
+    * Time Ordering: Verifies `start_time < end_time` (e.g., 09:00 < 10:00).
+    * Missing Required Fields: Flags any entry lacking Day, Subject, Time, or Room.
+    * Intra-batch Conflicts: Flags overlapping lecture slots in the same room.
+    * Duplicate Detection: Detects redundant entries for the same section.
+  - Generates a validation report with severity tags (`error`, `warning`, `valid`).
+
+Step 3: Preview Generation
+  - An interactive preview table is rendered for the administrator showing:
+    * Total entries parsed and target scope.
+    * Warning badges on conflicting slots.
+    * Proposed version number (e.g., Version 2 replacing Version 1).
+
+Step 4: Explicit Confirmation & Atomic Publishing
+  - Publishing is blocked until the admin explicitly checks the confirmation checkbox
+    ("Confirm and Publish Schedule").
+  - On submission (`/api/v1/timetable/publish`):
+    * The backend re-validates the payload and verifies admin credentials.
+    * The existing active timetable is archived with `is_published: false`.
+    * The new schedule is saved with `version: N+1`, `is_published: true`.
+    * Version snapshot and audit record are created.
+
+Step 5: Immediate Availability
+  - The AI assistant's timetable lookup reflects the new version immediately.
+
+
+4. MESS MENU UPDATE WORKFLOW
+--------------------------------------------------------------------------------
+Step 1: Ingestion
+  - Admin uploads weekly or daily meal schedule for a target facility (e.g., Central Mess).
+
+Step 2: Meal Slot Categorization
+  - Parser organizes items into standard meal windows:
+    * Breakfast (07:30 - 09:15)
+    * Lunch (12:30 - 14:30)
+    * Evening Snacks (17:00 - 18:15)
+    * Dinner (19:45 - 21:45)
+
+Step 3: Preview & Confirmation
+  - Displays day-by-day itemization across all meal slots.
+  - Requires explicit confirmation before publication.
+
+Step 4: Atomic Commit
+  - On publish (`/api/v1/mess/publish`):
+    * Increments menu version number.
+    * Stores previous version in historical archive.
+    * Writes immutable audit entry.
+
+
+5. VERSION HISTORY & INSTANT ROLLBACK
+--------------------------------------------------------------------------------
+Every publication event creates an immutable version snapshot:
+- Querying Versions:
+  Admin can view all historical releases at `/api/v1/timetable/versions` and
+  `/api/v1/mess/versions`.
+- Instant Rollback:
+  If a published timetable or menu is found to be erroneous:
+  1. Admin clicks "Restore" next to any previous version.
+  2. Frontend submits a POST request to `/api/v1/timetable/rollback` or `/api/v1/mess/rollback`
+     specifying the target `version` number.
+  3. The system atomically deactivates the current version, creates a new version
+     cloned from the target historical release, sets `is_published: true`, and logs the rollback.
+  4. The AI immediately resumes querying the restored schedule.
+
+
+6. AUDIT LOGGING & COMPLIANCE
+--------------------------------------------------------------------------------
+All administrative operations are permanently recorded by `audit_service.py` in the
+`audit_logs` collection:
+- Captured Metadata:
+  * `timestamp`: ISO 8601 Indian Standard Time timestamp.
+  * `user_id`: Unique identifier of the authenticated administrator.
+  * `user_name`: Display name of the administrator.
+  * `action`: Action type (`PUBLISH_TIMETABLE`, `PUBLISH_MESS`, `ROLLBACK_TIMETABLE`, `ROLLBACK_MESS`).
+  * `target_entity`: Scope descriptor (e.g., "B.Tech CSE - Semester 3", "Central Mess").
+  * `version`: New active version number.
+  * `previous_version`: Superseded version number.
+  * `details`: Descriptive summary of changes applied.
+- Tamper-Proof: Audit logs cannot be updated or purged via client-facing APIs.
+- Visibility: Accessible to administrators via `/api/v1/ai/audit-logs` and displayed
+  in the "Audit Log History" tab of `AdminUpdatesModal.jsx`.
+===============================================================================

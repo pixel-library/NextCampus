@@ -1,6 +1,14 @@
 import copy
-from typing import Any, Dict
-from backend.app.db.connection import get_database, is_db_connected, IN_MEMORY_ANNOUNCEMENTS
+from datetime import datetime, timezone
+import re
+from typing import Any, Dict, List, Optional
+from backend.app.db.connection import (
+    get_database,
+    is_db_connected,
+    IN_MEMORY_ANNOUNCEMENTS,
+    IN_MEMORY_USERS,
+    IN_MEMORY_ENROLLMENTS,
+)
 from backend.app.utils.helpers import serialize_mongo
 
 async def get_admin_stats() -> Dict[str, Any]:
@@ -85,3 +93,167 @@ async def get_admin_stats() -> Dict[str, Any]:
     }
 
 get_admin_dashboard_metrics = get_admin_stats
+
+async def get_admin_students(
+    search: Optional[str] = None,
+    department: Optional[str] = None,
+    status_filter: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Retrieve all student database records including registration, claim state, and block status."""
+    students: List[Dict[str, Any]] = []
+    claimed_murs = set()
+
+    # 1. Collect all registered student accounts from users
+    for u in IN_MEMORY_USERS:
+        if u.get("role") != "admin":
+            mur = (u.get("enrollmentNumber") or u.get("studentId") or "").strip().upper()
+            claimed_murs.add(mur)
+            students.append({
+                "id": str(u.get("id") or u.get("_id")),
+                "name": u.get("name") or u.get("preferredName") or "Student",
+                "email": u.get("email") or "",
+                "enrollmentNumber": mur,
+                "department": u.get("department") or "Computer Science & Engineering",
+                "academicYear": u.get("academicYear") or "Class of 2029",
+                "semester": u.get("semester") or "1st Year • Semester 1",
+                "phone": u.get("phone") or "—",
+                "residence": u.get("residence") or "Hostel Block C",
+                "isClaimed": True,
+                "isBlocked": bool(u.get("isBlocked", False)),
+                "createdAt": u.get("createdAt"),
+            })
+
+    # 2. Collect remaining university enrollment roster (pending registration)
+    for e in IN_MEMORY_ENROLLMENTS:
+        mur = (e.get("enrollmentNumber") or "").strip().upper()
+        if mur not in claimed_murs:
+            students.append({
+                "id": str(e.get("_id") or e.get("id") or f"enr_{mur.lower()}"),
+                "name": e.get("fullName") or "Pending Student",
+                "email": e.get("email") or f"{mur.lower()}@nextcampus.edu",
+                "enrollmentNumber": mur,
+                "department": e.get("department") or "Computer Science & Engineering",
+                "academicYear": e.get("academicYear") or "Class of 2029",
+                "semester": "1st Year • Semester 1",
+                "phone": "—",
+                "residence": "Not Allocated Yet",
+                "isClaimed": False,
+                "isBlocked": bool(e.get("isBlocked", False)),
+                "createdAt": e.get("createdAt"),
+            })
+
+    # 3. Apply Filters
+    filtered = []
+    search_lower = search.strip().lower() if search else None
+    dept_lower = department.strip().lower() if department and department != "all" else None
+    status_lower = status_filter.strip().lower() if status_filter and status_filter != "all" else None
+
+    for s in students:
+        if search_lower:
+            text = f"{s['name']} {s['enrollmentNumber']} {s['email']} {s['phone']} {s['department']}".lower()
+            if search_lower not in text:
+                continue
+
+        if dept_lower:
+            if dept_lower not in s["department"].lower():
+                continue
+
+        if status_lower:
+            if status_lower == "registered" and not s["isClaimed"]:
+                continue
+            if status_lower == "unclaimed" and s["isClaimed"]:
+                continue
+            if status_lower == "blocked" and not s["isBlocked"]:
+                continue
+            if status_lower == "active" and (not s["isClaimed"] or s["isBlocked"]):
+                continue
+
+        filtered.append(s)
+
+    # Sort registered first, then alphabetically by name
+    filtered.sort(key=lambda x: (not x["isClaimed"], x["name"].lower()))
+
+    # Calculate overall stats
+    total_roster = len(students)
+    registered_count = sum(1 for s in students if s["isClaimed"])
+    unclaimed_count = sum(1 for s in students if not s["isClaimed"])
+    blocked_count = sum(1 for s in students if s["isBlocked"])
+    active_count = sum(1 for s in students if s["isClaimed"] and not s["isBlocked"])
+
+    return {
+        "students": filtered,
+        "count": len(filtered),
+        "stats": {
+            "totalRoster": total_roster,
+            "registered": registered_count,
+            "unclaimed": unclaimed_count,
+            "blocked": blocked_count,
+            "active": active_count,
+        },
+    }
+
+async def toggle_student_block_status(student_id_or_mur: str) -> Dict[str, Any]:
+    """Toggle the suspended / blocked access flag for a student in MongoDB and memory."""
+    target = student_id_or_mur.strip().upper()
+    found = False
+    new_blocked_state = False
+    target_student = None
+
+    db = get_database()
+
+    # Search in IN_MEMORY_USERS
+    for u in IN_MEMORY_USERS:
+        u_id = str(u.get("id") or u.get("_id", "")).upper()
+        u_mur = (u.get("enrollmentNumber") or u.get("studentId") or "").strip().upper()
+        if target in [u_id, u_mur]:
+            current_state = bool(u.get("isBlocked", False))
+            new_blocked_state = not current_state
+            u["isBlocked"] = new_blocked_state
+            u["updatedAt"] = datetime.now(timezone.utc)
+            target_student = {
+                "id": str(u.get("id") or u.get("_id")),
+                "name": u.get("name"),
+                "enrollmentNumber": u_mur,
+                "isBlocked": new_blocked_state,
+                "status": "blocked" if new_blocked_state else "active",
+            }
+            found = True
+            break
+
+    # If not registered yet, check IN_MEMORY_ENROLLMENTS
+    if not found:
+        for e in IN_MEMORY_ENROLLMENTS:
+            e_id = str(e.get("_id") or e.get("id", "")).upper()
+            e_mur = (e.get("enrollmentNumber") or "").strip().upper()
+            if target in [e_id, e_mur]:
+                current_state = bool(e.get("isBlocked", False))
+                new_blocked_state = not current_state
+                e["isBlocked"] = new_blocked_state
+                target_student = {
+                    "id": str(e.get("_id") or e.get("id")),
+                    "name": e.get("fullName"),
+                    "enrollmentNumber": e_mur,
+                    "isBlocked": new_blocked_state,
+                    "status": "blocked" if new_blocked_state else "unclaimed",
+                }
+                found = True
+                break
+
+    # Sync to MongoDB if connected
+    if is_db_connected() and db is not None:
+        try:
+            await db.users.update_many(
+                {"$or": [{"_id": student_id_or_mur}, {"id": student_id_or_mur}, {"enrollmentNumber": target}, {"studentId": target}]},
+                {"$set": {"isBlocked": new_blocked_state, "updatedAt": datetime.now(timezone.utc)}},
+            )
+            await db.enrollments.update_many(
+                {"$or": [{"_id": student_id_or_mur}, {"enrollmentNumber": target}]},
+                {"$set": {"isBlocked": new_blocked_state}},
+            )
+        except Exception:
+            pass
+
+    if not found or not target_student:
+        raise ValueError(f"Student with identifier '{student_id_or_mur}' not found in university directory.")
+
+    return target_student

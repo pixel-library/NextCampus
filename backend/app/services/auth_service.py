@@ -224,6 +224,9 @@ async def login_user(email_or_id: str, password: str) -> Dict[str, Any]:
     if not is_valid:
         raise ValueError("Invalid credentials provided.")
 
+    if user.get("isBlocked", False):
+        raise ValueError("Account Suspended: Your student account access has been restricted by campus administration. Please contact the registrar office.")
+
     sanitized = sanitize_user(user)
     token = generate_token({
         "id": sanitized["id"],

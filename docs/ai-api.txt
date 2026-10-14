@@ -1,0 +1,338 @@
+================================================================================
+NEXTCAMPUS AI: REST API INTERFACE SPECIFICATION
+================================================================================
+Document: docs/ai-api.txt
+Base URL: /api/v1
+Authentication: Bearer JWT Token in Authorization header (where required)
+Timezone Reference: Asia/Kolkata (Indian Standard Time)
+================================================================================
+
+1. AI ASSISTANT ENDPOINTS
+--------------------------------------------------------------------------------
+
+1.1 POST /api/v1/ai/query
+Description:
+  Submits a user message to the NextCampus AI engine for intent classification,
+  authoritative data retrieval, context updating, and grounded response synthesis.
+
+Permission:
+  Public / Optional Bearer JWT (Authenticated user profile improves personalized resolution)
+
+Headers:
+  Content-Type: application/json
+  Authorization: Bearer <token> (Optional)
+
+Request Body:
+  {
+    "message": "Today's lunch menu",
+    "conversationHistory": [
+      { "role": "user", "content": "Today mess menu" },
+      { "role": "assistant", "content": "Today's complete dining menu..." }
+    ],
+    "contextFilters": {
+      "department": "CSE",
+      "semester": 3,
+      "facility": "Central Mess"
+    }
+  }
+
+Response (200 OK):
+  {
+    "success": true,
+    "reply": "Today's lunch at Central Mess includes Rajma Masala, Steamed Basmati Rice, Seasonal Mixed Veg, Phulkas, Fresh Curd, Green Salad, and Gulab Jamun.",
+    "intent": "mess_menu_specific",
+    "entities": {
+      "day": "Wednesday",
+      "meal": "lunch",
+      "date": "2026-10-14"
+    },
+    "card": {
+      "type": "mess",
+      "data": {
+        "facility": "Central Mess",
+        "day": "Wednesday",
+        "date": "2026-10-14",
+        "meals": [
+          {
+            "name": "Lunch",
+            "time": "12:30 PM - 02:30 PM",
+            "items": ["Rajma Masala", "Steamed Basmati Rice", "Seasonal Mixed Veg", "Phulkas", "Fresh Curd", "Green Salad", "Gulab Jamun"]
+          }
+        ]
+      }
+    }
+  }
+
+
+1.2 GET /api/v1/ai/audit-logs
+Description:
+  Retrieves immutable administrative audit logs for schedule and menu updates.
+
+Permission:
+  Admin only (Requires Bearer JWT with `role: "admin"`)
+
+Headers:
+  Authorization: Bearer <admin_token>
+
+Response (200 OK):
+  [
+    {
+      "id": "audit-670a1b2c",
+      "timestamp": "2026-10-14T10:00:00+05:30",
+      "user_id": "usr-admin-01",
+      "user_name": "Dr. S. K. Sharma (Registrar)",
+      "action": "PUBLISH_TIMETABLE",
+      "target_entity": "B.Tech CSE - Semester 3",
+      "version": 2,
+      "previous_version": 1,
+      "details": "Published revised semester 3 timetable with 12 lecture slots."
+    }
+  ]
+
+Error Response (403 Forbidden):
+  {
+    "detail": "Admin privileges required to access audit trails"
+  }
+
+
+2. TIMETABLE ENDPOINTS
+--------------------------------------------------------------------------------
+
+2.1 GET /api/v1/timetable/query
+Description:
+  Retrieves active published class schedule matching departmental filters.
+
+Permission:
+  Public / Student / Faculty / Admin
+
+Query Parameters:
+  - department (string, default: "Computer Science & Engineering")
+  - semester (integer, default: 3)
+  - section (string, default: "A")
+  - day (string, optional: e.g., "Monday", "Wednesday")
+
+Response (200 OK):
+  {
+    "success": true,
+    "count": 4,
+    "department": "Computer Science & Engineering",
+    "semester": 3,
+    "section": "A",
+    "day": "Wednesday",
+    "version": 1,
+    "data": [
+      {
+        "id": "tt-wed-01",
+        "day": "Wednesday",
+        "start_time": "09:00",
+        "end_time": "10:00",
+        "subject": "Data Structures & Algorithms",
+        "subject_code": "CS301",
+        "faculty": "Dr. A. Verma",
+        "room": "Alan Turing Hall (ENG-02, Room 204)"
+      }
+    ]
+  }
+
+
+2.2 GET /api/v1/timetable/versions
+Description:
+  Retrieves historical releases for a timetable scope.
+
+Permission:
+  Admin only
+
+Query Parameters:
+  - department (string, default: "Computer Science & Engineering")
+  - semester (integer, default: 3)
+  - section (string, default: "A")
+
+Response (200 OK):
+  {
+    "department": "Computer Science & Engineering",
+    "semester": 3,
+    "section": "A",
+    "total_versions": 2,
+    "versions": [
+      { "version": 2, "is_published": true, "published_at": "2026-10-14T12:00:00+05:30", "published_by": "admin" },
+      { "version": 1, "is_published": false, "published_at": "2026-10-10T09:00:00+05:30", "published_by": "admin" }
+    ]
+  }
+
+
+2.3 POST /api/v1/timetable/upload-preview
+Description:
+  Parses an uploaded file (.xlsx, .csv, .pdf) or raw text and generates a preview
+  report with automated conflict checks.
+
+Permission:
+  Admin only
+
+Form-Data Payload:
+  - file (UploadFile, optional)
+  - text (string, optional)
+  - department (string, optional)
+  - semester (integer, optional)
+  - section (string, optional)
+
+Response (200 OK):
+  {
+    "success": true,
+    "total_entries": 12,
+    "scope": {
+      "department": "Computer Science & Engineering",
+      "semester": 3,
+      "section": "A"
+    },
+    "entries": [...],
+    "conflicts": [
+      {
+        "type": "OVERLAPPING_SLOT",
+        "severity": "warning",
+        "message": "Entry 2 overlaps with Entry 1 on Wednesday 09:30 in Room 204"
+      }
+    ]
+  }
+
+
+2.4 POST /api/v1/timetable/publish
+Description:
+  Atomically publishes a validated timetable release, arching the previous version.
+
+Permission:
+  Admin only
+
+Request Body:
+  {
+    "department": "Computer Science & Engineering",
+    "course": "B.Tech CSE",
+    "semester": 3,
+    "section": "A",
+    "effective_date": "2026-10-19",
+    "instructions": "Revised timetable effective from Monday",
+    "entries": [
+      {
+        "day": "Monday",
+        "start_time": "09:00",
+        "end_time": "10:00",
+        "subject": "Data Structures & Algorithms",
+        "subject_code": "CS301",
+        "faculty": "Dr. A. Verma",
+        "room": "Room 204"
+      }
+    ]
+  }
+
+Response (200 OK):
+  {
+    "success": true,
+    "message": "Timetable published successfully as version 2",
+    "version": 2,
+    "entries_count": 1
+  }
+
+
+2.5 POST /api/v1/timetable/rollback
+Description:
+  Restores an earlier published timetable version.
+
+Permission:
+  Admin only
+
+Request Body:
+  {
+    "department": "Computer Science & Engineering",
+    "semester": 3,
+    "section": "A",
+    "target_version": 1
+  }
+
+Response (200 OK):
+  {
+    "success": true,
+    "message": "Restored timetable to version 1 as new active version 3",
+    "active_version": 3
+  }
+
+
+3. MESS & DINING ENDPOINTS
+--------------------------------------------------------------------------------
+
+3.1 GET /api/v1/mess/today
+Description:
+  Retrieves today's complete 4-meal published dining roster.
+
+Permission:
+  Public
+
+Query Parameters:
+  - facility (string, default: "Central Mess")
+
+Response (200 OK):
+  {
+    "facility": "Central Mess",
+    "day": "Wednesday",
+    "date": "2026-10-14",
+    "is_published": true,
+    "version": 1,
+    "meals": [
+      { "name": "Breakfast", "time": "07:30 AM - 09:15 AM", "items": [...] },
+      { "name": "Lunch", "time": "12:30 PM - 02:30 PM", "items": [...] },
+      { "name": "Evening Snacks", "time": "05:00 PM - 06:15 PM", "items": [...] },
+      { "name": "Dinner", "time": "07:45 PM - 09:45 PM", "items": [...] }
+    ]
+  }
+
+
+3.2 GET /api/v1/mess/query
+Description:
+  Retrieves dining information for a specific day, date, or meal slot.
+
+Permission:
+  Public
+
+Query Parameters:
+  - day (string, optional: e.g. "Tomorrow", "Thursday")
+  - meal (string, optional: e.g. "dinner")
+  - facility (string, default: "Central Mess")
+
+Response (200 OK):
+  {
+    "facility": "Central Mess",
+    "day": "Thursday",
+    "meal": "dinner",
+    "items": ["Paneer Butter Masala", "Dal Tadka", "Jeera Rice", "Butter Roti", "Gulab Jamun"],
+    "time": "07:45 PM - 09:45 PM"
+  }
+
+
+3.3 GET /api/v1/mess/weekly
+Description:
+  Retrieves the complete 7-day cyclical dining schedule.
+
+Permission:
+  Public
+
+Query Parameters:
+  - facility (string, default: "Central Mess")
+
+Response (200 OK):
+  {
+    "facility": "Central Mess",
+    "days": {
+      "Monday": [...],
+      "Tuesday": [...],
+      "Wednesday": [...],
+      "Thursday": [...],
+      "Friday": [...],
+      "Saturday": [...],
+      "Sunday": [...]
+    }
+  }
+
+
+3.4 POST /api/v1/mess/publish & POST /api/v1/mess/rollback
+Description:
+  Allows authorized administrators to atomically publish new weekly dining menus
+  or rollback to an earlier release version. Same RBAC policy as timetable endpoints.
+================================================================================

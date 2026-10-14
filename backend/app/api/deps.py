@@ -13,7 +13,19 @@ async def get_current_user(authorization: Optional[str] = Header(None)) -> Dict[
     token = authorization.split(" ")[1]
     try:
         payload = verify_token(token)
+        user_id = payload.get("id")
+        from backend.app.db.connection import IN_MEMORY_USERS
+        for u in IN_MEMORY_USERS:
+            if u.get("id") == user_id or u.get("_id") == user_id:
+                if u.get("isBlocked", False):
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail="Access Denied: Your account has been restricted by campus administration.",
+                    )
+                break
         return payload
+    except HTTPException:
+        raise
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

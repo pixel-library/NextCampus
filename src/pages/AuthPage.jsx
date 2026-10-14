@@ -64,10 +64,13 @@ export const AuthPage = () => {
       const from = location.state?.from?.pathname;
       if (from) {
         navigate(from, { replace: true });
-      } else if (user.role === 'admin' || user.role === 'care_admin') {
-        navigate('/admin', { replace: true });
       } else {
-        navigate('/dashboard', { replace: true });
+        const role = user.role;
+        if (role === 'admin' || role === 'care_admin' || role === 'staff') {
+          navigate('/admin', { replace: true });
+        } else {
+          navigate('/dashboard', { replace: true });
+        }
       }
     }
   }, [isAuthenticated, user, navigate, location]);

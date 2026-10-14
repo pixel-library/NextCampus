@@ -116,7 +116,7 @@ export const AuthModal = ({ isOpen, onClose, initialTab = 'signin', onSuccessRed
           onClose?.();
           if (onSuccessRedirect !== false) {
             const role = res.data?.user?.role;
-            if (role === 'admin' || role === 'care_admin') {
+            if (role === 'admin' || role === 'care_admin' || role === 'staff') {
               navigate('/admin');
             } else {
               navigate('/dashboard');

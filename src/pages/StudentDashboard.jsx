@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import {
   Clock,
   MapPin,
@@ -38,15 +38,81 @@ export function StudentDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  // If user is Admin, direct to Admin Console
+  if (user?.role === 'admin' || user?.role === 'care_admin' || user?.role === 'staff') {
+    return <Navigate to="/admin" replace />;
+  }
+
+
   // AI Copilot State
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiResponse, setAiResponse] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
 
-  // Digital Gate Pass Modal
+  // Digital Gate Pass Modal & Appeal State
   const [isGatePassOpen, setIsGatePassOpen] = useState(false);
   const [hasCopiedPassId, setHasCopiedPassId] = useState(false);
   const [turnstileUnlocked, setTurnstileUnlocked] = useState(false);
+  const [myGatePasses, setMyGatePasses] = useState([]);
+  const [gatePassSubmitting, setGatePassSubmitting] = useState(false);
+  const [gatePassSuccessMsg, setGatePassSuccessMsg] = useState('');
+  const [activeGatePassTab, setActiveGatePassTab] = useState('pass'); // 'pass' | 'apply'
+  const [gatePassForm, setGatePassForm] = useState({
+    destination: '',
+    reason: '',
+    outTime: '',
+    expectedInTime: '',
+    emergencyContact: '',
+  });
+
+  const fetchMyGatePasses = async () => {
+    try {
+      const res = await api.get('/gatepass/my-passes');
+      if (res.success && res.data?.passes) {
+        setMyGatePasses(res.data.passes);
+        const hasApproved = res.data.passes.some((p) => p.status === 'APPROVED');
+        if (!hasApproved && res.data.passes.length === 0) {
+          setActiveGatePassTab('apply');
+        }
+      }
+    } catch (err) {
+      console.warn('[Student] Failed to fetch gate passes:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (isGatePassOpen) {
+      fetchMyGatePasses();
+    }
+  }, [isGatePassOpen]);
+
+  const handleSubmitGatePassAppeal = async (e) => {
+    e.preventDefault();
+    if (!gatePassForm.destination || !gatePassForm.reason) {
+      return;
+    }
+    setGatePassSubmitting(true);
+    try {
+      const res = await api.post('/gatepass/apply', {
+        destination: gatePassForm.destination,
+        reason: gatePassForm.reason,
+        outTime: gatePassForm.outTime || 'Today 05:00 PM',
+        expectedInTime: gatePassForm.expectedInTime || 'Today 08:30 PM',
+        emergencyContact: gatePassForm.emergencyContact || user?.emergencyContact || user?.phone || '',
+      });
+      if (res.success) {
+        setGatePassSuccessMsg('Gate pass appeal submitted! Sent to Campus Admin / Warden for approval.');
+        setGatePassForm({ destination: '', reason: '', outTime: '', expectedInTime: '', emergencyContact: '' });
+        fetchMyGatePasses();
+        setActiveGatePassTab('pass');
+        setTimeout(() => setGatePassSuccessMsg(''), 6000);
+      }
+    } catch (err) {
+      alert(err.message || 'Failed to submit gate pass');
+    } finally {
+      setGatePassSubmitting(false);
+    }
+  };
 
   // Live Class Countdown (Starts at 24m 18s and ticks every 1s)
   const [classCountdownSecs, setClassCountdownSecs] = useState(24 * 60 + 18);
@@ -613,7 +679,7 @@ export function StudentDashboard() {
       </div>
 
       {/* =========================================================================
-          MODAL: DIGITAL NFC CAMPUS SMART GATE PASS
+          MODAL: DIGITAL NFC CAMPUS SMART GATE PASS & OUT-PASS APPEAL SYSTEM
           ========================================================================= */}
       {isGatePassOpen && (
         <div
@@ -625,14 +691,16 @@ export function StudentDashboard() {
           }}
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#142D28]/40 backdrop-blur-sm animate-in fade-in duration-200"
         >
-          <div className="relative w-full max-w-sm rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-4 sm:p-6 flex flex-col gap-5 text-[#202A27] max-h-[90dvh] overflow-y-auto">
+          <div className="relative w-full max-w-md rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-5 sm:p-6 flex flex-col gap-4 text-[#202A27] max-h-[92dvh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-[#E4EAE5]">
               <div className="flex items-center gap-2">
                 <ShieldCheck size={20} className="text-[#168567]" />
                 <div className="flex flex-col">
-                  <span id="gate-pass-title" className="text-xs font-bold text-[#202A27]">Mewar University Smart ID</span>
-                  <span className="text-[10px] text-[#65736B] font-medium">Turnstile Gate Pass</span>
+                  <span id="gate-pass-title" className="text-xs font-bold text-[#202A27]">
+                    Mewar University Smart Pass
+                  </span>
+                  <span className="text-[10px] text-[#65736B] font-medium">Digital Turnstile & Campus Out-Pass</span>
                 </div>
               </div>
               <button
@@ -645,72 +713,278 @@ export function StudentDashboard() {
               </button>
             </div>
 
-            {/* High-res Digital Pass Body */}
-            <div className="p-5 rounded-2xl bg-gradient-to-b from-[#F6F8F6] to-white border border-[#E4EAE5] flex flex-col items-center gap-3.5 shadow-xs">
-              <div className="w-36 h-36 p-2 rounded-xl bg-white border border-[#E4EAE5] flex items-center justify-center shadow-xs">
-                <svg viewBox="0 0 100 100" className="w-full h-full">
-                  <rect x="0" y="0" width="100" height="100" fill="#FFFFFF" />
-                  <rect x="10" y="10" width="25" height="25" fill="#142D28" />
-                  <rect x="15" y="15" width="15" height="15" fill="#FFFFFF" />
-                  <rect x="18" y="18" width="9" height="9" fill="#142D28" />
-
-                  <rect x="65" y="10" width="25" height="25" fill="#142D28" />
-                  <rect x="70" y="15" width="15" height="15" fill="#FFFFFF" />
-                  <rect x="73" y="18" width="9" height="9" fill="#142D28" />
-
-                  <rect x="10" y="65" width="25" height="25" fill="#142D28" />
-                  <rect x="15" y="70" width="15" height="15" fill="#FFFFFF" />
-                  <rect x="18" y="73" width="9" height="9" fill="#142D28" />
-
-                  <rect x="42" y="15" width="6" height="6" fill="#142D28" />
-                  <rect x="52" y="25" width="6" height="6" fill="#142D28" />
-                  <rect x="40" y="45" width="6" height="6" fill="#142D28" />
-                  <rect x="55" y="55" width="6" height="6" fill="#142D28" />
-                  <rect x="65" y="70" width="6" height="6" fill="#142D28" />
-                  <rect x="75" y="45" width="6" height="6" fill="#142D28" />
-                  <circle cx="50" cy="50" r="5" fill="#168567" />
-                </svg>
+            {/* Success toast if recently submitted */}
+            {gatePassSuccessMsg && (
+              <div className="p-3 rounded-xl bg-[#EAF5EF] border border-[#B7DEC9] text-[#142D28] text-xs font-semibold flex items-center gap-2 animate-in fade-in">
+                <CheckCircle2 size={16} className="text-[#168567] shrink-0" />
+                <span>{gatePassSuccessMsg}</span>
               </div>
+            )}
 
-              <div className="text-center">
-                <h4 className="text-base font-extrabold text-[#202A27]">{studentName}</h4>
-                <p className="text-xs font-mono font-bold text-[#168567] mt-0.5">{studentRoll}</p>
-                <p className="text-[11px] text-[#65736B] mt-1 font-medium">
-                  {studentDept} ({studentYear})
-                </p>
-              </div>
-
-              <div className="w-full pt-2.5 border-t border-[#E4EAE5] flex items-center justify-between text-[11px] text-[#65736B]">
-                <span>Gate Barrier: NFC Enabled</span>
-                <span className="text-[#168567] font-bold">VALID 2026</span>
-              </div>
-            </div>
-
-            {/* Turnstile Tap Simulator */}
-            <div className="flex flex-col gap-2">
-              <Button
-                variant={turnstileUnlocked ? 'primary' : 'secondary'}
-                size="md"
-                onClick={handleSimulateTurnstile}
-                icon={turnstileUnlocked ? Unlock : Lock}
-              >
-                {turnstileUnlocked
-                  ? 'Turnstile Access Granted! ✓'
-                  : 'Simulate NFC Tap at Gate Reader'}
-              </Button>
-
+            {/* Toggle: Active Pass vs Apply New */}
+            <div className="grid grid-cols-2 p-1 rounded-xl bg-[#F0F4F1] text-xs font-bold">
               <button
-                onClick={handleCopyPass}
-                className="w-full py-2 rounded-xl text-xs text-[#65736B] hover:text-[#202A27] flex items-center justify-center gap-1.5 font-medium transition-colors"
+                type="button"
+                onClick={() => setActiveGatePassTab('pass')}
+                className={`py-2 rounded-lg transition-all cursor-pointer ${
+                  activeGatePassTab === 'pass'
+                    ? 'bg-white text-[#142D28] shadow-xs'
+                    : 'text-[#65736B] hover:text-[#202A27]'
+                }`}
               >
-                {hasCopiedPassId ? (
-                  <Check size={14} className="text-[#168567]" />
-                ) : (
-                  <Copy size={14} />
-                )}
-                <span>{hasCopiedPassId ? 'Roll Number Copied' : 'Copy Student Roll ID'}</span>
+                My Pass & Appeals {myGatePasses.length > 0 && `(${myGatePasses.length})`}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveGatePassTab('apply')}
+                className={`py-2 rounded-lg transition-all cursor-pointer ${
+                  activeGatePassTab === 'apply'
+                    ? 'bg-white text-[#142D28] shadow-xs'
+                    : 'text-[#65736B] hover:text-[#202A27]'
+                }`}
+              >
+                + Apply for Out-Pass
               </button>
             </div>
+
+            {/* TAB 1: ACTIVE PASS / STATUS VIEW */}
+            {activeGatePassTab === 'pass' && (
+              <div className="space-y-4">
+                {myGatePasses.length === 0 ? (
+                  <div className="p-6 rounded-2xl bg-[#F6F8F6] border border-[#E4EAE5] text-center space-y-3">
+                    <ShieldCheck size={32} className="mx-auto text-[#87968D]" />
+                    <p className="text-xs font-semibold text-[#404D46]">
+                      You do not have any active out-passes registered.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setActiveGatePassTab('apply')}
+                      className="px-4 py-2 rounded-xl bg-[#142D28] hover:bg-[#1f3f38] text-white text-xs font-bold cursor-pointer"
+                    >
+                      Fill Gate Pass Appeal Form
+                    </button>
+                  </div>
+                ) : (
+                  myGatePasses.map((pass) => {
+                    const isApproved = pass.status === 'APPROVED';
+                    const isPending = pass.status === 'PENDING';
+                    const isRejected = pass.status === 'REJECTED';
+
+                    return (
+                      <div
+                        key={pass.id || pass.passCode}
+                        className={`p-4 rounded-2xl border transition-all ${
+                          isApproved
+                            ? 'bg-gradient-to-b from-[#F6F8F6] to-white border-[#168567]/30 shadow-xs'
+                            : isPending
+                            ? 'bg-[#FFF9EB]/60 border-[#F9E2AF]'
+                            : 'bg-[#FDF2F3]/60 border-[#F1C2C6]'
+                        }`}
+                      >
+                        {/* Status bar */}
+                        <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#E4EAE5]">
+                          <span className="font-mono text-xs font-bold text-[#142D28]">
+                            {pass.passCode || 'GP-OUTPASS'}
+                          </span>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
+                              isApproved
+                                ? 'bg-[#EAF5EF] text-[#168567] border border-[#B7DEC9]'
+                                : isPending
+                                ? 'bg-[#FFF9EB] text-[#B26A00] border border-[#F9E2AF]'
+                                : 'bg-[#FDF2F3] text-[#C43D4B] border border-[#F1C2C6]'
+                            }`}
+                          >
+                            {pass.status}
+                          </span>
+                        </div>
+
+                        {isApproved ? (
+                          /* Approved Digital QR Pass */
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="w-32 h-32 p-2 rounded-xl bg-white border border-[#E4EAE5] flex items-center justify-center shadow-xs">
+                              <svg viewBox="0 0 100 100" className="w-full h-full">
+                                <rect x="0" y="0" width="100" height="100" fill="#FFFFFF" />
+                                <rect x="10" y="10" width="25" height="25" fill="#142D28" />
+                                <rect x="15" y="15" width="15" height="15" fill="#FFFFFF" />
+                                <rect x="18" y="18" width="9" height="9" fill="#142D28" />
+
+                                <rect x="65" y="10" width="25" height="25" fill="#142D28" />
+                                <rect x="70" y="15" width="15" height="15" fill="#FFFFFF" />
+                                <rect x="73" y="18" width="9" height="9" fill="#142D28" />
+
+                                <rect x="10" y="65" width="25" height="25" fill="#142D28" />
+                                <rect x="15" y="70" width="15" height="15" fill="#FFFFFF" />
+                                <rect x="18" y="73" width="9" height="9" fill="#142D28" />
+
+                                <rect x="42" y="15" width="6" height="6" fill="#142D28" />
+                                <rect x="52" y="25" width="6" height="6" fill="#142D28" />
+                                <rect x="40" y="45" width="6" height="6" fill="#142D28" />
+                                <rect x="55" y="55" width="6" height="6" fill="#142D28" />
+                                <rect x="65" y="70" width="6" height="6" fill="#142D28" />
+                                <circle cx="50" cy="50" r="5" fill="#168567" />
+                              </svg>
+                            </div>
+
+                            <div className="text-center">
+                              <h4 className="text-sm font-extrabold text-[#202A27]">{pass.studentName}</h4>
+                              <p className="text-xs font-mono font-bold text-[#168567] mt-0.5">{pass.enrollmentNumber}</p>
+                              <p className="text-[11px] text-[#65736B] font-medium mt-0.5">
+                                Destination: <span className="font-bold text-[#202A27]">{pass.destination}</span>
+                              </p>
+                              <p className="text-[10px] text-[#87968D]">
+                                Window: {pass.outTime} $\rightarrow$ {pass.expectedInTime}
+                              </p>
+                            </div>
+
+                            <Button
+                              variant={turnstileUnlocked ? 'primary' : 'secondary'}
+                              size="sm"
+                              onClick={handleSimulateTurnstile}
+                              icon={turnstileUnlocked ? Unlock : Lock}
+                              className="w-full"
+                            >
+                              {turnstileUnlocked ? 'Turnstile Unlocked! ✓' : 'Tap at Gate Reader'}
+                            </Button>
+                          </div>
+                        ) : isPending ? (
+                          /* Pending Appeal Information */
+                          <div className="space-y-2 text-xs">
+                            <p className="font-bold text-[#B26A00] flex items-center gap-1.5">
+                              <Clock size={14} /> Appeal Under Administrative Review
+                            </p>
+                            <p className="text-[#404D46]">
+                              Destination: <span className="font-semibold text-[#202A27]">{pass.destination}</span>
+                            </p>
+                            <p className="text-[#65736B] text-[11px]">Reason: {pass.reason}</p>
+                            <div className="p-2 rounded-lg bg-white/80 border border-[#F9E2AF] text-[10.5px] text-[#87968D]">
+                              Your appeal is currently with the Hostel Warden & Campus Admin. Once approved, your digital QR pass will become active.
+                            </div>
+                          </div>
+                        ) : (
+                          /* Rejected Appeal */
+                          <div className="space-y-1.5 text-xs">
+                            <p className="font-bold text-[#C43D4B] flex items-center gap-1.5">
+                              <AlertTriangle size={14} /> Request Declined
+                            </p>
+                            <p className="text-[#65736B] text-[11px]">
+                              {pass.adminRemarks || 'Declined by campus administration.'}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
+
+            {/* TAB 2: APPLY FOR GATE PASS FORM */}
+            {activeGatePassTab === 'apply' && (
+              <form onSubmit={handleSubmitGatePassAppeal} className="space-y-3 text-xs">
+                {/* Auto-filled Section */}
+                <div className="p-3 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] space-y-2">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-[#87968D]">Student Name:</span>
+                    <span className="font-bold text-[#202A27]">{studentName} (Auto-filled)</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-[#87968D]">Enrollment / MUR:</span>
+                    <span className="font-mono font-bold text-[#168567]">{studentRoll} (Auto-filled)</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-[#87968D]">Course & Dept:</span>
+                    <span className="font-medium text-[#202A27] truncate max-w-[200px]">{studentDept}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-[#87968D]">Registered Mobile:</span>
+                    <span className="font-mono font-bold text-[#202A27]">
+                      {user?.phone || '+91 98765 43210'} (Auto-filled)
+                    </span>
+                  </div>
+                </div>
+
+                {/* Destination Input */}
+                <div>
+                  <label className="font-bold text-[#404D46] block mb-1">Destination *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. City Railway Station / Home / Medical Clinic"
+                    value={gatePassForm.destination}
+                    onChange={(e) => setGatePassForm({ ...gatePassForm, destination: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs focus:outline-hidden focus:border-[#168567]"
+                  />
+                </div>
+
+                {/* Reason Input */}
+                <div>
+                  <label className="font-bold text-[#404D46] block mb-1">Reason for Leaving Campus *</label>
+                  <textarea
+                    rows="2"
+                    required
+                    placeholder="e.g. Family function attendance over the weekend"
+                    value={gatePassForm.reason}
+                    onChange={(e) => setGatePassForm({ ...gatePassForm, reason: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs focus:outline-hidden focus:border-[#168567]"
+                  />
+                </div>
+
+                {/* Date & Time Grid */}
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="font-bold text-[#404D46] block mb-1">Out Time (Departure)</label>
+                    <input
+                      type="text"
+                      placeholder="Today 05:00 PM"
+                      value={gatePassForm.outTime}
+                      onChange={(e) => setGatePassForm({ ...gatePassForm, outTime: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs focus:outline-hidden focus:border-[#168567]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-bold text-[#404D46] block mb-1">Expected Return Time</label>
+                    <input
+                      type="text"
+                      placeholder="Today 08:30 PM"
+                      value={gatePassForm.expectedInTime}
+                      onChange={(e) => setGatePassForm({ ...gatePassForm, expectedInTime: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs focus:outline-hidden focus:border-[#168567]"
+                    />
+                  </div>
+                </div>
+
+                {/* Emergency Contact */}
+                <div>
+                  <label className="font-bold text-[#404D46] block mb-1">Parent / Guardian Contact</label>
+                  <input
+                    type="text"
+                    placeholder="+91 98765 00000"
+                    value={gatePassForm.emergencyContact}
+                    onChange={(e) => setGatePassForm({ ...gatePassForm, emergencyContact: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs focus:outline-hidden focus:border-[#168567]"
+                  />
+                </div>
+
+                <div className="pt-2 border-t border-[#E4EAE5] flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveGatePassTab('pass')}
+                    className="px-3 py-2 rounded-xl bg-[#F0F4F1] text-[#65736B] font-semibold cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={gatePassSubmitting}
+                    className="px-4 py-2 rounded-xl bg-[#142D28] hover:bg-[#1f3f38] text-white font-bold shadow-xs cursor-pointer disabled:opacity-50"
+                  >
+                    {gatePassSubmitting ? 'Submitting Appeal...' : 'Submit Gate Pass Appeal'}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

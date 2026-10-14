@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   MapPin,
@@ -16,15 +16,18 @@ import { useAuth } from '../../hooks/useAuth';
 
 export const MobileNav = ({ onOpenMore }) => {
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin' || user?.role === 'care_admin';
+  const location = useLocation();
+  const currentFullPath = location.pathname + location.search;
 
-    const items = isAdmin
+  const isAdmin = user?.role === 'admin' || user?.role === 'staff' || user?.role === 'care_admin';
+
+  const items = isAdmin
     ? [
-        { label: 'Admin', path: '/admin', icon: ShieldAlert },
-        { label: 'Campus', path: '/admin/campus-management', icon: Sliders },
+        { label: 'Console', path: '/admin', icon: LayoutDashboard },
+        { label: 'Gate Pass', path: '/admin?tab=gatepass', icon: DoorOpen },
+        { label: 'Students', path: '/admin?tab=students', icon: Users },
+        { label: 'Timetable', path: '/admin?tab=timetable', icon: Sliders },
         { label: 'Map', path: '/campus-map', icon: MapPin },
-        { label: 'Care', path: '/admin/complaints', icon: LifeBuoy },
-        { label: 'Directory', path: '/directory', icon: Users },
       ]
     : [
         { label: 'Home', path: '/dashboard', icon: LayoutDashboard },
@@ -34,6 +37,16 @@ export const MobileNav = ({ onOpenMore }) => {
         { label: 'Directory', path: '/directory', icon: Users },
       ];
 
+  const checkIsActive = (itemPath) => {
+    if (itemPath.includes('?')) {
+      return currentFullPath === itemPath;
+    }
+    if (itemPath === '/admin') {
+      return location.pathname === '/admin' && (!location.search || location.search === '?tab=overview');
+    }
+    return location.pathname === itemPath;
+  };
+
   return (
     <nav
       role="navigation"
@@ -42,33 +55,28 @@ export const MobileNav = ({ onOpenMore }) => {
     >
       {items.map((item, idx) => {
         const Icon = item.icon;
+        const active = checkIsActive(item.path);
         return (
           <NavLink
             key={idx}
             to={item.path}
             aria-label={item.label}
-            className={({ isActive }) =>
-              `flex flex-col items-center justify-center min-w-[44px] min-h-[44px] py-1 px-1.5 rounded-xl transition-all duration-150 text-decoration-none ${
-                isActive
-                  ? 'text-[#168567] font-bold'
-                  : 'text-[#65736B] hover:text-[#202A27] font-medium'
-              }`
-            }
+            className={`flex flex-col items-center justify-center min-w-[44px] min-h-[44px] py-1 px-1.5 rounded-xl transition-all duration-150 text-decoration-none ${
+              active
+                ? 'text-[#168567] font-bold'
+                : 'text-[#65736B] hover:text-[#202A27] font-medium'
+            }`}
           >
-            {({ isActive }) => (
-              <>
-                <div
-                  className={`p-1 rounded-lg transition-colors ${
-                    isActive ? 'bg-[#EAF5EF] text-[#168567]' : 'text-[#87968D]'
-                  }`}
-                >
-                  <Icon size={18} />
-                </div>
-                <span className="text-[10px] leading-none tracking-tight">
-                  {item.label}
-                </span>
-              </>
-            )}
+            <div
+              className={`p-1 rounded-lg transition-colors ${
+                active ? 'bg-[#EAF5EF] text-[#168567]' : 'text-[#87968D]'
+              }`}
+            >
+              <Icon size={18} />
+            </div>
+            <span className="text-[10px] leading-none tracking-tight">
+              {item.label}
+            </span>
           </NavLink>
         );
       })}

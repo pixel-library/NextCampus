@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { useAuth } from '../hooks/useAuth';
+import AdminUpdatesModal from '../components/admin/AdminUpdatesModal';
 import {
   Bot,
   Send,
@@ -141,6 +143,7 @@ const INITIAL_MESSAGES = [
 
 export function AiAssistant() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [messages, setMessages] = useState(INITIAL_MESSAGES);
   const [inputValue, setInputValue] = useState('');
@@ -153,6 +156,7 @@ export function AiAssistant() {
   const [showMobileHistory, setShowMobileHistory] = useState(false);
   const [speakingMsgId, setSpeakingMsgId] = useState(null);
   const [voiceTranscript, setVoiceTranscript] = useState('');
+  const [showAdminModal, setShowAdminModal] = useState(false);
 
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -212,7 +216,18 @@ export function AiAssistant() {
     setLastFailedPrompt('');
 
     try {
-      const res = await api.post('/ai/query', { prompt: userPrompt });
+      const historyPayload = messages.slice(-10).map((m) => ({
+        role: m.sender === 'user' ? 'user' : 'assistant',
+        content: m.text,
+        intent: m.intent,
+        entities: m.entities
+      }));
+
+      const res = await api.post('/ai/query', {
+        prompt: userPrompt,
+        conversationHistory: historyPayload
+      });
+
       if (res && res.success && res.data) {
         const aiData = res.data;
         const aiMsg = {
@@ -220,30 +235,24 @@ export function AiAssistant() {
           sender: 'ai',
           text: aiData.reply || 'Request processed successfully.',
           time: 'Just now • NextCampus AI',
-          engineName: aiData.engineName || 'NextCampus Spatial AI Engine',
+          engineName: aiData.engineName || 'NextCampus AI Engine',
+          intent: aiData.intent,
+          entities: aiData.entities,
           thought: aiData.thought || [
-            '⚡ Spatial Graph: Queried Mewar University CAD & GIS topology node.',
-            '⚡ Live Telemetry: LoRaWAN 100Hz IoT mesh active.'
+            '⚡ Grounded in Mewar University records.',
+            '⚡ Live campus telemetry verified.'
           ],
           cards: Array.isArray(aiData.richCards)
             ? aiData.richCards
             : aiData.richCards
             ? [aiData.richCards]
-            : [
-                {
-                  type: 'spatial',
-                  title: 'Faculty of Engineering (Block ENG-02)',
-                  tag: 'CAD Vector Mesh',
-                  room: 'Room B-204 (Level 2)',
-                  actionLabel: 'Navigate in Campus Map',
-                  actionRoute: '/campus-map?bldg=eng'
-                }
-              ]
+            : []
         };
         setMessages((prev) => [...prev, aiMsg]);
       } else {
         throw new Error('API returned unformatted response');
       }
+
     } catch (err) {
       // High-fidelity fallback logic
       const q = userPrompt.toLowerCase();
@@ -484,6 +493,17 @@ export function AiAssistant() {
             {showMobileHistory ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
           </button>
 
+          {user?.role === 'admin' && (
+            <Button
+              variant="primary"
+              size="sm"
+              icon={ShieldCheck}
+              onClick={() => setShowAdminModal(true)}
+            >
+              Admin Updates
+            </Button>
+          )}
+
           <Button
             variant="secondary"
             size="sm"
@@ -494,6 +514,7 @@ export function AiAssistant() {
           </Button>
         </div>
       </div>
+
 
       {/* Main Integrated Workspace */}
       <div className="flex flex-1 min-h-0 gap-3.5 overflow-hidden relative">
@@ -796,13 +817,14 @@ export function AiAssistant() {
           <div className="p-2.5 px-4 bg-slate-50/80 border-t border-slate-100 flex items-center gap-2 overflow-x-auto scrollbar-none">
             <span className="text-[11px] font-mono uppercase text-slate-400 font-bold shrink-0">Try Asking:</span>
             {[
-              'When is mid-term exam week?',
-              "What is today's hostel dinner menu?",
-              'Central Library book borrowing rules?',
-              'Minimum 75% attendance policy?',
-              'How to reach Room B-204 from Main Campus Gate?',
-              'Are there quiet study pods free in Central Library?',
-              'What is the EV shuttle schedule today?'
+              "Today's mess menu",
+              "Aaj ka lunch",
+              "CSE third sem timetable",
+              "Next class",
+              "What time does the library close?",
+              "Minimum 75% attendance policy?",
+              "When is mid-term exam week?",
+              "Where is the temple?"
             ].map((chip, i) => (
               <button
                 key={i}
@@ -856,8 +878,17 @@ export function AiAssistant() {
           </div>
         </main>
       </div>
+
+      {/* Admin Management Modal */}
+      {user?.role === 'admin' && (
+        <AdminUpdatesModal
+          isOpen={showAdminModal}
+          onClose={() => setShowAdminModal(false)}
+        />
+      )}
     </div>
   );
 }
 
 export default AiAssistant;
+

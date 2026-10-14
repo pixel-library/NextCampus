@@ -12,6 +12,10 @@ from backend.app.db.seed_data import (
     SEED_PROJECTS,
     SEED_METRICS,
     SEED_ANNOUNCEMENTS,
+    SEED_TIMETABLES,
+    SEED_MESS_MENUS,
+    SEED_AUDIT_LOGS,
+    SEED_GATE_PASSES,
 )
 
 # Global client and database instances
@@ -28,6 +32,12 @@ IN_MEMORY_COMPLAINTS = copy.deepcopy(SEED_COMPLAINTS)
 IN_MEMORY_PROJECTS = copy.deepcopy(SEED_PROJECTS)
 IN_MEMORY_METRICS = copy.deepcopy(SEED_METRICS)
 IN_MEMORY_ANNOUNCEMENTS = copy.deepcopy(SEED_ANNOUNCEMENTS)
+IN_MEMORY_TIMETABLES = copy.deepcopy(SEED_TIMETABLES)
+IN_MEMORY_MESS_MENUS = copy.deepcopy(SEED_MESS_MENUS)
+IN_MEMORY_AUDIT_LOGS = copy.deepcopy(SEED_AUDIT_LOGS)
+IN_MEMORY_GATE_PASSES = copy.deepcopy(SEED_GATE_PASSES)
+
+
 
 async def connect_db():
     """Connect to MongoDB with resilience and seed initial datasets if empty."""
@@ -85,7 +95,24 @@ async def _seed_collections_if_empty():
         if await db.announcements.count_documents({}) == 0:
             await db.announcements.insert_many(copy.deepcopy(SEED_ANNOUNCEMENTS))
             logger.info(f"[NextCampus DB] Seeded {len(SEED_ANNOUNCEMENTS)} announcements")
+
+        if await db.timetables.count_documents({}) == 0:
+            await db.timetables.insert_many(copy.deepcopy(SEED_TIMETABLES))
+            logger.info(f"[NextCampus DB] Seeded {len(SEED_TIMETABLES)} timetable entries")
+
+        if await db.mess_menus.count_documents({}) == 0:
+            await db.mess_menus.insert_many(copy.deepcopy(SEED_MESS_MENUS))
+            logger.info(f"[NextCampus DB] Seeded {len(SEED_MESS_MENUS)} mess menu records")
+
+        if await db.audit_logs.count_documents({}) == 0:
+            await db.audit_logs.insert_many(copy.deepcopy(SEED_AUDIT_LOGS))
+            logger.info(f"[NextCampus DB] Seeded {len(SEED_AUDIT_LOGS)} initial audit log entries")
+
+        if await db.gate_passes.count_documents({}) == 0:
+            await db.gate_passes.insert_many(copy.deepcopy(SEED_GATE_PASSES))
+            logger.info(f"[NextCampus DB] Seeded {len(SEED_GATE_PASSES)} gate pass requests")
     except Exception as e:
+
         logger.warning(f"[NextCampus DB] Seeding warning: {str(e)}")
 
 async def close_db():

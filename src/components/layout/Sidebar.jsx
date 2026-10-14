@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   MapPin,
@@ -7,6 +7,9 @@ import {
   DoorOpen,
   LifeBuoy,
   ShieldAlert,
+  ShieldCheck,
+  Calendar,
+  Utensils,
   Settings,
   Sliders,
   LogOut,
@@ -20,24 +23,31 @@ import { useAuth } from '../../hooks/useAuth';
 
 export const Sidebar = ({ onClose, isCollapsed = false, onToggleCollapse }) => {
   const { user, logout } = useAuth();
-  const isAdmin = user?.role === 'admin' || user?.role === 'care_admin';
+  const location = useLocation();
 
-  const navGroups = isAdmin
+  const isAdminUser = user?.role === 'admin' || user?.role === 'care_admin' || user?.role === 'staff';
+
+  const isItemActive = (path) => {
+    if (path.includes('?')) {
+      return (location.pathname + location.search) === path;
+    }
+    if (path === '/admin') {
+      return location.pathname === '/admin' && (!location.search || location.search === '?tab=overview');
+    }
+    return location.pathname === path;
+  };
+
+  const navGroups = isAdminUser
     ? [
         {
-          title: 'Administration',
+          title: 'Campus Administration',
           items: [
-            { label: 'Admin Dashboard', path: '/admin', icon: ShieldAlert },
-            { label: 'Campus Management', path: '/admin/campus-management', icon: Sliders },
-            { label: 'Helpdesk & Care', path: '/admin/complaints', icon: LifeBuoy, badge: 'Live' },
-          ],
-        },
-        {
-          title: 'Campus Operations',
-          items: [
-            { label: 'Interactive Map', path: '/campus-map', icon: MapPin },
-            { label: 'Indoor Navigation', path: '/smartroom', icon: Compass },
-            { label: 'Campus Directory', path: '/directory', icon: Users },
+            { label: 'Admin Console', path: '/admin', icon: ShieldAlert, badge: 'PORTAL' },
+            { label: 'Gate Pass Appeals', path: '/admin?tab=gatepass', icon: ShieldCheck, badge: 'DESK' },
+            { label: 'Student Directory', path: '/admin?tab=students', icon: Users },
+            { label: 'Timetable Studio', path: '/admin?tab=timetable', icon: Calendar },
+            { label: 'Mess Menu Control', path: '/admin?tab=mess', icon: Utensils },
+            { label: 'Campus Facilities', path: '/admin/campus-management', icon: Sliders },
           ],
         },
         {
@@ -47,7 +57,7 @@ export const Sidebar = ({ onClose, isCollapsed = false, onToggleCollapse }) => {
       ]
     : [
         {
-          title: 'Student Workspace',
+          title: 'Campus Workspace',
           items: [
             { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
             { label: 'Interactive Map', path: '/campus-map', icon: MapPin, badge: 'GIS' },
@@ -134,6 +144,7 @@ export const Sidebar = ({ onClose, isCollapsed = false, onToggleCollapse }) => {
             )}
             {group.items.map((item, idx) => {
               const Icon = item.icon;
+              const active = isItemActive(item.path);
               return isCollapsed ? (
                 /* Collapsed Icon Rail Item with Non-Clipping Floating Tooltip */
                 <div key={idx} className="relative group/tooltip flex justify-center">
@@ -141,24 +152,20 @@ export const Sidebar = ({ onClose, isCollapsed = false, onToggleCollapse }) => {
                     to={item.path}
                     onClick={handleLinkClick}
                     aria-label={item.label}
-                    className={({ isActive }) =>
-                      `flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-150 text-decoration-none min-h-[44px] sm:min-h-0 ${
-                        isActive
-                          ? 'bg-[#EAF5EF] text-[#142D28] font-bold shadow-xs'
-                          : 'text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1]'
-                      }`
-                    }
+                    className={`flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-150 text-decoration-none min-h-[44px] sm:min-h-0 ${
+                      active
+                        ? 'bg-[#EAF5EF] text-[#142D28] font-bold shadow-xs'
+                        : 'text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1]'
+                    }`}
                   >
-                    {({ isActive }) => (
-                      <Icon
-                        size={19}
-                        className={`shrink-0 transition-colors ${
-                          isActive
-                            ? 'text-[#168567]'
-                            : 'text-[#87968D] group-hover/tooltip:text-[#202A27]'
-                        }`}
-                      />
-                    )}
+                    <Icon
+                      size={19}
+                      className={`shrink-0 transition-colors ${
+                        active
+                          ? 'text-[#168567]'
+                          : 'text-[#87968D] group-hover/tooltip:text-[#202A27]'
+                      }`}
+                    />
                   </NavLink>
                   {/* Floating Tooltip visible on hover & keyboard focus */}
                   <div
@@ -180,39 +187,33 @@ export const Sidebar = ({ onClose, isCollapsed = false, onToggleCollapse }) => {
                   key={idx}
                   to={item.path}
                   onClick={handleLinkClick}
-                  className={({ isActive }) =>
-                    `flex items-center justify-between px-3 py-3 sm:py-2.5 min-h-[44px] sm:min-h-0 rounded-xl text-xs transition-all duration-150 group text-decoration-none ${
-                      isActive
-                        ? 'bg-[#EAF5EF] text-[#142D28] font-bold shadow-xs'
-                        : 'text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1] font-semibold'
-                    }`
-                  }
+                  className={`flex items-center justify-between px-3 py-3 sm:py-2.5 min-h-[44px] sm:min-h-0 rounded-xl text-xs transition-all duration-150 group text-decoration-none ${
+                    active
+                      ? 'bg-[#EAF5EF] text-[#142D28] font-bold shadow-xs'
+                      : 'text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1] font-semibold'
+                  }`}
                 >
-                  {({ isActive }) => (
-                    <>
-                      <div className="flex items-center gap-2.5">
-                        <Icon
-                          size={17}
-                          className={`shrink-0 transition-colors ${
-                            isActive
-                              ? 'text-[#168567]'
-                              : 'text-[#87968D] group-hover:text-[#202A27]'
-                          }`}
-                        />
-                        <span>{item.label}</span>
-                      </div>
-                      {item.badge && (
-                        <span
-                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
-                            isActive
-                              ? 'bg-[#168567] text-white'
-                              : 'bg-[#EAF5EF] text-[#168567] group-hover:bg-[#CBE2D4]'
-                          }`}
-                        >
-                          {item.badge}
-                        </span>
-                      )}
-                    </>
+                  <div className="flex items-center gap-2.5">
+                    <Icon
+                      size={17}
+                      className={`shrink-0 transition-colors ${
+                        active
+                          ? 'text-[#168567]'
+                          : 'text-[#87968D] group-hover:text-[#202A27]'
+                      }`}
+                    />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge && (
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
+                        active
+                          ? 'bg-[#168567] text-white'
+                          : 'bg-[#EAF5EF] text-[#168567] group-hover:bg-[#CBE2D4]'
+                      }`}
+                    >
+                      {item.badge}
+                    </span>
                   )}
                 </NavLink>
               );

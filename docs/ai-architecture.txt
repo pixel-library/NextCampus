@@ -1,0 +1,168 @@
+================================================================================
+NEXTCAMPUS AI: ARCHITECTURE SPECIFICATION & SYSTEM DESIGN
+================================================================================
+Document: docs/ai-architecture.txt
+Institution: Mewar University (Gangrar, Chittorgarh, Rajasthan)
+Primary Backend: Python 3.11 FastAPI (app/main.py) on Port 5000
+Legacy Compatibility Layer: Node.js / Express (server/index.js) on Port 5000
+Frontend: React 18 + Vite SPA (src/pages/AiAssistant.jsx)
+Database Layer: MongoDB (Motor async driver) with resilient In-Memory seed fallback
+================================================================================
+
+1. SYSTEM TOPOLOGY & COMPONENT OVERVIEW
+--------------------------------------------------------------------------------
+NextCampus AI is designed with a layered, decoupled service architecture:
+
+  +-------------------------------------------------------------+
+  |              React 18 Single Page Application              |
+  | (AiAssistant.jsx, AdminUpdatesModal.jsx, ChatMessage.jsx)   |
+  +------------------------------+------------------------------+
+                                 | HTTP / JSON (Bearer JWT)
+                                 v
+  +-------------------------------------------------------------+
+  |                  FastAPI Application Gateway                |
+  |  - CORS & Security Middleware                              |
+  |  - JWT Authentication Middleware (security.py)              |
+  |  - Route Dispatchers (/api/v1/ai, /timetable, /mess)       |
+  +------------------------------+------------------------------+
+                                 |
+         +-----------------------+-----------------------+
+         |                                               |
+         v                                               v
+  +-----------------------------+                 +-----------------------------+
+  |   Intent Understanding &    |                 |   Admin Update Controller   |
+  |   Context Resolution Engine |                 |   - File Ingestion (.xlsx,  |
+  |   (intent_service.py)       |                 |     .csv, .pdf)             |
+  |   - Multi-lingual NER & RegEx|                |   - Automated Validator     |
+  |   - Asia/Kolkata Timezone   |                 |   - Atomic Publisher        |
+  |   - Context Carry-forward   |                 |   - Version History/Rollback|
+  +--------------+--------------+                 +--------------+--------------+
+                 |                                               |
+                 v                                               v
+  +-----------------------------+                 +-----------------------------+
+  |    Authoritative Data       |<----------------+   Audit Logging Service     |
+  |    Retrieval Services       |                 |   (audit_service.py)        |
+  |    - timetable_service.py   |                 +-----------------------------+
+  |    - mess_service.py        |                                |
+  |    - GIS Navigation Service |                                v
+  |    - University Policies    |                 +-----------------------------+
+  +--------------+--------------+                 |   MongoDB & In-Memory Store |
+                 |                                |   - timetables collection   |
+                 v                                |   - mess_menus collection   |
+  +-----------------------------+                 |   - campus_locations        |
+  |     AI Synthesis Engine     |                 |   - audit_logs collection   |
+  |     (ai_service.py)         |                 +-----------------------------+
+  |     - LLM Prompt Assembly   |
+  |     - Strict Anti-hallucination
+  |     - Structured Card Gen   |
+  +-----------------------------+
+
+
+2. AI PROVIDER & MODEL INTEGRATION
+--------------------------------------------------------------------------------
+- Primary AI Provider: Google Gemini API (gemini-1.5-pro / gemini-1.5-flash)
+  configured via GEMINI_API_KEY environment variable.
+- Autonomous Resilient Architecture:
+  When an external AI provider key is unavailable or during network partitions,
+  NextCampus AI activates its deterministic Institutional Expert Synthesis Engine.
+  This engine utilizes rule-based NLP, regularized token matchers, and grounded
+  template generators to produce accurate, professional responses directly from
+  database records without external API round-trips.
+- Grounded Prompting Policy:
+  The LLM prompt is dynamically constructed in `ai_service.py` with verified
+  database records injected into the context window. Hallucination is strictly
+  forbidden: the system prompt instructs the model to explicitly state when
+  records do not exist.
+
+
+3. REQUEST & RESPONSE FLOW
+--------------------------------------------------------------------------------
+Step 1: User Submission
+  - Client sends a POST request to `/api/v1/ai/query` with:
+    {
+      "message": "Kal lunch me kya hai?",
+      "conversationHistory": [
+        {"role": "user", "content": "Today's mess menu"},
+        {"role": "assistant", "content": "Today's menu is..."}
+      ],
+      "contextFilters": {"meal": "lunch", "day": "tomorrow"}
+    }
+
+Step 2: Authentication & Contextual Identification
+  - FastAPI extracts and verifies Bearer JWT token if present.
+  - User role (student, faculty, admin) is extracted and verified.
+
+Step 3: Intent Classification & Entity Extraction (intent_service.py)
+  - Detects query language (English, Hindi, Hinglish).
+  - Normalizes informal language ("tmrw", "aaj ka lunch", "lib timing").
+  - Computes target date and time using Indian Standard Time (`Asia/Kolkata`).
+  - Merges previous turns from `conversationHistory`:
+    Carries forward active parameters (department, semester, facility, meal).
+  - Classifies intent:
+    - mess_menu_query / mess_menu_specific
+    - timetable_query / next_class_query
+    - navigation_query
+    - policy_query / exam_query / library_query
+    - care_ticket / general_query
+
+Step 4: Authoritative Data Retrieval
+  - The classified intent triggers dedicated retrieval routines:
+    * `timetable_service.get_timetable()` or `get_next_class()`
+    * `mess_service.get_mess_menu()` or `get_specific_meal()`
+    * Spatial graph search for campus coordinates
+    * Verified institutional policy lookup
+  - If no record exists for the requested filters, an authoritative "Data Unavailable"
+    state is flagged.
+
+Step 5: Response Generation & Card Synthesis (ai_service.py)
+  - Text response is formulated adhering to professional university guidelines:
+    direct, polite, factual, concise, free of robotic greetings.
+  - Structured UI card is assembled (e.g., MessCard, TimetableCard, RouteCard)
+    enabling native interactive rendering in the frontend.
+
+Step 6: Delivery
+  - Standard JSON response returned with:
+    {
+      "reply": "...",
+      "intent": "mess_menu_specific",
+      "entities": {"meal": "lunch", "day": "Wednesday", "date": "2026-10-15"},
+      "card": { "type": "mess", "data": {...} }
+    }
+
+
+4. CONVERSATIONAL CONTEXT MANAGEMENT
+--------------------------------------------------------------------------------
+Conversational context is maintained through client-side state transmitted on each turn:
+- Context Filters: Filters such as `department: "CSE"`, `semester: 3`, `section: "A"`,
+  and `meal: "lunch"` persist across follow-up queries.
+- Follow-up Resolution:
+  Turn 1: "Show my CSE timetable" -> intent: timetable_query, dept: "CSE"
+  Turn 2: "Third semester" -> carries forward "CSE", resolves sem: 3
+  Turn 3: "What about Monday?" -> carries forward CSE Sem 3, resolves day: "Monday"
+- Context Invalidation:
+  When the user pivots to an unrelated topic (e.g., from mess menus to campus navigation),
+  unrelated filters are purged automatically to prevent false constraints.
+
+
+5. DATA RETRIEVAL & STORAGE INTEGRATION
+--------------------------------------------------------------------------------
+- Persistent Storage: MongoDB collections:
+  * `timetables`: Stores versioned class schedules indexed by (department, semester, section).
+  * `mess_menus`: Stores 7-day cyclical dining schedules indexed by (facility, day).
+  * `campus_locations`: Stores GIS geo-coordinates, block codes, and accessibility features.
+  * `audit_logs`: Stores immutable records of administrative update events.
+- In-Memory Fallback Store:
+  If MongoDB is not connected during local dev or testing, the system transparently
+  falls back to initialized in-memory seed stores, ensuring zero downtime.
+
+
+6. SECURITY & ACCESS CONTROL (RBAC)
+--------------------------------------------------------------------------------
+- Read Operations:
+  Available to students, faculty, and administrative staff. Personal timetable queries
+  respect the student's enrolled department and semester.
+- Write Operations:
+  Timetable and Mess Menu publishing, updating, and rollbacks are protected by
+  backend role checks (`current_user.get("role") == "admin"`).
+  Unauthorized attempts yield HTTP 403 Forbidden and are logged to security audit trails.
+================================================================================

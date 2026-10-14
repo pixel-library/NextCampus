@@ -1,0 +1,151 @@
+================================================================================
+NEXTCAMPUS AI: UNIVERSITY KNOWLEDGE BASE SPECIFICATION
+================================================================================
+Document: docs/ai-knowledge-base.txt
+Campus Node: Mewar University (Gangrar, Chittorgarh, Rajasthan, India)
+Runtime Status: ACTIVE & VERIFIED
+Timezone Reference: Indian Standard Time (IST / Asia/Kolkata)
+================================================================================
+
+1. SUPPORTED INFORMATION CATEGORIES
+--------------------------------------------------------------------------------
+NextCampus AI maintains authoritative institutional knowledge across seven core
+university domains:
+
+Category 1: University Identity & Profile
+  - Full Name: Mewar University, Gangrar, Chittorgarh, Rajasthan.
+  - Accreditation & Approvals: UGC recognized, NAAC accredited, AICTE approved.
+  - Campus Area: 30+ acre sprawling green campus situated on NH-48.
+  - Academic Structure: Faculties of Engineering & Technology, Computer Applications,
+    Basic Sciences, Management & Commerce, Legal Studies, and Agriculture.
+
+Category 2: Academic Timetables & Class Schedules
+  - Detailed class schedules for Departments (CSE, ECE, ME, Civil, Applied Sciences).
+  - Degree programs: B.Tech, M.Tech, BCA, MCA.
+  - Scope attributes: Department, Course, Semester, Section, Day of Week, Time Window.
+  - Faculty assignments, Course codes (e.g., CS301, CS302, CS303), Room numbers,
+    and Lab designations (e.g., Turing Computing Lab-2).
+
+Category 3: Dining Services & Mess Menus
+  - Primary Dining Facility: Central Campus Mess (Ground & First Floors).
+  - 7-Day Cycle: Monday through Sunday with distinct menus for every day.
+  - Four Scheduled Meal Services:
+    * Breakfast: 07:30 AM - 09:15 AM
+    * Lunch: 12:30 PM - 02:30 PM
+    * Evening Snacks: 05:00 PM - 06:15 PM
+    * Dinner: 07:45 PM - 09:45 PM
+  - Special and festive meal schedules published via administrative updates.
+
+Category 4: Campus Facilities & GIS Navigation
+  - High-precision CAD/GIS coordinates for all university facilities:
+    * Alan Turing Hall (ENG-02, Dept of Computer Science & Engineering)
+    * Maharana Pratap Administrative Block (ADM-01, Registrar & Finance)
+    * Central University Library (LIB-03, 3 floors, Reading Commons)
+    * Central Dining Hall & Mess (CAF-05)
+    * North Campus Main Gate 1 (NH-48 Access)
+    * South Gate 2 (Hostel Residential Access)
+    * Mewar University Campus Temple & Meditation Sanctuary
+    * General Parking Zone A & B
+    * University Sports Complex (Cricket Oval & Football Grounds)
+    * On-Campus Student Hostels (Boys Hostels 1-3, Girls Hostels 1-2)
+  - Accessibility attributes: Ramp access, tactile pathways, elevator locations,
+    step-free pathways.
+
+Category 5: University Policies & Academic Ordinances
+  - Attendance Policy (Academic Ordinance §4.1):
+    * Mandatory Minimum: 75% attendance across lectures, tutorials, and practicals.
+    * Medical Condonation: Students with 65%–74.9% may submit certified medical
+      records from the Mewar University Hospital within 5 working days of resumption.
+    * Strict Detention: Below 65% attendance results in semester detention without exception.
+  - Central Library Regulations (Ordinance §2.4):
+    * Undergraduate Loan Limit: 4 volumes for 14 calendar days.
+    * Postgraduate & Research Scholar Limit: 6 volumes for 28 calendar days.
+    * Overdue Fine: ₹2 per day per volume.
+    * 24/7 Digital Library & Reading Commons access during examination periods.
+  - Academic Datesheet & Examination Schedules:
+    * Mid-Term Theory Examinations: October 20 – October 25.
+    * Practical Demonstrations & Vivas: November 24 – November 28.
+    * End-Term Semester Final Examinations: December 1 – December 15.
+    * Winter Recess: December 18 – January 4.
+  - Transit & Campus Shuttles:
+    * Free zero-emission EV shuttles run between Gate 1, Academic Blocks, Mess,
+      and Hostels at 10–15 minute intervals from 07:00 AM to 09:30 PM.
+
+Category 6: Student Care & Helpdesk Support
+  - Incident reporting and grievance dispatch categories:
+    * Hostel Maintenance (Plumbing, Electrical, Carpentry)
+    * Campus Wi-Fi & Network Access
+    * Academic Inquiries
+    * Mess & Dining Feedback
+    * Security & Lost-and-Found
+  - Generates tracking ticket IDs and priority classifications.
+
+
+2. STRUCTURED DATA SOURCES & STORAGE
+--------------------------------------------------------------------------------
+The knowledge base relies on authoritative database collections:
+  - `timetables`: Schema validated against `backend/app/schemas/timetable.py`.
+    Stores active and historical versions of class schedules.
+  - `mess_menus`: Schema validated against `backend/app/schemas/mess.py`.
+    Stores weekly meal schedules and special menus.
+  - `campus_locations`: Schema validated against `backend/app/schemas/map.py`.
+    Stores geospatial nodes, edges, codes, and accessibility metadata.
+  - `university_policies`: Structured registry in `seed_data.py` storing verified
+    clauses, ordinance references, and official contact officers.
+
+
+3. SOURCE PRIORITY POLICY
+--------------------------------------------------------------------------------
+When answering queries, NextCampus AI enforces a strict priority hierarchy:
+
+  Rank 1: Currently Published Database Records (Active Version)
+          - Timetable records with `is_published: true`.
+          - Mess menus marked as active for the specified day/date.
+          - These records strictly supersede any LLM parametric knowledge.
+
+  Rank 2: Official Approved University Ordinances & Documents
+          - Verified attendance rules, library guidelines, and exam calendars.
+          - Sourced directly from verified institutional policies.
+
+  Rank 3: General Educational & Academic Explanations
+          - General programming concepts, mathematical principles, study tips.
+          - Handled via general LLM knowledge ONLY when no institutional policy applies.
+
+Conflict Resolution:
+If conflicting schedules or documents are detected, the system discloses the ambiguity
+and reports the version timestamp rather than silently guessing.
+
+
+4. DATA FRESHNESS & CACHING POLICY
+--------------------------------------------------------------------------------
+- Timezone Sensitivity: All dates and times are resolved against `Asia/Kolkata`
+  using the server-side system clock.
+- Immediate Cache Invalidation:
+  When an administrator publishes a new timetable or mess menu version, any active
+  caches are instantly invalidated. The newly published record is immediately
+  retrievable on the subsequent request turn.
+
+
+5. MISSING DATA & ANTI-HALLUCINATION BEHAVIOR
+--------------------------------------------------------------------------------
+NextCampus AI never fabricates or hallucinates university facts.
+- If a timetable for an unknown section (e.g., "Civil Engineering Section Z") is requested:
+  -> System responds: "The timetable for Civil Engineering Section Z is not available
+     in the current university records."
+- If a meal item is unrecorded for a specific slot:
+  -> System responds: "The menu for this meal has not been published yet."
+- If a student asks "When is my next class?" but has no active timetable:
+  -> System prompts the student to specify their department, semester, and section.
+
+
+6. ADMINISTRATIVE KNOWLEDGE UPDATES
+--------------------------------------------------------------------------------
+University knowledge is updated through two safe mechanisms:
+1. Interactive Administrator Updates Modal (`AdminUpdatesModal.jsx`):
+   - Administrators upload Excel, CSV, or PDF schedules.
+   - The system parses, validates, and generates a visual preview with conflict detection.
+   - On explicit confirmation, records are atomically committed with version incrementation.
+2. Direct API Ingestion:
+   - Secured REST endpoints with role enforcement (`/api/v1/timetable/publish`,
+     `/api/v1/mess/publish`).
+================================================================================

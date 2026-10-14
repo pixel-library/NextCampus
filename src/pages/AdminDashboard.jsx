@@ -1,532 +1,1850 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import api from '../services/api';
+import { useAuth } from '../hooks/useAuth';
 import {
-  Building2,
   Users,
-  DoorOpen,
-  Wrench,
-  Activity,
-  Zap,
-  TrendingUp,
-  Download,
-  Megaphone,
-  Sliders,
-  CheckCircle2,
-  AlertTriangle,
-  ArrowRight,
+  Shield,
   ShieldCheck,
-  Radio,
+  ShieldAlert,
+  Calendar,
   Clock,
-  Wifi,
+  Utensils,
+  Search,
+  Filter,
+  Check,
   X,
-  Check
+  AlertTriangle,
+  UserX,
+  UserCheck,
+  DoorOpen,
+  Building,
+  Plus,
+  Trash2,
+  RefreshCw,
+  Edit2,
+  Eye,
+  CheckCircle2,
+  XCircle,
+  FileText,
+  Phone,
+  Mail,
+  MapPin,
+  Sparkles,
+  ChevronRight,
+  BookOpen,
+  ArrowRight,
 } from 'lucide-react';
 
 export function AdminDashboard() {
-  const navigate = useNavigate();
-  const { user } = useContext(AuthContext) || {};
+  const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlTab = searchParams.get('tab');
+  
+  // Tab state: 'overview' | 'students' | 'gatepass' | 'timetable' | 'mess'
+  const [activeTab, setActiveTabState] = useState(
+    urlTab && ['overview', 'students', 'gatepass', 'timetable', 'mess'].includes(urlTab)
+      ? urlTab
+      : 'overview'
+  );
 
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [accessDenied, setAccessDenied] = useState(false);
-  const [broadcastMessage, setBroadcastMessage] = useState('');
-  const [showBroadcastModal, setShowBroadcastModal] = useState(false);
-
-  useEffect(() => {
-    fetchAdminStats();
-  }, [user]);
-
-  const fetchAdminStats = async () => {
-    setLoading(true);
-    setAccessDenied(false);
-
-    try {
-      const res = await api.get('/admin/stats');
-      if (res && res.success && res.data) {
-        setStats(res.data);
-      }
-    } catch (err) {
-      if (err.status === 403 || err.status === 401) {
-        setAccessDenied(true);
-      }
-      setStats({
-        population: { total: 14820, students: 12450, faculty: 1320, staff: 1050 },
-        rooms: { total: 184, inUse: 142, available: 42, utilizationRate: 78.4 },
-        complaints: { total: 48, active: 18, inDispatch: 30, avgSlaDays: 2.4 },
-        projects: { total: 38, openRoles: 64 },
-        announcements: [
-          { id: '1', title: 'Scheduled Network Maintenance', desc: 'Central Library AP-09 undergoing firmware update', category: 'Network', createdAt: 'Today 08:30 AM' },
-          { id: '2', title: 'MU Hackathon 2026 Venue Approval', desc: 'Mewar Central Auditorium reserved for Dec 4-6', category: 'Incubator', createdAt: 'Yesterday' }
-        ]
-      });
-    } finally {
-      setLoading(false);
+  const setActiveTab = (tab) => {
+    setActiveTabState(tab);
+    if (tab === 'overview') {
+      setSearchParams({});
+    } else {
+      setSearchParams({ tab });
     }
   };
 
-  const handleSendBroadcast = (e) => {
-    e.preventDefault();
-    if (!broadcastMessage.trim()) return;
-    alert(`Campus Alert Broadcast Dispatched to 14,820 Nodes: "${broadcastMessage}"`);
-    setBroadcastMessage('');
-    setShowBroadcastModal(false);
+  useEffect(() => {
+    if (urlTab && ['overview', 'students', 'gatepass', 'timetable', 'mess'].includes(urlTab)) {
+      setActiveTabState(urlTab);
+    } else if (!urlTab) {
+      setActiveTabState('overview');
+    }
+  }, [urlTab]);
+
+  const pageMeta = useMemo(() => {
+    switch (activeTab) {
+      case 'gatepass':
+        return {
+          tag: 'GATE PASS DESK',
+          title: 'Digital Gate Pass Approval Desk',
+          description: 'Review student out-pass appeals, verify transit reasons & curfew times, and authorize RFID turnstile passes.',
+        };
+      case 'students':
+        return {
+          tag: 'STUDENT REGISTRY',
+          title: 'Student Directory & Access Control',
+          description: 'Comprehensive database of all enrolled university students, account registration tracking, and security access suspension.',
+        };
+      case 'timetable':
+        return {
+          tag: 'ACADEMIC TIMETABLE',
+          title: 'Timetable Studio & Faculty Allocations',
+          description: 'Hierarchical schedule management: Department → Course → Year → Semester → Section → Day-wise class slots with assigned teachers.',
+        };
+      case 'mess':
+        return {
+          tag: 'DINING OPERATIONS',
+          title: 'Mess Menu Control & Dining Schedules',
+          description: 'Manage and publish day-wise meals (Breakfast, Lunch, Snacks, Dinner) for campus residential dining halls.',
+        };
+      default:
+        return {
+          tag: 'CENTRAL ADMIN NODE',
+          title: 'Campus Administrative Console',
+          description: 'Central operational command hub for Mewar University. Select a department from the sidebar or click a quick action below.',
+        };
+    }
+  }, [activeTab]);
+
+  const [toastMessage, setToastMessage] = useState(null);
+
+  const showToast = (msg, type = 'success') => {
+    setToastMessage({ text: msg, type });
+    setTimeout(() => setToastMessage(null), 4000);
   };
 
-  const isAdminRole = user?.role === 'admin' || user?.role === 'care_admin' || user?.role === 'staff' || accessDenied;
+  // =========================================================================
+  // 1. STUDENT DIRECTORY & ACCESS CONTROL STATE
+  // =========================================================================
+  const [students, setStudents] = useState([]);
+  const [studentStats, setStudentStats] = useState({
+    totalRoster: 0,
+    registered: 0,
+    unclaimed: 0,
+    blocked: 0,
+    active: 0,
+  });
+  const [studentSearch, setStudentSearch] = useState('');
+  const [studentDeptFilter, setStudentDeptFilter] = useState('all');
+  const [studentStatusFilter, setStudentStatusFilter] = useState('all');
+  const [loadingStudents, setLoadingStudents] = useState(false);
+  const [selectedStudentDetail, setSelectedStudentDetail] = useState(null);
+  const [blockingTarget, setBlockingTarget] = useState(null);
+
+  const fetchStudents = async () => {
+    setLoadingStudents(true);
+    try {
+      const params = new URLSearchParams();
+      if (studentSearch) params.append('search', studentSearch);
+      if (studentDeptFilter !== 'all') params.append('department', studentDeptFilter);
+      if (studentStatusFilter !== 'all') params.append('status', studentStatusFilter);
+
+      const res = await api.get(`/admin/students?${params.toString()}`);
+      if (res.success && res.data) {
+        setStudents(res.data.students || []);
+        if (res.data.stats) setStudentStats(res.data.stats);
+      }
+    } catch (err) {
+      console.error('[Admin] Failed to load students:', err);
+      showToast('Could not fetch student directory', 'error');
+    } finally {
+      setLoadingStudents(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'students' || activeTab === 'overview') {
+      const timer = setTimeout(() => {
+        fetchStudents();
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [studentSearch, studentDeptFilter, studentStatusFilter, activeTab]);
+
+  const handleToggleBlock = async (student) => {
+    try {
+      const res = await api.patch(`/admin/students/${student.id || student.enrollmentNumber}/toggle-block`, {});
+      if (res.success) {
+        const isNowBlocked = res.data.isBlocked;
+        showToast(
+          `Student ${student.name} is now ${isNowBlocked ? 'SUSPENDED / BLOCKED' : 'UNBLOCKED / ACTIVE'}`,
+          isNowBlocked ? 'warning' : 'success'
+        );
+        // Refresh local student state
+        setStudents((prev) =>
+          prev.map((s) =>
+            s.id === student.id || s.enrollmentNumber === student.enrollmentNumber
+              ? { ...s, isBlocked: isNowBlocked }
+              : s
+          )
+        );
+        setStudentStats((prev) => ({
+          ...prev,
+          blocked: isNowBlocked ? prev.blocked + 1 : Math.max(0, prev.blocked - 1),
+          active: isNowBlocked ? Math.max(0, prev.active - 1) : prev.active + 1,
+        }));
+      }
+    } catch (err) {
+      showToast(err.message || 'Failed to update student access', 'error');
+    } finally {
+      setBlockingTarget(null);
+    }
+  };
+
+  // =========================================================================
+  // 2. GATE PASS APPROVAL DESK STATE
+  // =========================================================================
+  const [gatePasses, setGatePasses] = useState([]);
+  const [loadingPasses, setLoadingPasses] = useState(false);
+  const [gatePassFilter, setGatePassFilter] = useState('ALL'); // 'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'
+  const [reviewModalPass, setReviewModalPass] = useState(null);
+  const [reviewRemarks, setReviewRemarks] = useState('');
+  const [reviewAction, setReviewAction] = useState('APPROVE');
+
+  const fetchGatePasses = async () => {
+    setLoadingPasses(true);
+    try {
+      const res = await api.get(`/gatepass/admin/all${gatePassFilter !== 'ALL' ? `?status=${gatePassFilter}` : ''}`);
+      if (res.success && res.data?.passes) {
+        setGatePasses(res.data.passes);
+      }
+    } catch (err) {
+      console.error('[Admin] Failed to load gate passes:', err);
+    } finally {
+      setLoadingPasses(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGatePasses();
+    fetchHierarchy();
+    fetchMessMenu();
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'gatepass' || activeTab === 'overview') {
+      fetchGatePasses();
+    }
+  }, [activeTab, gatePassFilter]);
+
+  const handleProcessPass = async () => {
+    if (!reviewModalPass) return;
+    try {
+      const res = await api.post(`/gatepass/admin/${reviewModalPass.id || reviewModalPass.passCode}/action`, {
+        action: reviewAction,
+        remarks: reviewRemarks.trim() || (reviewAction === 'APPROVE' ? 'Approved by campus authority.' : 'Request declined.'),
+      });
+      if (res.success) {
+        showToast(
+          `Gate pass for ${reviewModalPass.studentName} has been ${reviewAction === 'APPROVE' ? 'APPROVED' : 'REJECTED'}`,
+          reviewAction === 'APPROVE' ? 'success' : 'warning'
+        );
+        setReviewModalPass(null);
+        setReviewRemarks('');
+        fetchGatePasses();
+      }
+    } catch (err) {
+      showToast(err.message || 'Action failed', 'error');
+    }
+  };
+
+  const pendingPassesCount = useMemo(() => {
+    return gatePasses.filter((p) => p.status === 'PENDING').length;
+  }, [gatePasses]);
+
+  // =========================================================================
+  // 3. TIMETABLE STUDIO (HIERARCHY: DEPT -> COURSE -> YEAR -> SEM -> SEC -> DAY)
+  // =========================================================================
+  const [hierarchy, setHierarchy] = useState(null);
+  const [selectedDept, setSelectedDept] = useState('Computer Science & Engineering');
+  const [selectedCourse, setSelectedCourse] = useState('B.Tech CSE');
+  const [selectedYear, setSelectedYear] = useState(2);
+  const [selectedSemester, setSelectedSemester] = useState(3);
+  const [selectedSection, setSelectedSection] = useState('A');
+  const [selectedDay, setSelectedDay] = useState('Monday');
+  const [timetableEntries, setTimetableEntries] = useState([]);
+  const [loadingTimetable, setLoadingTimetable] = useState(false);
+  const [slotModalOpen, setSlotModalOpen] = useState(false);
+  const [editingSlot, setEditingSlot] = useState(null);
+
+  const [slotForm, setSlotForm] = useState({
+    subject: '',
+    subjectCode: '',
+    faculty: '',
+    startTime: '09:30',
+    endTime: '10:30',
+    room: 'Room B-204',
+    building: 'Faculty of Engineering & Technology (ENG-02)',
+  });
+
+  const fetchHierarchy = async () => {
+    try {
+      const res = await api.get('/timetable/hierarchy');
+      if (res.success && res.data) {
+        setHierarchy(res.data);
+      }
+    } catch (err) {
+      console.warn('[Admin] Failed to load timetable hierarchy:', err);
+    }
+  };
+
+  const fetchTimetable = async () => {
+    setLoadingTimetable(true);
+    try {
+      const res = await api.get(
+        `/timetable/query?department=${encodeURIComponent(selectedDept)}&semester=${selectedSemester}&section=${selectedSection}&day=${selectedDay}`
+      );
+      if (res.success && res.data?.entries) {
+        setTimetableEntries(res.data.entries);
+      } else {
+        setTimetableEntries([]);
+      }
+    } catch (err) {
+      console.error('[Admin] Failed to load timetable:', err);
+      setTimetableEntries([]);
+    } finally {
+      setLoadingTimetable(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'timetable') {
+      fetchHierarchy();
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab === 'timetable') {
+      fetchTimetable();
+    }
+  }, [activeTab, selectedDept, selectedSemester, selectedSection, selectedDay]);
+
+  const handleOpenSlotModal = (slot = null) => {
+    if (slot) {
+      setEditingSlot(slot);
+      setSlotForm({
+        subject: slot.subject || '',
+        subjectCode: slot.subjectCode || '',
+        faculty: slot.faculty || '',
+        startTime: slot.startTime || '09:30',
+        endTime: slot.endTime || '10:30',
+        room: slot.room || 'Room B-204',
+        building: slot.building || 'Faculty of Engineering & Technology (ENG-02)',
+      });
+    } else {
+      setEditingSlot(null);
+      setSlotForm({
+        subject: '',
+        subjectCode: '',
+        faculty: '',
+        startTime: '09:30',
+        endTime: '10:30',
+        room: 'Room B-204',
+        building: 'Faculty of Engineering & Technology (ENG-02)',
+      });
+    }
+    setSlotModalOpen(true);
+  };
+
+  const handleSaveSlot = async (e) => {
+    e.preventDefault();
+    if (!slotForm.subject || !slotForm.faculty) {
+      showToast('Subject name and Faculty / Teacher are required', 'error');
+      return;
+    }
+
+    try {
+      const payload = {
+        id: editingSlot ? editingSlot.id : undefined,
+        department: selectedDept,
+        course: selectedCourse,
+        year: selectedYear,
+        semester: selectedSemester,
+        section: selectedSection,
+        dayOfWeek: selectedDay,
+        ...slotForm,
+      };
+
+      const res = await api.post('/timetable/slot', payload);
+      if (res.success) {
+        showToast(
+          editingSlot
+            ? `Updated ${slotForm.subject} taught by ${slotForm.faculty}`
+            : `Added new class slot: ${slotForm.subject} (${slotForm.faculty})`,
+          'success'
+        );
+        setSlotModalOpen(false);
+        fetchTimetable();
+      }
+    } catch (err) {
+      showToast(err.message || 'Failed to save class slot', 'error');
+    }
+  };
+
+  const handleDeleteSlot = async (slotId) => {
+    if (!window.confirm('Are you sure you want to delete this class slot?')) return;
+    try {
+      const res = await api.delete(`/timetable/slot/${slotId}`);
+      if (res.success) {
+        showToast('Class slot removed from schedule', 'info');
+        fetchTimetable();
+      }
+    } catch (err) {
+      showToast(err.message || 'Failed to remove slot', 'error');
+    }
+  };
+
+  // =========================================================================
+  // 4. MESS MENU MANAGER STATE
+  // =========================================================================
+  const [messDay, setMessDay] = useState('Monday');
+  const [messMealType, setMessMealType] = useState('lunch');
+  const [currentMenuData, setCurrentMenuData] = useState(null);
+  const [loadingMess, setLoadingMess] = useState(false);
+  const [editMenuModalOpen, setEditMenuModalOpen] = useState(false);
+  const [menuItemsText, setMenuItemsText] = useState('');
+
+  const fetchMessMenu = async () => {
+    setLoadingMess(true);
+    try {
+      const res = await api.get(`/mess/query?day=${messDay}`);
+      if (res.success && res.data) {
+        setCurrentMenuData(res.data);
+      }
+    } catch (err) {
+      console.warn('[Admin] Failed to load mess menu:', err);
+    } finally {
+      setLoadingMess(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'mess' || activeTab === 'overview') {
+      fetchMessMenu();
+    }
+  }, [activeTab, messDay]);
+
+  const handleOpenEditMenuModal = () => {
+    const meal = currentMenuData?.meals?.[messMealType];
+    const items = meal?.items || [];
+    setMenuItemsText(items.join('\n'));
+    setEditMenuModalOpen(true);
+  };
+
+  const handleSaveMenu = async () => {
+    const lines = menuItemsText
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean);
+
+    if (lines.length === 0) {
+      showToast('Please provide at least one menu item', 'error');
+      return;
+    }
+
+    try {
+      const updatedMeals = {
+        ...(currentMenuData?.meals || {}),
+        [messMealType]: {
+          ...(currentMenuData?.meals?.[messMealType] || {}),
+          items: lines,
+        },
+      };
+
+      const res = await api.post('/mess/update-day', {
+        dayOfWeek: messDay,
+        meals: updatedMeals,
+      });
+
+      if (res.success) {
+        showToast(`Updated ${messDay} ${messMealType.toUpperCase()} menu successfully!`, 'success');
+        setEditMenuModalOpen(false);
+        fetchMessMenu();
+      }
+    } catch (err) {
+      showToast(err.message || 'Failed to update mess menu', 'error');
+    }
+  };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16 text-slate-800">
-      {/* Access Control Notice Banner if user lacks admin role */}
-      {!isAdminRole && (
-        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between shadow-xs">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-amber-700 shrink-0" />
-            <span>Demonstration Access: Backend RBAC restricts admin API mutations to authorized roles (admin, staff, care_admin).</span>
-          </div>
-          <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold border border-amber-200">READ ONLY DEMO</span>
+    <div className="min-h-screen bg-[#F6F8F6] text-[#202A27] pb-16">
+      {/* Toast Notification Banner */}
+      {toastMessage && (
+        <div
+          className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl shadow-xl border flex items-center gap-3 animate-in slide-in-from-bottom duration-200 ${
+            toastMessage.type === 'error'
+              ? 'bg-[#FDF2F3] border-[#F1C2C6] text-[#C43D4B]'
+              : toastMessage.type === 'warning'
+              ? 'bg-[#FFF9EB] border-[#F9E2AF] text-[#B26A00]'
+              : 'bg-[#EAF5EF] border-[#B7DEC9] text-[#142D28]'
+          }`}
+        >
+          {toastMessage.type === 'error' ? (
+            <XCircle size={18} className="text-[#C43D4B]" />
+          ) : toastMessage.type === 'warning' ? (
+            <AlertTriangle size={18} className="text-[#B26A00]" />
+          ) : (
+            <CheckCircle2 size={18} className="text-[#168567]" />
+          )}
+          <span className="text-xs font-semibold">{toastMessage.text}</span>
+          <button
+            onClick={() => setToastMessage(null)}
+            className="ml-2 text-inherit hover:opacity-75 cursor-pointer"
+          >
+            <X size={14} />
+          </button>
         </div>
       )}
 
-      {/* Top Command Context Bar */}
-      <div className="flex flex-col gap-4 pb-6 border-b border-slate-200/80">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-slate-500">
-            <span className="px-2.5 py-1 rounded-full bg-rose-50 text-[#9E153E] border border-rose-200 font-bold flex items-center gap-1.5 shadow-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#9E153E] animate-pulse"></span>
-              Admin Central Ops
-            </span>
-            <span className="hidden sm:inline text-slate-400">• Mewar University Operations Node • Fall 2026</span>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
-            <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 shadow-xs flex items-center gap-1.5">
-              <Radio className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Telemetry Mesh: Active</span>
-            </span>
-            <span className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 shadow-xs flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-sky-600" />
-              <span>BMS Core v4.18</span>
-            </span>
-          </div>
-        </div>
-
-        {/* Headline & Actions */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      {/* Top Banner & Header */}
+      <div className="bg-[#142D28] text-white pt-8 pb-12 px-4 sm:px-8 border-b border-[#20443D]">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                Executive Operations Dashboard
-              </h1>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
-                Live Telemetry
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#168567]/30 text-[#6CE0B8] border border-[#168567]/50 text-[10px] font-mono font-bold uppercase tracking-wider">
+                {pageMeta.tag}
               </span>
+              <span className="text-xs text-[#A3B8AC]">Mewar University • Identity & Operations</span>
             </div>
-            <p className="text-sm text-slate-500 max-w-2xl mt-1">
-              Authorized Executive User: <strong className="text-slate-800">{user?.name || 'Dr. Eleanor Vance (SuperAdmin)'}</strong> • High-concurrency campus oversight &amp; facility health.
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{pageMeta.title}</h1>
+            <p className="text-sm text-[#A3B8AC] mt-1 max-w-2xl">
+              {pageMeta.description}
             </p>
           </div>
 
-          {/* Action Group */}
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-            <button
-              onClick={() => alert('Downloading Executive Operations Audit Report (PDF)...')}
-              className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-2 transition-all shadow-xs cursor-pointer"
-              type="button"
-            >
-              <Download className="w-3.5 h-3.5 text-slate-500" />
-              <span>Export Ops Report</span>
-            </button>
-            <button
-              onClick={() => setShowBroadcastModal(true)}
-              className="px-3.5 py-2 rounded-xl bg-white border border-rose-200 hover:bg-rose-50 text-xs font-semibold text-[#9E153E] flex items-center gap-2 transition-all shadow-xs cursor-pointer"
-              type="button"
-            >
-              <Megaphone className="w-3.5 h-3.5 text-[#9E153E]" />
-              <span>Broadcast Campus Alert</span>
-            </button>
-            <button
-              onClick={() => navigate('/admin/campus-management')}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#9E153E] to-[#BE123C] hover:from-[#881337] hover:to-[#9E153E] text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all active:scale-[0.98] cursor-pointer"
-              type="button"
-            >
-              <Sliders className="w-3.5 h-3.5 text-white" />
-              <span>Campus Management →</span>
-            </button>
+          <div className="flex items-center gap-3">
+            <div className="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs flex items-center gap-2.5 text-xs text-[#E4EAE5]">
+              <Shield size={16} className="text-[#6CE0B8]" />
+              <div className="flex flex-col">
+                <span className="font-bold text-white">{user?.name || 'Administrator'}</span>
+                <span className="text-[10px] text-[#A3B8AC]">Super Admin Clearance</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 5 Core Executive Operational KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        {/* KPI 1 */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono">Enrolled Pop</span>
-            <div className="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center">
-              <Users className="w-4 h-4 text-[#9E153E]" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
-              {stats?.population?.total ? stats.population.total.toLocaleString() : '14,820'}
-            </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 truncate">12,450 Students • 1,320 Faculty</p>
-          </div>
-          <div className="mt-3 pt-2 border-t border-slate-100 flex items-center">
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-              <TrendingUp className="w-3 h-3" />
-              +3.2% vs last term
-            </span>
-          </div>
-        </div>
-
-        {/* KPI 2 */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono">Space Util</span>
-            <div className="w-8 h-8 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-center">
-              <DoorOpen className="w-4 h-4 text-sky-600" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
-              {stats?.rooms?.utilizationRate || 78.4}%
-            </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 truncate">
-              {stats?.rooms?.inUse || 142} of {stats?.rooms?.total || 184} Rooms Active
-            </p>
-          </div>
-          <div className="mt-3 pt-2 border-t border-slate-100 flex flex-col gap-1.5">
-            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-[#9E153E] to-rose-400 rounded-full" style={{ width: '78.4%' }}></div>
-            </div>
-            <span className="text-[10px] text-slate-500 font-medium">Optimal thermal load</span>
-          </div>
-        </div>
-
-        {/* KPI 3 */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono">Care Tickets</span>
-            <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center">
-              <Wrench className="w-4 h-4 text-amber-600" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
-              {stats?.complaints?.total || 48} Active
-            </div>
-            <p className="text-[11px] text-slate-500 mt-0.5 truncate">18 Pending • 30 In Dispatch</p>
-          </div>
-          <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-            <span className="text-amber-700 font-semibold font-mono">Avg SLA: 2.4d</span>
-            <button onClick={() => navigate('/care')} className="text-[#9E153E] hover:underline font-bold">
-              Care Admin →
-            </button>
-          </div>
-        </div>
-
-        {/* KPI 4 */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono">Infrastructure</span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center">
-              <Wifi className="w-4 h-4 text-emerald-600" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-extrabold text-slate-900 tracking-tight">99.85%</div>
-            <p className="text-[11px] text-slate-500 mt-0.5 truncate">14/14 Major Facilities Online</p>
-          </div>
-          <div className="mt-3 pt-2 border-t border-slate-100 flex items-center">
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-semibold border border-emerald-200">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              Nominal Mesh Active
-            </span>
-          </div>
-        </div>
-
-        {/* KPI 5 */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono">Smart Grid</span>
-            <div className="w-8 h-8 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-center">
-              <Zap className="w-4 h-4 text-purple-600" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-extrabold text-slate-900 tracking-tight">98.4%</div>
-            <p className="text-[11px] text-slate-500 mt-0.5 truncate">32.4 MWh Monitored</p>
-          </div>
-          <div className="mt-3 pt-2 border-t border-slate-100 flex items-center">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[11px] font-semibold border border-purple-200">
-              <CheckCircle2 className="w-3 h-3" />
-              High Efficiency
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        {/* LEFT COLUMN (8 cols) */}
-        <div className="xl:col-span-8 flex flex-col gap-6">
-          {/* 1. Building Allocation Table */}
-          <section className="bg-white rounded-2xl p-5 sm:p-6 shadow-xs border border-slate-200/90">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2">
-              <div>
-                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-[#9E153E]" />
-                  <span>Building &amp; SmartRoom Allocation Matrix</span>
-                </h2>
-                <p className="text-xs text-slate-500 mt-0.5">Live telemetry from Building Management System (BMS Core v4.18)</p>
-              </div>
-              <button
-                onClick={() => navigate('/admin/campus-management')}
-                className="inline-flex items-center gap-1.5 text-[#9E153E] hover:text-[#881337] text-xs font-bold transition-colors cursor-pointer"
+      {/* Main Container */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 -mt-6">
+        {/* =========================================================================
+            TAB 0: EXECUTIVE ADMIN CONSOLE OVERVIEW
+            ========================================================================= */}
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
+            {/* Quick Metrics KPI Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div
+                onClick={() => setActiveTab('students')}
+                className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:border-[#168567]/50 hover:shadow-md transition-all cursor-pointer group"
               >
-                <span>Manage Buildings</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="overflow-x-auto rounded-xl border border-slate-200/80 mt-4">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-slate-500 uppercase font-mono text-[10px] tracking-wider border-b border-slate-200">
-                  <tr>
-                    <th className="px-4 py-3 font-semibold">Building &amp; Node</th>
-                    <th className="px-4 py-3 font-semibold">Floors</th>
-                    <th className="px-4 py-3 font-semibold">SmartRooms</th>
-                    <th className="px-4 py-3 font-semibold">Live Load</th>
-                    <th className="px-4 py-3 font-semibold">Defects</th>
-                    <th className="px-4 py-3 font-semibold">Status</th>
-                    <th className="px-4 py-3 font-semibold text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="text-slate-800 divide-y divide-slate-100">
-                  {[
-                    { name: 'Faculty of Engineering & Tech', code: 'Block ENG-02 • Computing & AI', floors: 4, rooms: '42 (32 In-Use / 10 Free)', load: 84, tickets: '2 Active', status: 'Nominal' },
-                    { name: 'Swami Vivekananda Central Library', code: 'Block LIB-03 • Open Learning', floors: 3, rooms: '28 (19 In-Use / 9 Free)', load: 91, tickets: '1 Critical', status: 'Peak Footfall' },
-                    { name: 'Maharana Pratap Admin Block', code: 'Block ADM-01 • Registrar & Labs', floors: 5, rooms: '56 (44 In-Use / 12 Free)', load: 76, tickets: '0 Tickets', status: 'Nominal' },
-                    { name: 'Central Cafeteria & Food Court', code: 'Block CAF-05 • Dining Plaza', floors: 2, rooms: '18 (15 In-Use / 3 Free)', load: 68, tickets: '1 Ticket', status: 'Nominal' },
-                    { name: 'Mewar University Hospital', code: 'Block MED-09 • Clinical Health', floors: 4, rooms: '40 (32 In-Use / 8 Free)', load: 80, tickets: '1 Ticket', status: 'Nominal' }
-                  ].map((b, idx) => (
-                    <tr key={idx} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="px-4 py-3 font-medium">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center shrink-0">
-                            <Building2 className="w-3.5 h-3.5 text-[#9E153E]" />
-                          </div>
-                          <div>
-                            <div className="font-semibold text-slate-900">{b.name}</div>
-                            <div className="text-[10px] text-slate-400">{b.code}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 font-semibold text-slate-700">{b.floors}</td>
-                      <td className="px-4 py-3 text-slate-600">{b.rooms}</td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <div className="w-12 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                            <div className="h-full bg-[#9E153E]" style={{ width: `${b.load}%` }}></div>
-                          </div>
-                          <span className="font-mono text-[11px] font-semibold">{b.load}%</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${b.tickets.includes('Critical') ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-slate-100 text-slate-600'}`}>
-                          {b.tickets}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-medium">
-                          <span className={`w-1.5 h-1.5 rounded-full ${b.status.includes('Peak') ? 'bg-rose-500 animate-ping' : 'bg-emerald-500'}`}></span>
-                          {b.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <button
-                          onClick={() => navigate('/smartroom')}
-                          className="px-2.5 py-1 rounded-lg bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-[11px] font-semibold transition-colors border border-slate-200 shadow-xs cursor-pointer"
-                        >
-                          Inspect
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          {/* 2. Incident Defect Triage Queue */}
-          <section className="bg-white rounded-2xl p-5 sm:p-6 shadow-xs border border-slate-200/90">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2">
-              <div>
-                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Wrench className="w-4 h-4 text-[#9E153E]" />
-                  <span>Campus Helpdesk &amp; Defect Triage Queue</span>
-                </h2>
-                <p className="text-xs text-slate-500 mt-0.5">Live incident response stream prioritized by institutional severity</p>
-              </div>
-              <button
-                onClick={() => navigate('/care')}
-                className="inline-flex items-center gap-1.5 text-[#9E153E] hover:text-[#881337] text-xs font-bold transition-colors cursor-pointer"
-              >
-                <span>View Helpdesk Admin Queue</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-2.5 mt-4">
-              {[
-                { id: '#CMP-1042', title: 'CS Lab B Projector HDMI Glitch', sub: 'Classroom AV • Engineering Block B-204 • Tech: Marcus Vance', status: 'En Route (ETA 25m)', prio: 'Medium' },
-                { id: '#CMP-1044', title: 'Water Pressure Loss in 2nd Floor Washrooms', sub: 'Plumbing • Swami Vivekananda Library • Unassigned Dispatch', status: 'Pending Assign', prio: 'High', isHigh: true },
-                { id: '#CMP-1040', title: 'Core Mesh AP Dropping Packets (Beacon Failure)', sub: 'Wi-Fi / Net • Admin Block East Wing • Assigned: Network Ops Tier 2', status: 'Investigating', prio: 'High', isHigh: true },
-                { id: '#CMP-1038', title: 'LED Driver Flickering in Lecture Theatre 1', sub: 'Electrical • Engineering Block ENG-101 • Assigned: Facilities Team 1', status: 'Parts Ordered', prio: 'Low' }
-              ].map((inc) => (
-                <div key={inc.id} className="p-3.5 rounded-xl bg-slate-50/70 hover:bg-slate-50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-3 border border-slate-200/80">
-                  <div className="flex items-start gap-3">
-                    <span className={`px-2 py-0.5 rounded-lg text-xs font-mono font-bold ${inc.isHigh ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-slate-200/70 text-slate-700'}`}>
-                      {inc.id}
-                    </span>
-                    <div>
-                      <div className="text-xs font-bold text-slate-900">{inc.title}</div>
-                      <div className="text-[11px] text-slate-500 mt-0.5">{inc.sub}</div>
-                    </div>
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-[#EAF5EF] text-[#168567] flex items-center justify-center font-bold">
+                    <Users size={20} />
                   </div>
-                  <div className="flex items-center gap-2 self-end md:self-auto">
-                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${inc.status.includes('Pending') ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
-                      {inc.status}
+                  <ArrowRight size={16} className="text-[#168567] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </div>
+                <div className="mt-4">
+                  <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Student Roster</span>
+                  <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">{studentStats.totalRoster}</div>
+                  <p className="text-xs text-[#87968D] mt-1">
+                    <span className="text-[#168567] font-bold">{studentStats.registered} Registered</span> • {studentStats.unclaimed} Unclaimed
+                  </p>
+                </div>
+              </div>
+
+              <div
+                onClick={() => setActiveTab('gatepass')}
+                className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:border-[#C43D4B]/50 hover:shadow-md transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-[#FFF0F2] text-[#C43D4B] flex items-center justify-center font-bold">
+                    <DoorOpen size={20} />
+                  </div>
+                  <ArrowRight size={16} className="text-[#C43D4B] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </div>
+                <div className="mt-4">
+                  <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Gate Pass Appeals</span>
+                  <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">{pendingPassesCount}</div>
+                  <p className="text-xs text-[#87968D] mt-1">
+                    {pendingPassesCount > 0 ? (
+                      <span className="text-[#C43D4B] font-bold">Requires Action</span>
+                    ) : (
+                      <span className="text-[#168567] font-bold">All Requests Cleared</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div
+                onClick={() => setActiveTab('timetable')}
+                className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:border-[#142D28]/50 hover:shadow-md transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-[#F0F4F1] text-[#142D28] flex items-center justify-center font-bold">
+                    <Calendar size={20} />
+                  </div>
+                  <ArrowRight size={16} className="text-[#142D28] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </div>
+                <div className="mt-4">
+                  <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Academic Schedules</span>
+                  <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">{hierarchy?.departments?.length || 5}</div>
+                  <p className="text-xs text-[#87968D] mt-1">
+                    Departments with live faculty time tables
+                  </p>
+                </div>
+              </div>
+
+              <div
+                onClick={() => setActiveTab('mess')}
+                className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:border-[#B26A00]/50 hover:shadow-md transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-[#FFF9EB] text-[#B26A00] flex items-center justify-center font-bold">
+                    <Utensils size={20} />
+                  </div>
+                  <ArrowRight size={16} className="text-[#B26A00] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </div>
+                <div className="mt-4">
+                  <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Mess & Dining</span>
+                  <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">4 Meals</div>
+                  <p className="text-xs text-[#87968D] mt-1">
+                    Breakfast, Lunch, Snacks & Dinner
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Action Navigation Panels */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Module 1: Student Registry */}
+              <div className="p-6 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-[#EAF5EF] text-[#168567] flex items-center justify-center">
+                        <Users size={18} />
+                      </div>
+                      <h3 className="text-base font-extrabold text-[#202A27]">Student Database & Access Control</h3>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF5EF] text-[#168567] border border-[#B7DEC9]">
+                      DATABASE
                     </span>
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${inc.isHigh ? 'bg-rose-100 text-rose-800' : 'bg-slate-200 text-slate-600'}`}>
-                      {inc.prio}
-                    </span>
+                  </div>
+                  <p className="text-xs text-[#65736B] leading-relaxed">
+                    View complete student records from the database. Identify who is registered vs. pre-enrolled, manage profile information, and toggle suspension/blocking to revoke student platform access instantly.
+                  </p>
+                  <div className="mt-4 flex items-center gap-4 text-xs font-semibold text-[#404D46]">
+                    <span>• {studentStats.totalRoster} Total Enrollees</span>
+                    <span>• {studentStats.registered} Web Accounts</span>
+                    <span className="text-[#C43D4B]">• {studentStats.blocked} Suspended</span>
                   </div>
                 </div>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        {/* RIGHT COLUMN (4 cols) */}
-        <div className="xl:col-span-4 flex flex-col gap-6">
-          {/* Administrative Task Pipeline */}
-          <section className="bg-white rounded-2xl p-5 sm:p-6 shadow-xs border border-slate-200/90">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold text-slate-900">Task Pipeline</h2>
-                <span className="px-2 py-0.5 rounded-full bg-rose-50 text-[#9E153E] text-[10px] font-bold border border-rose-200">5 Pending</span>
+                <div className="mt-5 pt-4 border-t border-[#E4EAE5] flex items-center justify-end">
+                  <button
+                    onClick={() => setActiveTab('students')}
+                    className="px-4 py-2 rounded-xl bg-[#142D28] hover:bg-[#1f423b] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <span>Open Student Directory</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div className="flex flex-col gap-2.5 mt-4">
-              {[
-                { title: 'Approve Room Allocation for MU Hackathon 2026', tag: 'High Priority', detail: 'Mewar Central Auditorium • Due 2:00 PM', isHigh: true },
-                { title: 'Authorize Emergency HVAC Sub-Meter Replacement', tag: 'Medium', detail: 'Block B Basement • Due Tomorrow' },
-                { title: 'Sign off 4 Resolved Care Maintenance Tickets', tag: 'Medium', detail: 'Batch Verification • Due Today' },
-                { title: 'Review Faculty Keycard NFC Audit Discrepancies', tag: 'Low', detail: 'Security Dispatch • Due Oct 16' },
-                { title: 'Publish Term 2 Academic Timetable Re-allocation', tag: 'High Priority', detail: 'Registrar Workflow • Due Oct 18', isHigh: true }
-              ].map((tsk, tIdx) => (
-                <div key={tIdx} className="p-3 rounded-xl bg-slate-50/70 flex items-start gap-3 hover:bg-slate-50 transition-colors border border-slate-200/80">
-                  <input type="checkbox" className="mt-1 rounded border-slate-300 text-[#9E153E] focus:ring-[#9E153E] h-4 w-4 cursor-pointer" />
-                  <div className="flex-1">
-                    <div className="text-xs font-semibold text-slate-900 leading-snug">{tsk.title}</div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${tsk.isHigh ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-slate-200 text-slate-600'}`}>
-                        {tsk.tag}
+              {/* Module 2: Gate Pass Appeals Desk */}
+              <div className="p-6 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-[#FFF0F2] text-[#C43D4B] flex items-center justify-center">
+                        <ShieldCheck size={18} />
+                      </div>
+                      <h3 className="text-base font-extrabold text-[#202A27]">Gate Pass Appeal Approvals</h3>
+                    </div>
+                    {pendingPassesCount > 0 ? (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#C43D4B] text-white animate-pulse">
+                        {pendingPassesCount} PENDING
                       </span>
-                      <span className="text-[10px] text-slate-400">{tsk.detail}</span>
-                    </div>
+                    ) : (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF5EF] text-[#168567] border border-[#B7DEC9]">
+                        CLEARED
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-[#65736B] leading-relaxed">
+                    Review digital gate out-pass appeals submitted by students. Verify reason, destination, departure time, and expected return. Approve or reject with warden remarks to unlock biometric turnstiles.
+                  </p>
+                  <div className="mt-4 flex items-center gap-4 text-xs font-semibold text-[#404D46]">
+                    <span className="text-[#B26A00]">• {pendingPassesCount} Awaiting Review</span>
+                    <span>• {gatePasses.filter(p => p.status === 'APPROVED').length} Approved Today</span>
                   </div>
                 </div>
+                <div className="mt-5 pt-4 border-t border-[#E4EAE5] flex items-center justify-end">
+                  <button
+                    onClick={() => setActiveTab('gatepass')}
+                    className="px-4 py-2 rounded-xl bg-[#168567] hover:bg-[#126b53] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <span>Open Gate Pass Desk</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Module 3: Timetable Studio */}
+              <div className="p-6 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-[#F0F4F1] text-[#142D28] flex items-center justify-center">
+                        <Calendar size={18} />
+                      </div>
+                      <h3 className="text-base font-extrabold text-[#202A27]">Academic Timetable Studio</h3>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F0F4F1] text-[#142D28] border border-[#D5E0D8]">
+                      HIERARCHICAL
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#65736B] leading-relaxed">
+                    Organize schedules by Department $\rightarrow$ Course $\rightarrow$ Year $\rightarrow$ Semester $\rightarrow$ Section $\rightarrow$ Day. Assign faculty members to lectures, manage room allocations, and integrate directly with campus AI queries.
+                  </p>
+                  <div className="mt-4 flex items-center gap-4 text-xs font-semibold text-[#404D46]">
+                    <span>• Computer Science, Mech, Electrical & more</span>
+                    <span>• Multi-section support</span>
+                  </div>
+                </div>
+                <div className="mt-5 pt-4 border-t border-[#E4EAE5] flex items-center justify-end">
+                  <button
+                    onClick={() => setActiveTab('timetable')}
+                    className="px-4 py-2 rounded-xl bg-[#142D28] hover:bg-[#1f423b] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <span>Configure Timetables</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Module 4: Mess Menu Control */}
+              <div className="p-6 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-[#FFF9EB] text-[#B26A00] flex items-center justify-center">
+                        <Utensils size={18} />
+                      </div>
+                      <h3 className="text-base font-extrabold text-[#202A27]">Hostel Mess & Dining Control</h3>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FFF9EB] text-[#B26A00] border border-[#F9E2AF]">
+                      DAILY DINING
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#65736B] leading-relaxed">
+                    Configure and publish weekly meal menus across Breakfast, Lunch, Evening Snacks, and Dinner. Update menu items in real time so students can check the dining schedule from their dashboard and AI Copilot.
+                  </p>
+                  <div className="mt-4 flex items-center gap-4 text-xs font-semibold text-[#404D46]">
+                    <span>• 7 Days Schedule</span>
+                    <span>• Live Vegetarian & Special Diet Tracking</span>
+                  </div>
+                </div>
+                <div className="mt-5 pt-4 border-t border-[#E4EAE5] flex items-center justify-end">
+                  <button
+                    onClick={() => setActiveTab('mess')}
+                    className="px-4 py-2 rounded-xl bg-[#142D28] hover:bg-[#1f423b] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <span>Manage Mess Menus</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* System Status & Infrastructure Strip */}
+            <div className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-[#EAF5EF] text-[#168567] flex items-center justify-center shrink-0">
+                  <ShieldCheck size={18} />
+                </div>
+                <div>
+                  <h4 className="text-xs font-extrabold text-[#202A27]">NextCampus Security & Operations Engine</h4>
+                  <p className="text-[11px] text-[#65736B]">All institutional microservices, AI copilot engines, and digital gate nodes are operational.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-bold bg-[#EAF5EF] text-[#168567] border border-[#B7DEC9]">
+                  <span className="w-2 h-2 rounded-full bg-[#168567] animate-pulse" />
+                  GATE PASS ENGINE READY
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB 1: STUDENT REGISTRY & BLOCKING CONTROLS
+            ========================================================================= */}
+        {activeTab === 'students' && (
+          <div className="space-y-6">
+            {/* Quick Metrics Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+              <div className="p-4 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs">
+                <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Total In Database</span>
+                <div className="text-2xl font-extrabold text-[#202A27] mt-1">{studentStats.totalRoster}</div>
+                <span className="text-[10px] text-[#87968D]">Active enrollment roster</span>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs">
+                <span className="text-[11px] font-bold text-[#168567] uppercase tracking-wider">Registered Accounts</span>
+                <div className="text-2xl font-extrabold text-[#168567] mt-1">{studentStats.registered}</div>
+                <span className="text-[10px] text-[#87968D]">Claimed web access</span>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs">
+                <span className="text-[11px] font-bold text-[#B26A00] uppercase tracking-wider">Unclaimed Roster</span>
+                <div className="text-2xl font-extrabold text-[#B26A00] mt-1">{studentStats.unclaimed}</div>
+                <span className="text-[10px] text-[#87968D]">Pre-enrolled enrollees</span>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs">
+                <span className="text-[11px] font-bold text-[#C43D4B] uppercase tracking-wider">Suspended / Blocked</span>
+                <div className="text-2xl font-extrabold text-[#C43D4B] mt-1">{studentStats.blocked}</div>
+                <span className="text-[10px] text-[#87968D]">Access revoked</span>
+              </div>
+
+              <div
+                onClick={() => setActiveTab('gatepass')}
+                className="p-4 rounded-2xl bg-white border border-[#E4EAE5] hover:border-[#C43D4B]/50 hover:shadow-xs transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-[#C43D4B] uppercase tracking-wider">Gate Passes</span>
+                  <ArrowRight size={14} className="text-[#C43D4B] opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <div className="text-2xl font-extrabold text-[#C43D4B] mt-1">{pendingPassesCount}</div>
+                <span className="text-[10px] text-[#87968D]">Appeals pending review</span>
+              </div>
+            </div>
+
+            {/* Filters Bar */}
+            <div className="p-4 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+              {/* Search Field */}
+              <div className="relative flex-1 max-w-md">
+                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#87968D]" />
+                <input
+                  type="text"
+                  placeholder="Search student by name, MUR, email, or department..."
+                  value={studentSearch}
+                  onChange={(e) => setStudentSearch(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs focus:outline-hidden focus:border-[#168567] focus:ring-2 focus:ring-[#168567]/10"
+                />
+              </div>
+
+              {/* Status Filter Buttons */}
+              <div className="flex flex-wrap items-center gap-2">
+                {['all', 'registered', 'unclaimed', 'blocked', 'active'].map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setStudentStatusFilter(s)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors cursor-pointer ${
+                      studentStatusFilter === s
+                        ? 'bg-[#142D28] text-white'
+                        : 'bg-[#F0F4F1] text-[#65736B] hover:text-[#202A27]'
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+
+                <button
+                  onClick={fetchStudents}
+                  title="Refresh records"
+                  className="p-2 rounded-lg bg-[#F0F4F1] text-[#65736B] hover:text-[#202A27] transition-colors cursor-pointer"
+                >
+                  <RefreshCw size={15} className={loadingStudents ? 'animate-spin' : ''} />
+                </button>
+              </div>
+            </div>
+
+            {/* Students Table */}
+            <div className="bg-white rounded-2xl border border-[#E4EAE5] shadow-xs overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-[#F6F8F6] border-b border-[#E4EAE5] text-[11px] font-bold text-[#65736B] uppercase tracking-wider">
+                      <th className="py-3 px-4">Student Profile</th>
+                      <th className="py-3 px-4">MUR / Enrollment</th>
+                      <th className="py-3 px-4">Department & Class</th>
+                      <th className="py-3 px-4">Registration</th>
+                      <th className="py-3 px-4">Access Status</th>
+                      <th className="py-3 px-4 text-right">Administrative Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E4EAE5] text-xs">
+                    {loadingStudents ? (
+                      <tr>
+                        <td colSpan="6" className="py-12 text-center text-[#87968D]">
+                          <RefreshCw size={24} className="animate-spin mx-auto mb-2 text-[#168567]" />
+                          Querying student database registry...
+                        </td>
+                      </tr>
+                    ) : students.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" className="py-12 text-center text-[#87968D]">
+                          No student records matching current filters.
+                        </td>
+                      </tr>
+                    ) : (
+                      students.map((student) => (
+                        <tr
+                          key={student.id || student.enrollmentNumber}
+                          className="hover:bg-[#F9FAF9] transition-colors"
+                        >
+                          {/* Name & Avatar */}
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#168567] to-[#142D28] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                                {student.name ? student.name.charAt(0).toUpperCase() : 'S'}
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="font-bold text-[#202A27]">{student.name}</span>
+                                <span className="text-[11px] text-[#65736B]">{student.email}</span>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Enrollment MUR */}
+                          <td className="py-3 px-4">
+                            <span className="font-mono font-bold text-[#142D28] bg-[#F0F4F1] px-2.5 py-1 rounded-md border border-[#E4EAE5]">
+                              {student.enrollmentNumber}
+                            </span>
+                          </td>
+
+                          {/* Dept */}
+                          <td className="py-3 px-4">
+                            <div className="flex flex-col">
+                              <span className="font-medium text-[#202A27] max-w-xs truncate">
+                                {student.department}
+                              </span>
+                              <span className="text-[10.5px] text-[#87968D]">
+                                {student.academicYear} • {student.semester}
+                              </span>
+                            </div>
+                          </td>
+
+                          {/* Registration Status */}
+                          <td className="py-3 px-4">
+                            {student.isClaimed ? (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.8 rounded-full text-[10.5px] font-bold bg-[#EAF5EF] text-[#168567] border border-[#B7DEC9]">
+                                <Check size={11} /> Registered
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.8 rounded-full text-[10.5px] font-bold bg-[#FFF9EB] text-[#B26A00] border border-[#F9E2AF]">
+                                <Clock size={11} /> Unclaimed
+                              </span>
+                            )}
+                          </td>
+
+                          {/* Block Status */}
+                          <td className="py-3 px-4">
+                            {student.isBlocked ? (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.8 rounded-full text-[10.5px] font-bold bg-[#FDF2F3] text-[#C43D4B] border border-[#F1C2C6]">
+                                <UserX size={12} /> Suspended / Blocked
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.8 rounded-full text-[10.5px] font-bold bg-[#EAF5EF] text-[#142D28] border border-[#B7DEC9]">
+                                <UserCheck size={12} /> Active Access
+                              </span>
+                            )}
+                          </td>
+
+                          {/* Action Button */}
+                          <td className="py-3 px-4 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => setSelectedStudentDetail(student)}
+                                className="px-2.5 py-1.5 rounded-lg bg-[#F0F4F1] hover:bg-[#E4EAE5] text-[#404D46] font-semibold text-xs flex items-center gap-1 transition-colors cursor-pointer"
+                                title="View full profile details"
+                              >
+                                <Eye size={13} /> Details
+                              </button>
+
+                              <button
+                                onClick={() => handleToggleBlock(student)}
+                                className={`px-3 py-1.5 rounded-lg font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs ${
+                                  student.isBlocked
+                                    ? 'bg-[#168567] hover:bg-[#126b53] text-white'
+                                    : 'bg-[#FDF2F3] hover:bg-[#C43D4B] text-[#C43D4B] hover:text-white border border-[#F1C2C6]'
+                                }`}
+                                title={student.isBlocked ? 'Restore student access' : 'Block student account'}
+                              >
+                                {student.isBlocked ? (
+                                  <>
+                                    <UserCheck size={13} /> Unblock
+                                  </>
+                                ) : (
+                                  <>
+                                    <UserX size={13} /> Block Student
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB 2: GATE PASS APPROVAL DESK
+            ========================================================================= */}
+        {activeTab === 'gatepass' && (
+          <div className="space-y-6">
+            {/* Filter pills & refresh */}
+            <div className="p-4 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-[#65736B] uppercase tracking-wider mr-1">Filter Passes:</span>
+                {['ALL', 'PENDING', 'APPROVED', 'REJECTED'].map((st) => (
+                  <button
+                    key={st}
+                    onClick={() => setGatePassFilter(st)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      gatePassFilter === st
+                        ? 'bg-[#142D28] text-white shadow-xs'
+                        : 'bg-[#F0F4F1] text-[#65736B] hover:text-[#202A27]'
+                    }`}
+                  >
+                    {st === 'PENDING' ? `Pending (${pendingPassesCount})` : st}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={fetchGatePasses}
+                className="px-3 py-1.5 rounded-xl bg-[#F0F4F1] text-[#404D46] hover:text-[#202A27] text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+              >
+                <RefreshCw size={14} className={loadingPasses ? 'animate-spin' : ''} />
+                Refresh Appeals
+              </button>
+            </div>
+
+            {/* Passes Grid */}
+            {loadingPasses ? (
+              <div className="p-12 text-center text-[#87968D]">
+                <RefreshCw size={24} className="animate-spin mx-auto mb-2 text-[#168567]" />
+                Loading gate pass requests...
+              </div>
+            ) : gatePasses.length === 0 ? (
+              <div className="p-12 rounded-2xl bg-white border border-[#E4EAE5] text-center text-[#87968D]">
+                <ShieldCheck size={36} className="mx-auto mb-2 text-[#87968D]" />
+                No gate pass requests found for the selected filter.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {gatePasses.map((pass) => {
+                  const isPending = pass.status === 'PENDING';
+                  const isApproved = pass.status === 'APPROVED';
+                  const isRejected = pass.status === 'REJECTED';
+
+                  return (
+                    <div
+                      key={pass.id || pass.passCode}
+                      className={`p-5 rounded-2xl bg-white border transition-all shadow-xs flex flex-col justify-between gap-4 ${
+                        isPending
+                          ? 'border-[#B26A00]/40 ring-2 ring-[#B26A00]/10'
+                          : isApproved
+                          ? 'border-[#168567]/30'
+                          : 'border-[#E4EAE5]'
+                      }`}
+                    >
+                      {/* Pass Card Top */}
+                      <div>
+                        <div className="flex items-center justify-between pb-3 border-b border-[#E4EAE5]">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs font-bold text-[#142D28] bg-[#F0F4F1] px-2 py-0.5 rounded border border-[#E4EAE5]">
+                              {pass.passCode || 'GP-OUTPASS'}
+                            </span>
+                          </div>
+
+                          <span
+                            className={`px-2.5 py-0.8 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider ${
+                              isPending
+                                ? 'bg-[#FFF9EB] text-[#B26A00] border border-[#F9E2AF]'
+                                : isApproved
+                                ? 'bg-[#EAF5EF] text-[#168567] border border-[#B7DEC9]'
+                                : 'bg-[#FDF2F3] text-[#C43D4B] border border-[#F1C2C6]'
+                            }`}
+                          >
+                            {pass.status}
+                          </span>
+                        </div>
+
+                        {/* Student Info */}
+                        <div className="mt-3.5">
+                          <h4 className="text-base font-extrabold text-[#202A27]">{pass.studentName}</h4>
+                          <div className="flex items-center gap-2 mt-0.5 text-xs text-[#65736B]">
+                            <span className="font-mono font-bold text-[#168567]">{pass.enrollmentNumber}</span>
+                            <span>•</span>
+                            <span className="truncate">{pass.course || pass.department}</span>
+                          </div>
+                          {pass.phone && (
+                            <div className="flex items-center gap-1.5 text-[11px] text-[#87968D] mt-1 font-mono">
+                              <Phone size={12} /> {pass.phone}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Destination & Reason Details */}
+                        <div className="mt-4 p-3 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] space-y-2 text-xs">
+                          <div>
+                            <span className="text-[10px] font-bold uppercase text-[#87968D]">Destination</span>
+                            <p className="font-bold text-[#202A27]">{pass.destination}</p>
+                          </div>
+
+                          <div>
+                            <span className="text-[10px] font-bold uppercase text-[#87968D]">Purpose / Reason</span>
+                            <p className="text-[#404D46]">{pass.reason}</p>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2 pt-1 border-t border-[#E4EAE5]/60 text-[11px]">
+                            <div>
+                              <span className="text-[9.5px] font-bold uppercase text-[#87968D]">Out Time</span>
+                              <p className="font-semibold text-[#202A27]">{pass.outTime}</p>
+                            </div>
+                            <div>
+                              <span className="text-[9.5px] font-bold uppercase text-[#87968D]">Expected Return</span>
+                              <p className="font-semibold text-[#202A27]">{pass.expectedInTime}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {pass.adminRemarks && (
+                          <div className="mt-3 text-[11px] text-[#65736B] bg-[#FFF9EB] p-2 rounded-lg border border-[#F9E2AF]">
+                            <span className="font-bold">Warden Note:</span> {pass.adminRemarks}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Action buttons */}
+                      {isPending ? (
+                        <div className="pt-3 border-t border-[#E4EAE5] flex items-center gap-2">
+                          <button
+                            onClick={() => {
+                              setReviewModalPass(pass);
+                              setReviewAction('APPROVE');
+                              setReviewRemarks('Approved. Return before curfew time.');
+                            }}
+                            className="flex-1 py-2 rounded-xl bg-[#168567] hover:bg-[#126b53] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                          >
+                            <Check size={14} /> Approve Pass
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setReviewModalPass(pass);
+                              setReviewAction('REJECT');
+                              setReviewRemarks('Declined due to security / curriculum regulations.');
+                            }}
+                            className="px-3.5 py-2 rounded-xl bg-[#FDF2F3] hover:bg-[#C43D4B] text-[#C43D4B] hover:text-white font-bold text-xs flex items-center justify-center gap-1 border border-[#F1C2C6] transition-colors cursor-pointer"
+                          >
+                            <X size={14} /> Reject
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="pt-2 text-[11px] text-[#87968D] flex items-center justify-between border-t border-[#E4EAE5]">
+                          <span>Reviewed by: {pass.approvedBy || 'Admin Desk'}</span>
+                          <span className="font-bold text-[#168567]">Turnstile Verified</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB 3: TIMETABLE STUDIO (HIERARCHY DEPT -> TEACHER)
+            ========================================================================= */}
+        {activeTab === 'timetable' && (
+          <div className="space-y-6">
+            {/* Cascading Hierarchy Control Bar */}
+            <div className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E4EAE5]">
+                <div>
+                  <h3 className="text-base font-extrabold text-[#202A27]">Departmental Academic Schedule</h3>
+                  <p className="text-xs text-[#65736B]">
+                    Select Department $\rightarrow$ Course $\rightarrow$ Year $\rightarrow$ Semester $\rightarrow$ Section to organize and assign faculty.
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => handleOpenSlotModal()}
+                  className="px-4 py-2 rounded-xl bg-[#142D28] hover:bg-[#1f3f38] text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer shrink-0"
+                >
+                  <Plus size={15} /> Add Class Slot
+                </button>
+              </div>
+
+              {/* Cascade Selectors Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+                {/* 1. Department */}
+                <div>
+                  <label className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider block mb-1">
+                    1. Department
+                  </label>
+                  <select
+                    value={selectedDept}
+                    onChange={(e) => {
+                      setSelectedDept(e.target.value);
+                      if (hierarchy?.courses?.[e.target.value]?.[0]) {
+                        setSelectedCourse(hierarchy.courses[e.target.value][0]);
+                      }
+                    }}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs font-semibold text-[#202A27] focus:outline-hidden focus:border-[#168567]"
+                  >
+                    {(hierarchy?.departments || [selectedDept]).map((dept) => (
+                      <option key={dept} value={dept}>
+                        {dept}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 2. Course */}
+                <div>
+                  <label className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider block mb-1">
+                    2. Course / Degree
+                  </label>
+                  <select
+                    value={selectedCourse}
+                    onChange={(e) => setSelectedCourse(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs font-semibold text-[#202A27] focus:outline-hidden focus:border-[#168567]"
+                  >
+                    {(hierarchy?.courses?.[selectedDept] || [selectedCourse]).map((course) => (
+                      <option key={course} value={course}>
+                        {course}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 3. Year */}
+                <div>
+                  <label className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider block mb-1">
+                    3. Academic Year
+                  </label>
+                  <select
+                    value={selectedYear}
+                    onChange={(e) => {
+                      const yr = parseInt(e.target.value, 10);
+                      setSelectedYear(yr);
+                      setSelectedSemester(yr * 2 - 1);
+                    }}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs font-semibold text-[#202A27] focus:outline-hidden focus:border-[#168567]"
+                  >
+                    <option value={1}>1st Year (UG)</option>
+                    <option value={2}>2nd Year (UG)</option>
+                    <option value={3}>3rd Year (UG)</option>
+                    <option value={4}>4th Year (UG)</option>
+                  </select>
+                </div>
+
+                {/* 4. Semester */}
+                <div>
+                  <label className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider block mb-1">
+                    4. Semester
+                  </label>
+                  <select
+                    value={selectedSemester}
+                    onChange={(e) => setSelectedSemester(parseInt(e.target.value, 10))}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs font-semibold text-[#202A27] focus:outline-hidden focus:border-[#168567]"
+                  >
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
+                      <option key={sem} value={sem}>
+                        Semester {sem}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 5. Section */}
+                <div>
+                  <label className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider block mb-1">
+                    5. Section
+                  </label>
+                  <select
+                    value={selectedSection}
+                    onChange={(e) => setSelectedSection(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs font-semibold text-[#202A27] focus:outline-hidden focus:border-[#168567]"
+                  >
+                    {['A', 'B', 'C'].map((sec) => (
+                      <option key={sec} value={sec}>
+                        Section {sec}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Day Selector Tabs */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
+                <button
+                  key={day}
+                  onClick={() => setSelectedDay(day)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                    selectedDay === day
+                      ? 'bg-[#142D28] text-white shadow-xs'
+                      : 'bg-white border border-[#E4EAE5] text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1]'
+                  }`}
+                >
+                  {day}
+                </button>
               ))}
             </div>
-          </section>
 
-          {/* Active Operations Bulletins */}
-          <section className="bg-white rounded-2xl p-5 sm:p-6 shadow-xs border border-slate-200/90">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h2 className="text-sm font-bold text-slate-900">Operations Bulletins</h2>
-              <button
-                onClick={() => setShowBroadcastModal(true)}
-                className="text-xs text-[#9E153E] hover:underline font-bold cursor-pointer"
-              >
-                + Post Bulletin
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-3 mt-4">
-              <div className="p-3.5 rounded-xl bg-slate-50/70 flex flex-col gap-1 border border-slate-200/80">
+            {/* Schedule Classes Display */}
+            <div className="bg-white rounded-2xl border border-[#E4EAE5] shadow-xs p-5">
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#E4EAE5]">
                 <div className="flex items-center gap-2">
-                  <Radio className="w-3.5 h-3.5 text-amber-600" />
-                  <span className="text-xs font-bold text-slate-900">Scheduled Network Maintenance</span>
+                  <Calendar size={18} className="text-[#168567]" />
+                  <span className="font-extrabold text-sm text-[#202A27]">
+                    {selectedDay} Schedule • {selectedCourse} (Sem {selectedSemester} - Sec {selectedSection})
+                  </span>
                 </div>
-                <p className="text-[11px] text-slate-500">Central Library AP-09 undergoing firmware update between 02:00 - 04:00 AM.</p>
-                <span className="text-[10px] text-slate-400 self-end font-mono mt-1">Today 08:30 AM</span>
+                <span className="text-xs text-[#87968D] font-medium">
+                  {timetableEntries.length} Classes Scheduled
+                </span>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-50/70 flex flex-col gap-1 border border-slate-200/80">
-                <div className="flex items-center gap-2">
-                  <Activity className="w-3.5 h-3.5 text-[#9E153E]" />
-                  <span className="text-xs font-bold text-slate-900">MU Hackathon 2026 Venue Approved</span>
+              {loadingTimetable ? (
+                <div className="py-12 text-center text-[#87968D]">
+                  <RefreshCw size={24} className="animate-spin mx-auto mb-2 text-[#168567]" />
+                  Loading schedule entries...
                 </div>
-                <p className="text-[11px] text-slate-500">Mewar University Central Auditorium &amp; Smart Labs reserved for Dec 4-6 sprint.</p>
-                <span className="text-[10px] text-slate-400 self-end font-mono mt-1">Yesterday</span>
+              ) : timetableEntries.length === 0 ? (
+                <div className="py-12 text-center text-[#87968D]">
+                  <BookOpen size={32} className="mx-auto mb-2 text-[#87968D]" />
+                  <p className="font-semibold text-sm">No class slots scheduled for {selectedDay}.</p>
+                  <p className="text-xs mt-1">Click "Add Class Slot" above to assign faculty and classrooms.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {timetableEntries.map((slot) => (
+                    <div
+                      key={slot.id || slot._id}
+                      className="p-4 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-[#168567]/40 transition-all"
+                    >
+                      {/* Time and Subject */}
+                      <div className="flex items-start sm:items-center gap-4">
+                        <div className="px-3 py-2 rounded-xl bg-white border border-[#E4EAE5] text-center min-w-[100px] shadow-2xs">
+                          <span className="text-[10px] font-bold text-[#87968D] uppercase block">Slot</span>
+                          <span className="font-mono text-xs font-extrabold text-[#142D28]">
+                            {slot.startTime} – {slot.endTime}
+                          </span>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-sm font-extrabold text-[#202A27]">{slot.subject}</h4>
+                            {slot.subjectCode && (
+                              <span className="font-mono text-[10px] font-bold px-1.5 py-0.2 rounded bg-[#EAF5EF] text-[#168567] border border-[#B7DEC9]">
+                                {slot.subjectCode}
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-3 mt-1 text-xs text-[#65736B]">
+                            <span className="font-bold text-[#142D28] flex items-center gap-1">
+                              👨‍🏫 Teacher: {slot.faculty}
+                            </span>
+                            <span>•</span>
+                            <span className="flex items-center gap-1">
+                              <DoorOpen size={13} /> {slot.room}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action buttons */}
+                      <div className="flex items-center gap-2 self-end sm:self-center">
+                        <button
+                          onClick={() => handleOpenSlotModal(slot)}
+                          className="p-2 rounded-lg bg-white border border-[#E4EAE5] hover:bg-[#F0F4F1] text-[#404D46] transition-colors cursor-pointer"
+                          title="Edit slot details"
+                        >
+                          <Edit2 size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSlot(slot.id || slot._id)}
+                          className="p-2 rounded-lg bg-white border border-[#E4EAE5] hover:bg-[#FDF2F3] text-[#C43D4B] transition-colors cursor-pointer"
+                          title="Delete slot"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* AI Assistant Timetable Info */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-[#142D28] to-[#1C433C] text-white flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                  <Sparkles size={20} className="text-[#6CE0B8]" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold">AI Timetable Intelligence Connected</h4>
+                  <p className="text-xs text-[#A3B8AC]">
+                    All timetable modifications sync instantly with the NextCampus AI Assistant, allowing students to ask naturally for their schedules and assigned faculty.
+                  </p>
+                </div>
               </div>
             </div>
-          </section>
-        </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB 4: MESS MENU MANAGER
+            ========================================================================= */}
+        {activeTab === 'mess' && (
+          <div className="space-y-6">
+            {/* Day selector pills */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
+                <button
+                  key={day}
+                  onClick={() => setMessDay(day)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                    messDay === day
+                      ? 'bg-[#142D28] text-white shadow-xs'
+                      : 'bg-white border border-[#E4EAE5] text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1]'
+                  }`}
+                >
+                  {day}
+                </button>
+              ))}
+            </div>
+
+            {/* Meals Grid for the Day */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+              {[
+                { type: 'breakfast', title: 'Breakfast', time: '07:30 AM – 09:30 AM' },
+                { type: 'lunch', title: 'Lunch', time: '12:30 PM – 02:30 PM' },
+                { type: 'snacks', title: 'High-Tea & Snacks', time: '05:00 PM – 06:15 PM' },
+                { type: 'dinner', title: 'Dinner', time: '07:45 PM – 09:45 PM' },
+              ].map((m) => {
+                const mealData = currentMenuData?.meals?.[m.type];
+                const items = mealData?.items || ['No items configured for this meal slot'];
+
+                return (
+                  <div
+                    key={m.type}
+                    className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col justify-between gap-4"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between pb-3 border-b border-[#E4EAE5]">
+                        <h4 className="font-extrabold text-sm text-[#202A27]">{m.title}</h4>
+                        <button
+                          onClick={() => {
+                            setMessMealType(m.type);
+                            handleOpenEditMenuModal();
+                          }}
+                          className="p-1.5 rounded-lg bg-[#F0F4F1] hover:bg-[#E4EAE5] text-[#142D28] transition-colors cursor-pointer"
+                          title="Edit meal items"
+                        >
+                          <Edit2 size={13} />
+                        </button>
+                      </div>
+
+                      <span className="text-[11px] font-mono font-semibold text-[#87968D] block mt-1.5">
+                        {m.time}
+                      </span>
+
+                      <div className="mt-3.5 space-y-2">
+                        {items.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center gap-2 text-xs text-[#202A27] p-2 rounded-lg bg-[#F6F8F6] border border-[#E4EAE5]/60"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#168567]" />
+                            <span className="font-medium">{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-[#E4EAE5] flex items-center justify-between text-[11px] text-[#87968D]">
+                      <span>Diet: Vegetarian</span>
+                      <span className="font-bold text-[#168567]">Published ✓</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Broadcast Alert Modal */}
-      {showBroadcastModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 w-full max-w-lg shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2 text-rose-600">
-                <Megaphone className="w-5 h-5 text-[#9E153E]" />
-                <h3 className="text-base font-bold text-slate-900">Broadcast Campus Alert</h3>
+      {/* =========================================================================
+          MODAL: STUDENT DETAILS VIEW
+          ========================================================================= */}
+      {selectedStudentDetail && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedStudentDetail(null);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#142D28]/40 backdrop-blur-xs animate-in fade-in duration-200"
+        >
+          <div className="relative w-full max-w-md rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-6 flex flex-col gap-4 text-[#202A27]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E4EAE5]">
+              <div className="flex items-center gap-2">
+                <Users size={18} className="text-[#168567]" />
+                <h3 className="font-extrabold text-sm">Official University Student Record</h3>
               </div>
               <button
-                onClick={() => setShowBroadcastModal(false)}
-                className="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center cursor-pointer"
+                onClick={() => setSelectedStudentDetail(null)}
+                className="p-1.5 rounded-lg bg-[#F0F4F1] text-[#65736B] hover:text-[#202A27] cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleSendBroadcast} className="space-y-3">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Alert Message *</label>
+            <div className="space-y-3 text-xs">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#168567] to-[#142D28] text-white flex items-center justify-center font-extrabold text-base">
+                  {selectedStudentDetail.name?.charAt(0) || 'S'}
+                </div>
+                <div>
+                  <h4 className="font-bold text-base text-[#202A27]">{selectedStudentDetail.name}</h4>
+                  <span className="font-mono text-xs font-bold text-[#168567] bg-[#EAF5EF] px-2 py-0.5 rounded">
+                    {selectedStudentDetail.enrollmentNumber}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] space-y-2 mt-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[#87968D]">Email:</span>
+                  <span className="font-semibold text-[#202A27]">{selectedStudentDetail.email}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[#87968D]">Phone:</span>
+                  <span className="font-semibold text-[#202A27]">{selectedStudentDetail.phone}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[#87968D]">Department:</span>
+                  <span className="font-semibold text-[#202A27] truncate max-w-[200px]">
+                    {selectedStudentDetail.department}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[#87968D]">Hostel Residence:</span>
+                  <span className="font-semibold text-[#202A27]">{selectedStudentDetail.residence || 'Campus Hostel'}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[#87968D]">Account Status:</span>
+                  <span
+                    className={`font-bold px-2 py-0.5 rounded ${
+                      selectedStudentDetail.isBlocked
+                        ? 'bg-[#FDF2F3] text-[#C43D4B]'
+                        : 'bg-[#EAF5EF] text-[#168567]'
+                    }`}
+                  >
+                    {selectedStudentDetail.isBlocked ? 'SUSPENDED' : 'ACTIVE'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                handleToggleBlock(selectedStudentDetail);
+                setSelectedStudentDetail(null);
+              }}
+              className={`w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-xs transition-colors ${
+                selectedStudentDetail.isBlocked
+                  ? 'bg-[#168567] hover:bg-[#126b53] text-white'
+                  : 'bg-[#C43D4B] hover:bg-[#a32e3a] text-white'
+              }`}
+            >
+              {selectedStudentDetail.isBlocked ? <UserCheck size={14} /> : <UserX size={14} />}
+              {selectedStudentDetail.isBlocked ? 'Restore Student Access' : 'Suspend / Block Student Access'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MODAL: GATE PASS REVIEW / ACTION
+          ========================================================================= */}
+      {reviewModalPass && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setReviewModalPass(null);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#142D28]/40 backdrop-blur-xs animate-in fade-in duration-200"
+        >
+          <div className="relative w-full max-w-md rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-6 flex flex-col gap-4 text-[#202A27]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E4EAE5]">
+              <div className="flex items-center gap-2">
+                <ShieldCheck size={18} className="text-[#168567]" />
+                <h3 className="font-extrabold text-sm">
+                  {reviewAction === 'APPROVE' ? 'Approve Gate Pass' : 'Reject Out-Pass Request'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setReviewModalPass(null)}
+                className="p-1.5 rounded-lg bg-[#F0F4F1] text-[#65736B] hover:text-[#202A27] cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="text-xs space-y-2">
+              <p>
+                Student: <span className="font-bold">{reviewModalPass.studentName}</span> (
+                <span className="font-mono text-[#168567]">{reviewModalPass.enrollmentNumber}</span>)
+              </p>
+              <p>
+                Destination: <span className="font-bold">{reviewModalPass.destination}</span>
+              </p>
+              <p className="text-[#65736B]">Reason: {reviewModalPass.reason}</p>
+
+              <div className="pt-2">
+                <label className="font-bold text-[#404D46] block mb-1">
+                  Warden / Admin Remarks (Visible to Student):
+                </label>
                 <textarea
                   rows="3"
-                  value={broadcastMessage}
-                  onChange={(e) => setBroadcastMessage(e.target.value)}
-                  placeholder="Enter high-priority operational broadcast message..."
-                  className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-[#9E153E] resize-none"
-                  required
-                ></textarea>
+                  value={reviewRemarks}
+                  onChange={(e) => setReviewRemarks(e.target.value)}
+                  placeholder="Enter any conditions or reason for decision..."
+                  className="w-full p-2.5 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs focus:outline-hidden focus:border-[#168567]"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2 border-t border-[#E4EAE5]">
+              <button
+                onClick={() => setReviewModalPass(null)}
+                className="flex-1 py-2 rounded-xl bg-[#F0F4F1] text-[#65736B] hover:text-[#202A27] text-xs font-bold cursor-pointer"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleProcessPass}
+                className={`flex-1 py-2 rounded-xl text-white font-bold text-xs shadow-xs cursor-pointer ${
+                  reviewAction === 'APPROVE' ? 'bg-[#168567] hover:bg-[#126b53]' : 'bg-[#C43D4B] hover:bg-[#a32e3a]'
+                }`}
+              >
+                Confirm {reviewAction}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MODAL: ADD / EDIT TIMETABLE SLOT
+          ========================================================================= */}
+      {slotModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSlotModalOpen(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#142D28]/40 backdrop-blur-xs animate-in fade-in duration-200"
+        >
+          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-6 flex flex-col gap-4 text-[#202A27]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E4EAE5]">
+              <div className="flex items-center gap-2">
+                <Calendar size={18} className="text-[#168567]" />
+                <h3 className="font-extrabold text-sm">
+                  {editingSlot ? 'Edit Class Slot' : 'Add Class Slot to Schedule'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setSlotModalOpen(false)}
+                className="p-1.5 rounded-lg bg-[#F0F4F1] text-[#65736B] hover:text-[#202A27] cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveSlot} className="space-y-3.5 text-xs">
+              <div className="p-2.5 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-[#65736B]">
+                <span className="font-bold text-[#142D28]">Schedule Target:</span> {selectedDept} • {selectedCourse} • {selectedDay} (Sem {selectedSemester} - Sec {selectedSection})
               </div>
 
-              <div className="pt-3 flex justify-end gap-3 border-t border-slate-100">
+              <div>
+                <label className="font-bold text-[#404D46] block mb-1">Subject Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Distributed Database Management"
+                  value={slotForm.subject}
+                  onChange={(e) => setSlotForm({ ...slotForm, subject: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] focus:outline-hidden focus:border-[#168567]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-[#404D46] block mb-1">Subject Code</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. CS-302"
+                    value={slotForm.subjectCode}
+                    onChange={(e) => setSlotForm({ ...slotForm, subjectCode: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] focus:outline-hidden focus:border-[#168567]"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-[#404D46] block mb-1">Faculty / Teacher Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Dr. Sarah Chen"
+                    value={slotForm.faculty}
+                    onChange={(e) => setSlotForm({ ...slotForm, faculty: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] focus:outline-hidden focus:border-[#168567]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-[#404D46] block mb-1">Start Time</label>
+                  <input
+                    type="text"
+                    placeholder="09:30"
+                    value={slotForm.startTime}
+                    onChange={(e) => setSlotForm({ ...slotForm, startTime: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] focus:outline-hidden focus:border-[#168567]"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-[#404D46] block mb-1">End Time</label>
+                  <input
+                    type="text"
+                    placeholder="10:30"
+                    value={slotForm.endTime}
+                    onChange={(e) => setSlotForm({ ...slotForm, endTime: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] focus:outline-hidden focus:border-[#168567]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-[#404D46] block mb-1">Room / Lab Number</label>
+                  <input
+                    type="text"
+                    placeholder="Room B-204"
+                    value={slotForm.room}
+                    onChange={(e) => setSlotForm({ ...slotForm, room: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] focus:outline-hidden focus:border-[#168567]"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-[#404D46] block mb-1">Campus Building</label>
+                  <input
+                    type="text"
+                    placeholder="Turing Hall"
+                    value={slotForm.building}
+                    onChange={(e) => setSlotForm({ ...slotForm, building: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] focus:outline-hidden focus:border-[#168567]"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-[#E4EAE5] flex items-center justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowBroadcastModal(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                  onClick={() => setSlotModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-[#F0F4F1] text-[#65736B] hover:text-[#202A27] font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#9E153E] to-[#BE123C] hover:from-[#881337] hover:to-[#9E153E] text-white text-xs font-bold shadow-sm cursor-pointer transition-all active:scale-[0.98]"
+                  className="px-4 py-2 rounded-xl bg-[#142D28] hover:bg-[#1f3f38] text-white font-bold shadow-xs cursor-pointer"
                 >
-                  Dispatch Alert to All Nodes
+                  Save Class Slot
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MODAL: EDIT MESS MENU ITEMS
+          ========================================================================= */}
+      {editMenuModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setEditMenuModalOpen(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#142D28]/40 backdrop-blur-xs animate-in fade-in duration-200"
+        >
+          <div className="relative w-full max-w-md rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-6 flex flex-col gap-4 text-[#202A27]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E4EAE5]">
+              <div className="flex items-center gap-2">
+                <Utensils size={18} className="text-[#168567]" />
+                <h3 className="font-extrabold text-sm capitalize">
+                  Edit {messDay} {messMealType} Menu
+                </h3>
+              </div>
+              <button
+                onClick={() => setEditMenuModalOpen(false)}
+                className="p-1.5 rounded-lg bg-[#F0F4F1] text-[#65736B] hover:text-[#202A27] cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="text-xs space-y-2">
+              <label className="font-bold text-[#404D46] block">
+                Dishes / Menu Items (One per line):
+              </label>
+              <textarea
+                rows="7"
+                value={menuItemsText}
+                onChange={(e) => setMenuItemsText(e.target.value)}
+                placeholder="Paneer Butter Masala&#10;Jeera Rice&#10;Tandoori Roti&#10;Gulab Jamun"
+                className="w-full p-3 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs font-medium focus:outline-hidden focus:border-[#168567]"
+              />
+              <span className="text-[10.5px] text-[#87968D]">
+                These items will update the live dining schedule for all students.
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2 border-t border-[#E4EAE5]">
+              <button
+                onClick={() => setEditMenuModalOpen(false)}
+                className="flex-1 py-2 rounded-xl bg-[#F0F4F1] text-[#65736B] font-semibold cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveMenu}
+                className="flex-1 py-2 rounded-xl bg-[#168567] hover:bg-[#126b53] text-white font-bold shadow-xs cursor-pointer"
+              >
+                Publish Menu
+              </button>
+            </div>
           </div>
         </div>
       )}
