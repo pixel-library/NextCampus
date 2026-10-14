@@ -111,9 +111,11 @@ export const AuthPage = () => {
     setLoading(true);
     try {
       const res = await login(signInIdentifier.trim(), signInPassword);
-      if (res.success) {
+      if (res && res.success) {
         setSuccessMessage('Authentication verified. Loading campus session...');
         // Redirection will trigger via useEffect
+      } else {
+        setErrorMessage(res?.message || 'Authentication failed. Please verify credentials.');
       }
     } catch (err) {
       setErrorMessage(err.message || 'Authentication failed. Please verify credentials.');
@@ -160,8 +162,10 @@ export const AuthPage = () => {
         password: regPassword,
       });
 
-      if (res.success) {
+      if (res && res.success) {
         setSuccessMessage('Student account created successfully! Initializing workspace...');
+      } else {
+        setErrorMessage(res?.message || 'Registration failed. Please check your submission.');
       }
     } catch (err) {
       setErrorMessage(err.message || 'Registration failed. Please check your submission.');
