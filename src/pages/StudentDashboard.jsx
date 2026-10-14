@@ -26,6 +26,10 @@ import {
   Unlock,
   Radio,
   BookOpen,
+  Timer,
+  FileText,
+  Printer,
+  Calendar,
 } from 'lucide-react';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
@@ -33,6 +37,12 @@ import Badge from '../components/common/Badge';
 import StatusIndicator from '../components/common/StatusIndicator';
 import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
+import {
+  formatTime12,
+  addHoursToTime,
+  calculateDurationHours,
+  getOutpassTimeInfo,
+} from '../utils/outpassHelpers';
 
 export function StudentDashboard() {
   const { user } = useAuth();
@@ -49,21 +59,33 @@ export function StudentDashboard() {
   const [aiResponse, setAiResponse] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
 
-  // Digital Gate Pass Modal & Appeal State
+  // Digital Outpass Modal & Appeal State
   const [isGatePassOpen, setIsGatePassOpen] = useState(false);
   const [hasCopiedPassId, setHasCopiedPassId] = useState(false);
+  const [copiedPassCode, setCopiedPassCode] = useState(null);
   const [turnstileUnlocked, setTurnstileUnlocked] = useState(false);
+  const [now, setNow] = useState(new Date());
   const [myGatePasses, setMyGatePasses] = useState([]);
   const [gatePassSubmitting, setGatePassSubmitting] = useState(false);
   const [gatePassSuccessMsg, setGatePassSuccessMsg] = useState('');
   const [activeGatePassTab, setActiveGatePassTab] = useState('pass'); // 'pass' | 'apply'
+
+  const todayDateStr = useMemo(() => new Date().toISOString().split('T')[0], []);
+
   const [gatePassForm, setGatePassForm] = useState({
     destination: '',
     reason: '',
-    outTime: '',
-    expectedInTime: '',
+    date: todayDateStr,
+    outTime: '17:00', // 05:00 PM
+    expectedInTime: '19:00', // 07:00 PM (Default 2-hour expire limit)
     emergencyContact: '',
   });
+
+  // Dynamic ticking clock for real-time validity & countdown
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 10000);
+    return () => clearInterval(timer);
+  }, []);
 
   const fetchMyGatePasses = async () => {
     try {
@@ -86,6 +108,18 @@ export function StudentDashboard() {
     }
   }, [isGatePassOpen]);
 
+  const currentFormDuration = useMemo(() => {
+    return calculateDurationHours(gatePassForm.outTime, gatePassForm.expectedInTime);
+  }, [gatePassForm.outTime, gatePassForm.expectedInTime]);
+
+  const handleDurationPresetClick = (hours) => {
+    const newInTime = addHoursToTime(gatePassForm.outTime, hours);
+    setGatePassForm((prev) => ({
+      ...prev,
+      expectedInTime: newInTime,
+    }));
+  };
+
   const handleSubmitGatePassAppeal = async (e) => {
     e.preventDefault();
     if (!gatePassForm.destination || !gatePassForm.reason) {
@@ -93,22 +127,34 @@ export function StudentDashboard() {
     }
     setGatePassSubmitting(true);
     try {
+      const outFormatted = formatTime12(gatePassForm.outTime);
+      const inFormatted = formatTime12(gatePassForm.expectedInTime);
+      const durationHours = currentFormDuration;
+
       const res = await api.post('/gatepass/apply', {
         destination: gatePassForm.destination,
         reason: gatePassForm.reason,
-        outTime: gatePassForm.outTime || 'Today 05:00 PM',
-        expectedInTime: gatePassForm.expectedInTime || 'Today 08:30 PM',
+        outTime: `${gatePassForm.date} ${outFormatted}`,
+        expectedInTime: `${gatePassForm.date} ${inFormatted}`,
+        durationHours: Number(durationHours.toFixed(2)),
+        expiresAt: new Date(`${gatePassForm.date}T${gatePassForm.expectedInTime}:00`).toISOString(),
         emergencyContact: gatePassForm.emergencyContact || user?.emergencyContact || user?.phone || '',
       });
       if (res.success) {
-        setGatePassSuccessMsg('Gate pass appeal submitted! Sent to Campus Admin / Warden for approval.');
-        setGatePassForm({ destination: '', reason: '', outTime: '', expectedInTime: '', emergencyContact: '' });
+        setGatePassSuccessMsg(
+          `Outpass request submitted! Expire limit: ${durationHours} hours (Valid until ${inFormatted}). Sent to Warden for approval.`
+        );
+        setGatePassForm((prev) => ({
+          ...prev,
+          destination: '',
+          reason: '',
+        }));
         fetchMyGatePasses();
         setActiveGatePassTab('pass');
         setTimeout(() => setGatePassSuccessMsg(''), 6000);
       }
     } catch (err) {
-      alert(err.message || 'Failed to submit gate pass');
+      alert(err.message || 'Failed to submit outpass');
     } finally {
       setGatePassSubmitting(false);
     }
@@ -240,10 +286,10 @@ export function StudentDashboard() {
           <Button
             variant="primary"
             size="md"
-            icon={QrCode}
+            icon={DoorOpen}
             onClick={() => setIsGatePassOpen(true)}
           >
-            Digital Gate Pass
+            Digital Outpass
           </Button>
 
           <div className="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-[#E4EAE5] text-xs text-[#65736B] shadow-xs">
@@ -559,38 +605,6 @@ export function StudentDashboard() {
             </div>
           </section>
 
-          {/* C. CAMPUS BULLETINS */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4.5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between text-[11px] font-bold text-[#168567] mb-1">
-                  <span>INFRASTRUCTURE</span>
-                  <span className="text-[#87968D] font-normal">Today, 4:00 PM</span>
-                </div>
-                <h4 className="text-sm font-bold text-[#202A27]">
-                  Central Library Level 2 Wi-Fi 7 Core Migration
-                </h4>
-                <p className="text-xs text-[#65736B] mt-1 leading-relaxed">
-                  AP nodes 12–16 firmware upgrade active. Acoustic study pods in West Wing remain fully online.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-4.5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between text-[11px] font-bold text-[#3478B8] mb-1">
-                  <span>HACKATHON • ACADEMIC</span>
-                  <span className="text-[#87968D] font-normal">Due Oct 18</span>
-                </div>
-                <h4 className="text-sm font-bold text-[#202A27]">
-                  Mewar SmartCampus Innovation Submissions
-                </h4>
-                <p className="text-xs text-[#65736B] mt-1 leading-relaxed">
-                  Interim architecture documentation open for student teams in AI and Robotics verticals.
-                </p>
-              </div>
-            </div>
-          </section>
         </div>
 
         {/* RIGHT COLUMN: AI COPILOT & DEADLINES (4 COLS) */}
@@ -691,16 +705,18 @@ export function StudentDashboard() {
           }}
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#142D28]/40 backdrop-blur-sm animate-in fade-in duration-200"
         >
-          <div className="relative w-full max-w-md rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-5 sm:p-6 flex flex-col gap-4 text-[#202A27] max-h-[92dvh] overflow-y-auto">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-5 sm:p-6 flex flex-col gap-4 text-[#202A27] max-h-[92dvh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-[#E4EAE5]">
-              <div className="flex items-center gap-2">
-                <ShieldCheck size={20} className="text-[#168567]" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-[#EAF5EF] border border-[#B7DEC9] flex items-center justify-center text-[#168567]">
+                  <DoorOpen size={18} />
+                </div>
                 <div className="flex flex-col">
-                  <span id="gate-pass-title" className="text-xs font-bold text-[#202A27]">
-                    Mewar University Smart Pass
+                  <span id="gate-pass-title" className="text-sm font-extrabold text-[#202A27]">
+                    Campus Digital Outpass
                   </span>
-                  <span className="text-[10px] text-[#65736B] font-medium">Digital Turnstile & Campus Out-Pass</span>
+                  <span className="text-[10px] text-[#65736B] font-medium">Official Gate Pass & Timed Transit Permit</span>
                 </div>
               </div>
               <button
@@ -732,7 +748,7 @@ export function StudentDashboard() {
                     : 'text-[#65736B] hover:text-[#202A27]'
                 }`}
               >
-                My Pass & Appeals {myGatePasses.length > 0 && `(${myGatePasses.length})`}
+                My Outpass Permits {myGatePasses.length > 0 && `(${myGatePasses.length})`}
               </button>
               <button
                 type="button"
@@ -743,11 +759,11 @@ export function StudentDashboard() {
                     : 'text-[#65736B] hover:text-[#202A27]'
                 }`}
               >
-                + Apply for Out-Pass
+                + Request New Outpass
               </button>
             </div>
 
-            {/* TAB 1: ACTIVE PASS / STATUS VIEW */}
+            {/* TAB 1: OUTPASS STATUS & ACTIVE PERMITS */}
             {activeGatePassTab === 'pass' && (
               <div className="space-y-4">
                 {myGatePasses.length === 0 ? (
@@ -761,7 +777,7 @@ export function StudentDashboard() {
                       onClick={() => setActiveGatePassTab('apply')}
                       className="px-4 py-2 rounded-xl bg-[#142D28] hover:bg-[#1f3f38] text-white text-xs font-bold cursor-pointer"
                     >
-                      Fill Gate Pass Appeal Form
+                      Apply for Campus Outpass
                     </button>
                   </div>
                 ) : (
@@ -769,109 +785,240 @@ export function StudentDashboard() {
                     const isApproved = pass.status === 'APPROVED';
                     const isPending = pass.status === 'PENDING';
                     const isRejected = pass.status === 'REJECTED';
+                    const timeInfo = getOutpassTimeInfo(pass, now);
+                    const isExpired = isApproved && timeInfo.isExpired;
 
                     return (
                       <div
                         key={pass.id || pass.passCode}
-                        className={`p-4 rounded-2xl border transition-all ${
-                          isApproved
-                            ? 'bg-gradient-to-b from-[#F6F8F6] to-white border-[#168567]/30 shadow-xs'
+                        className={`rounded-2xl border transition-all overflow-hidden ${
+                          isApproved && !isExpired
+                            ? 'bg-white border-[#168567]/35 shadow-md shadow-[#168567]/5'
+                            : isExpired
+                            ? 'bg-white border-[#C43D4B]/35 shadow-xs'
                             : isPending
-                            ? 'bg-[#FFF9EB]/60 border-[#F9E2AF]'
-                            : 'bg-[#FDF2F3]/60 border-[#F1C2C6]'
+                            ? 'bg-white border-[#F9E2AF] shadow-xs'
+                            : 'bg-white border-[#F1C2C6]'
                         }`}
                       >
-                        {/* Status bar */}
-                        <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#E4EAE5]">
-                          <span className="font-mono text-xs font-bold text-[#142D28]">
-                            {pass.passCode || 'GP-OUTPASS'}
-                          </span>
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
-                              isApproved
-                                ? 'bg-[#EAF5EF] text-[#168567] border border-[#B7DEC9]'
-                                : isPending
-                                ? 'bg-[#FFF9EB] text-[#B26A00] border border-[#F9E2AF]'
-                                : 'bg-[#FDF2F3] text-[#C43D4B] border border-[#F1C2C6]'
-                            }`}
-                          >
-                            {pass.status}
-                          </span>
+                        {/* Outpass Header Ribbon */}
+                        <div className="p-3.5 bg-[#F6F8F6] border-b border-[#E4EAE5] flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs font-extrabold text-[#142D28] bg-white px-2 py-0.5 rounded border border-[#E4EAE5] shadow-2xs">
+                              {pass.passCode || 'GP-OUTPASS'}
+                            </span>
+                            <span className="text-[10px] font-bold text-[#65736B] uppercase tracking-wider hidden sm:inline">
+                              Mewar University
+                            </span>
+                          </div>
+
+                          {/* Dynamic Status Badge */}
+                          {isApproved && !isExpired && (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider bg-[#EAF5EF] text-[#168567] border border-[#B7DEC9]">
+                              <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#168567] opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#168567]"></span>
+                              </span>
+                              ACTIVE PERMIT
+                            </span>
+                          )}
+
+                          {isApproved && isExpired && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider bg-[#FDF2F3] text-[#C43D4B] border border-[#F1C2C6]">
+                              <AlertTriangle size={12} /> EXPIRED PASS
+                            </span>
+                          )}
+
+                          {isPending && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider bg-[#FFF9EB] text-[#B26A00] border border-[#F9E2AF]">
+                              <Clock size={12} /> PENDING REVIEW
+                            </span>
+                          )}
+
+                          {isRejected && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider bg-[#FDF2F3] text-[#C43D4B] border border-[#F1C2C6]">
+                              <AlertTriangle size={12} /> DECLINED
+                            </span>
+                          )}
                         </div>
 
-                        {isApproved ? (
-                          /* Approved Digital QR Pass */
-                          <div className="flex flex-col items-center gap-3">
-                            <div className="w-32 h-32 p-2 rounded-xl bg-white border border-[#E4EAE5] flex items-center justify-center shadow-xs">
-                              <svg viewBox="0 0 100 100" className="w-full h-full">
-                                <rect x="0" y="0" width="100" height="100" fill="#FFFFFF" />
-                                <rect x="10" y="10" width="25" height="25" fill="#142D28" />
-                                <rect x="15" y="15" width="15" height="15" fill="#FFFFFF" />
-                                <rect x="18" y="18" width="9" height="9" fill="#142D28" />
-
-                                <rect x="65" y="10" width="25" height="25" fill="#142D28" />
-                                <rect x="70" y="15" width="15" height="15" fill="#FFFFFF" />
-                                <rect x="73" y="18" width="9" height="9" fill="#142D28" />
-
-                                <rect x="10" y="65" width="25" height="25" fill="#142D28" />
-                                <rect x="15" y="70" width="15" height="15" fill="#FFFFFF" />
-                                <rect x="18" y="73" width="9" height="9" fill="#142D28" />
-
-                                <rect x="42" y="15" width="6" height="6" fill="#142D28" />
-                                <rect x="52" y="25" width="6" height="6" fill="#142D28" />
-                                <rect x="40" y="45" width="6" height="6" fill="#142D28" />
-                                <rect x="55" y="55" width="6" height="6" fill="#142D28" />
-                                <rect x="65" y="70" width="6" height="6" fill="#142D28" />
-                                <circle cx="50" cy="50" r="5" fill="#168567" />
-                              </svg>
+                        {/* EXPIRATION & REMAINING TIME BANNER (When Approved) */}
+                        {isApproved && !isExpired && (
+                          <div className="p-3 bg-gradient-to-r from-[#EAF5EF] to-[#F3F9F5] border-b border-[#B7DEC9]/70 space-y-1.5">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="font-bold text-[#142D28] flex items-center gap-1.5">
+                                <Timer size={14} className="text-[#168567]" />
+                                Expire Limit: <span className="text-[#168567] font-extrabold">{timeInfo.durationText}</span>
+                              </span>
+                              <span className="font-mono font-bold text-[#168567] text-[11px] bg-white px-2 py-0.5 rounded-md border border-[#B7DEC9]">
+                                {timeInfo.remainingText}
+                              </span>
                             </div>
-
-                            <div className="text-center">
-                              <h4 className="text-sm font-extrabold text-[#202A27]">{pass.studentName}</h4>
-                              <p className="text-xs font-mono font-bold text-[#168567] mt-0.5">{pass.enrollmentNumber}</p>
-                              <p className="text-[11px] text-[#65736B] font-medium mt-0.5">
-                                Destination: <span className="font-bold text-[#202A27]">{pass.destination}</span>
-                              </p>
-                              <p className="text-[10px] text-[#87968D]">
-                                Window: {pass.outTime} $\rightarrow$ {pass.expectedInTime}
-                              </p>
+                            <div className="w-full bg-[#D1E7DC] h-1.5 rounded-full overflow-hidden">
+                              <div
+                                className="bg-[#168567] h-full rounded-full transition-all duration-500"
+                                style={{ width: `${Math.max(5, timeInfo.progressPercent)}%` }}
+                              />
                             </div>
-
-                            <Button
-                              variant={turnstileUnlocked ? 'primary' : 'secondary'}
-                              size="sm"
-                              onClick={handleSimulateTurnstile}
-                              icon={turnstileUnlocked ? Unlock : Lock}
-                              className="w-full"
-                            >
-                              {turnstileUnlocked ? 'Turnstile Unlocked! ✓' : 'Tap at Gate Reader'}
-                            </Button>
-                          </div>
-                        ) : isPending ? (
-                          /* Pending Appeal Information */
-                          <div className="space-y-2 text-xs">
-                            <p className="font-bold text-[#B26A00] flex items-center gap-1.5">
-                              <Clock size={14} /> Appeal Under Administrative Review
-                            </p>
-                            <p className="text-[#404D46]">
-                              Destination: <span className="font-semibold text-[#202A27]">{pass.destination}</span>
-                            </p>
-                            <p className="text-[#65736B] text-[11px]">Reason: {pass.reason}</p>
-                            <div className="p-2 rounded-lg bg-white/80 border border-[#F9E2AF] text-[10.5px] text-[#87968D]">
-                              Your appeal is currently with the Hostel Warden & Campus Admin. Once approved, your digital QR pass will become active.
+                            <div className="flex items-center justify-between text-[10.5px] text-[#404D46]">
+                              <span>Departure: <b>{timeInfo.outFormatted}</b></span>
+                              <span>Auto-Expires: <b>{timeInfo.inFormatted}</b></span>
                             </div>
                           </div>
-                        ) : (
-                          /* Rejected Appeal */
-                          <div className="space-y-1.5 text-xs">
-                            <p className="font-bold text-[#C43D4B] flex items-center gap-1.5">
-                              <AlertTriangle size={14} /> Request Declined
-                            </p>
-                            <p className="text-[#65736B] text-[11px]">
-                              {pass.adminRemarks || 'Declined by campus administration.'}
+                        )}
+
+                        {isApproved && isExpired && (
+                          <div className="p-3 bg-[#FDF2F3] border-b border-[#F1C2C6] text-xs space-y-1">
+                            <div className="flex items-center justify-between font-bold text-[#C43D4B]">
+                              <span className="flex items-center gap-1.5">
+                                <AlertTriangle size={14} /> Pass Expired • {timeInfo.durationText} Limit Reached
+                              </span>
+                              <span className="font-mono text-[11px] bg-white px-2 py-0.5 rounded-md border border-[#F1C2C6]">
+                                {timeInfo.remainingText}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-[#8C232F]">
+                              This outpass concluded at <b>{timeInfo.inFormatted}</b>. The student must report back to the campus security checkpoint immediately.
                             </p>
                           </div>
                         )}
+
+                        {/* PASS CONTENT */}
+                        <div className="p-4 space-y-3.5">
+                          {/* Student Identity */}
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#142D28] to-[#168567] text-white flex items-center justify-center font-extrabold text-sm shadow-xs shrink-0">
+                                {(pass.studentName || 'ST').slice(0, 2).toUpperCase()}
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-1.5">
+                                  <h4 className="text-sm font-extrabold text-[#202A27]">{pass.studentName}</h4>
+                                  <span className="text-[9.5px] text-[#168567] font-bold bg-[#EAF5EF] px-1.5 py-0.2 rounded border border-[#B7DEC9]">
+                                    VERIFIED
+                                  </span>
+                                </div>
+                                <p className="text-xs font-mono font-bold text-[#168567] mt-0.5">{pass.enrollmentNumber}</p>
+                                <p className="text-[11px] text-[#65736B] truncate max-w-[220px]">
+                                  {pass.course || pass.department}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Destination & Reason */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <div className="p-2.5 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5]">
+                              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#87968D] mb-1">
+                                <MapPin size={12} className="text-[#168567]" /> Destination
+                              </div>
+                              <p className="font-bold text-[#202A27] text-xs leading-snug">{pass.destination}</p>
+                            </div>
+
+                            <div className="p-2.5 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5]">
+                              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-[#87968D] mb-1">
+                                <FileText size={12} className="text-[#168567]" /> Reason / Purpose
+                              </div>
+                              <p className="text-[#404D46] text-xs leading-snug">{pass.reason}</p>
+                            </div>
+                          </div>
+
+                          {/* Time Window & Expiration Limit */}
+                          <div className="p-3 rounded-xl bg-[#F0F4F1]/70 border border-[#E4EAE5]">
+                            <div className="grid grid-cols-3 items-center text-center">
+                              <div>
+                                <span className="text-[9.5px] font-extrabold uppercase text-[#87968D] block">Departure</span>
+                                <span className="text-sm font-extrabold text-[#202A27] block mt-0.5">{timeInfo.outFormatted}</span>
+                                <span className="text-[10px] text-[#65736B] block">{timeInfo.outDateFormatted || 'Scheduled'}</span>
+                              </div>
+
+                              <div className="flex flex-col items-center justify-center px-1">
+                                <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-[#142D28] text-white shadow-xs">
+                                  ⏳ {timeInfo.durationText}
+                                </span>
+                                <span className="text-[9px] text-[#87968D] mt-1 font-semibold uppercase">Allowed Limit</span>
+                              </div>
+
+                              <div>
+                                <span className="text-[9.5px] font-extrabold uppercase text-[#87968D] block">Return (Curfew)</span>
+                                <span
+                                  className={`text-sm font-extrabold block mt-0.5 ${
+                                    isExpired ? 'text-[#C43D4B]' : 'text-[#168567]'
+                                  }`}
+                                >
+                                  {timeInfo.inFormatted}
+                                </span>
+                                <span className="text-[10px] text-[#65736B] block">{timeInfo.inDateFormatted || 'Expires At'}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Pending Review Details */}
+                          {isPending && (
+                            <div className="p-3 rounded-xl bg-[#FFF9EB] border border-[#F9E2AF] text-xs space-y-1.5">
+                              <p className="font-bold text-[#B26A00] flex items-center gap-1.5">
+                                <Clock size={14} /> Outpass Appeal Under Administrative Review
+                              </p>
+                              <p className="text-[#65736B] text-[11px]">
+                                Your requested {timeInfo.durationText} validity window from {timeInfo.outFormatted} to {timeInfo.inFormatted} has been queued with the Hostel Warden & Campus Security Admin. Once approved, the pass will activate automatically.
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Rejection Remarks */}
+                          {isRejected && (
+                            <div className="p-3 rounded-xl bg-[#FDF2F3] border border-[#F1C2C6] text-xs space-y-1">
+                              <p className="font-bold text-[#C43D4B] flex items-center gap-1.5">
+                                <AlertTriangle size={14} /> Request Declined
+                              </p>
+                              <p className="text-[#65736B] text-[11px]">
+                                {pass.adminRemarks || 'Declined by campus administration or curfew policy.'}
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Warden Approval Note for Approved */}
+                          {isApproved && pass.adminRemarks && (
+                            <div className="p-2.5 rounded-xl bg-[#FFF9EB] border border-[#F9E2AF] text-[11px] text-[#404D46]">
+                              <span className="font-bold text-[#B26A00]">Warden Approval Note:</span> {pass.adminRemarks}
+                            </div>
+                          )}
+
+                          {/* Footer with Security Badge & Print/Copy */}
+                          <div className="pt-2 border-t border-[#E4EAE5] flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                            <div className="flex items-center gap-1.5 text-[#65736B]">
+                              <ShieldCheck size={14} className="text-[#168567]" />
+                              <span>
+                                {isApproved
+                                  ? `Approved by ${pass.approvedBy || 'Campus Administrator'}`
+                                  : 'Mewar University Security Registry'}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 ml-auto">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  navigator.clipboard?.writeText?.(pass.passCode || studentRoll);
+                                  setCopiedPassCode(pass.passCode || pass.id);
+                                  setTimeout(() => setCopiedPassCode(null), 2000);
+                                }}
+                                className="px-2.5 py-1 rounded-lg bg-[#F0F4F1] hover:bg-[#E4EAE5] text-[#202A27] font-semibold text-[11px] flex items-center gap-1 cursor-pointer transition-colors"
+                              >
+                                <Copy size={12} />
+                                {copiedPassCode === (pass.passCode || pass.id) ? 'Copied ID' : 'Copy ID'}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => window.print?.()}
+                                className="px-2.5 py-1 rounded-lg bg-[#142D28] hover:bg-[#1f3f38] text-white font-semibold text-[11px] flex items-center gap-1 cursor-pointer transition-colors"
+                              >
+                                <Printer size={12} />
+                                Print
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     );
                   })
@@ -879,28 +1026,22 @@ export function StudentDashboard() {
               </div>
             )}
 
-            {/* TAB 2: APPLY FOR GATE PASS FORM */}
+            {/* TAB 2: APPLY FOR OUTPASS FORM WITH EXPIRATION LIMIT */}
             {activeGatePassTab === 'apply' && (
-              <form onSubmit={handleSubmitGatePassAppeal} className="space-y-3 text-xs">
+              <form onSubmit={handleSubmitGatePassAppeal} className="space-y-3.5 text-xs">
                 {/* Auto-filled Section */}
-                <div className="p-3 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] space-y-2">
+                <div className="p-3 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] space-y-1.5">
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-[#87968D]">Student Name:</span>
+                    <span className="text-[#87968D]">Student:</span>
                     <span className="font-bold text-[#202A27]">{studentName} (Auto-filled)</span>
                   </div>
                   <div className="flex items-center justify-between text-[11px]">
                     <span className="text-[#87968D]">Enrollment / MUR:</span>
-                    <span className="font-mono font-bold text-[#168567]">{studentRoll} (Auto-filled)</span>
+                    <span className="font-mono font-bold text-[#168567]">{studentRoll}</span>
                   </div>
                   <div className="flex items-center justify-between text-[11px]">
                     <span className="text-[#87968D]">Course & Dept:</span>
-                    <span className="font-medium text-[#202A27] truncate max-w-[200px]">{studentDept}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-[#87968D]">Registered Mobile:</span>
-                    <span className="font-mono font-bold text-[#202A27]">
-                      {user?.phone || '+91 98765 43210'} (Auto-filled)
-                    </span>
+                    <span className="font-medium text-[#202A27] truncate max-w-[220px]">{studentDept}</span>
                   </div>
                 </div>
 
@@ -910,7 +1051,7 @@ export function StudentDashboard() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. City Railway Station / Home / Medical Clinic"
+                    placeholder="e.g. Chittorgarh Railway Station / City Center / Home"
                     value={gatePassForm.destination}
                     onChange={(e) => setGatePassForm({ ...gatePassForm, destination: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs focus:outline-hidden focus:border-[#168567]"
@@ -923,36 +1064,103 @@ export function StudentDashboard() {
                   <textarea
                     rows="2"
                     required
-                    placeholder="e.g. Family function attendance over the weekend"
+                    placeholder="e.g. Family function attendance / Medical appointment"
                     value={gatePassForm.reason}
                     onChange={(e) => setGatePassForm({ ...gatePassForm, reason: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs focus:outline-hidden focus:border-[#168567]"
                   />
                 </div>
 
+                {/* Date Selection */}
+                <div>
+                  <label className="font-bold text-[#404D46] block mb-1">Outpass Date *</label>
+                  <input
+                    type="date"
+                    required
+                    value={gatePassForm.date}
+                    onChange={(e) => setGatePassForm({ ...gatePassForm, date: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs focus:outline-hidden focus:border-[#168567]"
+                  />
+                </div>
+
+                {/* Quick Expiration Limit Selector Chips */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="font-bold text-[#404D46] flex items-center gap-1.5">
+                      <Timer size={13} className="text-[#168567]" />
+                      Select Expire Limit (Hours)
+                    </label>
+                    <span className="text-[11px] font-extrabold text-[#168567]">
+                      {currentFormDuration} {currentFormDuration === 1 ? 'Hour' : 'Hours'} Window
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-5 gap-1.5">
+                    {[1, 2, 3, 4, 6].map((hrs) => {
+                      const isSelected = Math.abs(currentFormDuration - hrs) < 0.1;
+                      return (
+                        <button
+                          key={hrs}
+                          type="button"
+                          onClick={() => handleDurationPresetClick(hrs)}
+                          className={`py-1.5 px-2 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+                            isSelected
+                              ? 'bg-[#142D28] text-white shadow-xs'
+                              : 'bg-[#F0F4F1] text-[#404D46] hover:bg-[#E4EAE5]'
+                          }`}
+                        >
+                          {hrs}h Limit
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {/* Date & Time Grid */}
                 <div className="grid grid-cols-2 gap-2.5">
                   <div>
-                    <label className="font-bold text-[#404D46] block mb-1">Out Time (Departure)</label>
+                    <label className="font-bold text-[#404D46] block mb-1">
+                      Departure Time <span className="font-semibold text-[#168567]">({formatTime12(gatePassForm.outTime)})</span>
+                    </label>
                     <input
-                      type="text"
-                      placeholder="Today 05:00 PM"
+                      type="time"
+                      required
                       value={gatePassForm.outTime}
-                      onChange={(e) => setGatePassForm({ ...gatePassForm, outTime: e.target.value })}
+                      onChange={(e) => {
+                        const newOut = e.target.value;
+                        const duration = currentFormDuration;
+                        setGatePassForm({
+                          ...gatePassForm,
+                          outTime: newOut,
+                          expectedInTime: addHoursToTime(newOut, duration),
+                        });
+                      }}
                       className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs focus:outline-hidden focus:border-[#168567]"
                     />
                   </div>
 
                   <div>
-                    <label className="font-bold text-[#404D46] block mb-1">Expected Return Time</label>
+                    <label className="font-bold text-[#404D46] block mb-1">
+                      Expected Return <span className="font-semibold text-[#168567]">({formatTime12(gatePassForm.expectedInTime)})</span>
+                    </label>
                     <input
-                      type="text"
-                      placeholder="Today 08:30 PM"
+                      type="time"
+                      required
                       value={gatePassForm.expectedInTime}
                       onChange={(e) => setGatePassForm({ ...gatePassForm, expectedInTime: e.target.value })}
                       className="w-full px-3 py-2 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] text-xs focus:outline-hidden focus:border-[#168567]"
                     />
                   </div>
+                </div>
+
+                {/* Live Expiration Limit Calculation Banner */}
+                <div className="p-3 rounded-xl bg-[#EAF5EF] border border-[#B7DEC9] text-[#142D28] space-y-1">
+                  <div className="flex items-center gap-1.5 font-extrabold text-xs text-[#168567]">
+                    <Timer size={14} />
+                    <span>Outpass Expire Limit: {currentFormDuration} {currentFormDuration === 1 ? 'Hour' : 'Hours'}</span>
+                  </div>
+                  <p className="text-[11px] text-[#404D46] leading-snug">
+                    Permit valid from <b>{formatTime12(gatePassForm.outTime)}</b> until <b>{formatTime12(gatePassForm.expectedInTime)}</b>. Once the {currentFormDuration}-hour limit is reached, this outpass automatically expires.
+                  </p>
                 </div>
 
                 {/* Emergency Contact */}
@@ -978,9 +1186,9 @@ export function StudentDashboard() {
                   <button
                     type="submit"
                     disabled={gatePassSubmitting}
-                    className="px-4 py-2 rounded-xl bg-[#142D28] hover:bg-[#1f3f38] text-white font-bold shadow-xs cursor-pointer disabled:opacity-50"
+                    className="px-4 py-2 rounded-xl bg-[#142D28] hover:bg-[#1f3f38] text-white font-bold shadow-xs cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
                   >
-                    {gatePassSubmitting ? 'Submitting Appeal...' : 'Submit Gate Pass Appeal'}
+                    {gatePassSubmitting ? 'Submitting...' : `Submit Outpass (${currentFormDuration}h Limit)`}
                   </button>
                 </div>
               </form>

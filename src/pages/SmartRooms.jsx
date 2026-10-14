@@ -891,7 +891,20 @@ export function SmartRooms() {
   const [cadZoom, setCadZoom] = useState(1);
   const [hoveredRoomId, setHoveredRoomId] = useState(null);
   const [navToast, setNavToast] = useState(null);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [bookingPurpose, setBookingPurpose] = useState('Study & Research');
   const svgRef = useRef(null);
+
+  // Close booking modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isBookingModalOpen) {
+        setIsBookingModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isBookingModalOpen]);
 
   // Robust room selector & navigator
   const handleSelectRoom = (roomId) => {
@@ -1312,7 +1325,7 @@ export function SmartRooms() {
             )}
 
             {/* Architectural Ground Floor Blueprint Canvas with Exact SVG Reference */}
-            <div className="w-full h-[380px] sm:h-[540px] xl:h-[680px] bg-[#0A0F1D] relative overflow-hidden select-none flex items-center justify-center rounded-2xl border border-[#1E293B] shadow-2xl">
+            <div className="w-full h-[380px] sm:h-[480px] xl:h-[580px] bg-[#0A0F1D] relative overflow-hidden select-none flex items-center justify-center rounded-2xl border border-[#1E293B] shadow-2xl">
               {/* Precision Background Blueprint Grid */}
               <svg className="absolute inset-0 w-full h-full opacity-15 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -1595,6 +1608,74 @@ export function SmartRooms() {
           </div>
         </div>
       </div>
+
+      {/* =========================================================================
+          MODAL: ROOM BOOKING & ACCESS RESERVATION
+          ========================================================================= */}
+      {isBookingModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="booking-modal-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsBookingModalOpen(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200"
+        >
+          <div className="relative w-full max-w-md rounded-2xl bg-white border border-[#E4EAE5] shadow-2xl p-6 flex flex-col gap-4 text-[var(--text-primary)]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E4EAE5]">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-[var(--brand-primary)]" />
+                <h3 id="booking-modal-title" className="text-base font-bold font-heading">
+                  Reserve {selectedRoom?.name}
+                </h3>
+              </div>
+              <button
+                type="button"
+                aria-label="Close booking modal"
+                onClick={() => setIsBookingModalOpen(false)}
+                className="w-7 h-7 rounded-lg bg-[var(--bg-canvas)] text-[var(--text-muted)] hover:text-[var(--text-primary)] flex items-center justify-center cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="text-xs space-y-3">
+              <p className="text-[var(--text-secondary)]">
+                Booking Room {selectedRoom?.roomNumber} ({selectedRoom?.buildingCode}) for immediate session.
+              </p>
+              <div>
+                <label className="font-bold text-[var(--text-secondary)] block mb-1">Purpose of Reservation</label>
+                <input
+                  type="text"
+                  value={bookingPurpose}
+                  onChange={(e) => setBookingPurpose(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-canvas)] border border-[#E4EAE5] text-xs"
+                />
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-[#E4EAE5] flex items-center justify-end gap-2">
+              <button
+                onClick={() => setIsBookingModalOpen(false)}
+                className="px-3 py-2 rounded-xl bg-[#F0F4F1] text-[var(--text-secondary)] font-semibold text-xs cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setIsBookingModalOpen(false);
+                  setNavToast(`Reserved ${selectedRoom?.name} successfully!`);
+                  setTimeout(() => setNavToast(null), 3000);
+                }}
+                className="px-4 py-2 rounded-xl bg-[var(--brand-primary)] text-white font-bold text-xs shadow-xs cursor-pointer"
+              >
+                Confirm Reservation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

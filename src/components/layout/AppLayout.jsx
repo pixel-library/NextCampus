@@ -138,7 +138,7 @@ export const AppLayout = () => {
         <main
           className={
             isMapRoute
-              ? 'flex-1 p-0 w-full overflow-hidden h-[calc(100dvh-4rem-4rem)] md:h-[calc(100vh-4rem)]'
+              ? 'flex-1 p-0 w-full overflow-hidden h-[calc(100vh-4rem-4rem)] md:h-[calc(100vh-4rem)]'
               : isAiRoute
               ? 'flex-1 p-2 sm:p-4 lg:p-8 w-full'
               : 'flex-1 p-3.5 sm:p-6 lg:p-8 w-full'

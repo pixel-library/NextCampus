@@ -2274,7 +2274,7 @@ export const CampusGisMap = ({
       {/* FLOATING MAP LEGEND (COLLAPSIBLE) */}
       {showLegend && (
         <div
-          className="absolute bottom-16 right-3 md:bottom-20 md:right-16 bg-white rounded-xl border border-[var(--border-subtle)] shadow-xl p-3.5 sm:p-4 min-w-[210px] max-w-[calc(100vw-24px)] flex flex-col gap-2.5 animate-fadeIn"
+          className="absolute bottom-16 right-3 md:bottom-20 md:right-16 bg-white rounded-xl border border-[var(--border-subtle)] shadow-xl p-3.5 sm:p-4 min-w-[210px] max-w-[calc(100vw - 32px)] flex flex-col gap-2.5 animate-fadeIn"
           style={{ zIndex: 450, backgroundColor: '#FFFFFF' }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

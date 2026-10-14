@@ -7,6 +7,8 @@ class GatePassApply(BaseModel):
     outTime: str = Field(..., min_length=3, description="Departure date and time (ISO or formatted)")
     expectedInTime: str = Field(..., min_length=3, description="Expected return date and time")
     emergencyContact: Optional[str] = Field(None, description="Emergency phone number or contact person")
+    durationHours: Optional[float] = Field(None, description="Expiration limit duration in hours")
+    expiresAt: Optional[str] = Field(None, description="Exact expiration timestamp ISO string")
 
 class GatePassReview(BaseModel):
     action: str = Field(..., pattern="^(APPROVE|REJECT)$", description="Administrative decision: APPROVE or REJECT")

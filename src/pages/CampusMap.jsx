@@ -1243,14 +1243,14 @@ export const CampusMap = () => {
   }, []);
 
   const handleOpenNavPanel = () => {
-    if (windowWidth < 1024) {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       setDrawerOpen(false);
     }
     setIsNavPanelOpen(true);
   };
 
   const handleOpenDrawer = () => {
-    if (windowWidth < 1024) {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       setIsNavPanelOpen(false);
     }
     setDrawerOpen(true);

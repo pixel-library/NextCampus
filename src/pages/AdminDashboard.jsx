@@ -34,7 +34,9 @@ import {
   ChevronRight,
   BookOpen,
   ArrowRight,
+  Timer,
 } from 'lucide-react';
+import { getOutpassTimeInfo } from '../utils/outpassHelpers';
 
 export function AdminDashboard() {
   const { user } = useAuth();
@@ -1039,6 +1041,8 @@ export function AdminDashboard() {
                   const isPending = pass.status === 'PENDING';
                   const isApproved = pass.status === 'APPROVED';
                   const isRejected = pass.status === 'REJECTED';
+                  const timeInfo = getOutpassTimeInfo(pass);
+                  const isExpired = isApproved && timeInfo.isExpired;
 
                   return (
                     <div
@@ -1046,8 +1050,10 @@ export function AdminDashboard() {
                       className={`p-5 rounded-2xl bg-white border transition-all shadow-xs flex flex-col justify-between gap-4 ${
                         isPending
                           ? 'border-[#B26A00]/40 ring-2 ring-[#B26A00]/10'
-                          : isApproved
-                          ? 'border-[#168567]/30'
+                          : isApproved && !isExpired
+                          ? 'border-[#168567]/30 shadow-xs'
+                          : isApproved && isExpired
+                          ? 'border-[#C43D4B]/30'
                           : 'border-[#E4EAE5]'
                       }`}
                     >
@@ -1060,17 +1066,29 @@ export function AdminDashboard() {
                             </span>
                           </div>
 
-                          <span
-                            className={`px-2.5 py-0.8 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider ${
-                              isPending
-                                ? 'bg-[#FFF9EB] text-[#B26A00] border border-[#F9E2AF]'
-                                : isApproved
-                                ? 'bg-[#EAF5EF] text-[#168567] border border-[#B7DEC9]'
-                                : 'bg-[#FDF2F3] text-[#C43D4B] border border-[#F1C2C6]'
-                            }`}
-                          >
-                            {pass.status}
-                          </span>
+                          {isPending && (
+                            <span className="px-2.5 py-0.8 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider bg-[#FFF9EB] text-[#B26A00] border border-[#F9E2AF]">
+                              PENDING
+                            </span>
+                          )}
+
+                          {isApproved && !isExpired && (
+                            <span className="px-2.5 py-0.8 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider bg-[#EAF5EF] text-[#168567] border border-[#B7DEC9]">
+                              ACTIVE PERMIT
+                            </span>
+                          )}
+
+                          {isApproved && isExpired && (
+                            <span className="px-2.5 py-0.8 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider bg-[#FDF2F3] text-[#C43D4B] border border-[#F1C2C6]">
+                              EXPIRED
+                            </span>
+                          )}
+
+                          {isRejected && (
+                            <span className="px-2.5 py-0.8 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider bg-[#FDF2F3] text-[#C43D4B] border border-[#F1C2C6]">
+                              REJECTED
+                            </span>
+                          )}
                         </div>
 
                         {/* Student Info */}
@@ -1100,15 +1118,41 @@ export function AdminDashboard() {
                             <p className="text-[#404D46]">{pass.reason}</p>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-2 pt-1 border-t border-[#E4EAE5]/60 text-[11px]">
-                            <div>
-                              <span className="text-[9.5px] font-bold uppercase text-[#87968D]">Out Time</span>
-                              <p className="font-semibold text-[#202A27]">{pass.outTime}</p>
+                          {/* Time & Expire Limit Grid */}
+                          <div className="pt-2 border-t border-[#E4EAE5]/60 space-y-1.5">
+                            <div className="flex items-center justify-between text-[11px]">
+                              <span className="font-bold text-[#404D46] flex items-center gap-1">
+                                <Timer size={12} className="text-[#168567]" /> Expire Limit:
+                              </span>
+                              <span className="font-extrabold text-[#168567] bg-white px-2 py-0.5 rounded border border-[#E4EAE5]">
+                                {timeInfo.durationText}
+                              </span>
                             </div>
-                            <div>
-                              <span className="text-[9.5px] font-bold uppercase text-[#87968D]">Expected Return</span>
-                              <p className="font-semibold text-[#202A27]">{pass.expectedInTime}</p>
+
+                            <div className="grid grid-cols-2 gap-2 text-[11px]">
+                              <div>
+                                <span className="text-[9.5px] font-bold uppercase text-[#87968D] block">Departure</span>
+                                <p className="font-semibold text-[#202A27]">{timeInfo.outFormatted}</p>
+                                <span className="text-[9.5px] text-[#87968D]">{timeInfo.outDateFormatted}</span>
+                              </div>
+                              <div>
+                                <span className="text-[9.5px] font-bold uppercase text-[#87968D] block">Expires / Return</span>
+                                <p className={`font-semibold ${isExpired ? 'text-[#C43D4B]' : 'text-[#202A27]'}`}>
+                                  {timeInfo.inFormatted}
+                                </p>
+                                <span className="text-[9.5px] text-[#87968D]">{timeInfo.inDateFormatted}</span>
+                              </div>
                             </div>
+
+                            {isApproved && (
+                              <div className="pt-1 text-[10.5px] font-semibold text-[#65736B]">
+                                {isExpired ? (
+                                  <span className="text-[#C43D4B]">⚠️ {timeInfo.remainingText}</span>
+                                ) : (
+                                  <span className="text-[#168567]">🟢 {timeInfo.remainingText} remaining</span>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -1126,11 +1170,11 @@ export function AdminDashboard() {
                             onClick={() => {
                               setReviewModalPass(pass);
                               setReviewAction('APPROVE');
-                              setReviewRemarks('Approved. Return before curfew time.');
+                              setReviewRemarks(`Approved for ${timeInfo.durationText}. Return strictly before curfew time.`);
                             }}
                             className="flex-1 py-2 rounded-xl bg-[#168567] hover:bg-[#126b53] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
                           >
-                            <Check size={14} /> Approve Pass
+                            <Check size={14} /> Approve ({timeInfo.durationText})
                           </button>
 
                           <button
@@ -1147,7 +1191,7 @@ export function AdminDashboard() {
                       ) : (
                         <div className="pt-2 text-[11px] text-[#87968D] flex items-center justify-between border-t border-[#E4EAE5]">
                           <span>Reviewed by: {pass.approvedBy || 'Admin Desk'}</span>
-                          <span className="font-bold text-[#168567]">Turnstile Verified</span>
+                          <span className="font-bold text-[#168567]">Gate Permit Verified</span>
                         </div>
                       )}
                     </div>
@@ -1613,6 +1657,24 @@ export function AdminDashboard() {
                 Destination: <span className="font-bold">{reviewModalPass.destination}</span>
               </p>
               <p className="text-[#65736B]">Reason: {reviewModalPass.reason}</p>
+
+              {(() => {
+                const modalTime = getOutpassTimeInfo(reviewModalPass);
+                return (
+                  <div className="p-2.5 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5] space-y-1">
+                    <div className="flex items-center justify-between font-bold text-[#142D28]">
+                      <span className="flex items-center gap-1.5">
+                        <Timer size={13} className="text-[#168567]" /> Expire Limit:
+                      </span>
+                      <span className="text-[#168567] font-extrabold">{modalTime.durationText}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px] text-[#65736B]">
+                      <span>Departure: <b>{modalTime.outFormatted}</b></span>
+                      <span>Return: <b>{modalTime.inFormatted}</b></span>
+                    </div>
+                  </div>
+                );
+              })()}
 
               <div className="pt-2">
                 <label className="font-bold text-[#404D46] block mb-1">

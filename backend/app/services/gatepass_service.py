@@ -61,6 +61,8 @@ async def apply_gate_pass(current_user: Dict[str, Any], pass_data: GatePassApply
         "reason": pass_data.reason.strip(),
         "outTime": pass_data.outTime,
         "expectedInTime": pass_data.expectedInTime,
+        "durationHours": pass_data.durationHours,
+        "expiresAt": pass_data.expiresAt,
         "emergencyContact": emergency,
         "status": "PENDING",
         "approvedBy": None,
