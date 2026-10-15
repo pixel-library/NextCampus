@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
   Compass,
@@ -50,14 +50,20 @@ import {
   SlidersHorizontal,
   Clock,
   Info,
+  Sparkles,
+  Box,
+  Globe,
 } from 'lucide-react';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
 import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
+import CampusGoogle3DMap from '../components/map/CampusGoogle3DMap';
+import Campus3DMap from '../components/map/Campus3DMap';
 import CampusGisMap, {
   CAMPUS_GIS_LOCATIONS,
+  calculateBearing,
   calculateDistanceMeters,
   DEFAULT_CAMPUS_CENTER,
   findShortestCampusRoute,
@@ -151,8 +157,8 @@ const INITIAL_BUILDINGS = {
   eng: {
     id: 'eng',
     code: 'ENG-02',
-    name: 'Faculty of Engineering & Technology',
-    shortName: 'Engineering Building',
+    name: 'Engineering Block',
+    shortName: 'Engineering Block',
     block: 'Block ENG-02',
     dept: 'Department of Computer Science & Engineering, AI Labs & Core Tech',
     category: 'academic',
@@ -510,8 +516,8 @@ const INITIAL_BUILDINGS = {
   hospital: {
     id: 'hospital',
     code: 'MED-01',
-    name: 'University Hospital & Health Centre',
-    shortName: 'Campus Hospital',
+    name: 'Hospital and Gora Hostel',
+    shortName: 'Hospital and Gora Hostel',
     block: 'Block MED-01',
     dept: '24/7 Campus Emergency Medical Care & Dispensary',
     category: 'facility',
@@ -535,8 +541,8 @@ const INITIAL_BUILDINGS = {
   gora: {
     id: 'gora',
     code: 'HST-03',
-    name: 'Gora Boys Residential Hostel',
-    shortName: 'Gora Hostel',
+    name: 'Hospital and Gora Hostel',
+    shortName: 'Hospital and Gora Hostel',
     block: 'Block HST-03',
     dept: 'Boys Residence Complex & Quadrangle Living',
     category: 'facility',
@@ -560,8 +566,8 @@ const INITIAL_BUILDINGS = {
   sanaga: {
     id: 'sanaga',
     code: 'HST-04',
-    name: 'Sanaga Boys Residential Hostel',
-    shortName: 'Sanaga Hostel',
+    name: 'Sanga Hostel',
+    shortName: 'Sanga Hostel',
     block: 'Block HST-04',
     dept: 'Male Student Residence Wing',
     category: 'facility',
@@ -1192,7 +1198,7 @@ export const CampusMap = () => {
   const [startLocationId, setStartLocationId] = useState('gate');
   const [mobilityMode, setMobilityMode] = useState('walk'); // walk | wheelchair | shuttle
   const [categoryFilter, setCategoryFilter] = useState('all');
-  const [viewEngine, setViewEngine] = useState('gis'); // 'gis' | 'blueprint'
+  const [viewEngine, setViewEngine] = useState('gis'); // 'gis' (2D GIS first) | 'google-3d' | '3d' | 'blueprint'
   const [zoomLevel, setZoomLevel] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isNavPanelOpen, setIsNavPanelOpen] = useState(
@@ -1212,6 +1218,8 @@ export const CampusMap = () => {
     speed: 1.2,
   });
   const [isLiveGpsActive, setIsLiveGpsActive] = useState(false);
+  const [autoFollow, setAutoFollow] = useState(true);
+  const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [isSimulatingWalk, setIsSimulatingWalk] = useState(false);
   const [simulationProgress, setSimulationProgress] = useState(0);
   const [gpsError, setGpsError] = useState('');
@@ -1223,6 +1231,9 @@ export const CampusMap = () => {
 
   const watchIdRef = useRef(null);
   const simulationTimerRef = useRef(null);
+  const prevCoordsRef = useRef(null);
+  const lastHeadingRef = useRef(0);
+  const hasCenteredInitiallyRef = useRef(false);
 
   // Admin Map Editor states
   const [adminMapMode, setAdminMapMode] = useState(isAdmin);
@@ -1308,6 +1319,12 @@ export const CampusMap = () => {
   const currentBldg = buildings[selectedBldg] || buildings.eng || Object.values(buildings)[0];
 
   const handleSelectBuilding = (id, openDetails = false) => {
+    if (!id) {
+      setSelectedBldg(null);
+      setCustomDestination(null);
+      setSearchParams({});
+      return;
+    }
     if (!buildings[id]) return;
     setSelectedBldg(id);
     setActiveStepIndex(0);
@@ -1334,7 +1351,99 @@ export const CampusMap = () => {
     triggerToast(`Calculating route to ${buildings[id]?.shortName || buildings[id]?.name}...`);
   };
 
-  // Real Hardware Browser GPS Tracking (watchPosition)
+  // Automatic Real Hardware GPS Tracking (watchPosition)
+  const startLiveGpsTracking = useCallback(() => {
+    if (typeof window === 'undefined' || !('geolocation' in navigator)) {
+      setGpsError('Geolocation is not supported by your browser or device.');
+      return;
+    }
+
+    if (simulationTimerRef.current) {
+      clearInterval(simulationTimerRef.current);
+      simulationTimerRef.current = null;
+    }
+    setIsSimulatingWalk(false);
+    setGpsError('');
+
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
+
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      (pos) => {
+        setIsLiveGpsActive(true);
+        setStartPointMode('gps');
+        setGpsError('');
+
+        const { latitude, longitude, accuracy, heading: rawHeading, speed: rawSpeed } = pos.coords;
+
+        // Calculate heading if not directly provided by GPS hardware
+        let computedHeading = rawHeading;
+        if (computedHeading === null || isNaN(computedHeading) || computedHeading === undefined) {
+          if (prevCoordsRef.current) {
+            const dist = calculateDistanceMeters(
+              prevCoordsRef.current.lat,
+              prevCoordsRef.current.lng,
+              latitude,
+              longitude
+            );
+            if (dist > 1.2) {
+              computedHeading = calculateBearing(
+                prevCoordsRef.current.lat,
+                prevCoordsRef.current.lng,
+                latitude,
+                longitude
+              );
+            } else {
+              computedHeading = lastHeadingRef.current || 0;
+            }
+          } else {
+            computedHeading = lastHeadingRef.current || 0;
+          }
+        }
+        lastHeadingRef.current = Math.round(computedHeading || 0);
+        prevCoordsRef.current = { lat: latitude, lng: longitude };
+
+        const newCoords = {
+          lat: latitude,
+          lng: longitude,
+          accuracy: Math.round(accuracy || 6),
+          heading: Math.round(computedHeading || 0),
+          speed: rawSpeed !== null && !isNaN(rawSpeed) ? Number((rawSpeed * 3.6).toFixed(1)) : 1.2,
+          timestamp: pos.timestamp || Date.now(),
+        };
+
+        setUserCoords(newCoords);
+
+        // Record breadcrumb trail of device footsteps
+        setBreadcrumbs((prev) => {
+          const last = prev[prev.length - 1];
+          if (!last || calculateDistanceMeters(last[1], last[0], latitude, longitude) > 2) {
+            return [...prev.slice(-150), [longitude, latitude]];
+          }
+          return prev;
+        });
+
+        if (!hasCenteredInitiallyRef.current) {
+          hasCenteredInitiallyRef.current = true;
+          triggerToast(`📍 Live Location Active (Accuracy: ±${Math.round(accuracy || 6)}m)`);
+        }
+      },
+      (err) => {
+        if (err.code === 1) {
+          setIsLiveGpsActive(false);
+          setGpsError(
+            'GPS Permission Denied. Please enable location permissions in browser settings to track live movement.'
+          );
+        } else if (err.code === 2) {
+          setGpsError('Unable to acquire accurate GPS position.');
+        }
+      },
+      { enableHighAccuracy: true, maximumAge: 1000, timeout: 15000 }
+    );
+  }, []);
+
   const toggleLiveGps = () => {
     if (isLiveGpsActive) {
       if (watchIdRef.current !== null) {
@@ -1344,46 +1453,49 @@ export const CampusMap = () => {
       setIsLiveGpsActive(false);
       setGpsError('');
       setStartPointMode('gate');
+      triggerToast('Live GPS tracking paused');
     } else {
-      if (!('geolocation' in navigator)) {
-        setGpsError('Geolocation is not supported by this browser.');
-        return;
-      }
-
-      if (simulationTimerRef.current) {
-        clearInterval(simulationTimerRef.current);
-        simulationTimerRef.current = null;
-      }
-      setIsSimulatingWalk(false);
-      setGpsError('');
-
-      watchIdRef.current = navigator.geolocation.watchPosition(
-        (pos) => {
-          setIsLiveGpsActive(true);
-          setStartPointMode('gps');
-          const { latitude, longitude, accuracy, heading, speed } = pos.coords;
-          setUserCoords({
-            lat: latitude,
-            lng: longitude,
-            accuracy: accuracy || 8,
-            heading: heading || 0,
-            speed: speed || 1.2,
-          });
-        },
-        (err) => {
-          setIsLiveGpsActive(false);
-          setGpsError(
-            err.code === 1
-              ? 'GPS Permission Denied. Use "Simulate Movement" to test navigation across Mewar University.'
-              : 'Unable to acquire accurate GPS position.'
-          );
-        },
-        { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
-      );
+      startLiveGpsTracking();
+      triggerToast('Starting live GPS tracking...');
     }
   };
 
-  // Simulated Walking Movement
+  // Auto-start live GPS tracking on mount + listen to mobile device orientation
+  useEffect(() => {
+    startLiveGpsTracking();
+
+    const handleOrientation = (e) => {
+      let compass = null;
+      if (e.webkitCompassHeading) {
+        compass = e.webkitCompassHeading;
+      } else if (e.alpha !== null && e.absolute) {
+        compass = 360 - e.alpha;
+      }
+      if (compass !== null && !isNaN(compass)) {
+        const rounded = Math.round(compass);
+        lastHeadingRef.current = rounded;
+        setUserCoords((prev) => (prev ? { ...prev, heading: rounded } : prev));
+      }
+    };
+
+    if (typeof window !== 'undefined' && window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+      window.addEventListener('deviceorientation', handleOrientation, true);
+    }
+
+    return () => {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+        watchIdRef.current = null;
+      }
+      if (typeof window !== 'undefined' && window.DeviceOrientationEvent) {
+        window.removeEventListener('deviceorientationabsolute', handleOrientation, true);
+        window.removeEventListener('deviceorientation', handleOrientation, true);
+      }
+    };
+  }, [startLiveGpsTracking]);
+
+  // Simulated Walking Movement (For testing or campus preview)
   const toggleSimulation = () => {
     if (isSimulatingWalk) {
       if (simulationTimerRef.current) {
@@ -1433,12 +1545,18 @@ export const CampusMap = () => {
 
         const point = waypoints[Math.min(totalWaypoints - 1, waypointIdx)];
 
-        setUserCoords((prev) => ({
-          ...prev,
-          lat: point[0],
-          lng: point[1],
-          speed: 1.3,
-        }));
+        setUserCoords((prev) => {
+          const heading = prev ? calculateBearing(prev.lat, prev.lng, point[0], point[1]) : 0;
+          return {
+            ...prev,
+            lat: point[0],
+            lng: point[1],
+            heading,
+            speed: 1.3,
+          };
+        });
+
+        setBreadcrumbs((prev) => [...prev.slice(-150), [point[1], point[0]]]);
 
         if (waypointIdx >= totalWaypoints - 1) {
           clearInterval(simulationTimerRef.current);
@@ -2978,8 +3096,158 @@ export const CampusMap = () => {
           )}
         </div>
 
-        {/* MAP CANVAS ENGINE (Leaflet GIS vs Blueprint SVG) */}
-        {viewEngine === 'gis' ? (
+        {/* PERSISTENT FLOATING MAP ENGINE SELECTOR (3D WebGL vs 2D GIS vs CAD Blueprint) */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: drawerOpen && windowWidth >= 1024 ? '396px' : '64px',
+            zIndex: 45,
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: 'rgba(15, 23, 42, 0.92)',
+            backdropFilter: 'blur(12px)',
+            padding: '4px',
+            borderRadius: '10px',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)',
+            transition: 'right 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => {
+              setViewEngine('gis');
+              triggerToast('Switched to Leaflet 2D GIS Engine');
+            }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              padding: '6px 10px',
+              borderRadius: '7px',
+              border: 'none',
+              fontSize: '11px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              backgroundColor: viewEngine === 'gis' ? '#3B82F6' : 'transparent',
+              color: viewEngine === 'gis' ? '#FFFFFF' : '#94A3B8',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <Compass size={12} />
+            <span>2D GIS</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setViewEngine('3d');
+              triggerToast('Switched to MapLibre 3D Engine');
+            }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              padding: '6px 10px',
+              borderRadius: '7px',
+              border: 'none',
+              fontSize: '11px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              backgroundColor: viewEngine === '3d' ? '#10B981' : 'transparent',
+              color: viewEngine === '3d' ? '#FFFFFF' : '#94A3B8',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <Box size={12} />
+            <span>3D WebGL</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setViewEngine('google-3d');
+              triggerToast('Switched to Google Maps 3D Platform');
+            }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              padding: '6px 10px',
+              borderRadius: '7px',
+              border: 'none',
+              fontSize: '11px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              backgroundColor: viewEngine === 'google-3d' ? '#2563EB' : 'transparent',
+              color: viewEngine === 'google-3d' ? '#FFFFFF' : '#94A3B8',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <Globe size={12} />
+            <span>Google 3D</span>
+          </button>
+        </div>
+
+        {/* MAP CANVAS ENGINE (Google 3D vs MapLibre 3D WebGL vs Leaflet 2D GIS vs CAD Blueprint) */}
+        {viewEngine === 'google-3d' ? (
+          <div style={{ width: '100%', height: '100%' }}>
+            <CampusGoogle3DMap
+              selectedBuildingKey={selectedBldg}
+              onSelectBuilding={(key) => handleSelectBuilding(key, false)}
+              customDestination={customDestination}
+              onSetCustomDestination={(dest) => {
+                setCustomDestination(dest);
+                triggerToast(`Marked destination on Google 3D map: (${dest.lat.toFixed(4)}, ${dest.lng.toFixed(4)})`);
+              }}
+              userCoords={userCoords}
+              isLiveGpsActive={isLiveGpsActive}
+              isSimulatingWalk={isSimulatingWalk}
+              isNavPanelOpen={isNavPanelOpen}
+              onOpenDetails={handleOpenDrawer}
+              autoFollow={autoFollow}
+              onToggleAutoFollow={setAutoFollow}
+              onSwitchToBlueprint={(bldgKey) => {
+                setSelectedBldg(bldgKey);
+                setViewEngine('blueprint');
+                triggerToast(`Opening CAD Plan for ${buildings[bldgKey]?.shortName || bldgKey}`);
+              }}
+            />
+          </div>
+        ) : viewEngine === '3d' ? (
+          <div style={{ width: '100%', height: '100%' }}>
+            <Campus3DMap
+              selectedBuildingKey={selectedBldg}
+              onSelectBuilding={(key) => handleSelectBuilding(key, false)}
+              customDestination={customDestination}
+              onSetCustomDestination={(dest) => {
+                setCustomDestination(dest);
+                triggerToast(`Marked destination on 3D map: (${dest.lat.toFixed(4)}, ${dest.lng.toFixed(4)})`);
+              }}
+              onClearCustomDestination={() => setCustomDestination(null)}
+              userCoords={userCoords}
+              setUserCoords={setUserCoords}
+              isLiveGpsActive={isLiveGpsActive}
+              setIsLiveGpsActive={setIsLiveGpsActive}
+              isSimulatingWalk={isSimulatingWalk}
+              setIsSimulatingWalk={setIsSimulatingWalk}
+              simulationProgress={simulationProgress}
+              setSimulationProgress={setSimulationProgress}
+              onNavigationUpdate={setNavigationStats}
+              isNavPanelOpen={isNavPanelOpen}
+              onOpenDetails={handleOpenDrawer}
+              autoFollow={autoFollow}
+              onToggleAutoFollow={setAutoFollow}
+              breadcrumbs={breadcrumbs}
+              onSwitchToBlueprint={(bldgKey) => {
+                setSelectedBldg(bldgKey);
+                setViewEngine('blueprint');
+                triggerToast(`Opening CAD Plan for ${buildings[bldgKey]?.shortName || bldgKey}`);
+              }}
+            />
+          </div>
+        ) : viewEngine === 'gis' ? (
           <div style={{ width: '100%', height: '100%' }}>
             <CampusGisMap
               selectedBuildingKey={selectedBldg}
@@ -3003,6 +3271,9 @@ export const CampusMap = () => {
               isDrawerOpen={drawerOpen}
               isNavPanelOpen={isNavPanelOpen}
               onOpenDetails={handleOpenDrawer}
+              autoFollow={autoFollow}
+              onToggleAutoFollow={setAutoFollow}
+              breadcrumbs={breadcrumbs}
             />
           </div>
         ) : (
@@ -3110,6 +3381,12 @@ export const CampusMap = () => {
 
               {/* Right: Zoom & Scale Controls */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {isLiveGpsActive && userCoords && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#10B981', fontWeight: 700, padding: '4px 10px', backgroundColor: 'rgba(16, 185, 129, 0.15)', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                    <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#10B981', display: 'inline-block' }} />
+                    <span>Live GPS: {userCoords.lat.toFixed(4)}, {userCoords.lng.toFixed(4)}</span>
+                  </div>
+                )}
                 <span style={{ fontSize: '10px', color: '#94A3B8', fontFamily: 'monospace', fontWeight: 600 }}>
                   1:200 CAD Vector
                 </span>
@@ -3172,6 +3449,28 @@ export const CampusMap = () => {
                     }}
                   >
                     <ZoomIn size={13} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewEngine('3d')}
+                    title="Return to 3D Campus Map"
+                    style={{
+                      padding: '0 10px',
+                      height: '28px',
+                      borderRadius: '6px',
+                      backgroundColor: '#10B981',
+                      border: 'none',
+                      color: '#0F172A',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      cursor: 'pointer',
+                      fontSize: '11px',
+                      fontWeight: 800,
+                    }}
+                  >
+                    <Sparkles size={12} />
+                    <span>Back to 3D Map</span>
                   </button>
                 </div>
               </div>

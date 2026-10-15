@@ -515,6 +515,21 @@ a:hover {
   animation: routeDashFlow 1.2s linear infinite;
 }
 
+@keyframes userRadarPulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  70% {
+    transform: scale(1.6);
+    opacity: 0.1;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
 
 /* =========================================================================
    ACCESSIBILITY, FOCUS VISIBILITY & MOTION PREFERENCES (WCAG 2.1 AA)

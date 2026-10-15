@@ -379,8 +379,8 @@ export const CAMPUS_GIS_LOCATIONS = {
   eng: {
     id: 'eng',
     code: 'ENG-02',
-    name: 'Faculty of Engineering & Technology',
-    shortName: 'Engineering Building',
+    name: 'Engineering Block',
+    shortName: 'Engineering Block',
     category: 'academic',
     color: '#168567',
     bgColor: '#EAF5EF',
@@ -796,8 +796,8 @@ export const CAMPUS_GIS_LOCATIONS = {
   hospital: {
     id: 'hospital',
     code: 'MED-01',
-    name: 'University Hospital & Health Centre',
-    shortName: 'Campus Hospital',
+    name: 'Hospital and Gora Hostel',
+    shortName: 'Hospital and Gora Hostel',
     category: 'facility',
     color: '#DC2626',
     bgColor: '#FEF2F2',
@@ -817,8 +817,8 @@ export const CAMPUS_GIS_LOCATIONS = {
   gora: {
     id: 'gora',
     code: 'HST-03',
-    name: 'Gora Boys Residential Hostel',
-    shortName: 'Gora Hostel',
+    name: 'Hospital and Gora Hostel',
+    shortName: 'Hospital and Gora Hostel',
     category: 'facility',
     color: '#EA580C',
     bgColor: '#FFF7ED',
@@ -856,8 +856,8 @@ export const CAMPUS_GIS_LOCATIONS = {
   sanaga: {
     id: 'sanaga',
     code: 'HST-04',
-    name: 'Sanaga Boys Residential Hostel',
-    shortName: 'Sanaga Hostel',
+    name: 'Sanga Hostel',
+    shortName: 'Sanga Hostel',
     category: 'facility',
     color: '#2563EB',
     bgColor: '#EFF6FF',
@@ -915,6 +915,7 @@ export const CAMPUS_GIS_LOCATIONS = {
 CAMPUS_GIS_LOCATIONS.admin = CAMPUS_GIS_LOCATIONS.main;
 CAMPUS_GIS_LOCATIONS.cafeteria = CAMPUS_GIS_LOCATIONS.mess;
 CAMPUS_GIS_LOCATIONS.hostel_b = CAMPUS_GIS_LOCATIONS.sanaga;
+CAMPUS_GIS_LOCATIONS.sanga = CAMPUS_GIS_LOCATIONS.sanaga;
 CAMPUS_GIS_LOCATIONS.hostel_g = CAMPUS_GIS_LOCATIONS.mira;
 CAMPUS_GIS_LOCATIONS.sports = CAMPUS_GIS_LOCATIONS.basketball;
 CAMPUS_GIS_LOCATIONS.library = CAMPUS_GIS_LOCATIONS.pratap;
@@ -936,6 +937,20 @@ export function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   return Math.round(R * c);
+}
+
+// Great-circle initial bearing in degrees (0 - 360)
+export function calculateBearing(startLat, startLng, destLat, destLng) {
+  const startLatRad = (startLat * Math.PI) / 180;
+  const startLngRad = (startLng * Math.PI) / 180;
+  const destLatRad = (destLat * Math.PI) / 180;
+  const destLngRad = (destLng * Math.PI) / 180;
+  const y = Math.sin(destLngRad - startLngRad) * Math.cos(destLatRad);
+  const x =
+    Math.cos(startLatRad) * Math.sin(destLatRad) -
+    Math.sin(startLatRad) * Math.cos(destLatRad) * Math.cos(destLngRad - startLngRad);
+  const brng = (Math.atan2(y, x) * 180) / Math.PI;
+  return Math.round((brng + 360) % 360);
 }
 
 // Authentic Mewar University Campus Road Graph Topology
@@ -1311,11 +1326,15 @@ export const CampusGisMap = ({
   isDrawerOpen = false,
   isNavPanelOpen = true,
   onOpenDetails,
+  autoFollow = true,
+  onToggleAutoFollow,
+  breadcrumbs = [],
 }) => {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const userMarkerRef = useRef(null);
   const userAccuracyCircleRef = useRef(null);
+  const breadcrumbsLayerRef = useRef(null);
   const customDestMarkerRef = useRef(null);
   const routeCasingPolylineRef = useRef(null);
   const routePolylineRef = useRef(null);
@@ -1327,6 +1346,8 @@ export const CampusGisMap = ({
   const roadsLayerRef = useRef([]);
   const shuttleMarkersRef = useRef({});
   const shuttlePathLayersRef = useRef({});
+  const [localAutoFollow, setLocalAutoFollow] = useState(true);
+  const isFollowActive = autoFollow !== undefined ? autoFollow : localAutoFollow;
 
   // Map Tile Style: 'satellite' | 'streets'
   const [mapLayerStyle, setMapLayerStyle] = useState('satellite');
@@ -1366,25 +1387,29 @@ export const CampusGisMap = ({
       }
     : CAMPUS_GIS_LOCATIONS[selectedBuildingKey] || CAMPUS_GIS_LOCATIONS.eng;
 
-  // Initialize Leaflet Map locked to Mewar University, Gangrar, Chittorgarh
+  // Initialize Leaflet Map (defaults to Campus or user's live position)
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
     if (!mapInstanceRef.current) {
+      const initialCenter =
+        userCoords && userCoords.lat && userCoords.lng
+          ? [userCoords.lat, userCoords.lng]
+          : DEFAULT_CAMPUS_CENTER;
+
       const map = L.map(mapContainerRef.current, {
-        center: DEFAULT_CAMPUS_CENTER,
+        center: initialCenter,
         zoom: 17.5,
-        minZoom: 16.2, // STRICT HARD LOCK: User cannot zoom out beyond university campus
+        minZoom: 3, // Allow full zoom out so off-campus location and route context can be viewed
         maxZoom: 20, // High-resolution building footprint & pathway zoom (upscaled cleanly beyond native zoom)
-        maxBounds: MEWAR_CAMPUS_BOUNDS,
-        maxBoundsViscosity: 1.0, // 100% HARD LOCK: Bounces back instantly; cannot drag outside
         zoomControl: false,
         attributionControl: false,
       });
 
-      // Strict Drag Clamp: keeps map centered strictly within university boundary
-      map.on('drag', () => {
-        map.panInsideBounds(MEWAR_CAMPUS_BOUNDS, { animate: false });
+      // Pause auto-follow when user manually drags or touches the map
+      map.on('dragstart', () => {
+        setLocalAutoFollow(false);
+        if (onToggleAutoFollow) onToggleAutoFollow(false);
       });
 
       // Initialize base tile layer with maxNativeZoom protection
@@ -1393,7 +1418,16 @@ export const CampusGisMap = ({
       // Add Zoom Control bottom right
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      // 1. INVERSE SHADED MASK: Dim everything outside the university perimeter with calm Forest Green
+      // Live Breadcrumb Trail Polyline
+      breadcrumbsLayerRef.current = L.polyline([], {
+        color: '#10B981',
+        weight: 3.5,
+        opacity: 0.85,
+        dashArray: '6, 8',
+        lineCap: 'round',
+      }).addTo(map);
+
+      // 1. INVERSE SHADED MASK: Subtle university perimeter shading
       const outerWorldPolygon = [
         [24.90, 74.50],
         [24.90, 74.80],
@@ -1404,7 +1438,7 @@ export const CampusGisMap = ({
         color: '#142D28',
         weight: 0,
         fillColor: '#142D28',
-        fillOpacity: 0.32,
+        fillOpacity: 0.12,
         interactive: false,
       }).addTo(map);
 
@@ -1675,26 +1709,22 @@ export const CampusGisMap = ({
           ">
             ${bldg.icon}
           </div>
-          ${
-            isSelected
-              ? `
-            <div style="
-              background: #142D28;
-              color: #FFFFFF;
-              font-size: 11px;
-              font-weight: 700;
-              font-family: 'Plus Jakarta Sans', sans-serif;
-              padding: 4px 10px;
-              border-radius: 9999px;
-              white-space: nowrap;
-              box-shadow: 0 4px 14px rgba(20,45,40,0.3);
-              border: 1.5px solid #168567;
-            ">
-              ${bldg.shortName}
-            </div>
-          `
-              : ''
-          }
+          <div style="
+            background: ${isSelected ? '#10B981' : 'rgba(15, 23, 42, 0.92)'};
+            color: #FFFFFF;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            padding: 3px 8px;
+            border-radius: 9999px;
+            white-space: nowrap;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+            border: 1.5px solid ${isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.25)'};
+            margin-top: 3px;
+            pointer-events: none;
+          ">
+            ${bldg.shortName}
+          </div>
         </div>
       `;
 
@@ -1894,27 +1924,47 @@ export const CampusGisMap = ({
     }
   }, [userCoords, activeDestination, customDestination, mobilityMode, onNavigationUpdate]);
 
-  // Update User Marker & Accuracy Circle
+  // Update User Marker, Heading Cone, Accuracy Circle & Auto-Follow
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map || !userCoords) return;
+    if (!map || !userCoords || !userCoords.lat || !userCoords.lng) return;
 
+    const heading = userCoords.heading || 0;
     const userHtml = `
-      <div style="position: relative; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
-        <div style="
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background-color: #3478B8;
-          border: 3px solid #FFFFFF;
-          box-shadow: 0 0 16px rgba(52, 120, 184, 0.85);
+      <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+        <div class="user-live-cone" style="
+          position: absolute;
+          width: 0;
+          height: 0;
+          border-left: 12px solid transparent;
+          border-right: 12px solid transparent;
+          border-top: 26px solid rgba(16, 185, 129, 0.5);
+          filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.7));
+          top: -14px;
+          transform-origin: 50% 100%;
+          transform: rotate(${heading}deg);
+          transition: transform 0.2s ease-out;
+          pointer-events: none;
         "></div>
         <div style="
           position: absolute;
-          inset: 0;
+          width: 36px;
+          height: 36px;
           border-radius: 50%;
-          border: 2px solid #3478B8;
-          animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+          background: rgba(16, 185, 129, 0.22);
+          border: 1.5px solid #10B981;
+          animation: userRadarPulse 2s infinite ease-out;
+          pointer-events: none;
+        "></div>
+        <div style="
+          position: relative;
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+          background-color: #10B981;
+          border: 2.5px solid #FFFFFF;
+          box-shadow: 0 0 12px rgba(16, 185, 129, 0.9), 0 2px 4px rgba(0, 0, 0, 0.4);
+          z-index: 2;
         "></div>
       </div>
     `;
@@ -1922,15 +1972,19 @@ export const CampusGisMap = ({
     const userIcon = L.divIcon({
       html: userHtml,
       className: 'user-live-beacon',
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
+      iconSize: [44, 44],
+      iconAnchor: [22, 22],
     });
 
     if (userMarkerRef.current) {
       userMarkerRef.current.setLatLng([userCoords.lat, userCoords.lng]);
+      const cone = userMarkerRef.current.getElement()?.querySelector('.user-live-cone');
+      if (cone) {
+        cone.style.transform = `rotate(${heading}deg)`;
+      }
     } else {
-      userMarkerRef.current = L.marker([userCoords.lat, userCoords.lng], { icon: userIcon }).addTo(map);
-      userMarkerRef.current.bindTooltip('<b>You Are Here</b>', { permanent: false, direction: 'top', className: 'mewar-tooltip' });
+      userMarkerRef.current = L.marker([userCoords.lat, userCoords.lng], { icon: userIcon, zIndexOffset: 1000 }).addTo(map);
+      userMarkerRef.current.bindTooltip('<b>Your Live Location</b>', { permanent: false, direction: 'top', className: 'mewar-tooltip' });
     }
 
     if (userAccuracyCircleRef.current) {
@@ -1939,13 +1993,26 @@ export const CampusGisMap = ({
     } else {
       userAccuracyCircleRef.current = L.circle([userCoords.lat, userCoords.lng], {
         radius: userCoords.accuracy || 8,
-        color: '#3478B8',
-        fillColor: '#93C5FD',
+        color: '#10B981',
+        fillColor: '#34D399',
         fillOpacity: 0.15,
         weight: 1,
       }).addTo(map);
     }
-  }, [userCoords]);
+
+    // Auto-follow user as they move with their device
+    if (isFollowActive) {
+      map.panTo([userCoords.lat, userCoords.lng], { animate: true, duration: 0.5 });
+    }
+  }, [userCoords, isFollowActive]);
+
+  // Sync live breadcrumbs polyline on 2D map
+  useEffect(() => {
+    if (breadcrumbsLayerRef.current && Array.isArray(breadcrumbs) && breadcrumbs.length > 0) {
+      const latLngs = breadcrumbs.map(([lng, lat]) => [lat, lng]);
+      breadcrumbsLayerRef.current.setLatLngs(latLngs);
+    }
+  }, [breadcrumbs]);
 
   const handleFitRoute = () => {
     const map = mapInstanceRef.current;
@@ -1960,6 +2027,8 @@ export const CampusGisMap = ({
   const handleCenterOnUser = () => {
     const map = mapInstanceRef.current;
     if (!map || !userCoords) return;
+    setLocalAutoFollow(true);
+    if (onToggleAutoFollow) onToggleAutoFollow(true);
     map.flyTo([userCoords.lat, userCoords.lng], 18, { animate: true, duration: 1 });
   };
 
@@ -1969,38 +2038,94 @@ export const CampusGisMap = ({
     map.flyTo(DEFAULT_CAMPUS_CENTER, 17.5, { animate: true, duration: 1 });
   };
 
+  const distFromCampus = userCoords
+    ? calculateDistanceMeters(userCoords.lat, userCoords.lng, DEFAULT_CAMPUS_CENTER[0], DEFAULT_CAMPUS_CENTER[1])
+    : 0;
+  const isOffCampus = distFromCampus > 1500;
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
       {/* Map Canvas Mount */}
       <div ref={mapContainerRef} style={{ width: '100%', height: '100%', zIndex: 1 }} />
 
-
-      {/* FLOATING CAMPUS BOUNDARY LOCKED BADGE */}
+      {/* FLOATING LIVE TRACKING STATUS BADGE */}
       <div
-        className="hidden md:flex"
+        className="flex items-center"
         style={{
           position: 'absolute',
           top: '16px',
-          left: isNavPanelOpen ? '430px' : '16px',
+          left: isNavPanelOpen ? '420px' : '264px',
           transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           zIndex: 25,
-          backgroundColor: 'rgba(20, 45, 40, 0.94)',
+          backgroundColor: 'rgba(15, 23, 42, 0.92)',
           backdropFilter: 'blur(12px)',
           borderRadius: '9999px',
           padding: '6px 14px',
           border: '1px solid rgba(255, 255, 255, 0.16)',
           boxShadow: 'var(--shadow-md)',
-          alignItems: 'center',
           gap: '8px',
           fontSize: '11px',
           fontWeight: 700,
           color: '#FFFFFF',
-          pointerEvents: 'none',
         }}
       >
-        <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#10B981', display: 'inline-block' }} />
-        <Shield size={13} style={{ color: '#10B981' }} />
-        <span>University Area Locked • 30-Acre Campus</span>
+        <span
+          style={{
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            backgroundColor: isLiveGpsActive ? '#10B981' : '#F59E0B',
+            boxShadow: isLiveGpsActive ? '0 0 8px #10B981' : 'none',
+            display: 'inline-block',
+          }}
+        />
+        <Compass size={13} style={{ color: isLiveGpsActive ? '#10B981' : '#F59E0B' }} />
+        <span>
+          {isLiveGpsActive
+            ? isOffCampus
+              ? `Live GPS Active • ${(distFromCampus / 1000).toFixed(1)} km from Campus • ±${userCoords?.accuracy || 6}m`
+              : `Live Location Active • Campus Zone • ±${userCoords?.accuracy || 6}m`
+            : 'Mewar University • 30-Acre Campus'}
+        </span>
+        {isLiveGpsActive && (
+          <button
+            type="button"
+            onClick={handleCenterOnUser}
+            title={isFollowActive ? 'Auto-following your position' : 'Click to center on your position'}
+            style={{
+              background: isFollowActive ? 'rgba(16, 185, 129, 0.3)' : 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid #10B981',
+              color: '#34D399',
+              fontSize: '10px',
+              fontWeight: 800,
+              padding: '2px 8px',
+              borderRadius: '999px',
+              cursor: 'pointer',
+              marginLeft: '4px',
+            }}
+          >
+            {isFollowActive ? 'Following You' : 'Center on Me'}
+          </button>
+        )}
+        {isOffCampus && (
+          <button
+            type="button"
+            onClick={handleRecenter}
+            title="Focus on Mewar University Campus"
+            style={{
+              background: 'rgba(56, 189, 248, 0.2)',
+              border: '1px solid #38BDF8',
+              color: '#38BDF8',
+              fontSize: '10px',
+              fontWeight: 800,
+              padding: '2px 8px',
+              borderRadius: '999px',
+              cursor: 'pointer',
+            }}
+          >
+            Campus View
+          </button>
+        )}
       </div>
 
       {/* FLOATING CAMPUS DESTINATION CARD ON MAP (Shown when right drawer is closed) */}
