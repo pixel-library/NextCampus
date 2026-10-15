@@ -51,7 +51,6 @@ import {
   Clock,
   Info,
   Sparkles,
-  Box,
   Globe,
 } from 'lucide-react';
 import Card from '../components/common/Card';
@@ -3137,31 +3136,6 @@ export const CampusMap = () => {
           >
             <Compass size={12} />
             <span>2D GIS</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setViewEngine('3d');
-              triggerToast('Switched to MapLibre 3D Engine');
-            }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-              padding: '6px 10px',
-              borderRadius: '7px',
-              border: 'none',
-              fontSize: '11px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              backgroundColor: viewEngine === '3d' ? '#10B981' : 'transparent',
-              color: viewEngine === '3d' ? '#FFFFFF' : '#94A3B8',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <Box size={12} />
-            <span>3D WebGL</span>
           </button>
 
           <button
