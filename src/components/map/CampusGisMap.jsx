@@ -737,40 +737,17 @@ export const CAMPUS_GIS_LOCATIONS = {
     bgColor: '#ECFDF5',
     icon: '🏨',
     lat: 25.033780,
-    lng: 74.634550,
+    lng: 74.634600,
     polygon: [
-      [25.03388, 74.63442],
-      [25.03392, 74.63468],
-      [25.03368, 74.63475],
-      [25.03362, 74.63450],
+      [25.033880, 74.634500],
+      [25.033920, 74.634720],
+      [25.033680, 74.634780],
+      [25.033620, 74.634560],
+      [25.033880, 74.634500],
     ],
     dept: 'Campus Hospitality & Visiting Dignitaries Lodge',
     elevation: 'Ground + Floor 1',
     description: 'Furnished suites for visiting faculty, academic guest lecturers, delegates, and parent accommodations.',
-  },
-  mira: {
-    id: 'mira',
-    code: 'HST-01',
-    name: 'Mira Girls Residential Hostel',
-    shortName: 'Mira Hostel',
-    category: 'facility',
-    color: '#7C3AED',
-    bgColor: '#F5F3FF',
-    icon: '🏠',
-    lat: 25.034085,
-    lng: 74.634523,
-    polygon: [
-      [25.034158, 74.634385],
-      [25.034188, 74.634480],
-      [25.034049, 74.634534],
-      [25.034096, 74.634685],
-      [25.034011, 74.634717],
-      [25.033933, 74.634472],
-      [25.034158, 74.634385],
-    ],
-    dept: 'Female Student Residential Precinct (South Wing)',
-    elevation: 'Blocks A & B',
-    description: 'Secure female residence quarters with landscaped courtyard, reading hall, and dedicated warden outpost.',
   },
   panna: {
     id: 'panna',
@@ -781,17 +758,62 @@ export const CAMPUS_GIS_LOCATIONS = {
     color: '#9333EA',
     bgColor: '#FAF5FF',
     icon: '🏠',
-    lat: 25.034450,
-    lng: 74.634320,
+    lat: 25.034020,
+    lng: 74.634480,
     polygon: [
-      [25.03460, 74.63418],
-      [25.03465, 74.63445],
-      [25.03428, 74.63455],
-      [25.03422, 74.63428],
+      [25.034130, 74.634400],
+      [25.034180, 74.634600],
+      [25.033940, 74.634670],
+      [25.033890, 74.634470],
+      [25.034130, 74.634400],
     ],
-    dept: 'Female Student Residential Precinct (North Wing)',
+    dept: 'Female Student Residential Precinct (North-East Wing)',
     elevation: 'Blocks 1 & 2',
     description: 'Secure female student quarters, air-cooled living units, and study rooms.',
+  },
+  mira: {
+    id: 'mira',
+    code: 'HST-01',
+    name: 'Mira Girls Residential Hostel',
+    shortName: 'Mira Hostel',
+    category: 'facility',
+    color: '#7C3AED',
+    bgColor: '#F5F3FF',
+    icon: '🏠',
+    lat: 25.034260,
+    lng: 74.634350,
+    polygon: [
+      [25.034380, 74.634280],
+      [25.034430, 74.634480],
+      [25.034160, 74.634560],
+      [25.034110, 74.634360],
+      [25.034380, 74.634280],
+    ],
+    dept: 'Female Student Residential Precinct (Central Wing)',
+    elevation: 'Blocks A & B',
+    description: 'Secure female residence quarters with landscaped courtyard, reading hall, and dedicated warden outpost.',
+  },
+  padmani: {
+    id: 'padmani',
+    code: 'HST-09',
+    name: 'Padmani Girls Residential Hostel',
+    shortName: 'Padmani Hostel',
+    category: 'facility',
+    color: '#8B5CF6',
+    bgColor: '#F5F3FF',
+    icon: '🏠',
+    lat: 25.034500,
+    lng: 74.634220,
+    polygon: [
+      [25.034620, 74.634140],
+      [25.034680, 74.634340],
+      [25.034400, 74.634420],
+      [25.034340, 74.634220],
+      [25.034620, 74.634140],
+    ],
+    dept: 'Female Student Residential Precinct (West Wing)',
+    elevation: 'Blocks 1–3',
+    description: 'Secure female student accommodation complex located west of Mira Hostel along the southern campus boundary, featuring air-cooled rooms, dedicated warden office, study hall, and 24/7 security station.',
   },
   hospital: {
     id: 'hospital',
@@ -911,17 +933,52 @@ export const CAMPUS_GIS_LOCATIONS = {
   },
 };
 
-// Aliases for backwards compatibility with legacy routes/bookmarks
+// Aliases for backwards compatibility with legacy routes/bookmarks and satellite annotations
 CAMPUS_GIS_LOCATIONS.admin = CAMPUS_GIS_LOCATIONS.main;
+CAMPUS_GIS_LOCATIONS.main_building = CAMPUS_GIS_LOCATIONS.main;
 CAMPUS_GIS_LOCATIONS.cafeteria = CAMPUS_GIS_LOCATIONS.mess;
+CAMPUS_GIS_LOCATIONS.dining_mess = CAMPUS_GIS_LOCATIONS.mess;
 CAMPUS_GIS_LOCATIONS.hostel_b = CAMPUS_GIS_LOCATIONS.sanaga;
 CAMPUS_GIS_LOCATIONS.sanga = CAMPUS_GIS_LOCATIONS.sanaga;
+CAMPUS_GIS_LOCATIONS.sanga_hostel = CAMPUS_GIS_LOCATIONS.sanaga;
+CAMPUS_GIS_LOCATIONS.bhamasha_hostel = CAMPUS_GIS_LOCATIONS.bhamasha;
+CAMPUS_GIS_LOCATIONS.kumbha_hostel = CAMPUS_GIS_LOCATIONS.kumbha;
+CAMPUS_GIS_LOCATIONS.pratap_hostel = CAMPUS_GIS_LOCATIONS.pratap;
+CAMPUS_GIS_LOCATIONS.badal_hostel = CAMPUS_GIS_LOCATIONS.badal;
+CAMPUS_GIS_LOCATIONS.engineering = CAMPUS_GIS_LOCATIONS.eng;
+CAMPUS_GIS_LOCATIONS.engineering_block = CAMPUS_GIS_LOCATIONS.eng;
+CAMPUS_GIS_LOCATIONS.hospital_gora = CAMPUS_GIS_LOCATIONS.gora;
+CAMPUS_GIS_LOCATIONS.hospital_and_gora_hostel = CAMPUS_GIS_LOCATIONS.gora;
+CAMPUS_GIS_LOCATIONS.gora_hostel = CAMPUS_GIS_LOCATIONS.gora;
+CAMPUS_GIS_LOCATIONS.law_building = CAMPUS_GIS_LOCATIONS.law;
 CAMPUS_GIS_LOCATIONS.hostel_g = CAMPUS_GIS_LOCATIONS.mira;
+CAMPUS_GIS_LOCATIONS.mira_hostel = CAMPUS_GIS_LOCATIONS.mira;
+CAMPUS_GIS_LOCATIONS.padmani_hostel = CAMPUS_GIS_LOCATIONS.padmani;
+CAMPUS_GIS_LOCATIONS.panna_hostel = CAMPUS_GIS_LOCATIONS.panna;
 CAMPUS_GIS_LOCATIONS.sports = CAMPUS_GIS_LOCATIONS.basketball;
+CAMPUS_GIS_LOCATIONS.basketball_ground = CAMPUS_GIS_LOCATIONS.basketball;
+CAMPUS_GIS_LOCATIONS.volleyball_ground = CAMPUS_GIS_LOCATIONS.volleyball;
+CAMPUS_GIS_LOCATIONS.fitness_center = CAMPUS_GIS_LOCATIONS.gym;
 CAMPUS_GIS_LOCATIONS.library = CAMPUS_GIS_LOCATIONS.pratap;
 CAMPUS_GIS_LOCATIONS.auditorium = CAMPUS_GIS_LOCATIONS.football;
 CAMPUS_GIS_LOCATIONS.mandir = CAMPUS_GIS_LOCATIONS.temple;
 CAMPUS_GIS_LOCATIONS.farm = CAMPUS_GIS_LOCATIONS.agriculture;
+CAMPUS_GIS_LOCATIONS.agriculture_field = CAMPUS_GIS_LOCATIONS.agriculture;
+CAMPUS_GIS_LOCATIONS.campus_park = CAMPUS_GIS_LOCATIONS.park;
+
+// Ray-casting point-in-polygon algorithm to detect clicks anywhere on building footprints
+export function isPointInPolygon(point, vs) {
+  if (!vs || !vs.length) return false;
+  const x = point[0], y = point[1];
+  let inside = false;
+  for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+    const xi = vs[i][0], yi = vs[i][1];
+    const xj = vs[j][0], yj = vs[j][1];
+    const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
 
 // Haversine geodesic distance in meters
 export function calculateDistanceMeters(lat1, lon1, lat2, lon2) {

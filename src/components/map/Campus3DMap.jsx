@@ -27,6 +27,7 @@ import {
   CAMPUS_GIS_LOCATIONS,
   MEWAR_CAMPUS_ROADS,
   SHUTTLE_DATA,
+  isPointInPolygon,
 } from './CampusGisMap';
 
 // Building 3D Height profiles (meters) for authentic architectural representation
@@ -36,12 +37,23 @@ const BUILDING_HEIGHTS = {
   teacher: 24,
   law: 22,
   badal: 26,
+  padmani: 22,
+  mira: 22,
+  panna: 22,
+  guest_house: 18,
+  sanaga: 26,
+  bhamasha: 26,
+  kumbha: 24,
+  pratap: 24,
+  gora: 22,
+  hospital: 18,
   mess: 16,
   temple: 18,
   gym: 14,
   gate: 10,
   gate2: 10,
   parking: 6,
+  park: 2,
   football: 2,
   basketball: 2,
   cricket: 2,
@@ -449,6 +461,7 @@ export const Campus3DMap = ({
         const bldgId = e.features[0].properties.id;
         if (bldgId) {
           onSelectBuilding(bldgId);
+          onOpenDetails?.();
           const bldg = CAMPUS_GIS_LOCATIONS[bldgId];
           if (bldg) {
             map.flyTo({
@@ -475,12 +488,39 @@ export const Campus3DMap = ({
         setHoveredBuilding(null);
       });
 
-      // Map Click for custom destination
+      // Map Click for building boundary or custom destination
       map.on('click', (e) => {
         const features = map.queryRenderedFeatures(e.point, { layers: ['buildings-3d'] });
-        if (features.length === 0 && onSetCustomDestination) {
-          onSetCustomDestination({ lat: e.lngLat.lat, lng: e.lngLat.lng });
-          speakVoicePrompt('Custom destination marked on 3D map');
+        if (features.length === 0) {
+          // Check if click was inside any building boundary polygon footprint
+          let clickedKey = null;
+          for (const [key, bldg] of Object.entries(CAMPUS_GIS_LOCATIONS)) {
+            if (bldg.polygon && isPointInPolygon([e.lngLat.lat, e.lngLat.lng], bldg.polygon)) {
+              clickedKey = key;
+              break;
+            }
+          }
+          if (clickedKey) {
+            onSelectBuilding(clickedKey);
+            onOpenDetails?.();
+            const bldg = CAMPUS_GIS_LOCATIONS[clickedKey];
+            if (bldg) {
+              map.flyTo({
+                center: [bldg.lng, bldg.lat],
+                zoom: 17.8,
+                pitch: 65,
+                bearing: map.getBearing() + 20,
+                duration: 1200,
+              });
+              speakVoicePrompt(`Selected ${bldg.shortName || bldg.name}`);
+            }
+            return;
+          }
+
+          if (onSetCustomDestination) {
+            onSetCustomDestination({ lat: e.lngLat.lat, lng: e.lngLat.lng });
+            speakVoicePrompt('Custom destination marked on 3D map');
+          }
         }
       });
 
@@ -548,6 +588,7 @@ export const Campus3DMap = ({
       el.addEventListener('click', (ev) => {
         ev.stopPropagation();
         onSelectBuilding(key);
+        onOpenDetails?.();
         map.flyTo({
           center: [bldg.lng, bldg.lat],
           zoom: 17.8,

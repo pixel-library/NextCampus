@@ -155,6 +155,34 @@ const INITIAL_BUILDINGS = [
     depts: ['Chief Warden (Girls)', 'Student Welfare', 'Biometric Security Desk']
   },
   {
+    id: 'panna',
+    name: 'Panna Girls Residential Hostel',
+    subtitle: 'Female Student Residential Precinct (North-East Wing)',
+    block: 'Block HST-02',
+    floors: '3 Floors',
+    description:
+      'Secure female student quarters, air-cooled living units, study rooms, and attached dining mess.',
+    hours: 'Open 24/7 (Curfew 09:00 PM)',
+    occupancy: '85% Resident Footfall',
+    routeNote: 'West Residential Precinct near Mira Hostel',
+    image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80',
+    depts: ['Resident Warden', 'Common Study Hall', 'Security Desk']
+  },
+  {
+    id: 'padmani',
+    name: 'Padmani Girls Residential Hostel',
+    subtitle: 'Female Student Residential Precinct (West Wing)',
+    block: 'Block HST-09',
+    floors: '3 Floors',
+    description:
+      'Secure female student accommodation complex located west of Mira Hostel along the southern campus boundary, featuring air-cooled rooms, dedicated warden office, study hall, and 24/7 security station.',
+    hours: 'Open 24/7 (Curfew 09:00 PM)',
+    occupancy: '82% Resident Footfall',
+    routeNote: 'West Residential Precinct near Guest House & Gate 2',
+    image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80',
+    depts: ['Hostel Warden Office', 'Student Council', 'Security Post']
+  },
+  {
     id: 'hospital',
     name: 'University Hospital & Health Centre',
     subtitle: '24/7 Emergency Medical & Pharmacy',

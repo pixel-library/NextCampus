@@ -512,6 +512,34 @@ const INITIAL_BUILDINGS = {
       { num: 2, text: 'Arrive at Panna Hostel', sub: 'North gate portal', dist: '60 m • 0.8 min' },
     ],
   },
+  padmani: {
+    id: 'padmani',
+    code: 'HST-09',
+    name: 'Padmani Girls Residential Hostel',
+    shortName: 'Padmani Hostel',
+    block: 'Block HST-09',
+    dept: 'Female Student Residential Precinct (West Wing)',
+    category: 'facility',
+    x: 230,
+    y: 200,
+    width: 150,
+    height: 100,
+    description: 'Secure female student accommodation complex located west of Mira Hostel along the southern campus boundary, featuring air-cooled rooms, dedicated warden office, study hall, and 24/7 security station.',
+    occupancy: '82%',
+    seats: '180 Living Units Available',
+    temp: '23.5°C',
+    air: '390 ppm CO₂',
+    accessibility: 'Step-Free Ramp & Security Turnstile',
+    hours: 'Open 24/7 (In-Time 07:30 PM)',
+    status: 'open',
+    targetRoom: 'Hostel Warden Office & Common Hall',
+    targetDesc: 'West Girls Residential Wing',
+    image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80',
+    steps: [
+      { num: 1, text: 'Depart Campus Gate 2 / Guest House Road', sub: 'Walk East past Guest House towards Girls Hostels', dist: '0 m' },
+      { num: 2, text: 'Arrive at Padmani Hostel Entrance', sub: 'Padmani Girls Residence Quadrangle', dist: '65 m • 0.8 min' },
+    ],
+  },
   hospital: {
     id: 'hospital',
     code: 'MED-01',
@@ -785,16 +813,38 @@ const INITIAL_BUILDINGS = {
   },
 };
 
-// Aliases for backwards compatibility with legacy routes/bookmarks
+// Aliases for backwards compatibility with legacy routes/bookmarks and satellite annotations
 INITIAL_BUILDINGS.admin = INITIAL_BUILDINGS.main;
+INITIAL_BUILDINGS.main_building = INITIAL_BUILDINGS.main;
 INITIAL_BUILDINGS.cafeteria = INITIAL_BUILDINGS.mess;
+INITIAL_BUILDINGS.dining_mess = INITIAL_BUILDINGS.mess;
 INITIAL_BUILDINGS.hostel_b = INITIAL_BUILDINGS.sanaga;
+INITIAL_BUILDINGS.sanga = INITIAL_BUILDINGS.sanaga;
+INITIAL_BUILDINGS.sanga_hostel = INITIAL_BUILDINGS.sanaga;
+INITIAL_BUILDINGS.bhamasha_hostel = INITIAL_BUILDINGS.bhamasha;
+INITIAL_BUILDINGS.kumbha_hostel = INITIAL_BUILDINGS.kumbha;
+INITIAL_BUILDINGS.pratap_hostel = INITIAL_BUILDINGS.pratap;
+INITIAL_BUILDINGS.badal_hostel = INITIAL_BUILDINGS.badal;
+INITIAL_BUILDINGS.engineering = INITIAL_BUILDINGS.eng;
+INITIAL_BUILDINGS.engineering_block = INITIAL_BUILDINGS.eng;
+INITIAL_BUILDINGS.hospital_gora = INITIAL_BUILDINGS.gora;
+INITIAL_BUILDINGS.hospital_and_gora_hostel = INITIAL_BUILDINGS.gora;
+INITIAL_BUILDINGS.gora_hostel = INITIAL_BUILDINGS.gora;
+INITIAL_BUILDINGS.law_building = INITIAL_BUILDINGS.law;
 INITIAL_BUILDINGS.hostel_g = INITIAL_BUILDINGS.mira;
+INITIAL_BUILDINGS.mira_hostel = INITIAL_BUILDINGS.mira;
+INITIAL_BUILDINGS.padmani_hostel = INITIAL_BUILDINGS.padmani;
+INITIAL_BUILDINGS.panna_hostel = INITIAL_BUILDINGS.panna;
 INITIAL_BUILDINGS.sports = INITIAL_BUILDINGS.basketball;
+INITIAL_BUILDINGS.basketball_ground = INITIAL_BUILDINGS.basketball;
+INITIAL_BUILDINGS.volleyball_ground = INITIAL_BUILDINGS.volleyball;
+INITIAL_BUILDINGS.fitness_center = INITIAL_BUILDINGS.gym;
 INITIAL_BUILDINGS.library = INITIAL_BUILDINGS.pratap;
 INITIAL_BUILDINGS.auditorium = INITIAL_BUILDINGS.football;
 INITIAL_BUILDINGS.mandir = INITIAL_BUILDINGS.temple;
 INITIAL_BUILDINGS.farm = INITIAL_BUILDINGS.agriculture;
+INITIAL_BUILDINGS.agriculture_field = INITIAL_BUILDINGS.agriculture;
+INITIAL_BUILDINGS.campus_park = INITIAL_BUILDINGS.park;
 
 
 
@@ -3169,7 +3219,7 @@ export const CampusMap = () => {
           <div style={{ width: '100%', height: '100%' }}>
             <CampusGoogle3DMap
               selectedBuildingKey={selectedBldg}
-              onSelectBuilding={(key) => handleSelectBuilding(key, false)}
+              onSelectBuilding={(key) => handleSelectBuilding(key, true)}
               customDestination={customDestination}
               onSetCustomDestination={(dest) => {
                 setCustomDestination(dest);
@@ -3193,7 +3243,7 @@ export const CampusMap = () => {
           <div style={{ width: '100%', height: '100%' }}>
             <Campus3DMap
               selectedBuildingKey={selectedBldg}
-              onSelectBuilding={(key) => handleSelectBuilding(key, false)}
+              onSelectBuilding={(key) => handleSelectBuilding(key, true)}
               customDestination={customDestination}
               onSetCustomDestination={(dest) => {
                 setCustomDestination(dest);
@@ -3225,7 +3275,7 @@ export const CampusMap = () => {
           <div style={{ width: '100%', height: '100%' }}>
             <CampusGisMap
               selectedBuildingKey={selectedBldg}
-              onSelectBuilding={(key) => handleSelectBuilding(key, false)}
+              onSelectBuilding={(key) => handleSelectBuilding(key, true)}
               customDestination={customDestination}
               onSetCustomDestination={(dest) => {
                 setCustomDestination(dest);

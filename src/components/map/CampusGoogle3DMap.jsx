@@ -63,14 +63,17 @@ const DEFAULT_CAMERA_VIEW = {
 const MAX_ALLOWED_RANGE = 770; // Strict Zoom-Out Limit ("cannot minimize more than Image 2")
 const MIN_ALLOWED_RANGE = 200; // Close-up detail limit
 
-// Unique primary campus landmarks (excluding legacy duplicate aliases)
+// Unique primary campus landmarks matching satellite annotations
 const PRIMARY_CAMPUS_LANDMARKS = [
   'main',
   'eng',
   'teacher',
   'law',
   'badal',
+  'padmani',
   'mira',
+  'panna',
+  'guest_house',
   'gora',
   'sanaga',
   'kumbha',
@@ -78,11 +81,13 @@ const PRIMARY_CAMPUS_LANDMARKS = [
   'bhamasha',
   'mess',
   'temple',
+  'park',
   'football',
   'cricket',
   'basketball',
   'gym',
   'volleyball',
+  'agriculture',
   'gate',
   'gate2',
   'parking',
@@ -107,6 +112,9 @@ export const CampusGoogle3DMap = ({
 
   const onSelectBuildingRef = useRef(onSelectBuilding);
   onSelectBuildingRef.current = onSelectBuilding;
+
+  const onOpenDetailsRef = useRef(onOpenDetails);
+  onOpenDetailsRef.current = onOpenDetails;
 
   const onSetCustomDestinationRef = useRef(onSetCustomDestination);
   onSetCustomDestinationRef.current = onSetCustomDestination;
@@ -380,6 +388,7 @@ export const CampusGoogle3DMap = ({
           if (matchedKey) {
             const bldg = CAMPUS_GIS_LOCATIONS[matchedKey];
             if (onSelectBuildingRef.current) onSelectBuildingRef.current(matchedKey);
+            if (onOpenDetailsRef.current) onOpenDetailsRef.current();
             if (onSetCustomDestinationRef.current) {
               onSetCustomDestinationRef.current({ lat: bldg.lat, lng: bldg.lng, name: bldg.shortName });
             }
@@ -484,6 +493,7 @@ export const CampusGoogle3DMap = ({
       const handleClick = (ev) => {
         if (ev && ev.stopPropagation) ev.stopPropagation();
         if (onSelectBuildingRef.current) onSelectBuildingRef.current(key);
+        if (onOpenDetailsRef.current) onOpenDetailsRef.current();
         if (onSetCustomDestinationRef.current) {
           onSetCustomDestinationRef.current({ lat: bldg.lat, lng: bldg.lng, name: bldg.shortName });
         }
