@@ -415,7 +415,7 @@ export function ComplaintAdmin() {
       )}
 
       {/* Header — exact same structure as AdminDashboard */}
-      <div className="bg-[#142D28] text-white pt-8 pb-12 px-4 sm:px-8 border-b border-[#20443D]">
+      <div className="bg-[#142D28] text-white pt-8 pb-10 px-4 sm:px-8 border-b border-[#20443D]">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
@@ -444,13 +444,13 @@ export function ComplaintAdmin() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
           {/* Total Tickets */}
-          <div className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:shadow-md transition-all">
+          <div className="p-4 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:shadow-md transition-all">
             <div className="flex items-center justify-between">
               <div className="w-10 h-10 rounded-xl bg-[#EAF5EF] text-[#168567] flex items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">confirmation_number</span>
               </div>
             </div>
-            <div className="mt-4">
+            <div className="mt-3">
               <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Total Tickets</span>
               <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">{totalActiveTickets || 0}</div>
               <p className="text-xs text-[#87968D] mt-1">
@@ -460,13 +460,13 @@ export function ComplaintAdmin() {
           </div>
 
           {/* Avg First Response */}
-          <div className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:shadow-md transition-all">
+          <div className="p-4 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:shadow-md transition-all">
             <div className="flex items-center justify-between">
               <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#3478B8] flex items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">bolt</span>
               </div>
             </div>
-            <div className="mt-4">
+            <div className="mt-3">
               <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Avg. First Response</span>
               <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">18 <span className="text-lg font-bold text-[#3478B8]">min</span></div>
               <p className="text-xs text-[#87968D] mt-1">
@@ -476,13 +476,13 @@ export function ComplaintAdmin() {
           </div>
 
           {/* Critical & High */}
-          <div className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:shadow-md transition-all">
+          <div className="p-4 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:shadow-md transition-all">
             <div className="flex items-center justify-between">
               <div className="w-10 h-10 rounded-xl bg-[#FFF0F2] text-[#C43D4B] flex items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">crisis_alert</span>
               </div>
             </div>
-            <div className="mt-4">
+            <div className="mt-3">
               <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Critical &amp; High</span>
               <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">{criticalCount || 0}</div>
               <p className="text-xs text-[#87968D] mt-1">
@@ -494,13 +494,13 @@ export function ComplaintAdmin() {
           </div>
 
           {/* Student CSAT */}
-          <div className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:shadow-md transition-all">
+          <div className="p-4 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:shadow-md transition-all">
             <div className="flex items-center justify-between">
               <div className="w-10 h-10 rounded-xl bg-[#FFF9EB] text-[#B26A00] flex items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">reviews</span>
               </div>
             </div>
-            <div className="mt-4">
+            <div className="mt-3">
               <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Student CSAT</span>
               <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">{avgSatisfaction} <span className="text-lg text-[#B26A00]">★</span></div>
               <p className="text-xs text-[#87968D] mt-1">
