@@ -147,10 +147,10 @@ const INITIAL_BUILDINGS = [
     block: 'Block HST-09',
     floors: '3 Floors',
     description:
-      'Secure female student accommodation complex located immediately north of Mira Hostel featuring rooftop solar array, air-cooled rooms, study hall, and 24/7 security station.',
+      'Secure female student accommodation complex located immediately north of Panna Hostel featuring rooftop solar array, air-cooled rooms, study hall, and 24/7 security station.',
     hours: 'Open 24/7 (In-Time 07:30 PM)',
     occupancy: '82% Resident Footfall',
-    routeNote: 'West Residential Precinct North of Mira Hostel',
+    routeNote: 'West Residential Precinct North of Panna Hostel',
     image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80',
     depts: ['Hostel Warden Office', 'Student Council', 'Security Post']
   },
@@ -161,24 +161,24 @@ const INITIAL_BUILDINGS = [
     block: 'Block HST-01',
     floors: '3 Floors',
     description:
-      'Secure female residence quarters with central open courtyard, reading hall, and dedicated warden outpost situated between Padmani and Panna Hostels.',
+      'Secure female residence quarters with central open courtyard, reading hall, and dedicated warden outpost situated between Panna and Guest House.',
     hours: 'Open 24/7 (Curfew 09:00 PM)',
     occupancy: '88% Resident Footfall',
-    routeNote: 'West Residential Precinct between Padmani & Panna',
+    routeNote: 'West Residential Precinct between Panna & Guest House',
     image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80',
     depts: ['Chief Warden (Girls)', 'Student Welfare', 'Biometric Security Desk']
   },
   {
     id: 'panna',
     name: 'Panna Girls Residential Hostel',
-    subtitle: 'Female Student Residential Precinct (South Wing)',
+    subtitle: 'Female Student Residential Precinct (North Courtyard Wing)',
     block: 'Block HST-02',
     floors: '3 Floors',
     description:
-      'Secure female student quarters, air-cooled living units, study rooms, and attached dining mess located south of Mira Hostel.',
+      'Secure female student quarters, air-cooled living units, and study rooms located north of Mira Hostel and south of Padmani Hostel.',
     hours: 'Open 24/7 (Curfew 09:00 PM)',
     occupancy: '85% Resident Footfall',
-    routeNote: 'West Residential Precinct South of Mira Hostel',
+    routeNote: 'West Residential Precinct between Mira & Padmani',
     image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80',
     depts: ['Resident Warden', 'Common Study Hall', 'Security Desk']
   },
