@@ -51,7 +51,7 @@ Every facility has been calibrated against high-resolution satellite imagery and
 | ID | Landmark Name | Coordinates `[Lat, Lng]` | Category | Geometry & Footprint Description |
 | :--- | :--- | :--- | :--- | :--- |
 | `gate` | Gate 1 (NH-48 Main Portal) | `[25.032009, 74.634483]` | Transit | Primary arterial entrance portal on National Highway 48 boundary. |
-| `gate2` | Gate 2 (West Perimeter) | `[25.034828, 74.633839]` | Transit | West boundary perimeter entrance portal north of covered parking. |
+| `gate2` | Gate 2 (West Perimeter) | `[25.033475, 74.634605]` | Transit | West boundary perimeter entrance portal near Guest House. |
 | `main` | Main Academic & Admin Building | `[25.032755, 74.635872]` | Academic / Admin | Central flagship complex with north courtyard abutting Temple. |
 | `temple` | Mewar Campus Temple & Shrine | `[25.033669, 74.635822]` | Spiritual / Culture | Yellow boundary courtyard shrine north of Main Building, south of Park. |
 | `eng` | Faculty of Engineering & Technology | `[25.032631, 74.636545]` | Academic / Labs | Major engineering quadrangle directly east of Main Building. |

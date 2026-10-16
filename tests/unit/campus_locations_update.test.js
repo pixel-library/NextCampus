@@ -70,7 +70,7 @@ test('Campus Locations & Road Routing: All 26 real Mewar University locations an
 
   // Verify authentic ground-truth coordinates
   assert.ok(gisContent.includes('25.032009'), 'Gate 1 must be at the NH-48 entrance portal (25.032009)');
-  assert.ok(gisContent.includes('25.034828'), 'Gate 2 must be at perimeter boundary portal (25.034828)');
+  assert.ok(gisContent.includes('25.033475'), 'Gate 2 must be at perimeter boundary portal (25.033475)');
   assert.ok(gisContent.includes('25.032755'), 'Main Building center must be 25.032755');
   assert.ok(gisContent.includes('25.033669'), 'Temple center must be 25.033669');
   assert.ok(gisContent.includes('25.031181'), 'Parking center must be 25.031181');
