@@ -161,16 +161,6 @@ export function StudentDashboard() {
     }
   };
 
-  // Live Class Countdown (Starts at 24m 18s and ticks every 1s)
-  const [classCountdownSecs, setClassCountdownSecs] = useState(24 * 60 + 18);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setClassCountdownSecs((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
   // Keyboard accessibility: Escape to dismiss gate pass modal
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -182,11 +172,6 @@ export function StudentDashboard() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isGatePassOpen]);
 
-  const formattedCountdown = useMemo(() => {
-    const mins = Math.floor(classCountdownSecs / 60);
-    const secs = classCountdownSecs % 60;
-    return `${mins}m : ${secs < 10 ? '0' : ''}${secs}s`;
-  }, [classCountdownSecs]);
 
   // Actual Student Identity Resolution
   const studentName = user?.preferredName || user?.name || 'Aarav Mehta';
@@ -325,167 +310,11 @@ export function StudentDashboard() {
       </section>
 
       {/* =========================================================================
-          3. RESTRAINED QUICK ACTIONS LAUNCHER BAR
-          ========================================================================= */}
-      <section className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5">
-        <div
-          onClick={() => navigate('/campus-map')}
-          className="p-3 sm:p-4 rounded-2xl bg-white border border-[#E4EAE5] hover:border-[#CBE2D4] hover:shadow-sm transition-all flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group"
-        >
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
-            <Compass size={19} />
-          </div>
-          <div className="min-w-0">
-            <div className="text-xs sm:text-sm font-bold text-[#202A27] leading-tight group-hover:text-[#168567] transition-colors truncate">
-              Campus Map
-            </div>
-            <div className="text-[10px] sm:text-[11px] text-[#65736B] mt-0.5 truncate">3D Vector &amp; GIS</div>
-          </div>
-        </div>
-
-        <div
-          onClick={() => navigate('/smartroom')}
-          className="p-3 sm:p-4 rounded-2xl bg-white border border-[#E4EAE5] hover:border-[#CBE2D4] hover:shadow-sm transition-all flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group"
-        >
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
-            <DoorOpen size={19} />
-          </div>
-          <div className="min-w-0">
-            <div className="text-xs sm:text-sm font-bold text-[#202A27] leading-tight group-hover:text-[#168567] transition-colors truncate">
-              SmartRooms
-            </div>
-            <div className="text-[10px] sm:text-[11px] text-[#65736B] mt-0.5 truncate">Study Pods &amp; Labs</div>
-          </div>
-        </div>
-
-        <div
-          onClick={() => navigate('/directory')}
-          className="p-3 sm:p-4 rounded-2xl bg-white border border-[#E4EAE5] hover:border-[#C9DFEE] hover:shadow-sm transition-all flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group"
-        >
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#EEF5FA] text-[#3478B8] border border-[#C9DFEE] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
-            <Users size={19} />
-          </div>
-          <div className="min-w-0">
-            <div className="text-xs sm:text-sm font-bold text-[#202A27] leading-tight group-hover:text-[#3478B8] transition-colors truncate">
-              Directory
-            </div>
-            <div className="text-[10px] sm:text-[11px] text-[#65736B] mt-0.5 truncate">Faculty &amp; Hours</div>
-          </div>
-        </div>
-
-        <div
-          onClick={() => navigate('/complaints')}
-          className="p-3 sm:p-4 rounded-2xl bg-white border border-[#E4EAE5] hover:border-[#CBE2D4] hover:shadow-sm transition-all flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group"
-        >
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
-            <LifeBuoy size={19} />
-          </div>
-          <div className="min-w-0">
-            <div className="text-xs sm:text-sm font-bold text-[#202A27] leading-tight group-hover:text-[#168567] transition-colors truncate">
-              Campus Care
-            </div>
-            <div className="text-[10px] sm:text-[11px] text-[#65736B] mt-0.5 truncate">&lt;45m CAFM Fix</div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          4. MAIN CONTENT: 2/3 AGENDA & MAP PREVIEW vs 1/3 AI COPILOT
+          3. MAIN CONTENT: DIGITAL TWIN MAP & AI COPILOT
           ========================================================================= */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* LEFT COLUMN: AGENDA & MAP (8 COLS) */}
+        {/* LEFT COLUMN: DIGITAL TWIN MAP (8 COLS) */}
         <div className="lg:col-span-8 flex flex-col gap-6">
-          {/* A. TODAY'S SCHEDULE TIMELINE */}
-          <section className="bg-white rounded-2xl border border-[#E4EAE5] p-4 sm:p-6 shadow-xs">
-            <div className="flex items-center justify-between pb-4 border-b border-[#E4EAE5] mb-4">
-              <div className="flex items-center gap-2">
-                <Clock size={16} className="text-[#168567]" />
-                <h3 className="text-base font-bold text-[#202A27]">
-                  Today's Academic Agenda
-                </h3>
-              </div>
-              <span className="text-xs font-semibold text-[#65736B]">
-                Monday, Oct 12 • 3 Lectures
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              {/* Lecture 1 (Upcoming / Current) */}
-              <div className="p-3.5 rounded-xl border border-[#CBE2D4] bg-[#EAF5EF]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="px-2.5 py-1 rounded-lg bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] font-mono text-xs font-bold shrink-0">
-                    10:00 – 11:30 AM
-                  </span>
-                  <div>
-                    <h4 className="text-sm font-bold text-[#202A27]">
-                      CS-301: Distributed Systems &amp; Cloud Infrastructure
-                    </h4>
-                    <p className="text-xs text-[#65736B] mt-0.5">
-                      Faculty of Engineering Level 2, Room B-204 • Prof. Ananya Roy
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  className="w-full sm:w-auto shrink-0 justify-center"
-                  onClick={() => navigate('/campus-map?bldg=eng&room=B-204')}
-                >
-                  Map Route
-                </Button>
-              </div>
-
-              {/* Lecture 2 */}
-              <div className="p-3.5 rounded-xl border border-[#E4EAE5] bg-white hover:bg-[#F6F8F6] flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors">
-                <div className="flex items-center gap-3">
-                  <span className="px-2.5 py-1 rounded-lg bg-[#F0F4F1] text-[#202A27] font-mono text-xs font-bold shrink-0">
-                    01:00 – 02:30 PM
-                  </span>
-                  <div>
-                    <h4 className="text-sm font-bold text-[#202A27]">
-                      MATH-240: Linear Algebra &amp; Neural Nets
-                    </h4>
-                    <p className="text-xs text-[#65736B] mt-0.5">
-                      Ramanujan Block, Room S-108 • Prof. K. Venkatesh
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="w-full sm:w-auto shrink-0 justify-center"
-                  onClick={() => navigate('/campus-map?bldg=eng')}
-                >
-                  View Location
-                </Button>
-              </div>
-
-              {/* Lecture 3 */}
-              <div className="p-3.5 rounded-xl border border-[#E4EAE5] bg-white hover:bg-[#F6F8F6] flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors">
-                <div className="flex items-center gap-3">
-                  <span className="px-2.5 py-1 rounded-lg bg-[#F0F4F1] text-[#202A27] font-mono text-xs font-bold shrink-0">
-                    03:15 – 05:00 PM
-                  </span>
-                  <div>
-                    <h4 className="text-sm font-bold text-[#202A27]">
-                      CS-305: Embedded IoT Systems Lab
-                    </h4>
-                    <p className="text-xs text-[#65736B] mt-0.5">
-                      Faculty of Engineering Level 2, Bench #14 Reserved
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="w-full sm:w-auto shrink-0 justify-center"
-                  onClick={() => navigate('/campus-map?bldg=eng')}
-                >
-                  View Location
-                </Button>
-              </div>
-            </div>
-          </section>
 
           {/* B. DIGITAL TWIN & WAYFINDING CARD */}
           <section className="bg-white rounded-2xl border border-[#E4EAE5] overflow-hidden shadow-xs">
