@@ -1655,12 +1655,14 @@ export const CampusGisMap = ({
 
         // Hover border remains transparent at all times per user request
 
-        // Tooltip showing building name (required for audit checks)
-        poly.bindTooltip(`<b>${bldg.shortName || bldg.name}</b>`, {
-          permanent: isSelected,
-          direction: 'center',
-          className: 'mewar-tooltip',
-        });
+        // Hover tooltip showing building name (shows only on hover when unselected to avoid blocking destination dot)
+        if (!isSelected) {
+          poly.bindTooltip(`<b>${bldg.shortName || bldg.name}</b>`, {
+            permanent: false,
+            direction: 'center',
+            className: 'mewar-tooltip',
+          });
+        }
 
         poly.bindPopup(`
           <div style="padding: 10px; font-family: Inter, sans-serif; min-width: 220px;">
@@ -1682,15 +1684,15 @@ export const CampusGisMap = ({
 
       // Compute precise alignment coordinate (exact polygon centroid or bldg coordinate)
       const markerPosition = polyCenter ? [polyCenter.lat, polyCenter.lng] : [bldg.lat, bldg.lng];
-      const pinSize = isSelected ? 28 : 30;
+      const pinSize = isSelected ? 36 : 30;
 
       // 2. Draw Destination Pulsing Green Dot when destination is set, or Circular Symbol Marker Pin when unselected
       const markerHtml = isSelected
         ? `
           <div class="mewar-destination-dot" style="
             position: relative;
-            width: 28px;
-            height: 28px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1698,21 +1700,38 @@ export const CampusGisMap = ({
           ">
             <span style="
               position: absolute;
+              width: 42px;
+              height: 42px;
+              border-radius: 50%;
+              background: rgba(16, 185, 129, 0.35);
+              animation: destPulse 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+            "></span>
+            <span style="
+              position: absolute;
               width: 28px;
               height: 28px;
               border-radius: 50%;
-              background: rgba(16, 185, 129, 0.4);
-              animation: destPulse 1.8s ease-out infinite;
+              background: rgba(16, 185, 129, 0.25);
             "></span>
             <span style="
               position: relative;
-              width: 14px;
-              height: 14px;
+              width: 16px;
+              height: 16px;
               border-radius: 50%;
               background: #10B981;
               border: 3px solid #FFFFFF;
-              box-shadow: 0 0 14px rgba(16, 185, 129, 0.95), 0 3px 8px rgba(0,0,0,0.4);
-            "></span>
+              box-shadow: 0 0 20px rgba(16, 185, 129, 1), 0 3px 8px rgba(0, 0, 0, 0.45);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            ">
+              <span style="
+                width: 4px;
+                height: 4px;
+                border-radius: 50%;
+                background: #FFFFFF;
+              "></span>
+            </span>
           </div>
         `
         : `
@@ -1743,14 +1762,19 @@ export const CampusGisMap = ({
         iconAnchor: [pinSize / 2, pinSize / 2],
       });
 
-      const marker = L.marker(markerPosition, { icon: markerIcon }).addTo(map);
+      const marker = L.marker(markerPosition, {
+        icon: markerIcon,
+        zIndexOffset: isSelected ? 1500 : 50,
+      }).addTo(map);
 
-      // Hover tooltip on the circular marker symbol
-      marker.bindTooltip(`<b>${bldg.shortName || bldg.name}</b>`, {
-        direction: 'top',
-        offset: [0, -(pinSize / 2 + 2)],
-        className: 'mewar-tooltip',
-      });
+      // Hover tooltip on the circular marker symbol (only when unselected)
+      if (!isSelected) {
+        marker.bindTooltip(`<b>${bldg.shortName || bldg.name}</b>`, {
+          direction: 'top',
+          offset: [0, -(pinSize / 2 + 2)],
+          className: 'mewar-tooltip',
+        });
+      }
 
       marker.bindPopup(`
         <div style="padding: 10px; font-family: Inter, sans-serif; min-width: 220px;">
@@ -2339,29 +2363,30 @@ export const CampusGisMap = ({
             className="campus-map-floating-card absolute bottom-3 inset-x-3 md:bottom-auto md:top-16 md:right-4 md:inset-x-auto flex items-center justify-between gap-3 animate-fadeIn"
             style={{
               zIndex: 450,
-              padding: '8px 12px',
-              minWidth: '220px',
-              maxWidth: '320px',
+              padding: '10px 14px',
+              minWidth: '290px',
+              maxWidth: '380px',
               cursor: 'pointer',
             }}
             onClick={() => setIsDestinationCardMinimized(false)}
             title="Click to expand destination card"
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
               <div
                 style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '8px',
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '10px',
                   backgroundColor: activeDestination.color || '#168567',
                   color: '#FFFFFF',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 800,
-                  fontSize: '13px',
+                  fontSize: '15px',
                   flexShrink: 0,
                   position: 'relative',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
                 }}
               >
                 <span>{activeDestination.icon || (activeDestination.shortName ? activeDestination.shortName.charAt(0) : '🏛️')}</span>
@@ -2370,21 +2395,21 @@ export const CampusGisMap = ({
                     position: 'absolute',
                     bottom: -1,
                     right: -1,
-                    width: '8px',
-                    height: '8px',
+                    width: '9px',
+                    height: '9px',
                     borderRadius: '50%',
                     backgroundColor: '#10B981',
-                    border: '1.5px solid #FFFFFF',
+                    border: '2px solid #FFFFFF',
                   }}
                 />
               </div>
-              <div style={{ minWidth: 0 }}>
+              <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: '3px' }}>
                 <div
                   style={{
-                    fontSize: '12.5px',
+                    fontSize: '13px',
                     fontWeight: 800,
                     color: 'var(--text-primary)',
-                    lineHeight: 1.2,
+                    lineHeight: 1.25,
                     fontFamily: 'var(--font-heading)',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
@@ -2393,24 +2418,52 @@ export const CampusGisMap = ({
                 >
                   {activeDestination.shortName || activeDestination.name}
                 </div>
-                <div style={{ fontSize: '10.5px', color: 'var(--brand-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <span>● Open</span>
-                  <span style={{ color: 'var(--text-muted)' }}>•</span>
-                  <span style={{ color: 'var(--text-secondary)' }}>{activeDestination.code || 'Campus Zone'}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '3.5px',
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      color: '#059669',
+                      background: 'rgba(16, 185, 129, 0.12)',
+                      padding: '1.5px 6px',
+                      borderRadius: '5px',
+                    }}
+                  >
+                    <span style={{ width: '4.5px', height: '4.5px', borderRadius: '50%', backgroundColor: '#10B981' }} />
+                    Open
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      color: '#4B5563',
+                      background: 'rgba(243, 244, 246, 0.95)',
+                      border: '1px solid #E5E7EB',
+                      padding: '1.5px 6px',
+                      borderRadius: '5px',
+                      letterSpacing: '0.02em',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {activeDestination.code || 'Campus Zone'}
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
               <button
                 type="button"
                 onClick={handleFitRoute}
                 title="Recenter Camera on Route"
                 aria-label="Recenter Camera"
                 style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '7px',
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '8px',
                   backgroundColor: 'var(--bg-surface-subtle)',
                   border: '1px solid var(--border-subtle)',
                   display: 'flex',
@@ -2421,7 +2474,7 @@ export const CampusGisMap = ({
                   transition: 'all 0.15s ease',
                 }}
               >
-                <Crosshair size={13} />
+                <Crosshair size={14} />
               </button>
               <button
                 type="button"
@@ -2429,9 +2482,9 @@ export const CampusGisMap = ({
                 title="Expand Destination Card"
                 aria-label="Expand Destination Card"
                 style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '7px',
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '8px',
                   backgroundColor: 'var(--brand-soft-bg)',
                   border: '1px solid var(--brand-soft-border)',
                   display: 'flex',
@@ -2442,30 +2495,30 @@ export const CampusGisMap = ({
                   transition: 'all 0.15s ease',
                 }}
               >
-                <Maximize2 size={13} />
+                <Maximize2 size={14} />
               </button>
             </div>
           </div>
         ) : (
           <div
-            className="campus-map-floating-card absolute bottom-3 inset-x-3 md:bottom-auto md:top-16 md:right-4 md:inset-x-auto flex flex-col gap-2.5 animate-fadeIn"
-            style={{ zIndex: 450 }}
+            className="campus-map-floating-card absolute bottom-3 inset-x-3 md:bottom-auto md:top-16 md:right-4 md:inset-x-auto flex flex-col gap-3 animate-fadeIn"
+            style={{ zIndex: 450, minWidth: '290px', maxWidth: '380px' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div
                   style={{
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '10px',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '12px',
                     backgroundColor: activeDestination.color || '#168567',
                     color: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 800,
-                    fontSize: '16px',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                    fontSize: '18px',
+                    boxShadow: '0 3px 10px rgba(0, 0, 0, 0.18)',
                     position: 'relative',
                   }}
                 >
@@ -2484,26 +2537,53 @@ export const CampusGisMap = ({
                   />
                 </div>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.25, fontFamily: 'var(--font-heading)' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.25, fontFamily: 'var(--font-heading)' }}>
                     {activeDestination.shortName || activeDestination.name}
                   </div>
-                  <div style={{ fontSize: '11px', color: 'var(--brand-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
-                    <span>● Open</span>
-                    <span style={{ color: 'var(--text-muted)' }}>•</span>
-                    <span style={{ color: 'var(--text-secondary)' }}>{activeDestination.code || 'Campus Zone'}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '3px' }}>
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '3.5px',
+                        fontSize: '10px',
+                        fontWeight: 700,
+                        color: '#059669',
+                        background: 'rgba(16, 185, 129, 0.12)',
+                        padding: '1.5px 6px',
+                        borderRadius: '5px',
+                      }}
+                    >
+                      <span style={{ width: '4.5px', height: '4.5px', borderRadius: '50%', backgroundColor: '#10B981' }} />
+                      Open
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '10px',
+                        fontWeight: 700,
+                        color: '#4B5563',
+                        background: 'rgba(243, 244, 246, 0.95)',
+                        border: '1px solid #E5E7EB',
+                        padding: '1.5px 6px',
+                        borderRadius: '5px',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      {activeDestination.code || 'Campus Zone'}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <button
                   type="button"
                   onClick={handleFitRoute}
                   title="Recenter Camera on Route"
                   aria-label="Recenter Camera on Route"
                   style={{
-                    width: '32px',
-                    height: '32px',
+                    width: '30px',
+                    height: '30px',
                     borderRadius: '8px',
                     backgroundColor: 'var(--bg-surface-subtle)',
                     border: '1px solid var(--border-subtle)',
@@ -2523,8 +2603,8 @@ export const CampusGisMap = ({
                   title="Minimize Destination Card"
                   aria-label="Minimize Destination Card"
                   style={{
-                    width: '32px',
-                    height: '32px',
+                    width: '30px',
+                    height: '30px',
                     borderRadius: '8px',
                     backgroundColor: 'var(--bg-surface-subtle)',
                     border: '1px solid var(--border-subtle)',
@@ -2548,29 +2628,29 @@ export const CampusGisMap = ({
             </div>
 
             {/* Action Row */}
-            <div style={{ display: 'flex', gap: '6px', marginTop: '2px' }}>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '2px' }}>
               <button
                 type="button"
                 onClick={handleFitRoute}
                 style={{
                   flex: 1,
-                  padding: '8px 12px',
-                  backgroundColor: 'var(--brand-primary)',
+                  padding: '9px 14px',
+                  background: 'linear-gradient(135deg, #168567 0%, #106c53 100%)',
                   border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '11.5px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
                   fontWeight: 700,
                   color: '#FFFFFF',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '5px',
-                  boxShadow: 'var(--shadow-brand-glow)',
+                  gap: '6px',
+                  boxShadow: '0 4px 12px rgba(22, 133, 103, 0.25)',
                   transition: 'all 0.15s ease',
                 }}
               >
-                <Navigation size={12} />
+                <Navigation size={13} />
                 <span>Fit Route</span>
               </button>
               {onOpenDetails && (
@@ -2578,17 +2658,17 @@ export const CampusGisMap = ({
                   type="button"
                   onClick={onOpenDetails}
                   style={{
-                    padding: '8px 12px',
+                    padding: '9px 14px',
                     backgroundColor: 'var(--brand-soft-bg)',
                     border: '1px solid var(--brand-soft-border)',
-                    borderRadius: '8px',
-                    fontSize: '11.5px',
+                    borderRadius: '10px',
+                    fontSize: '12px',
                     fontWeight: 700,
                     color: 'var(--brand-primary)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '4px',
+                    gap: '5px',
                     transition: 'all 0.15s ease',
                   }}
                 >

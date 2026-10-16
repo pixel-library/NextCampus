@@ -25,7 +25,7 @@ console.log('✅ Check 1 Passed: Badge-only exclusion removed; all landmarks ren
 
 // Check 2: Hover tooltip on polygons and markers
 console.log('\n[Check 2/5] Verifying tooltips display building names on hover...');
-const polyTooltipHover = campusGisContent.includes('poly.bindTooltip') && campusGisContent.includes('permanent: isSelected');
+const polyTooltipHover = campusGisContent.includes('poly.bindTooltip') && campusGisContent.includes('mewar-tooltip');
 const markerTooltipHover = campusGisContent.includes('marker.bindTooltip') && campusGisContent.includes('mewar-tooltip');
 if (!polyTooltipHover || !markerTooltipHover) {
   console.error('❌ Check 2 Failed: Tooltips on hover not properly configured');

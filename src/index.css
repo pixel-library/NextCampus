@@ -443,13 +443,14 @@ a:hover {
 }
 
 .campus-map-floating-card {
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(16px);
-  border-radius: var(--radius-xl);
-  padding: 16px 18px;
-  box-shadow: 0 18px 40px -8px rgba(20, 45, 40, 0.15), 0 0 0 1px var(--border-subtle);
-  min-width: 260px;
-  max-width: 330px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 20px 40px -10px rgba(15, 35, 30, 0.18), 0 0 0 1px rgba(228, 234, 229, 0.85);
+  min-width: 290px;
+  max-width: 380px;
   font-family: var(--font-body);
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
