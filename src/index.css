@@ -502,6 +502,17 @@ a:hover {
   cursor: pointer;
 }
 
+@keyframes destPulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
 
 
 @keyframes fadeIn {

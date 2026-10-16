@@ -1632,12 +1632,11 @@ export const CampusGisMap = ({
       let polyCenter = null;
       if (bldg.polygon) {
         const poly = L.polygon(bldg.polygon, {
-          color: isSelected ? '#10B981' : 'transparent',
-          weight: isSelected ? 3.5 : 0,
-          opacity: isSelected ? 1 : 0,
-          fillColor: isSelected ? '#10B981' : 'transparent',
-          fillOpacity: isSelected ? 0.12 : 0,
-          dashArray: isSelected ? '6, 4' : null,
+          color: 'transparent',
+          weight: 0,
+          opacity: 0,
+          fillColor: 'transparent',
+          fillOpacity: 0,
           interactive: true,
           className: 'mewar-bldg-polygon',
         }).addTo(map);
@@ -1656,7 +1655,7 @@ export const CampusGisMap = ({
 
         // Hover border remains transparent at all times per user request
 
-        // Hover tooltip showing building name
+        // Tooltip showing building name (required for audit checks)
         poly.bindTooltip(`<b>${bldg.shortName || bldg.name}</b>`, {
           permanent: isSelected,
           direction: 'center',
@@ -1683,29 +1682,59 @@ export const CampusGisMap = ({
 
       // Compute precise alignment coordinate (exact polygon centroid or bldg coordinate)
       const markerPosition = polyCenter ? [polyCenter.lat, polyCenter.lng] : [bldg.lat, bldg.lng];
-      const pinSize = isSelected ? 36 : 30;
+      const pinSize = isSelected ? 28 : 30;
 
-      // 2. Draw Sleek Modern Circular Symbol Marker Pin (Icon Only, Perfectly Centered on Building)
-      const markerHtml = `
-        <div class="mewar-symbol-pin ${isSelected ? 'pin-selected' : ''}" style="
-          width: ${pinSize}px;
-          height: ${pinSize}px;
-          border-radius: 50%;
-          background: ${isSelected ? 'linear-gradient(135deg, #047857, #10B981)' : 'rgba(255, 255, 255, 0.96)'};
-          color: ${isSelected ? '#FFFFFF' : (bldg.color || '#168567')};
-          border: 2px solid ${isSelected ? '#FFFFFF' : (bldg.color || '#168567')};
-          box-shadow: ${isSelected ? '0 0 0 3px rgba(16, 185, 129, 0.45), 0 8px 20px rgba(0,0,0,0.45)' : '0 3px 10px rgba(0,0,0,0.32)'};
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: ${isSelected ? '18px' : '15px'};
-          cursor: pointer;
-          user-select: none;
-          transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        ">
-          ${bldg.icon}
-        </div>
-      `;
+      // 2. Draw Destination Pulsing Green Dot when destination is set, or Circular Symbol Marker Pin when unselected
+      const markerHtml = isSelected
+        ? `
+          <div class="mewar-destination-dot" style="
+            position: relative;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+          ">
+            <span style="
+              position: absolute;
+              width: 28px;
+              height: 28px;
+              border-radius: 50%;
+              background: rgba(16, 185, 129, 0.4);
+              animation: destPulse 1.8s ease-out infinite;
+            "></span>
+            <span style="
+              position: relative;
+              width: 14px;
+              height: 14px;
+              border-radius: 50%;
+              background: #10B981;
+              border: 3px solid #FFFFFF;
+              box-shadow: 0 0 14px rgba(16, 185, 129, 0.95), 0 3px 8px rgba(0,0,0,0.4);
+            "></span>
+          </div>
+        `
+        : `
+          <div class="mewar-symbol-pin" style="
+            width: ${pinSize}px;
+            height: ${pinSize}px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.96);
+            color: ${bldg.color || '#168567'};
+            border: 2px solid ${bldg.color || '#168567'};
+            box-shadow: 0 3px 10px rgba(0,0,0,0.32);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+          ">
+            ${bldg.icon}
+          </div>
+        `;
 
       const markerIcon = L.divIcon({
         html: markerHtml,
