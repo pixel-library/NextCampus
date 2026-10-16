@@ -2158,29 +2158,29 @@ export const CampusMap = () => {
             className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full border shadow-md px-3.5 py-2 md:px-4 md:py-2 flex items-center gap-2 text-xs font-bold cursor-pointer transition-all"
             style={{
               zIndex: 500,
-              backgroundColor: 'rgba(15, 23, 42, 0.92)',
-              backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
-              color: '#FFFFFF',
-              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)',
+              backgroundColor: 'rgba(255, 255, 255, 0.96)',
+              backdropFilter: 'blur(16px)',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-primary)',
+              boxShadow: 'var(--shadow-md)',
             }}
           >
-            <Search size={14} style={{ color: '#10B981' }} />
+            <Search size={14} style={{ color: 'var(--brand-primary)' }} />
             <span><span className="hidden xs:inline">Campus </span>Directory &amp; Routes</span>
             <span
               style={{
                 fontSize: '10.5px',
-                color: '#10B981',
-                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                color: 'var(--brand-primary)',
+                backgroundColor: 'var(--brand-soft-bg)',
                 padding: '2px 7px',
                 borderRadius: '9999px',
                 fontWeight: 800,
-                border: '1px solid rgba(16, 185, 129, 0.35)',
+                border: '1px solid var(--brand-soft-border)',
               }}
             >
               {Object.keys(buildings).length}
             </span>
-            <ChevronsRight size={14} style={{ color: '#94A3B8' }} />
+            <ChevronsRight size={14} style={{ color: 'var(--text-muted)' }} />
           </button>
         )}
 
@@ -3191,12 +3191,12 @@ export const CampusMap = () => {
             zIndex: 45,
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: 'rgba(15, 23, 42, 0.92)',
-            backdropFilter: 'blur(12px)',
-            padding: '4px',
+            backgroundColor: 'rgba(255, 255, 255, 0.96)',
+            backdropFilter: 'blur(16px)',
+            padding: '3px',
             borderRadius: '10px',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)',
+            border: '1px solid var(--border-subtle)',
+            boxShadow: 'var(--shadow-md)',
             transition: 'right 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
@@ -3210,14 +3210,15 @@ export const CampusMap = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '5px',
-              padding: '6px 10px',
+              padding: '6px 11px',
               borderRadius: '7px',
               border: 'none',
               fontSize: '11px',
               fontWeight: 700,
               cursor: 'pointer',
-              backgroundColor: viewEngine === 'gis' ? '#3B82F6' : 'transparent',
-              color: viewEngine === 'gis' ? '#FFFFFF' : '#94A3B8',
+              backgroundColor: viewEngine === 'gis' ? 'var(--brand-primary)' : 'transparent',
+              color: viewEngine === 'gis' ? '#FFFFFF' : 'var(--text-secondary)',
+              boxShadow: viewEngine === 'gis' ? '0 2px 6px rgba(22, 133, 103, 0.25)' : 'none',
               transition: 'all 0.15s ease',
             }}
           >
@@ -3235,14 +3236,15 @@ export const CampusMap = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '5px',
-              padding: '6px 10px',
+              padding: '6px 11px',
               borderRadius: '7px',
               border: 'none',
               fontSize: '11px',
               fontWeight: 700,
               cursor: 'pointer',
-              backgroundColor: viewEngine === 'google-3d' ? '#2563EB' : 'transparent',
-              color: viewEngine === 'google-3d' ? '#FFFFFF' : '#94A3B8',
+              backgroundColor: viewEngine === 'google-3d' ? 'var(--brand-primary)' : 'transparent',
+              color: viewEngine === 'google-3d' ? '#FFFFFF' : 'var(--text-secondary)',
+              boxShadow: viewEngine === 'google-3d' ? '0 2px 6px rgba(22, 133, 103, 0.25)' : 'none',
               transition: 'all 0.15s ease',
             }}
           >

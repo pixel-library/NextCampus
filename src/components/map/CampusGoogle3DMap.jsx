@@ -660,13 +660,13 @@ export const CampusGoogle3DMap = ({
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'center',
-          gap: '8px',
-          padding: '8px 12px',
-          backgroundColor: 'rgba(15, 23, 42, 0.92)',
-          backdropFilter: 'blur(12px)',
+          gap: '6px',
+          padding: '6px 10px',
+          backgroundColor: 'rgba(255, 255, 255, 0.96)',
+          backdropFilter: 'blur(16px)',
           borderRadius: '12px',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: 'var(--shadow-md)',
         }}
       >
         {/* RECENTER BUTTON */}
@@ -678,13 +678,14 @@ export const CampusGoogle3DMap = ({
             alignItems: 'center',
             gap: '5px',
             padding: '5px 10px',
-            backgroundColor: 'rgba(37, 99, 235, 0.25)',
-            border: '1px solid rgba(37, 99, 235, 0.6)',
+            backgroundColor: 'var(--brand-soft-bg)',
+            border: '1px solid var(--brand-soft-border)',
             borderRadius: '6px',
-            color: '#60A5FA',
+            color: 'var(--brand-primary)',
             fontSize: '11px',
             fontWeight: 800,
             cursor: 'pointer',
+            transition: 'all 0.15s ease',
           }}
         >
           <Locate size={13} />
@@ -692,7 +693,7 @@ export const CampusGoogle3DMap = ({
         </button>
 
         {/* 3D TILT PRESETS */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
           {[
             { id: '20', label: 'Overview' },
             { id: '45', label: '45° Iso' },
@@ -704,12 +705,13 @@ export const CampusGoogle3DMap = ({
               style={{
                 padding: '4px 8px',
                 fontSize: '11px',
-                fontWeight: 600,
+                fontWeight: 700,
                 borderRadius: '6px',
                 border: 'none',
                 cursor: 'pointer',
-                backgroundColor: pitchMode === mode.id ? '#2563EB' : 'rgba(255, 255, 255, 0.08)',
-                color: '#FFFFFF',
+                backgroundColor: pitchMode === mode.id ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
+                color: pitchMode === mode.id ? '#FFFFFF' : 'var(--text-secondary)',
+                boxShadow: pitchMode === mode.id ? '0 2px 6px rgba(22, 133, 103, 0.25)' : 'none',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -728,12 +730,14 @@ export const CampusGoogle3DMap = ({
             gap: '4px',
             padding: '4px 8px',
             fontSize: '11px',
-            fontWeight: 600,
+            fontWeight: 700,
             borderRadius: '6px',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            backgroundColor: isOrbiting ? '#8B5CF6' : 'rgba(255, 255, 255, 0.08)',
-            color: '#FFF',
+            border: isOrbiting ? '1px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+            backgroundColor: isOrbiting ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
+            color: isOrbiting ? '#FFFFFF' : 'var(--text-secondary)',
+            boxShadow: isOrbiting ? '0 2px 6px rgba(22, 133, 103, 0.25)' : 'none',
             cursor: 'pointer',
+            transition: 'all 0.15s ease',
           }}
         >
           <RotateCcw size={12} className={isOrbiting ? 'animate-spin' : ''} />
@@ -749,12 +753,13 @@ export const CampusGoogle3DMap = ({
             gap: '4px',
             padding: '4px 8px',
             fontSize: '11px',
-            fontWeight: 600,
+            fontWeight: 700,
             borderRadius: '6px',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            backgroundColor: showLabels ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.08)',
-            color: showLabels ? '#38BDF8' : '#94A3B8',
+            border: showLabels ? '1px solid var(--brand-soft-border)' : '1px solid var(--border-subtle)',
+            backgroundColor: showLabels ? 'var(--brand-soft-bg)' : 'var(--bg-surface-subtle)',
+            color: showLabels ? 'var(--brand-primary)' : 'var(--text-secondary)',
             cursor: 'pointer',
+            transition: 'all 0.15s ease',
           }}
         >
           <MapPin size={12} />
@@ -785,12 +790,13 @@ export const CampusGoogle3DMap = ({
               gap: '4px',
               padding: '4px 8px',
               fontSize: '11px',
-              fontWeight: 600,
+              fontWeight: 700,
               borderRadius: '6px',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              backgroundColor: followUser ? 'rgba(16, 185, 129, 0.3)' : 'rgba(255, 255, 255, 0.08)',
-              color: followUser ? '#34D399' : '#94A3B8',
+              border: followUser ? '1px solid var(--brand-soft-border)' : '1px solid var(--border-subtle)',
+              backgroundColor: followUser ? 'var(--brand-soft-bg)' : 'var(--bg-surface-subtle)',
+              color: followUser ? 'var(--brand-primary)' : 'var(--text-secondary)',
               cursor: 'pointer',
+              transition: 'all 0.15s ease',
             }}
           >
             <Compass size={12} />

@@ -729,13 +729,13 @@ export const Campus3DMap = ({
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'center',
-          gap: '8px',
-          padding: '8px 12px',
-          backgroundColor: 'rgba(15, 23, 42, 0.92)',
-          backdropFilter: 'blur(12px)',
+          gap: '6px',
+          padding: '6px 10px',
+          backgroundColor: 'rgba(255, 255, 255, 0.96)',
+          backdropFilter: 'blur(16px)',
           borderRadius: '12px',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: 'var(--shadow-md)',
         }}
       >
         {/* 3D BADGE */}
@@ -743,12 +743,12 @@ export const Campus3DMap = ({
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
+            gap: '5px',
             padding: '4px 8px',
-            backgroundColor: 'rgba(16, 185, 129, 0.2)',
-            border: '1px solid rgba(16, 185, 129, 0.5)',
+            backgroundColor: 'var(--brand-soft-bg)',
+            border: '1px solid var(--brand-soft-border)',
             borderRadius: '6px',
-            color: '#10B981',
+            color: 'var(--brand-primary)',
             fontSize: '11px',
             fontWeight: 800,
             letterSpacing: '0.5px',
@@ -759,7 +759,7 @@ export const Campus3DMap = ({
         </div>
 
         {/* 3D PITCH PRESETS */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
           {[
             { id: '2d', label: '2D Flat' },
             { id: '3d-iso', label: '45° Iso' },
@@ -771,13 +771,13 @@ export const Campus3DMap = ({
               style={{
                 padding: '4px 8px',
                 fontSize: '11px',
-                fontWeight: 600,
+                fontWeight: 700,
                 borderRadius: '6px',
                 border: 'none',
                 cursor: 'pointer',
-                backgroundColor:
-                  pitchMode === mode.id ? '#10B981' : 'rgba(255, 255, 255, 0.08)',
-                color: pitchMode === mode.id ? '#0F172A' : '#CBD5E1',
+                backgroundColor: pitchMode === mode.id ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
+                color: pitchMode === mode.id ? '#FFFFFF' : 'var(--text-secondary)',
+                boxShadow: pitchMode === mode.id ? '0 2px 6px rgba(22, 133, 103, 0.25)' : 'none',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -796,12 +796,14 @@ export const Campus3DMap = ({
             gap: '4px',
             padding: '4px 8px',
             fontSize: '11px',
-            fontWeight: 600,
+            fontWeight: 700,
             borderRadius: '6px',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            backgroundColor: isOrbiting ? '#8B5CF6' : 'rgba(255, 255, 255, 0.08)',
-            color: '#FFF',
+            border: isOrbiting ? '1px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+            backgroundColor: isOrbiting ? 'var(--brand-primary)' : 'var(--bg-surface-subtle)',
+            color: isOrbiting ? '#FFFFFF' : 'var(--text-secondary)',
+            boxShadow: isOrbiting ? '0 2px 6px rgba(22, 133, 103, 0.25)' : 'none',
             cursor: 'pointer',
+            transition: 'all 0.15s ease',
           }}
         >
           <RotateCcw size={12} className={isOrbiting ? 'animate-spin' : ''} />
@@ -818,12 +820,13 @@ export const Campus3DMap = ({
             gap: '4px',
             padding: '4px 8px',
             fontSize: '11px',
-            fontWeight: 600,
+            fontWeight: 700,
             borderRadius: '6px',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            backgroundColor: showBadges ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.08)',
-            color: showBadges ? '#38BDF8' : '#94A3B8',
+            border: showBadges ? '1px solid var(--brand-soft-border)' : '1px solid var(--border-subtle)',
+            backgroundColor: showBadges ? 'var(--brand-soft-bg)' : 'var(--bg-surface-subtle)',
+            color: showBadges ? 'var(--brand-primary)' : 'var(--text-secondary)',
             cursor: 'pointer',
+            transition: 'all 0.15s ease',
           }}
         >
           <MapPin size={12} />
@@ -844,12 +847,13 @@ export const Campus3DMap = ({
             gap: '4px',
             padding: '4px 8px',
             fontSize: '11px',
-            fontWeight: 600,
+            fontWeight: 700,
             borderRadius: '6px',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            backgroundColor: snapToRoads ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.08)',
-            color: snapToRoads ? '#10B981' : '#94A3B8',
+            border: snapToRoads ? '1px solid var(--brand-soft-border)' : '1px solid var(--border-subtle)',
+            backgroundColor: snapToRoads ? 'var(--brand-soft-bg)' : 'var(--bg-surface-subtle)',
+            color: snapToRoads ? 'var(--brand-primary)' : 'var(--text-secondary)',
             cursor: 'pointer',
+            transition: 'all 0.15s ease',
           }}
         >
           <Route size={12} />

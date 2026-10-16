@@ -2124,16 +2124,16 @@ export const CampusGisMap = ({
           left: isNavPanelOpen ? '420px' : '264px',
           transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           zIndex: 25,
-          backgroundColor: 'rgba(15, 23, 42, 0.92)',
-          backdropFilter: 'blur(12px)',
+          backgroundColor: 'rgba(255, 255, 255, 0.96)',
+          backdropFilter: 'blur(16px)',
           borderRadius: '9999px',
           padding: '6px 14px',
-          border: '1px solid rgba(255, 255, 255, 0.16)',
+          border: '1px solid var(--border-subtle)',
           boxShadow: 'var(--shadow-md)',
           gap: '8px',
           fontSize: '11px',
           fontWeight: 700,
-          color: '#FFFFFF',
+          color: 'var(--text-primary)',
         }}
       >
         <span
@@ -2146,7 +2146,7 @@ export const CampusGisMap = ({
             display: 'inline-block',
           }}
         />
-        <Compass size={13} style={{ color: isLiveGpsActive ? '#10B981' : '#F59E0B' }} />
+        <Compass size={13} style={{ color: isLiveGpsActive ? 'var(--brand-primary)' : '#D97706' }} />
         <span>
           {isLiveGpsActive
             ? isOffCampus
@@ -2164,15 +2164,16 @@ export const CampusGisMap = ({
             onClick={handleCenterOnUser}
             title={isFollowActive ? 'Auto-following your position' : 'Click to center on your position'}
             style={{
-              background: isFollowActive ? 'rgba(16, 185, 129, 0.3)' : 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid #10B981',
-              color: '#34D399',
+              background: isFollowActive ? 'var(--brand-soft-bg)' : 'var(--bg-surface-subtle)',
+              border: isFollowActive ? '1px solid var(--brand-soft-border)' : '1px solid var(--border-subtle)',
+              color: isFollowActive ? 'var(--brand-primary)' : 'var(--text-secondary)',
               fontSize: '10px',
               fontWeight: 800,
               padding: '2px 8px',
               borderRadius: '999px',
               cursor: 'pointer',
               marginLeft: '4px',
+              transition: 'all 0.15s ease',
             }}
           >
             {isFollowActive ? 'Following You' : 'Center on Me'}
@@ -2183,15 +2184,16 @@ export const CampusGisMap = ({
             onClick={handleCenterOnUser}
             title="Start live GPS tracking"
             style={{
-              background: 'rgba(245, 158, 11, 0.2)',
-              border: '1px solid #F59E0B',
-              color: '#FCD34D',
+              background: 'var(--status-warning-bg)',
+              border: '1px solid var(--status-warning-border)',
+              color: 'var(--status-warning)',
               fontSize: '10px',
               fontWeight: 800,
               padding: '2px 8px',
               borderRadius: '999px',
               cursor: 'pointer',
               marginLeft: '4px',
+              transition: 'all 0.15s ease',
             }}
           >
             Enable GPS
@@ -2205,10 +2207,10 @@ export const CampusGisMap = ({
             title="Snap your live position to your campus hostel"
             style={{
               background: isOffCampus
-                ? 'linear-gradient(135deg, #10B981, #059669)'
-                : 'rgba(59, 130, 246, 0.25)',
-              border: isOffCampus ? '1px solid #34D399' : '1px solid #60A5FA',
-              color: '#FFFFFF',
+                ? 'var(--brand-soft-bg)'
+                : 'var(--bg-surface-subtle)',
+              border: isOffCampus ? '1px solid var(--brand-soft-border)' : '1px solid var(--border-subtle)',
+              color: isOffCampus ? 'var(--brand-primary)' : 'var(--text-secondary)',
               fontSize: '10px',
               fontWeight: 800,
               padding: '2px 9px',
@@ -2217,13 +2219,13 @@ export const CampusGisMap = ({
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
-              boxShadow: isOffCampus ? '0 2px 8px rgba(16, 185, 129, 0.4)' : 'none',
+              boxShadow: isOffCampus ? '0 1px 3px rgba(22, 133, 103, 0.1)' : 'none',
               transition: 'all 0.15s ease',
             }}
           >
             <span>🏨</span>
             <span>{userCoords?.isManualHostel ? userCoords.hostelName : "I'm in My Hostel"}</span>
-            <span style={{ fontSize: '8px', opacity: 0.8 }}>▼</span>
+            <span style={{ fontSize: '8px', opacity: 0.7 }}>▼</span>
           </button>
 
           {showHostelPicker && (
@@ -2234,10 +2236,10 @@ export const CampusGisMap = ({
                 marginTop: '8px',
                 left: '0',
                 width: '270px',
-                backgroundColor: 'rgba(15, 23, 42, 0.98)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--border-subtle)',
                 borderRadius: '12px',
-                boxShadow: '0 16px 36px rgba(0, 0, 0, 0.6)',
+                boxShadow: '0 16px 36px rgba(20, 45, 40, 0.15)',
                 padding: '10px',
                 zIndex: 1000,
                 backdropFilter: 'blur(16px)',
@@ -2250,14 +2252,14 @@ export const CampusGisMap = ({
                   alignItems: 'center',
                   marginBottom: '8px',
                   paddingBottom: '6px',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderBottom: '1px solid var(--border-subtle)',
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '11.5px', fontWeight: 800, color: '#F8FAFC' }}>
+                  <div style={{ fontSize: '11.5px', fontWeight: 800, color: 'var(--text-primary)' }}>
                     Select Your Hostel
                   </div>
-                  <div style={{ fontSize: '9.5px', color: '#94A3B8' }}>
+                  <div style={{ fontSize: '9.5px', color: 'var(--text-secondary)' }}>
                     Set your true campus start location
                   </div>
                 </div>
@@ -2267,7 +2269,7 @@ export const CampusGisMap = ({
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#94A3B8',
+                    color: 'var(--text-muted)',
                     cursor: 'pointer',
                     padding: '2px',
                   }}
@@ -2295,9 +2297,9 @@ export const CampusGisMap = ({
                       justifyContent: 'space-between',
                       padding: '6px 8px',
                       borderRadius: '6px',
-                      background: 'rgba(255, 255, 255, 0.05)',
+                      background: 'var(--bg-surface-subtle)',
                       border: '1px solid transparent',
-                      color: '#E2E8F0',
+                      color: 'var(--text-primary)',
                       fontSize: '11px',
                       fontWeight: 600,
                       textAlign: 'left',
@@ -2305,12 +2307,14 @@ export const CampusGisMap = ({
                       transition: 'all 0.15s ease',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)';
-                      e.currentTarget.style.borderColor = '#10B981';
+                      e.currentTarget.style.background = 'var(--brand-soft-bg)';
+                      e.currentTarget.style.borderColor = 'var(--brand-soft-border)';
+                      e.currentTarget.style.color = 'var(--brand-primary)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                      e.currentTarget.style.background = 'var(--bg-surface-subtle)';
                       e.currentTarget.style.borderColor = 'transparent';
+                      e.currentTarget.style.color = 'var(--text-primary)';
                     }}
                   >
                     <span>🛏️ {h.shortName}</span>
@@ -2321,9 +2325,13 @@ export const CampusGisMap = ({
                         borderRadius: '4px',
                         background:
                           h.tag === 'Girls'
-                            ? 'rgba(244, 63, 94, 0.2)'
-                            : 'rgba(59, 130, 246, 0.2)',
-                        color: h.tag === 'Girls' ? '#FDA4AF' : '#93C5FD',
+                            ? 'var(--status-danger-bg)'
+                            : 'var(--status-info-bg)',
+                        color: h.tag === 'Girls' ? 'var(--status-danger)' : 'var(--status-info)',
+                        border:
+                          h.tag === 'Girls'
+                            ? '1px solid var(--status-danger-border)'
+                            : '1px solid var(--status-info-border)',
                       }}
                     >
                       {h.tag}
@@ -2340,14 +2348,15 @@ export const CampusGisMap = ({
             onClick={handleRecenter}
             title="Focus on Mewar University Campus"
             style={{
-              background: 'rgba(56, 189, 248, 0.2)',
-              border: '1px solid #38BDF8',
-              color: '#38BDF8',
+              background: 'var(--bg-surface-subtle)',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--brand-primary)',
               fontSize: '10px',
               fontWeight: 800,
               padding: '2px 8px',
               borderRadius: '999px',
               cursor: 'pointer',
+              transition: 'all 0.15s ease',
             }}
           >
             Campus View
