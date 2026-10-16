@@ -24,6 +24,8 @@ import {
   Zap,
   Clock,
   Users,
+  Plus,
+  Minus,
 } from 'lucide-react';
 
 // Exact Centroid of Mewar University, Gangrar, Chittorgarh (Rajasthan, India)
@@ -1514,11 +1516,8 @@ export const CampusGisMap = ({
         if (onToggleAutoFollow) onToggleAutoFollow(false);
       });
 
-      // Initialize base tile layer with maxNativeZoom protection
+      // Base tile layer initialized (zoom controls provided by unified floating UI)
       tileLayerRef.current = createTileLayer(mapLayerStyle).addTo(map);
-
-      // Add Zoom Control bottom right
-      L.control.zoom({ position: 'bottomright' }).addTo(map);
 
       // Live Breadcrumb Trail Polyline
       breadcrumbsLayerRef.current = L.polyline([], {
@@ -2419,22 +2418,41 @@ export const CampusGisMap = ({
                   {activeDestination.shortName || activeDestination.name}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
-                  <span
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '3.5px',
-                      fontSize: '10px',
-                      fontWeight: 700,
-                      color: '#059669',
-                      background: 'rgba(16, 185, 129, 0.12)',
-                      padding: '1.5px 6px',
-                      borderRadius: '5px',
-                    }}
-                  >
-                    <span style={{ width: '4.5px', height: '4.5px', borderRadius: '50%', backgroundColor: '#10B981' }} />
-                    Open
-                  </span>
+                  {activeDestination.isCustom ? (
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '3.5px',
+                        fontSize: '10px',
+                        fontWeight: 700,
+                        color: '#0284C7',
+                        background: 'rgba(2, 132, 199, 0.12)',
+                        padding: '1.5px 6px',
+                        borderRadius: '5px',
+                      }}
+                    >
+                      <MapPin size={10} />
+                      Custom Pin
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '3.5px',
+                        fontSize: '10px',
+                        fontWeight: 700,
+                        color: '#059669',
+                        background: 'rgba(16, 185, 129, 0.12)',
+                        padding: '1.5px 6px',
+                        borderRadius: '5px',
+                      }}
+                    >
+                      <span style={{ width: '4.5px', height: '4.5px', borderRadius: '50%', backgroundColor: '#10B981' }} />
+                      Open
+                    </span>
+                  )}
                   <span
                     style={{
                       fontSize: '10px',
@@ -2448,7 +2466,7 @@ export const CampusGisMap = ({
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {activeDestination.code || 'Campus Zone'}
+                    {activeDestination.code || (activeDestination.isCustom ? `${activeDestination.lat.toFixed(4)}, ${activeDestination.lng.toFixed(4)}` : 'Campus Zone')}
                   </span>
                 </div>
               </div>
@@ -2541,22 +2559,41 @@ export const CampusGisMap = ({
                     {activeDestination.shortName || activeDestination.name}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '3px' }}>
-                    <span
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '3.5px',
-                        fontSize: '10px',
-                        fontWeight: 700,
-                        color: '#059669',
-                        background: 'rgba(16, 185, 129, 0.12)',
-                        padding: '1.5px 6px',
-                        borderRadius: '5px',
-                      }}
-                    >
-                      <span style={{ width: '4.5px', height: '4.5px', borderRadius: '50%', backgroundColor: '#10B981' }} />
-                      Open
-                    </span>
+                    {activeDestination.isCustom ? (
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '3.5px',
+                          fontSize: '10px',
+                          fontWeight: 700,
+                          color: '#0284C7',
+                          background: 'rgba(2, 132, 199, 0.12)',
+                          padding: '1.5px 6px',
+                          borderRadius: '5px',
+                        }}
+                      >
+                        <MapPin size={10} />
+                        Custom Pin
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '3.5px',
+                          fontSize: '10px',
+                          fontWeight: 700,
+                          color: '#059669',
+                          background: 'rgba(16, 185, 129, 0.12)',
+                          padding: '1.5px 6px',
+                          borderRadius: '5px',
+                        }}
+                      >
+                        <span style={{ width: '4.5px', height: '4.5px', borderRadius: '50%', backgroundColor: '#10B981' }} />
+                        Open
+                      </span>
+                    )}
                     <span
                       style={{
                         fontSize: '10px',
@@ -2569,7 +2606,7 @@ export const CampusGisMap = ({
                         letterSpacing: '0.02em',
                       }}
                     >
-                      {activeDestination.code || 'Campus Zone'}
+                      {activeDestination.code || (activeDestination.isCustom ? `${activeDestination.lat.toFixed(4)}, ${activeDestination.lng.toFixed(4)}` : 'Campus Zone')}
                     </span>
                   </div>
                 </div>
@@ -2624,7 +2661,7 @@ export const CampusGisMap = ({
             {/* Department / Zone */}
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', fontSize: '11.5px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
               <MapPin size={13} style={{ color: 'var(--brand-primary)', flexShrink: 0, marginTop: '2px' }} />
-              <span>{activeDestination.dept || 'Mewar University Academic Zone'}</span>
+              <span>{activeDestination.isCustom ? 'Clicked Point on Campus Map' : (activeDestination.dept || 'Mewar University Academic Zone')}</span>
             </div>
 
             {/* Action Row */}
@@ -2653,7 +2690,30 @@ export const CampusGisMap = ({
                 <Navigation size={13} />
                 <span>Fit Route</span>
               </button>
-              {onOpenDetails && (
+              {activeDestination.isCustom && onClearCustomDestination ? (
+                <button
+                  type="button"
+                  onClick={onClearCustomDestination}
+                  title="Clear Marked Destination"
+                  style={{
+                    padding: '9px 14px',
+                    backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                    border: '1px solid rgba(239, 68, 68, 0.25)',
+                    borderRadius: '10px',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: '#DC2626',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <X size={13} />
+                  <span>Clear</span>
+                </button>
+              ) : onOpenDetails ? (
                 <button
                   type="button"
                   onClick={onOpenDetails}
@@ -2674,7 +2734,7 @@ export const CampusGisMap = ({
                 >
                   <span>Details</span>
                 </button>
-              )}
+              ) : null}
             </div>
           </div>
         )
@@ -2726,9 +2786,9 @@ export const CampusGisMap = ({
         </div>
       )}
 
-      {/* FLOATING BOTTOM-RIGHT QUICK ACTIONS (LOCATE, FIT ROUTE, RECENTER, & LEGEND) */}
+      {/* FLOATING BOTTOM-RIGHT QUICK ACTIONS (LOCATE, FIT ROUTE, RECENTER, ZOOM & LEGEND) */}
       <div
-        className="absolute bottom-3 right-3 md:bottom-6 md:right-4 flex flex-col gap-2"
+        className="absolute bottom-3 right-3 md:bottom-6 md:right-4 flex flex-col gap-2 items-center"
         style={{ zIndex: 450 }}
       >
         <button
@@ -2822,6 +2882,61 @@ export const CampusGisMap = ({
         >
           <Maximize2 size={17} />
         </button>
+
+        {/* Unified Custom Zoom Controls */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            backgroundColor: 'rgba(255, 255, 255, 0.96)',
+            borderRadius: '11px',
+            border: '1px solid var(--border-subtle)',
+            boxShadow: 'var(--shadow-md)',
+            overflow: 'hidden',
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => mapInstanceRef.current?.zoomIn()}
+            title="Zoom In"
+            aria-label="Zoom In"
+            style={{
+              width: '40px',
+              height: '36px',
+              border: 'none',
+              background: 'transparent',
+              color: 'var(--text-primary)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderBottom: '1px solid var(--border-subtle)',
+              transition: 'background 0.15s ease',
+            }}
+          >
+            <Plus size={16} />
+          </button>
+          <button
+            type="button"
+            onClick={() => mapInstanceRef.current?.zoomOut()}
+            title="Zoom Out"
+            aria-label="Zoom Out"
+            style={{
+              width: '40px',
+              height: '36px',
+              border: 'none',
+              background: 'transparent',
+              color: 'var(--text-primary)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'background 0.15s ease',
+            }}
+          >
+            <Minus size={16} />
+          </button>
+        </div>
       </div>
     </div>
   );

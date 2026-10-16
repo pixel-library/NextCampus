@@ -1376,6 +1376,7 @@ export const CampusMap = () => {
     }
     if (!buildings[id]) return;
     setSelectedBldg(id);
+    setCustomDestination(null);
     setActiveStepIndex(0);
     if (INDOOR_BLUEPRINTS[id]) {
       const floors = Object.keys(INDOOR_BLUEPRINTS[id].floors);
@@ -2154,24 +2155,32 @@ export const CampusMap = () => {
             type="button"
             onClick={handleOpenNavPanel}
             title="Open Campus Directory & Routes"
-            className="absolute top-3 left-3 md:top-4 md:left-4 bg-white rounded-full border border-[var(--border-subtle)] shadow-md px-3.5 py-2 md:px-4 md:py-2 flex items-center gap-2 text-xs font-bold text-[var(--text-primary)] cursor-pointer hover:bg-white transition-all"
-            style={{ zIndex: 500, backgroundColor: '#FFFFFF' }}
+            className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full border shadow-md px-3.5 py-2 md:px-4 md:py-2 flex items-center gap-2 text-xs font-bold cursor-pointer transition-all"
+            style={{
+              zIndex: 500,
+              backgroundColor: 'rgba(15, 23, 42, 0.92)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              color: '#FFFFFF',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)',
+            }}
           >
-            <Search size={14} style={{ color: 'var(--brand-primary)' }} />
+            <Search size={14} style={{ color: '#10B981' }} />
             <span><span className="hidden xs:inline">Campus </span>Directory &amp; Routes</span>
             <span
               style={{
                 fontSize: '10.5px',
-                color: 'var(--brand-primary)',
-                backgroundColor: 'var(--brand-soft-bg)',
+                color: '#10B981',
+                backgroundColor: 'rgba(16, 185, 129, 0.2)',
                 padding: '2px 7px',
                 borderRadius: '9999px',
                 fontWeight: 800,
+                border: '1px solid rgba(16, 185, 129, 0.35)',
               }}
             >
               {Object.keys(buildings).length}
             </span>
-            <ChevronsRight size={14} style={{ color: 'var(--text-muted)' }} />
+            <ChevronsRight size={14} style={{ color: '#94A3B8' }} />
           </button>
         )}
 
@@ -3178,7 +3187,7 @@ export const CampusMap = () => {
           style={{
             position: 'absolute',
             top: '16px',
-            right: drawerOpen && windowWidth >= 1024 ? '396px' : '64px',
+            right: drawerOpen && windowWidth >= 1024 ? '396px' : '16px',
             zIndex: 45,
             display: 'flex',
             alignItems: 'center',
