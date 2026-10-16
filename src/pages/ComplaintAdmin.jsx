@@ -403,7 +403,7 @@ export function ComplaintAdmin() {
   };
 
   return (
-    <div className="flex flex-col w-full" style={{ color: 'var(--text-primary)' }}>
+    <div className="min-h-screen bg-[#F6F8F6] text-[#202A27] pb-16">
 
       {/* Toast */}
       {successToast && (
@@ -415,7 +415,7 @@ export function ComplaintAdmin() {
       )}
 
       {/* Header — exact same structure as AdminDashboard */}
-      <div className="rounded-2xl bg-[#142D28] text-white pt-8 pb-12 px-4 sm:px-8">
+      <div className="bg-[#142D28] text-white pt-8 pb-12 px-4 sm:px-8 border-b border-[#20443D]">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
@@ -439,8 +439,8 @@ export function ComplaintAdmin() {
         </div>
       </div>
 
-      {/* KPI Cards — exact same -mt-6 overlap + card structure as AdminDashboard */}
-      <div className="-mt-6">
+      {/* KPI Cards + rest of content — exact same -mt-6 + max-w-7xl container as AdminDashboard */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 -mt-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
           {/* Total Tickets */}
@@ -511,11 +511,10 @@ export function ComplaintAdmin() {
             </div>
           </div>
 
-        </div>
-      </div>
+        </div>{/* end KPI grid */}
 
-      {/* Main Split */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-6">
+        {/* Main Split — inside the same max-w-7xl container */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-6">
 
         {/* LEFT */}
         <div className="lg:col-span-7 flex flex-col gap-4">
@@ -947,6 +946,7 @@ export function ComplaintAdmin() {
           </div>
         </div>
       )}
+      </div>{/* end max-w-7xl content container */}
     </div>
   );
 }
