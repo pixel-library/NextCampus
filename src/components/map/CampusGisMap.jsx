@@ -1529,7 +1529,7 @@ export const CampusGisMap = ({
         lineCap: 'round',
       }).addTo(map);
 
-      // 1. INVERSE SHADED MASK: Subtle university perimeter shading
+      // 1. INVERSE SHADED MASK (Transparent for clean natural satellite view)
       const outerWorldPolygon = [
         [24.90, 74.50],
         [24.90, 74.80],
@@ -1537,27 +1537,20 @@ export const CampusGisMap = ({
         [25.15, 74.50],
       ];
       L.polygon([outerWorldPolygon, MEWAR_PERIMETER_POLYGON], {
-        color: '#142D28',
+        color: 'transparent',
         weight: 0,
-        fillColor: '#142D28',
-        fillOpacity: 0.12,
+        fillColor: 'transparent',
+        fillOpacity: 0,
         interactive: false,
       }).addTo(map);
 
-      // 2. OFFICIAL CAMPUS PERIMETER FENCE (OSM Way 549126310)
+      // 2. OFFICIAL CAMPUS PERIMETER FENCE (Transparent for unobstructed satellite view)
       perimeterLayerRef.current = L.polygon(MEWAR_PERIMETER_POLYGON, {
-        color: '#168567',
-        weight: 2.5,
-        fillColor: '#168567',
-        fillOpacity: 0.04,
-        dashArray: '6, 6',
-      })
-        .bindTooltip('🏫 Mewar University 30-Acre Campus Perimeter (Restricted)', {
-          permanent: false,
-          direction: 'center',
-          className: 'mewar-tooltip',
-        })
-        .addTo(map);
+        color: 'transparent',
+        weight: 0,
+        fillColor: 'transparent',
+        fillOpacity: 0,
+      }).addTo(map);
 
       // Static blue road overlay removed per user request to maintain clean natural satellite imagery
       roadsLayerRef.current = [];
@@ -1661,27 +1654,7 @@ export const CampusGisMap = ({
           if (onSelectBuilding) onSelectBuilding(key);
         });
 
-        // Hover highlight: provide a subtle emerald dashed outline on hover
-        poly.on('mouseover', () => {
-          if (!isSelected) {
-            poly.setStyle({
-              color: '#10B981',
-              weight: 2,
-              opacity: 0.85,
-              dashArray: '4, 4',
-            });
-          }
-        });
-        poly.on('mouseout', () => {
-          if (!isSelected) {
-            poly.setStyle({
-              color: 'transparent',
-              weight: 0,
-              opacity: 0,
-              dashArray: null,
-            });
-          }
-        });
+        // Hover border remains transparent at all times per user request
 
         // Hover tooltip showing building name
         poly.bindTooltip(`<b>${bldg.shortName || bldg.name}</b>`, {
