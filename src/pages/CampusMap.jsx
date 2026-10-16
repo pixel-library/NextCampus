@@ -1485,11 +1485,35 @@ export const CampusMap = () => {
           setGpsError(
             'GPS Permission Denied. Please enable location permissions in browser settings to track live movement.'
           );
-        } else if (err.code === 2) {
-          setGpsError('Unable to acquire accurate GPS position.');
+        } else if (err.code === 3 || err.code === 2) {
+          // Fallback to standard network-based geolocation if high-accuracy satellite lock times out or is unavailable
+          navigator.geolocation.getCurrentPosition(
+            (fallbackPos) => {
+              setIsLiveGpsActive(true);
+              setStartPointMode('gps');
+              setGpsError('');
+              const { latitude, longitude, accuracy } = fallbackPos.coords;
+              setUserCoords({
+                lat: latitude,
+                lng: longitude,
+                accuracy: Math.round(accuracy || 20),
+                heading: lastHeadingRef.current || 0,
+                speed: 1.2,
+                timestamp: fallbackPos.timestamp || Date.now(),
+              });
+              if (!hasCenteredInitiallyRef.current) {
+                hasCenteredInitiallyRef.current = true;
+                triggerToast(`📍 Live Location Active (Standard Accuracy: ±${Math.round(accuracy || 20)}m)`);
+              }
+            },
+            () => {
+              setGpsError('Unable to acquire GPS position. Please check your browser location settings.');
+            },
+            { enableHighAccuracy: false, maximumAge: 30000, timeout: 10000 }
+          );
         }
       },
-      { enableHighAccuracy: true, maximumAge: 1000, timeout: 15000 }
+      { enableHighAccuracy: true, maximumAge: 2000, timeout: 10000 }
     );
   }, []);
 
@@ -1504,6 +1528,7 @@ export const CampusMap = () => {
       setStartPointMode('gate');
       triggerToast('Live GPS tracking paused');
     } else {
+      hasCenteredInitiallyRef.current = false;
       startLiveGpsTracking();
       triggerToast('Starting live GPS tracking...');
     }
@@ -2569,7 +2594,10 @@ export const CampusMap = () => {
                         const val = e.target.value;
                         setStartLocationId(val);
                         if (val === 'gps') {
-                          toggleLiveGps();
+                          if (!isLiveGpsActive) {
+                            startLiveGpsTracking();
+                          }
+                          triggerToast('Starting point set to Live GPS');
                         } else {
                           if (isLiveGpsActive) toggleLiveGps();
                           const loc = CAMPUS_GIS_LOCATIONS[val] || CAMPUS_GIS_LOCATIONS.gate;
@@ -3287,6 +3315,8 @@ export const CampusMap = () => {
               setUserCoords={setUserCoords}
               isLiveGpsActive={isLiveGpsActive}
               setIsLiveGpsActive={setIsLiveGpsActive}
+              onStartLiveGps={startLiveGpsTracking}
+              onToggleLiveGps={toggleLiveGps}
               isSimulatingWalk={isSimulatingWalk}
               setIsSimulatingWalk={setIsSimulatingWalk}
               simulationProgress={simulationProgress}

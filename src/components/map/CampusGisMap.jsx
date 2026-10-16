@@ -1305,7 +1305,10 @@ export function findShortestCampusRoute(startCoords, destCoords, maxStepMeters =
 
   // Assemble full geometric waypoint sequence
   const rawWaypoints = [];
-  rawWaypoints.push([sLat, sLng]);
+  const distStartToCampus = calculateDistanceMeters(sLat, sLng, DEFAULT_CAMPUS_CENTER[0], DEFAULT_CAMPUS_CENTER[1]);
+  if (distStartToCampus <= 1500) {
+    rawWaypoints.push([sLat, sLng]);
+  }
 
   pathKeys.forEach((key) => {
     const pt = MEWAR_CAMPUS_GRAPH.nodes[key];
@@ -1364,6 +1367,19 @@ function interpolateRoute(start, end, numPoints = 18) {
 }
 
 
+export const CAMPUS_HOSTEL_OPTIONS = [
+  { id: 'kumbha', name: 'Maharana Kumbha Boys Hostel', shortName: 'Kumbha Hostel', tag: 'Boys' },
+  { id: 'pratap', name: 'Maharana Pratap Boys Hostel', shortName: 'Pratap Hostel', tag: 'Boys' },
+  { id: 'badal', name: 'Badal Boys Residential Hostel', shortName: 'Badal Hostel', tag: 'Boys' },
+  { id: 'sanaga', name: 'Sanga Boys Hostel', shortName: 'Sanga Hostel', tag: 'Boys' },
+  { id: 'bhamasha', name: 'Bhamasha Boys Hostel', shortName: 'Bhamasha Hostel', tag: 'Boys' },
+  { id: 'gora', name: 'Hospital and Gora Hostel', shortName: 'Gora Hostel', tag: 'Boys' },
+  { id: 'mira', name: 'Mira Girls Residential Hostel', shortName: 'Mira Hostel', tag: 'Girls' },
+  { id: 'padmani', name: 'Padmani Girls Hostel', shortName: 'Padmani Hostel', tag: 'Girls' },
+  { id: 'panna', name: 'Panna Girls Residential Hostel', shortName: 'Panna Hostel', tag: 'Girls' },
+  { id: 'gate', name: 'Main Campus Gate 1 (NH-48)', shortName: 'Gate 1', tag: 'Gate' },
+];
+
 export const CampusGisMap = ({
   selectedBuildingKey = 'eng',
   onSelectBuilding,
@@ -1375,6 +1391,8 @@ export const CampusGisMap = ({
   setUserCoords,
   isLiveGpsActive,
   setIsLiveGpsActive,
+  onStartLiveGps,
+  onToggleLiveGps,
   isSimulatingWalk,
   setIsSimulatingWalk,
   simulationProgress,
@@ -1410,21 +1428,41 @@ export const CampusGisMap = ({
   const [mapLayerStyle, setMapLayerStyle] = useState('satellite');
   // Toggleable Map Legend
   const [showLegend, setShowLegend] = useState(false);
-  // Campus EV Shuttles Live Tracker State
-  const [showShuttles, setShowShuttles] = useState(true);
-  const [activeShuttlePanel, setActiveShuttlePanel] = useState(false);
-  const [trackedShuttleId, setTrackedShuttleId] = useState(null);
-  const [liveShuttles, setLiveShuttles] = useState(SHUTTLE_DATA);
   // Minimizable active destination card
   const [isDestinationCardMinimized, setIsDestinationCardMinimized] = useState(false);
+  // Quick Hostel Picker when user is in hostel or off-campus IP is detected
+  const [showHostelPicker, setShowHostelPicker] = useState(false);
 
-  // Auto-open shuttle drawer if mobilityMode is 'shuttle'
-  useEffect(() => {
-    if (mobilityMode === 'shuttle') {
-      setActiveShuttlePanel(true);
-      setShowShuttles(true);
+  const handleSnapToHostel = (hostelKey) => {
+    const loc = CAMPUS_GIS_LOCATIONS[hostelKey] || CAMPUS_GIS_LOCATIONS.kumbha;
+    if (!loc) return;
+    const newCoords = {
+      lat: loc.lat,
+      lng: loc.lng,
+      accuracy: 5,
+      heading: 0,
+      speed: 1.2,
+      timestamp: Date.now(),
+      isManualHostel: true,
+      hostelName: loc.shortName || loc.name,
+    };
+    if (setUserCoords) {
+      setUserCoords(newCoords);
     }
-  }, [mobilityMode]);
+    if (setIsLiveGpsActive) {
+      setIsLiveGpsActive(true);
+    }
+    setLocalAutoFollow(true);
+    if (onToggleAutoFollow) onToggleAutoFollow(true);
+    setShowHostelPicker(false);
+    try {
+      localStorage.setItem('nc_preferred_hostel', hostelKey);
+    } catch (e) {}
+    const map = mapInstanceRef.current;
+    if (map) {
+      map.flyTo([loc.lat, loc.lng], 18.5, { animate: true, duration: 1 });
+    }
+  };
 
   // Restore destination card when destination changes
   useEffect(() => {
@@ -1457,8 +1495,13 @@ export const CampusGisMap = ({
       const map = L.map(mapContainerRef.current, {
         center: initialCenter,
         zoom: 17.5,
-        minZoom: 3, // Allow full zoom out so off-campus location and route context can be viewed
+        minZoom: 16.2, // Prevents user from minimizing / zooming out beyond campus boundary
         maxZoom: 20, // High-resolution building footprint & pathway zoom (upscaled cleanly beyond native zoom)
+        maxBounds: [
+          [25.0230, 74.6280], // SW buffer around NH-48 & Gate 1
+          [25.0420, 74.6440], // NE buffer around North Living Quad & sports grounds
+        ],
+        maxBoundsViscosity: 0.9, // Firm elastic resistance against panning outside campus
         zoomControl: false,
         attributionControl: false,
       });
@@ -1539,6 +1582,20 @@ export const CampusGisMap = ({
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
+      userMarkerRef.current = null;
+      userAccuracyCircleRef.current = null;
+      breadcrumbsLayerRef.current = null;
+      customDestMarkerRef.current = null;
+      routeCasingPolylineRef.current = null;
+      routePolylineRef.current = null;
+      routePulsePolylineRef.current = null;
+      buildingMarkersRef.current = {};
+      buildingPolygonsRef.current = {};
+      tileLayerRef.current = null;
+      perimeterLayerRef.current = null;
+      roadsLayerRef.current = [];
+      shuttleMarkersRef.current = {};
+      shuttlePathLayersRef.current = {};
     };
   }, []);
 
@@ -1561,128 +1618,6 @@ export const CampusGisMap = ({
     tileLayerRef.current = createTileLayer(mapLayerStyle).addTo(map);
   }, [mapLayerStyle]);
 
-  // Live EV Campus Shuttle Real-Time Tracking & Dynamic Path Interpolation Loop
-  useEffect(() => {
-    const map = mapInstanceRef.current;
-    if (!map) return;
-
-    if (!showShuttles) {
-      Object.values(shuttleMarkersRef.current).forEach((m) => {
-        try { map.removeLayer(m); } catch {}
-      });
-      shuttleMarkersRef.current = {};
-      Object.values(shuttlePathLayersRef.current).forEach((p) => {
-        try { map.removeLayer(p); } catch {}
-      });
-      shuttlePathLayersRef.current = {};
-      return;
-    }
-
-    // Render subtle dashed transit route paths on map
-    SHUTTLE_DATA.forEach((shuttle) => {
-      if (!shuttlePathLayersRef.current[shuttle.id]) {
-        const polyline = L.polyline(shuttle.waypoints, {
-          color: shuttle.color,
-          weight: 3,
-          opacity: 0.55,
-          dashArray: '6, 8',
-          interactive: false,
-        }).addTo(map);
-        shuttlePathLayersRef.current[shuttle.id] = polyline;
-      }
-    });
-
-    let stepCounter = 0;
-    const interval = setInterval(() => {
-      stepCounter += 1;
-
-      setLiveShuttles((prevShuttles) =>
-        prevShuttles.map((shuttle, sIdx) => {
-          const waypoints = shuttle.waypoints;
-          const totalPoints = waypoints.length;
-          // Offset each shuttle slightly so they don't sync exactly
-          const effectiveStep = (stepCounter + sIdx * 5) % (totalPoints * 10);
-          const currIndex = Math.floor(effectiveStep / 10) % totalPoints;
-          const nextIndex = (currIndex + 1) % totalPoints;
-          const fraction = (effectiveStep % 10) / 10;
-
-          const p1 = waypoints[currIndex];
-          const p2 = waypoints[nextIndex];
-          const lat = p1[0] + (p2[0] - p1[0]) * fraction;
-          const lng = p1[1] + (p2[1] - p1[1]) * fraction;
-
-          // Next stop prediction
-          const nextStopName = shuttle.stops[(currIndex + 1) % shuttle.stops.length] || shuttle.stops[0];
-          const nextEtaMins = Math.max(1, Math.round((1 - fraction) * 3));
-
-          // Update Leaflet marker
-          if (!shuttleMarkersRef.current[shuttle.id]) {
-            const shuttleIcon = L.divIcon({
-              className: 'custom-shuttle-marker',
-              html: `
-                <div style="position:relative; display:flex; flex-direction:column; align-items:center; transform:translate(-50%, -50%); cursor:pointer;">
-                  <div style="background:${shuttle.color}; color:#FFFFFF; font-size:10px; font-weight:800; font-family:monospace; padding:3px 7px; border-radius:999px; box-shadow:0 3px 8px rgba(0,0,0,0.35); border:1.5px solid #FFFFFF; display:flex; align-items:center; gap:3px; white-space:nowrap;">
-                    <span>🚐</span>
-                    <span>${shuttle.code}</span>
-                    <span style="opacity:0.85; font-size:9px;">${shuttle.speed}km/h</span>
-                  </div>
-                  <div style="width:14px; height:14px; border-radius:50%; background:${shuttle.color}; border:2.5px solid #FFFFFF; box-shadow:0 0 10px ${shuttle.color}; margin-top:2px;"></div>
-                </div>
-              `,
-              iconSize: [80, 40],
-              iconAnchor: [40, 20],
-            });
-
-            const marker = L.marker([lat, lng], { icon: shuttleIcon, zIndexOffset: 850 }).addTo(map);
-
-            marker.bindPopup(`
-              <div style="font-family:system-ui, sans-serif; font-size:12px; min-width:210px; padding:2px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; border-bottom:1px solid #E2E8F0; padding-bottom:4px;">
-                  <span style="font-weight:800; color:${shuttle.color}; font-size:13px;">🚐 ${shuttle.name}</span>
-                  <span style="font-size:10px; font-family:monospace; background:${shuttle.color}15; color:${shuttle.color}; padding:2px 6px; border-radius:4px; font-weight:bold;">LIVE GPS</span>
-                </div>
-                <div style="display:flex; flex-direction:column; gap:4px; color:#475569; font-size:11px;">
-                  <div>Route: <strong style="color:#0F172A;">${shuttle.routeLabel}</strong></div>
-                  <div>Next Stop: <strong style="color:#168567;">${nextStopName}</strong> (~${nextEtaMins} min)</div>
-                  <div>Live Speed: <strong>${shuttle.speed} km/h</strong> • EV Battery: <strong style="color:#059669;">${shuttle.battery}%</strong></div>
-                  <div>Capacity: <strong>${shuttle.occupancy}</strong></div>
-                </div>
-              </div>
-            `);
-
-            shuttleMarkersRef.current[shuttle.id] = marker;
-          } else {
-            shuttleMarkersRef.current[shuttle.id].setLatLng([lat, lng]);
-          }
-
-          if (trackedShuttleId === shuttle.id) {
-            map.panTo([lat, lng], { animate: true, duration: 0.8 });
-          }
-
-          return {
-            ...shuttle,
-            currentLat: lat,
-            currentLng: lng,
-            nextStop: nextStopName,
-            nextEta: `${nextEtaMins} mins`,
-          };
-        })
-      );
-    }, 1200);
-
-    return () => {
-      clearInterval(interval);
-      Object.values(shuttleMarkersRef.current).forEach((m) => {
-        try { map.removeLayer(m); } catch {}
-      });
-      shuttleMarkersRef.current = {};
-      Object.values(shuttlePathLayersRef.current).forEach((p) => {
-        try { map.removeLayer(p); } catch {}
-      });
-      shuttlePathLayersRef.current = {};
-    };
-  }, [showShuttles, trackedShuttleId]);
-
   // Render Highlighted Building Footprint Polygons & Markers
   useEffect(() => {
     const map = mapInstanceRef.current;
@@ -1698,15 +1633,23 @@ export const CampusGisMap = ({
       if (bldg.id !== key) return; // Avoid rendering duplicate polygons/markers for backwards-compatible aliases
       const isSelected = !customDestination && (key === selectedBuildingKey || bldg.id === selectedBuildingKey);
 
-      // 1. Draw Visible Building Footprint Polygon
+      // 1. Draw Visible Building Footprint Polygon (Transparent interior, crisp colored boundary)
+      let polyCenter = null;
       if (bldg.polygon) {
         const poly = L.polygon(bldg.polygon, {
-          color: isSelected ? '#10B981' : bldg.color,
-          weight: isSelected ? 4 : 2,
-          fillColor: isSelected ? '#10B981' : bldg.color,
-          fillOpacity: isSelected ? 0.35 : 0.15,
+          color: isSelected ? '#10B981' : (bldg.color || '#168567'),
+          weight: isSelected ? 3.5 : 2,
+          fillColor: 'transparent',
+          fillOpacity: 0,
           dashArray: isSelected ? '6, 4' : null,
+          interactive: true,
         }).addTo(map);
+
+        try {
+          polyCenter = poly.getBounds().getCenter();
+        } catch (e) {
+          polyCenter = null;
+        }
 
         poly.on('click', (ev) => {
           L.DomEvent.stopPropagation(ev);
@@ -1739,65 +1682,45 @@ export const CampusGisMap = ({
         buildingPolygonsRef.current[key] = poly;
       }
 
-      // 2. Draw Marker Pin with Icon & Badge for ALL Locations (including temple, parking, gym, cricket, volleyball, agriculture)
+      // Compute precise alignment coordinate (exact polygon centroid or bldg coordinate)
+      const markerPosition = polyCenter ? [polyCenter.lat, polyCenter.lng] : [bldg.lat, bldg.lng];
+      const pinSize = isSelected ? 36 : 30;
+
+      // 2. Draw Sleek Modern Circular Symbol Marker Pin (Icon Only, Perfectly Centered on Building)
       const markerHtml = `
-        <div style="
-          position: relative;
+        <div class="mewar-symbol-pin ${isSelected ? 'pin-selected' : ''}" style="
+          width: ${pinSize}px;
+          height: ${pinSize}px;
+          border-radius: 50%;
+          background: ${isSelected ? 'linear-gradient(135deg, #047857, #10B981)' : 'rgba(255, 255, 255, 0.96)'};
+          color: ${isSelected ? '#FFFFFF' : (bldg.color || '#168567')};
+          border: 2px solid ${isSelected ? '#FFFFFF' : (bldg.color || '#168567')};
+          box-shadow: ${isSelected ? '0 0 0 3px rgba(16, 185, 129, 0.45), 0 8px 20px rgba(0,0,0,0.45)' : '0 3px 10px rgba(0,0,0,0.32)'};
           display: flex;
           align-items: center;
-          gap: 6px;
+          justify-content: center;
+          font-size: ${isSelected ? '18px' : '15px'};
           cursor: pointer;
           user-select: none;
-          transform: translate(-50%, -50%);
+          transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         ">
-          <div style="
-            width: ${isSelected ? '38px' : '32px'};
-            height: ${isSelected ? '38px' : '32px'};
-            border-radius: 50%;
-            background-color: ${isSelected ? '#142D28' : '#FFFFFF'};
-            color: ${isSelected ? '#FFFFFF' : bldg.color};
-            border: 2.5px solid ${isSelected ? '#168567' : bldg.color};
-            box-shadow: 0 4px 14px rgba(20,45,40,0.28);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: ${isSelected ? '18px' : '15px'};
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-          ">
-            ${bldg.icon}
-          </div>
-          <div style="
-            background: ${isSelected ? '#10B981' : 'rgba(15, 23, 42, 0.92)'};
-            color: #FFFFFF;
-            font-size: 11px;
-            font-weight: 700;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            padding: 3px 8px;
-            border-radius: 9999px;
-            white-space: nowrap;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-            border: 1.5px solid ${isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.25)'};
-            margin-top: 3px;
-            pointer-events: none;
-          ">
-            ${bldg.shortName}
-          </div>
+          ${bldg.icon}
         </div>
       `;
 
       const markerIcon = L.divIcon({
         html: markerHtml,
         className: 'mewar-gis-marker',
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
+        iconSize: [pinSize, pinSize],
+        iconAnchor: [pinSize / 2, pinSize / 2],
       });
 
-      const marker = L.marker([bldg.lat, bldg.lng], { icon: markerIcon }).addTo(map);
+      const marker = L.marker(markerPosition, { icon: markerIcon }).addTo(map);
 
       // Hover tooltip on the circular marker symbol
       marker.bindTooltip(`<b>${bldg.shortName || bldg.name}</b>`, {
         direction: 'top',
-        offset: [0, -18],
+        offset: [0, -(pinSize / 2 + 2)],
         className: 'mewar-tooltip',
       });
 
@@ -1937,9 +1860,12 @@ export const CampusGisMap = ({
     }
 
     // 1. Route Casing (White outer halo for maximum GIS contrast against satellite imagery)
-    if (routeCasingPolylineRef.current) {
+    if (routeCasingPolylineRef.current && map.hasLayer(routeCasingPolylineRef.current)) {
       routeCasingPolylineRef.current.setLatLngs(routePoints);
     } else {
+      if (routeCasingPolylineRef.current) {
+        try { routeCasingPolylineRef.current.remove(); } catch (e) {}
+      }
       routeCasingPolylineRef.current = L.polyline(routePoints, {
         color: '#FFFFFF',
         weight: 8,
@@ -1951,12 +1877,15 @@ export const CampusGisMap = ({
     }
 
     // 2. Route Core Polyline (Google Maps Signature Royal Blue Ribbon)
-    if (routePolylineRef.current) {
+    if (routePolylineRef.current && map.hasLayer(routePolylineRef.current)) {
       routePolylineRef.current.setLatLngs(routePoints);
       routePolylineRef.current.setStyle({
         color: '#1D4ED8',
       });
     } else {
+      if (routePolylineRef.current) {
+        try { routePolylineRef.current.remove(); } catch (e) {}
+      }
       routePolylineRef.current = L.polyline(routePoints, {
         color: '#1D4ED8',
         weight: 4.8,
@@ -1967,9 +1896,12 @@ export const CampusGisMap = ({
     }
 
     // 3. Route Animated Pulse Line (Google Maps Directional Chevron / Dashed stream)
-    if (routePulsePolylineRef.current) {
+    if (routePulsePolylineRef.current && map.hasLayer(routePulsePolylineRef.current)) {
       routePulsePolylineRef.current.setLatLngs(routePoints);
     } else {
+      if (routePulsePolylineRef.current) {
+        try { routePulsePolylineRef.current.remove(); } catch (e) {}
+      }
       routePulsePolylineRef.current = L.polyline(routePoints, {
         color: '#93C5FD',
         weight: 2.6,
@@ -2033,21 +1965,29 @@ export const CampusGisMap = ({
       iconAnchor: [22, 22],
     });
 
-    if (userMarkerRef.current) {
+    const isMarkerAttached = userMarkerRef.current && map.hasLayer(userMarkerRef.current);
+    if (isMarkerAttached) {
       userMarkerRef.current.setLatLng([userCoords.lat, userCoords.lng]);
       const cone = userMarkerRef.current.getElement()?.querySelector('.user-live-cone');
       if (cone) {
         cone.style.transform = `rotate(${heading}deg)`;
       }
     } else {
+      if (userMarkerRef.current) {
+        try { userMarkerRef.current.remove(); } catch (e) {}
+      }
       userMarkerRef.current = L.marker([userCoords.lat, userCoords.lng], { icon: userIcon, zIndexOffset: 1000 }).addTo(map);
       userMarkerRef.current.bindTooltip('<b>Your Live Location</b>', { permanent: false, direction: 'top', className: 'mewar-tooltip' });
     }
 
-    if (userAccuracyCircleRef.current) {
+    const isCircleAttached = userAccuracyCircleRef.current && map.hasLayer(userAccuracyCircleRef.current);
+    if (isCircleAttached) {
       userAccuracyCircleRef.current.setLatLng([userCoords.lat, userCoords.lng]);
       userAccuracyCircleRef.current.setRadius(userCoords.accuracy || 8);
     } else {
+      if (userAccuracyCircleRef.current) {
+        try { userAccuracyCircleRef.current.remove(); } catch (e) {}
+      }
       userAccuracyCircleRef.current = L.circle([userCoords.lat, userCoords.lng], {
         radius: userCoords.accuracy || 8,
         color: '#10B981',
@@ -2057,17 +1997,32 @@ export const CampusGisMap = ({
       }).addTo(map);
     }
 
-    // Auto-follow user as they move with their device
+    // Auto-follow user as they move with their device (limit auto-pan to campus vicinity so desktop IP locations do not drag map 200km away)
     if (isFollowActive) {
-      map.panTo([userCoords.lat, userCoords.lng], { animate: true, duration: 0.5 });
+      const dist = calculateDistanceMeters(userCoords.lat, userCoords.lng, DEFAULT_CAMPUS_CENTER[0], DEFAULT_CAMPUS_CENTER[1]);
+      if (dist <= 5000) {
+        map.panTo([userCoords.lat, userCoords.lng], { animate: true, duration: 0.5 });
+      }
     }
   }, [userCoords, isFollowActive]);
 
   // Sync live breadcrumbs polyline on 2D map
   useEffect(() => {
-    if (breadcrumbsLayerRef.current && Array.isArray(breadcrumbs) && breadcrumbs.length > 0) {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    if (Array.isArray(breadcrumbs) && breadcrumbs.length > 0) {
       const latLngs = breadcrumbs.map(([lng, lat]) => [lat, lng]);
-      breadcrumbsLayerRef.current.setLatLngs(latLngs);
+      if (breadcrumbsLayerRef.current && map.hasLayer(breadcrumbsLayerRef.current)) {
+        breadcrumbsLayerRef.current.setLatLngs(latLngs);
+      } else {
+        breadcrumbsLayerRef.current = L.polyline(latLngs, {
+          color: '#10B981',
+          weight: 3.5,
+          opacity: 0.85,
+          dashArray: '6, 8',
+          lineCap: 'round',
+        }).addTo(map);
+      }
     }
   }, [breadcrumbs]);
 
@@ -2083,10 +2038,14 @@ export const CampusGisMap = ({
 
   const handleCenterOnUser = () => {
     const map = mapInstanceRef.current;
-    if (!map || !userCoords) return;
+    if (!isLiveGpsActive && onStartLiveGps) {
+      onStartLiveGps();
+    }
     setLocalAutoFollow(true);
     if (onToggleAutoFollow) onToggleAutoFollow(true);
-    map.flyTo([userCoords.lat, userCoords.lng], 18, { animate: true, duration: 1 });
+    if (map && userCoords?.lat && userCoords?.lng) {
+      map.flyTo([userCoords.lat, userCoords.lng], 18, { animate: true, duration: 0.8 });
+    }
   };
 
   const handleRecenter = () => {
@@ -2140,11 +2099,15 @@ export const CampusGisMap = ({
         <span>
           {isLiveGpsActive
             ? isOffCampus
-              ? `Live GPS Active • ${(distFromCampus / 1000).toFixed(1)} km from Campus • ±${userCoords?.accuracy || 6}m`
-              : `Live Location Active • Campus Zone • ±${userCoords?.accuracy || 6}m`
+              ? userCoords?.isManualHostel
+                ? `📍 Live in ${userCoords.hostelName} • Campus Zone`
+                : `Wi-Fi / IP Location • ${(distFromCampus / 1000).toFixed(1)} km from Campus`
+              : userCoords?.isManualHostel
+                ? `📍 Live in ${userCoords.hostelName} • Campus Zone`
+                : `Live Location Active • Campus Zone • ±${userCoords?.accuracy || 6}m`
             : 'Mewar University • 30-Acre Campus'}
         </span>
-        {isLiveGpsActive && (
+        {isLiveGpsActive ? (
           <button
             type="button"
             onClick={handleCenterOnUser}
@@ -2163,7 +2126,163 @@ export const CampusGisMap = ({
           >
             {isFollowActive ? 'Following You' : 'Center on Me'}
           </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleCenterOnUser}
+            title="Start live GPS tracking"
+            style={{
+              background: 'rgba(245, 158, 11, 0.2)',
+              border: '1px solid #F59E0B',
+              color: '#FCD34D',
+              fontSize: '10px',
+              fontWeight: 800,
+              padding: '2px 8px',
+              borderRadius: '999px',
+              cursor: 'pointer',
+              marginLeft: '4px',
+            }}
+          >
+            Enable GPS
+          </button>
         )}
+        {/* QUICK HOSTEL SNAP BUTTON (Essential for students on Wi-Fi / Laptops) */}
+        <div style={{ position: 'relative', display: 'inline-flex' }}>
+          <button
+            type="button"
+            onClick={() => setShowHostelPicker((prev) => !prev)}
+            title="Snap your live position to your campus hostel"
+            style={{
+              background: isOffCampus
+                ? 'linear-gradient(135deg, #10B981, #059669)'
+                : 'rgba(59, 130, 246, 0.25)',
+              border: isOffCampus ? '1px solid #34D399' : '1px solid #60A5FA',
+              color: '#FFFFFF',
+              fontSize: '10px',
+              fontWeight: 800,
+              padding: '2px 9px',
+              borderRadius: '999px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              boxShadow: isOffCampus ? '0 2px 8px rgba(16, 185, 129, 0.4)' : 'none',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <span>🏨</span>
+            <span>{userCoords?.isManualHostel ? userCoords.hostelName : "I'm in My Hostel"}</span>
+            <span style={{ fontSize: '8px', opacity: 0.8 }}>▼</span>
+          </button>
+
+          {showHostelPicker && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '100%',
+                marginTop: '8px',
+                left: '0',
+                width: '270px',
+                backgroundColor: 'rgba(15, 23, 42, 0.98)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '12px',
+                boxShadow: '0 16px 36px rgba(0, 0, 0, 0.6)',
+                padding: '10px',
+                zIndex: 1000,
+                backdropFilter: 'blur(16px)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '8px',
+                  paddingBottom: '6px',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '11.5px', fontWeight: 800, color: '#F8FAFC' }}>
+                    Select Your Hostel
+                  </div>
+                  <div style={{ fontSize: '9.5px', color: '#94A3B8' }}>
+                    Set your true campus start location
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowHostelPicker(false)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#94A3B8',
+                    cursor: 'pointer',
+                    padding: '2px',
+                  }}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+              <div
+                style={{
+                  maxHeight: '230px',
+                  overflowY: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                }}
+              >
+                {CAMPUS_HOSTEL_OPTIONS.map((h) => (
+                  <button
+                    key={h.id}
+                    type="button"
+                    onClick={() => handleSnapToHostel(h.id)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '6px 8px',
+                      borderRadius: '6px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid transparent',
+                      color: '#E2E8F0',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)';
+                      e.currentTarget.style.borderColor = '#10B981';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                      e.currentTarget.style.borderColor = 'transparent';
+                    }}
+                  >
+                    <span>🛏️ {h.shortName}</span>
+                    <span
+                      style={{
+                        fontSize: '9px',
+                        padding: '1px 5px',
+                        borderRadius: '4px',
+                        background:
+                          h.tag === 'Girls'
+                            ? 'rgba(244, 63, 94, 0.2)'
+                            : 'rgba(59, 130, 246, 0.2)',
+                        color: h.tag === 'Girls' ? '#FDA4AF' : '#93C5FD',
+                      }}
+                    >
+                      {h.tag}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
         {isOffCampus && (
           <button
             type="button"
@@ -2499,140 +2618,11 @@ export const CampusGisMap = ({
         </div>
       )}
 
-      {/* FLOATING CAMPUS TRANSIT & EV SHUTTLE TRACKER PANEL */}
-      {activeShuttlePanel && (
-        <div
-          className="absolute bottom-16 right-3 md:bottom-20 md:right-16 bg-white rounded-xl border border-[var(--border-subtle)] shadow-2xl p-4 min-w-[290px] max-w-[340px] flex flex-col gap-3 animate-fadeIn"
-          style={{ zIndex: 450, backgroundColor: '#FFFFFF' }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <div style={{ width: '24px', height: '24px', borderRadius: '6px', backgroundColor: '#EFF6FF', color: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Bus size={14} />
-              </div>
-              <div>
-                <span style={{ fontSize: '12px', fontWeight: 800, color: '#0F172A', display: 'block' }}>
-                  Live Campus EV Shuttles
-                </span>
-                <span style={{ fontSize: '10px', color: '#059669', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#059669', display: 'inline-block' }} />
-                  2 Shuttles Active • Zero Emission
-                </span>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => setActiveShuttlePanel(false)}
-              aria-label="Close campus transit panel"
-              style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer', padding: '2px' }}
-            >
-              <X size={15} />
-            </button>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {liveShuttles.map((shuttle) => (
-              <div
-                key={shuttle.id}
-                style={{
-                  padding: '10px',
-                  borderRadius: '10px',
-                  backgroundColor: trackedShuttleId === shuttle.id ? `${shuttle.color}0D` : '#F8FAFC',
-                  border: trackedShuttleId === shuttle.id ? `1.5px solid ${shuttle.color}` : '1px solid #E2E8F0',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '6px',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 800, color: shuttle.color }}>
-                      🚐 {shuttle.code}
-                    </span>
-                    <span style={{ fontSize: '9px', fontWeight: 700, backgroundColor: `${shuttle.color}15`, color: shuttle.color, padding: '2px 5px', borderRadius: '4px' }}>
-                      {shuttle.tag}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setTrackedShuttleId(trackedShuttleId === shuttle.id ? null : shuttle.id)}
-                    style={{
-                      fontSize: '10px',
-                      fontWeight: 700,
-                      padding: '3px 8px',
-                      borderRadius: '6px',
-                      border: 'none',
-                      backgroundColor: trackedShuttleId === shuttle.id ? shuttle.color : '#0F172A',
-                      color: '#FFFFFF',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {trackedShuttleId === shuttle.id ? 'Tracking ✓' : 'Track on Map'}
-                  </button>
-                </div>
-
-                <div style={{ fontSize: '11px', color: '#334155', fontWeight: 500, lineHeight: 1.3 }}>
-                  {shuttle.routeLabel}
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', fontSize: '10px', color: '#64748B', backgroundColor: '#FFFFFF', padding: '6px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
-                  <div>Next: <strong style={{ color: '#0F172A' }}>{shuttle.nextStop || shuttle.stops[0]}</strong></div>
-                  <div>ETA: <strong style={{ color: '#168567' }}>{shuttle.nextEta || '< 2 mins'}</strong></div>
-                  <div>Speed: <strong style={{ color: '#0F172A' }}>{shuttle.speed} km/h</strong></div>
-                  <div>EV Battery: <strong style={{ color: '#059669' }}>{shuttle.battery}%</strong></div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border-subtle)', paddingTop: '6px' }}>
-            <span style={{ fontSize: '10.5px', color: '#64748B' }}>Show Routes on Map</span>
-            <button
-              type="button"
-              onClick={() => setShowShuttles(!showShuttles)}
-              style={{
-                fontSize: '10.5px',
-                fontWeight: 700,
-                color: showShuttles ? '#2563EB' : '#94A3B8',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-              }}
-            >
-              {showShuttles ? 'Routes Visible ✓' : 'Hidden'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* FLOATING BOTTOM-RIGHT QUICK ACTIONS (LOCATE, FIT ROUTE, RECENTER, SHUTTLES & LEGEND) */}
+      {/* FLOATING BOTTOM-RIGHT QUICK ACTIONS (LOCATE, FIT ROUTE, RECENTER, & LEGEND) */}
       <div
         className="absolute bottom-3 right-3 md:bottom-6 md:right-4 flex flex-col gap-2"
         style={{ zIndex: 450 }}
       >
-        <button
-          type="button"
-          onClick={() => setActiveShuttlePanel(!activeShuttlePanel)}
-          title="Campus EV Transit & Live Shuttle Tracker"
-          aria-label="Campus EV Transit & Live Shuttle Tracker"
-          style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '11px',
-            backgroundColor: activeShuttlePanel ? '#2563EB' : 'rgba(255, 255, 255, 0.96)',
-            color: activeShuttlePanel ? '#FFFFFF' : '#2563EB',
-            border: '1px solid var(--border-subtle)',
-            boxShadow: 'var(--shadow-md)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.15s ease',
-          }}
-        >
-          <Bus size={18} />
-        </button>
-
         <button
           type="button"
           onClick={() => setShowLegend(!showLegend)}
@@ -2656,30 +2646,28 @@ export const CampusGisMap = ({
           <Info size={17} />
         </button>
 
-        {userCoords && (
-          <button
-            type="button"
-            onClick={handleCenterOnUser}
-            title="Center on My Location"
-            aria-label="Center on My Location"
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '11px',
-              backgroundColor: isLiveGpsActive ? 'var(--brand-primary)' : 'rgba(255, 255, 255, 0.96)',
-              color: isLiveGpsActive ? '#FFFFFF' : 'var(--brand-primary)',
-              border: '1px solid var(--border-subtle)',
-              boxShadow: 'var(--shadow-md)',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <Locate size={18} />
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={handleCenterOnUser}
+          title={isLiveGpsActive ? (isFollowActive ? 'Lock to My Location (Active)' : 'Center on My Location') : 'Enable Live GPS & Center'}
+          aria-label="Center on My Location"
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '11px',
+            backgroundColor: isLiveGpsActive ? 'var(--brand-primary)' : 'rgba(255, 255, 255, 0.96)',
+            color: isLiveGpsActive ? '#FFFFFF' : 'var(--brand-primary)',
+            border: isLiveGpsActive ? '1px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+            boxShadow: 'var(--shadow-md)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.15s ease',
+          }}
+        >
+          <Locate size={18} />
+        </button>
 
         <button
           type="button"
