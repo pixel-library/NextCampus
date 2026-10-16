@@ -496,6 +496,12 @@ a:hover {
   border-top-color: var(--brand-forest);
 }
 
+/* Transparent building polygons maintain click/hover interactivity */
+.mewar-bldg-polygon {
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+
 
 
 @keyframes fadeIn {

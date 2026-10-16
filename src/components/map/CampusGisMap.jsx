@@ -1635,16 +1635,18 @@ export const CampusGisMap = ({
       if (bldg.id !== key) return; // Avoid rendering duplicate polygons/markers for backwards-compatible aliases
       const isSelected = !customDestination && (key === selectedBuildingKey || bldg.id === selectedBuildingKey);
 
-      // 1. Draw Visible Building Footprint Polygon (Transparent interior, crisp colored boundary)
+      // 1. Draw Building Footprint Polygon (Transparent boundaries and interior for crystal-clear satellite view)
       let polyCenter = null;
       if (bldg.polygon) {
         const poly = L.polygon(bldg.polygon, {
-          color: isSelected ? '#10B981' : (bldg.color || '#168567'),
-          weight: isSelected ? 3.5 : 2,
-          fillColor: 'transparent',
-          fillOpacity: 0,
+          color: isSelected ? '#10B981' : 'transparent',
+          weight: isSelected ? 3.5 : 0,
+          opacity: isSelected ? 1 : 0,
+          fillColor: isSelected ? '#10B981' : 'transparent',
+          fillOpacity: isSelected ? 0.12 : 0,
           dashArray: isSelected ? '6, 4' : null,
           interactive: true,
+          className: 'mewar-bldg-polygon',
         }).addTo(map);
 
         try {
@@ -1657,6 +1659,28 @@ export const CampusGisMap = ({
           L.DomEvent.stopPropagation(ev);
           if (onClearCustomDestination) onClearCustomDestination();
           if (onSelectBuilding) onSelectBuilding(key);
+        });
+
+        // Hover highlight: provide a subtle emerald dashed outline on hover
+        poly.on('mouseover', () => {
+          if (!isSelected) {
+            poly.setStyle({
+              color: '#10B981',
+              weight: 2,
+              opacity: 0.85,
+              dashArray: '4, 4',
+            });
+          }
+        });
+        poly.on('mouseout', () => {
+          if (!isSelected) {
+            poly.setStyle({
+              color: 'transparent',
+              weight: 0,
+              opacity: 0,
+              dashArray: null,
+            });
+          }
         });
 
         // Hover tooltip showing building name
