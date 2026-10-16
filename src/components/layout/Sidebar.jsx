@@ -17,6 +17,7 @@ import {
   PanelLeftOpen,
   X,
   Compass,
+  Megaphone,
 } from 'lucide-react';
 import Logo from '../common/Logo';
 import { useAuth } from '../../hooks/useAuth';
@@ -43,6 +44,8 @@ export const Sidebar = ({ onClose, isCollapsed = false, onToggleCollapse }) => {
           title: 'Campus Administration',
           items: [
             { label: 'Admin Console', path: '/admin', icon: ShieldAlert, badge: 'PORTAL' },
+            { label: 'Campus Circulars', path: '/admin?tab=announcements', icon: Megaphone, badge: 'NEW' },
+            { label: 'Student View', path: '/dashboard', icon: LayoutDashboard },
             { label: 'Complaints & Care', path: '/admin/complaints', icon: LifeBuoy, badge: 'CARE' },
             { label: 'Gate Pass Appeals', path: '/admin?tab=gatepass', icon: ShieldCheck, badge: 'DESK' },
             { label: 'Student Directory', path: '/admin?tab=students', icon: Users },

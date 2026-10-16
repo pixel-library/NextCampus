@@ -36,8 +36,10 @@ import {
   BookOpen,
   ArrowRight,
   Timer,
+  Megaphone,
 } from 'lucide-react';
 import { getOutpassTimeInfo } from '../utils/outpassHelpers';
+import AnnouncementsPanel from '../components/dashboard/AnnouncementsPanel';
 
 export function AdminDashboard() {
   const { user } = useAuth();
@@ -45,9 +47,9 @@ export function AdminDashboard() {
   const [searchParams, setSearchParams] = useSearchParams();
   const urlTab = searchParams.get('tab');
   
-  // Tab state: 'overview' | 'students' | 'gatepass' | 'timetable' | 'mess'
+  // Tab state: 'overview' | 'students' | 'gatepass' | 'timetable' | 'mess' | 'announcements'
   const [activeTab, setActiveTabState] = useState(
-    urlTab && ['overview', 'students', 'gatepass', 'timetable', 'mess'].includes(urlTab)
+    urlTab && ['overview', 'students', 'gatepass', 'timetable', 'mess', 'announcements'].includes(urlTab)
       ? urlTab
       : 'overview'
   );
@@ -62,7 +64,7 @@ export function AdminDashboard() {
   };
 
   useEffect(() => {
-    if (urlTab && ['overview', 'students', 'gatepass', 'timetable', 'mess'].includes(urlTab)) {
+    if (urlTab && ['overview', 'students', 'gatepass', 'timetable', 'mess', 'announcements'].includes(urlTab)) {
       setActiveTabState(urlTab);
     } else if (!urlTab) {
       setActiveTabState('overview');
@@ -71,6 +73,12 @@ export function AdminDashboard() {
 
   const pageMeta = useMemo(() => {
     switch (activeTab) {
+      case 'announcements':
+        return {
+          tag: 'CAMPUS BROADCAST',
+          title: 'Campus Announcements & Circulars Manager',
+          description: 'Publish permanent notices, time-limited advisories with auto-expiry, pin priority bulletins, and attach posters for students.',
+        };
       case 'gatepass':
         return {
           tag: 'GATE PASS DESK',
@@ -530,7 +538,26 @@ export function AdminDashboard() {
         {activeTab === 'overview' && (
           <div className="space-y-6">
             {/* Quick Metrics KPI Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div
+                onClick={() => setActiveTab('announcements')}
+                className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:border-[#168567]/50 hover:shadow-md transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-[#EAF5EF] text-[#168567] flex items-center justify-center font-bold">
+                    <Megaphone size={20} />
+                  </div>
+                  <ArrowRight size={16} className="text-[#168567] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </div>
+                <div className="mt-4">
+                  <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Campus Circulars</span>
+                  <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">Live</div>
+                  <p className="text-xs text-[#87968D] mt-1">
+                    <span className="text-[#168567] font-bold">Broadcast Notices</span> • Timed / Pinned
+                  </p>
+                </div>
+              </div>
+
               <div
                 onClick={() => setActiveTab('students')}
                 className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:border-[#168567]/50 hover:shadow-md transition-all cursor-pointer group"
@@ -779,6 +806,43 @@ export function AdminDashboard() {
                     <span>Open Complaints Admin</span>
                     <ArrowRight size={14} />
                   </button>
+                </div>
+              </div>
+
+              {/* Module 6: Campus Announcements & Broadcast */}
+              <div className="p-6 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col justify-between md:col-span-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-[#EAF5EF] text-[#168567] flex items-center justify-center shrink-0">
+                      <Megaphone size={20} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-base font-extrabold text-[#202A27]">Campus Announcements & Circulars Manager</h3>
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF5EF] text-[#168567] border border-[#B7DEC9]">
+                          STUDENT BROADCAST
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#65736B] leading-relaxed mt-1">
+                        Broadcast official university notices, exams, and facility alerts directly to all student dashboards. Configure permanent notices, time-bound advisories with automatic countdown expiry, pin urgent circulars to the spotlight, and attach posters or images.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={() => navigate('/dashboard')}
+                      className="px-4 py-2.5 rounded-xl bg-[#F0F4F1] hover:bg-[#E4EAE5] text-[#202A27] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <span>Preview Student View</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('announcements')}
+                      className="px-5 py-2.5 rounded-xl bg-[#168567] hover:bg-[#126b53] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <span>Manage Circulars</span>
+                      <ArrowRight size={14} />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1556,6 +1620,15 @@ export function AdminDashboard() {
                 );
               })}
             </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB 5: CAMPUS ANNOUNCEMENTS & CIRCULARS
+            ========================================================================= */}
+        {activeTab === 'announcements' && (
+          <div className="space-y-6">
+            <AnnouncementsPanel forcedAdmin={true} />
           </div>
         )}
       </div>

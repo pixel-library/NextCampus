@@ -30,6 +30,9 @@ import {
   FileText,
   Printer,
   Calendar,
+  Megaphone,
+  Pin,
+  ImageIcon,
 } from 'lucide-react';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
@@ -43,15 +46,13 @@ import {
   calculateDurationHours,
   getOutpassTimeInfo,
 } from '../utils/outpassHelpers';
+import AnnouncementsPanel from '../components/dashboard/AnnouncementsPanel';
 
 export function StudentDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // If user is Admin, direct to Admin Console
-  if (user?.role === 'admin' || user?.role === 'care_admin' || user?.role === 'staff') {
-    return <Navigate to="/admin" replace />;
-  }
+  const isAdminUser = user?.role === 'admin' || user?.role === 'care_admin' || user?.role === 'staff';
 
 
   // AI Copilot State
@@ -261,6 +262,24 @@ export function StudentDashboard() {
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto pb-12 font-sans">
+      {/* Admin Mode Notice (If logged in as admin) */}
+      {isAdminUser && (
+        <div className="w-full bg-[#EAF5EF] border border-[#CBE2D4] rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#168567]">
+          <div className="flex items-center gap-2.5 font-medium">
+            <ShieldCheck size={18} className="shrink-0 text-[#168567]" />
+            <span>
+              <strong>Admin Mode Active:</strong> You are viewing the Student Dashboard with administrative control. You can publish, pin, and manage announcements below.
+            </span>
+          </div>
+          <Link
+            to="/admin"
+            className="inline-flex items-center gap-1 font-bold text-[#168567] hover:underline shrink-0"
+          >
+            Go to Admin Console →
+          </Link>
+        </div>
+      )}
+
       {/* =========================================================================
           1. HEADER GREETING & INSTITUTIONAL CONTEXT
           ========================================================================= */}
@@ -299,94 +318,10 @@ export function StudentDashboard() {
       </section>
 
       {/* =========================================================================
-          2. ACADEMIC OVERVIEW ROW: NEXT CLASS HERO (FULL-WIDTH)
+          2. CAMPUS ANNOUNCEMENTS PANEL
           ========================================================================= */}
       <section className="w-full">
-        {/* HERO LIVE CLASS SPOTLIGHT */}
-        <div className="w-full bg-white rounded-2xl border border-[#E4EAE5] shadow-xs p-4 sm:p-6 flex flex-col justify-between relative overflow-hidden">
-          <div>
-            <div className="flex flex-wrap items-center justify-between gap-2.5 mb-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2.5 py-1 rounded-full bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] font-mono text-xs font-bold flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#168567] animate-ping" />
-                  STARTS IN {formattedCountdown}
-                </span>
-                <span className="text-xs font-semibold text-[#65736B] font-mono">
-                  10:00 AM – 11:30 AM
-                </span>
-              </div>
-              <Badge variant="brand" size="sm">
-                Next Academic Session
-              </Badge>
-            </div>
-
-            <h2 className="text-lg sm:text-2xl font-black text-[#202A27] tracking-tight">
-              CS-301: Distributed Systems &amp; Cloud Infrastructure
-            </h2>
-
-            <div className="flex flex-wrap items-center gap-3 text-xs text-[#65736B] mt-2">
-              <div className="flex items-center gap-1.5 font-medium">
-                <span className="text-[#87968D]">Instructor:</span>
-                <span className="text-[#202A27] font-semibold">Prof. Ananya Roy</span>
-              </div>
-              <span className="text-[#D0DAD2] hidden sm:inline">•</span>
-              <div className="flex items-center gap-1.5 text-[#168567] font-semibold">
-                <MapPin size={14} className="shrink-0" />
-                <span>Faculty of Engineering (ENG-02), Room B-204</span>
-              </div>
-            </div>
-
-            {/* Live Room Telemetry Tiles */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-5 p-3 rounded-xl bg-[#F6F8F6] border border-[#E4EAE5]/80">
-              <div className="flex items-center gap-2.5 text-xs">
-                <div className="w-8 h-8 rounded-lg bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] flex items-center justify-center shrink-0">
-                  <Thermometer size={15} />
-                </div>
-                <div>
-                  <div className="text-[10px] text-[#87968D] uppercase font-semibold">Climate</div>
-                  <div className="font-bold text-[#202A27]">21.8°C Optimal</div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2.5 text-xs">
-                <div className="w-8 h-8 rounded-lg bg-[#EEF5FA] text-[#3478B8] border border-[#C9DFEE] flex items-center justify-center shrink-0">
-                  <Users size={15} />
-                </div>
-                <div>
-                  <div className="text-[10px] text-[#87968D] uppercase font-semibold">Occupancy</div>
-                  <div className="font-bold text-[#202A27]">48 / 60 Desks</div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2.5 text-xs">
-                <div className="w-8 h-8 rounded-lg bg-[#EAF5EF] text-[#168567] border border-[#CBE2D4] flex items-center justify-center shrink-0">
-                  <Wind size={15} />
-                </div>
-                <div>
-                  <div className="text-[10px] text-[#87968D] uppercase font-semibold">Air Quality</div>
-                  <div className="font-bold text-[#202A27]">410 ppm CO₂</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-5 mt-5 border-t border-[#E4EAE5] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <span className="text-xs text-[#65736B] flex items-center gap-1.5">
-              <CheckCircle2 size={15} className="text-[#168567] shrink-0" />
-              <span>Dual 4K Laser Projection Ready • Wi-Fi 7 Core AP Online</span>
-            </span>
-
-            <Button
-              variant="primary"
-              size="sm"
-              icon={Navigation}
-              className="w-full sm:w-auto justify-center"
-              onClick={() => navigate('/campus-map?bldg=eng&room=B-204')}
-            >
-              Navigate to Room B-204 (1.2 min walk)
-            </Button>
-          </div>
-        </div>
+        <AnnouncementsPanel />
       </section>
 
       {/* =========================================================================
