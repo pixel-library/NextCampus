@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/complaints', authenticateUser, careController.handleGetComplaints);
 router.get('/complaints/:id', authenticateUser, careController.handleGetComplaintById);
 router.post('/complaints', authenticateUser, upload.array('attachments', 3), careController.handleCreateComplaint);
+router.post('/complaints/:id/review', authenticateUser, careController.handleCreateComplaintReview);
 router.get('/my-complaints', authenticateUser, careController.handleGetComplaints);
 
 // Administrative & Technician Routes (Protected: Admin & Staff only)

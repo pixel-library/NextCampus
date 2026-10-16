@@ -40,8 +40,18 @@ import {
   ArrowLeft,
   Calendar,
   Radio,
-  FileCheck
+  FileCheck,
+  Star
 } from 'lucide-react';
+import {
+  getStoredComplaints,
+  saveStoredComplaints,
+  upsertComplaint,
+  addComplaintReviewInStorage,
+  updateComplaintStatusInStorage,
+  mergeServerComplaintsWithStorage,
+  subscribeToComplaints
+} from '../utils/complaintsStorage';
 
 // ============================================================================
 // DATA: Standard Institutional Grievances & CAFM Dispatch Tickets
@@ -213,9 +223,12 @@ export function CareComplaints() {
   // View Mode: 'tracker' (Default: Live Tracker & Incident Queue) or 'new_ticket' (Guided Form)
   const [activeViewMode, setActiveViewMode] = useState('tracker');
 
-  // Core Complaints State
-  const [complaints, setComplaints] = useState(INITIAL_COMPLAINTS);
-  const [selectedTicket, setSelectedTicket] = useState(INITIAL_COMPLAINTS[0]);
+  // Core Complaints State (Synchronized via complaintsStorage)
+  const [complaints, setComplaints] = useState(() => getStoredComplaints());
+  const [selectedTicket, setSelectedTicket] = useState(() => {
+    const list = getStoredComplaints();
+    return list[0] || INITIAL_COMPLAINTS[0];
+  });
 
   // Form State
   const [title, setTitle] = useState('');
@@ -242,6 +255,15 @@ export function CareComplaints() {
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Student Resolution Review Form State
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewHoverRating, setReviewHoverRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState('');
+  const [reviewTags, setReviewTags] = useState(['⚡ Fast Resolution', '✅ Issue Fully Fixed']);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewSuccess, setReviewSuccess] = useState('');
+  const [isEditingReview, setIsEditingReview] = useState(false);
+
   // Live SLA Countdown Timer Simulation (ticks every 1s)
   const [timerSecondsRemaining, setTimerSecondsRemaining] = useState(23 * 60 + 45);
 
@@ -252,6 +274,35 @@ export function CareComplaints() {
 
   // Image Lightbox Modal State
   const [lightboxImage, setLightboxImage] = useState(null);
+
+  // Sync review form state when selected ticket changes
+  useEffect(() => {
+    if (selectedTicket?.review) {
+      setReviewRating(selectedTicket.review.rating || 5);
+      setReviewComment(selectedTicket.review.comment || '');
+      setReviewTags(selectedTicket.review.tags || []);
+      setIsEditingReview(false);
+    } else {
+      setReviewRating(5);
+      setReviewComment('');
+      setReviewTags(['⚡ Fast Resolution', '✅ Issue Fully Fixed']);
+      setIsEditingReview(false);
+    }
+    setReviewSuccess('');
+  }, [selectedTicket?.ticketId, selectedTicket?._id]);
+
+  // Realtime subscription to shared storage updates across components & browser tabs
+  useEffect(() => {
+    const unsubscribe = subscribeToComplaints((updated) => {
+      setComplaints(updated);
+      setSelectedTicket((prev) => {
+        if (!prev) return updated[0];
+        const key = (prev.ticketId || prev._id || '').replace('#', '');
+        return updated.find((c) => (c.ticketId || c._id || '').replace('#', '') === key) || updated[0];
+      });
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Fetch complaints on load if user is logged in
   useEffect(() => {
@@ -280,7 +331,7 @@ export function CareComplaints() {
   // Update timer whenever selected ticket changes
   useEffect(() => {
     if (selectedTicket) {
-      if (selectedTicket.status === 'resolved') {
+      if (selectedTicket.status === 'resolved' || selectedTicket.status === 'closed') {
         setTimerSecondsRemaining(0);
       } else {
         const targetMins = selectedTicket.slaTargetMins || (selectedTicket.slaHours ? selectedTicket.slaHours * 60 : 45);
@@ -294,7 +345,7 @@ export function CareComplaints() {
   const fetchComplaints = async () => {
     try {
       const res = await api.get('/care/complaints');
-      if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
+      if (res && res.success && Array.isArray(res.data)) {
         // Normalize loaded tickets with existing client shape
         const normalized = res.data.map((item) => ({
           ...item,
@@ -303,11 +354,24 @@ export function CareComplaints() {
           statusText: formatStatusText(item.status),
           slaTargetMins: item.slaHours ? item.slaHours * 60 : (item.slaTargetMins || 45)
         }));
-        setComplaints(normalized);
-        if (normalized[0]) setSelectedTicket(normalized[0]);
+        const merged = mergeServerComplaintsWithStorage(normalized);
+        setComplaints(merged);
+        if (merged[0]) {
+          setSelectedTicket((prev) => {
+            if (!prev) return merged[0];
+            const key = (prev.ticketId || prev._id || '').replace('#', '');
+            return merged.find((c) => (c.ticketId || c._id || '').replace('#', '') === key) || merged[0];
+          });
+        }
+      } else {
+        const stored = getStoredComplaints();
+        setComplaints(stored);
+        if (stored[0] && !selectedTicket) setSelectedTicket(stored[0]);
       }
     } catch {
-      // Graceful fallback to initial rich complaints
+      const stored = getStoredComplaints();
+      setComplaints(stored);
+      if (stored[0] && !selectedTicket) setSelectedTicket(stored[0]);
     }
   };
 
@@ -467,6 +531,15 @@ export function CareComplaints() {
     setFileError('');
 
     const targetSla = priority === 'urgent' ? 30 : priority === 'high' ? 45 : priority === 'medium' ? 120 : 240;
+    const studentInfo = {
+      _id: user?.id || user?._id || 'usr_student_01',
+      id: user?.id || user?._id || 'usr_student_01',
+      name: user?.name || 'Rakesh Kumar',
+      email: user?.email || 'rakesh@nextcampus.edu',
+      department: user?.department || 'Department of Computer Science & Engineering',
+      rollNumber: user?.studentId || user?.enrollmentNumber || 'MUR2502101',
+      phone: user?.phone || '+91 98765 43210'
+    };
 
     try {
       let payload;
@@ -502,8 +575,11 @@ export function CareComplaints() {
           slaTargetMins: targetSla,
           minutesElapsed: 1,
           eta: `${targetSla} mins`,
+          studentId: studentInfo,
+          student: studentInfo,
+          authorName: studentInfo.name,
           steps: [
-            { id: 1, label: 'Ticket Logged & Ingested', status: 'completed', time: 'Just now', actor: user?.name || 'Student Portal' },
+            { id: 1, label: 'Ticket Logged & Ingested', status: 'completed', time: 'Just now', actor: studentInfo.name },
             { id: 2, label: 'Automated Telemetry Diagnostic', status: 'active', time: 'In Progress', actor: 'Sensor Engine' },
             { id: 3, label: 'Field Specialist Dispatched', status: 'pending', time: 'Queued', actor: 'Dispatch Desk' },
             { id: 4, label: 'Resolution & Student Sign-Off', status: 'pending', time: 'Pending', actor: 'Student Confirmed' }
@@ -511,12 +587,13 @@ export function CareComplaints() {
           updates: [
             {
               message: 'Grievance ticket registered into NextCampus CAFM & Central Facilities Council.',
-              updatedBy: user?.name || 'Student Requester',
+              updatedBy: studentInfo.name,
               role: 'Author',
               createdAt: 'Just now'
             }
           ]
         };
+        upsertComplaint(newDoc);
         setSubmitSuccess(`Ticket logged into CAFM database! Ticket ID: ${newTicketId}`);
         setComplaints((prev) => [newDoc, ...prev]);
         setSelectedTicket(newDoc);
@@ -524,7 +601,7 @@ export function CareComplaints() {
         setActiveViewMode('tracker');
       }
     } catch {
-      // Local fallback for smooth demonstration and resilient UX
+      // Local fallback with cross-tab persistence so Admin sees it immediately
       const simulatedTicketId = `#CMP-${Math.floor(1000 + Math.random() * 9000)}`;
       const localTicket = {
         _id: `local-${Date.now()}`,
@@ -538,7 +615,11 @@ export function CareComplaints() {
         building,
         location: `${building} - ${location.trim()}`,
         description: description.trim(),
+        studentId: studentInfo,
+        student: studentInfo,
+        authorName: studentInfo.name,
         assignedTo: 'Rapid Maintenance Unit Alpha',
+        assignedToName: 'Facilities Maintenance Dispatch',
         assignedRole: 'Campus Facilities Service Desk • Unit #FM-01',
         slaTargetMins: targetSla,
         minutesElapsed: 0,
@@ -547,7 +628,7 @@ export function CareComplaints() {
         attachments: filePreviewUrl ? [filePreviewUrl] : [],
         attachmentNames: fileAttachment ? [fileAttachment.name] : [],
         steps: [
-          { id: 1, label: 'Ticket Logged & Ingested', status: 'completed', time: 'Just now', actor: user?.name || 'Student' },
+          { id: 1, label: 'Ticket Logged & Ingested', status: 'completed', time: 'Just now', actor: studentInfo.name },
           { id: 2, label: 'Automated Telemetry Diagnostic', status: 'active', time: 'In Progress', actor: 'CAFM Diagnostic' },
           { id: 3, label: 'Field Specialist Dispatched', status: 'pending', time: 'Queued', actor: 'Dispatch Desk' },
           { id: 4, label: 'Resolution & Student Sign-Off', status: 'pending', time: 'Pending', actor: 'Student Confirmed' }
@@ -555,12 +636,13 @@ export function CareComplaints() {
         updates: [
           {
             message: 'Ticket registered into NextCampus Central Administrative Council & CAFM.',
-            updatedBy: user?.name || 'Student Requester',
+            updatedBy: studentInfo.name,
             role: 'Author',
             createdAt: 'Just now'
           }
         ]
       };
+      upsertComplaint(localTicket);
       setComplaints((prev) => [localTicket, ...prev]);
       setSelectedTicket(localTicket);
       setSubmitSuccess(`Ticket logged into CAFM database! Ticket ID: ${simulatedTicketId}`);
@@ -598,6 +680,7 @@ export function CareComplaints() {
       updates: [...(selectedTicket.updates || []), newUpdate]
     };
 
+    upsertComplaint(updatedTicket);
     setSelectedTicket(updatedTicket);
     setComplaints((prev) => prev.map((c) => (c._id === selectedTicket._id ? updatedTicket : c)));
     const savedText = replyText.trim();
@@ -618,25 +701,56 @@ export function CareComplaints() {
   };
 
   // Student confirms resolution sign-off
-  const handleStudentSignOff = () => {
+  const handleStudentSignOff = async () => {
     if (!selectedTicket) return;
-    const resolvedTicket = {
-      ...selectedTicket,
-      status: 'resolved',
-      statusText: 'Resolved & Student Verified',
-      steps: (selectedTicket.steps || []).map((st) => ({ ...st, status: 'completed' })),
-      updates: [
-        ...(selectedTicket.updates || []),
-        {
-          message: 'Student confirmed resolution sign-off. Ticket marked closed.',
-          updatedBy: user?.name || 'Student Requester',
-          role: 'Verified Sign-Off',
-          createdAt: 'Just now'
-        }
-      ]
+    const ticketKey = (selectedTicket._id || selectedTicket.ticketId || '').replace('#', '');
+    try {
+      await api.post(`/care/complaints/${ticketKey}/status`, {
+        status: 'resolved',
+        message: 'Student confirmed resolution sign-off. Ticket marked closed.'
+      }).catch(() => null);
+    } catch {}
+
+    updateComplaintStatusInStorage(
+      selectedTicket.ticketId || selectedTicket._id,
+      'resolved',
+      'Student confirmed resolution sign-off. Ticket marked closed.',
+      user?.name || 'Student Requester'
+    );
+  };
+
+  // Student submits or updates rating and review for completed complaint
+  const handleSubmitReview = async () => {
+    if (!selectedTicket || reviewRating < 1) return;
+    setIsSubmittingReview(true);
+    setReviewSuccess('');
+
+    const reviewPayload = {
+      rating: reviewRating,
+      comment: reviewComment.trim(),
+      tags: reviewTags,
+      reviewedBy: user?.name || selectedTicket.authorName || 'Student Requester'
     };
-    setSelectedTicket(resolvedTicket);
-    setComplaints((prev) => prev.map((c) => (c._id === selectedTicket._id ? resolvedTicket : c)));
+
+    try {
+      const ticketKey = (selectedTicket._id || selectedTicket.ticketId || '').replace('#', '');
+      await api.post(`/care/complaints/${ticketKey}/review`, reviewPayload).catch(() => null);
+    } finally {
+      const updatedTicket = addComplaintReviewInStorage(selectedTicket.ticketId || selectedTicket._id, reviewPayload);
+      if (updatedTicket) {
+        setSelectedTicket(updatedTicket);
+        setComplaints((prev) =>
+          prev.map((c) =>
+            (c.ticketId || c._id || '').replace('#', '') === (updatedTicket.ticketId || updatedTicket._id || '').replace('#', '')
+              ? updatedTicket
+              : c
+          )
+        );
+      }
+      setIsSubmittingReview(false);
+      setReviewSuccess('Thank you! Your resolution review has been submitted and shared with Central Administration.');
+      setIsEditingReview(false);
+    }
   };
 
   // Format timer seconds into mm:ss
@@ -1409,6 +1523,18 @@ export function CareComplaints() {
                             ></span>
                             <span>{ticket.statusText || ticket.status}</span>
                           </span>
+
+                          {ticket.review ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                              <Star className="w-3 h-3 fill-amber-400 text-amber-500" />
+                              <span>{ticket.review.rating}.0</span>
+                            </span>
+                          ) : isResolved ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">
+                              <Star className="w-3 h-3 text-emerald-600" />
+                              <span>Review</span>
+                            </span>
+                          ) : null}
                         </div>
                       </div>
 
@@ -1729,6 +1855,246 @@ export function CareComplaints() {
                     <span className="text-[11px] text-slate-500">
                       Signing off marks SLA achieved &amp; informs Central Facilities CAFM.
                     </span>
+                  </div>
+                )}
+
+                {/* =========================================================================
+                    STUDENT RESOLUTION REVIEW & SATISFACTION (TASK COMPLETE)
+                    ========================================================================= */}
+                {(selectedTicket.status === 'resolved' || selectedTicket.status === 'closed') && (
+                  <div className="pt-4 mt-2 border-t border-slate-200 flex flex-col gap-3.5">
+                    {selectedTicket.review && !isEditingReview ? (
+                      /* Verified Submitted Review Card */
+                      <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-50/80 via-white to-emerald-50/40 border border-amber-200/80 shadow-xs flex flex-col gap-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+                              <Star className="w-4 h-4 fill-amber-500 text-amber-600" />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-bold text-slate-900">
+                                  Student Resolution Review
+                                </span>
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                  Verified Sign-Off
+                                </span>
+                              </div>
+                              <span className="text-[11px] text-slate-500">
+                                Shared with Administration &amp; Facilities Dispatch
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => setIsEditingReview(true)}
+                            className="px-3 py-1 rounded-lg bg-white border border-slate-200 hover:border-slate-300 text-xs font-semibold text-slate-700 hover:text-slate-900 transition-colors cursor-pointer"
+                          >
+                            Edit Review
+                          </button>
+                        </div>
+
+                        {/* Star Rating Display */}
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-0.5">
+                            {[1, 2, 3, 4, 5].map((s) => (
+                              <Star
+                                key={s}
+                                className={`w-5 h-5 ${
+                                  s <= (selectedTicket.review.rating || 5)
+                                    ? 'fill-amber-400 text-amber-500'
+                                    : 'text-slate-200'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          <span className="text-sm font-black text-slate-900 font-mono">
+                            {selectedTicket.review.rating}.0 / 5.0
+                          </span>
+                          <span className="text-xs text-slate-500">
+                            {selectedTicket.review.rating === 5
+                              ? '• Outstanding Service'
+                              : selectedTicket.review.rating === 4
+                              ? '• Very Good Experience'
+                              : selectedTicket.review.rating === 3
+                              ? '• Satisfactory'
+                              : '• Follow-up Required'}
+                          </span>
+                        </div>
+
+                        {/* Comment quote */}
+                        {selectedTicket.review.comment && (
+                          <div className="p-3 rounded-xl bg-white border border-amber-100 text-xs sm:text-sm text-slate-700 italic leading-relaxed">
+                            "{selectedTicket.review.comment}"
+                          </div>
+                        )}
+
+                        {/* Tags */}
+                        {selectedTicket.review.tags && selectedTicket.review.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {selectedTicket.review.tags.map((tag, idx) => (
+                              <span
+                                key={idx}
+                                className="px-2.5 py-0.5 rounded-full bg-white border border-amber-200 text-[11px] font-semibold text-amber-900"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-amber-100/60">
+                          <span>Reviewed by {selectedTicket.review.reviewedBy || user?.name || 'Student'}</span>
+                          <span>{selectedTicket.review.createdAt ? new Date(selectedTicket.review.createdAt).toLocaleDateString() : 'Recently'}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Interactive Review Form */
+                      <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-white via-slate-50 to-[#EAF5EF]/30 border-2 border-[#168567]/30 shadow-sm flex flex-col gap-3.5">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                              <h3 className="text-sm sm:text-base font-bold text-slate-900">
+                                Task Completed • Share Your Review
+                              </h3>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-0.5">
+                              Please rate the resolution quality and technician dispatch to help administration maintain high campus standards.
+                            </p>
+                          </div>
+
+                          {selectedTicket.review && (
+                            <button
+                              onClick={() => setIsEditingReview(false)}
+                              className="text-xs text-slate-500 hover:text-slate-800 underline cursor-pointer"
+                            >
+                              Cancel
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Star Picker */}
+                        <div className="flex flex-col gap-1.5 p-3 rounded-xl bg-white border border-slate-200">
+                          <label className="text-[11px] font-mono uppercase tracking-wider text-slate-600 font-bold">
+                            Overall Resolution Rating:
+                          </label>
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1.5">
+                              {[1, 2, 3, 4, 5].map((star) => {
+                                const isFilled = (reviewHoverRating || reviewRating) >= star;
+                                return (
+                                  <button
+                                    key={star}
+                                    type="button"
+                                    onClick={() => setReviewRating(star)}
+                                    onMouseEnter={() => setReviewHoverRating(star)}
+                                    onMouseLeave={() => setReviewHoverRating(0)}
+                                    className="p-1 rounded-lg hover:scale-115 transition-transform cursor-pointer focus:outline-none"
+                                    aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                                  >
+                                    <Star
+                                      className={`w-6 h-6 transition-colors ${
+                                        isFilled
+                                          ? 'fill-amber-400 text-amber-500'
+                                          : 'text-slate-300 hover:text-amber-300'
+                                      }`}
+                                    />
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            <span className="text-xs sm:text-sm font-bold text-slate-800">
+                              {(reviewHoverRating || reviewRating) === 5
+                                ? '⭐⭐⭐⭐⭐ 5/5 (Exceptional)'
+                                : (reviewHoverRating || reviewRating) === 4
+                                ? '⭐⭐⭐⭐ 4/5 (Very Good)'
+                                : (reviewHoverRating || reviewRating) === 3
+                                ? '⭐⭐⭐ 3/5 (Good)'
+                                : (reviewHoverRating || reviewRating) === 2
+                                ? '⭐⭐ 2/5 (Fair)'
+                                : '⭐ 1/5 (Needs Improvement)'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Quick Tag Pills */}
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-[11px] font-mono uppercase tracking-wider text-slate-600 font-bold">
+                            Select Service Highlights:
+                          </label>
+                          <div className="flex flex-wrap gap-1.5">
+                            {[
+                              '⚡ Fast Resolution',
+                              '🛠️ Skillful Technician',
+                              '💬 Great Communication',
+                              '🧹 Clean Work Area',
+                              '✅ Issue Fully Fixed',
+                              '⏱️ On-Time Arrival'
+                            ].map((tag) => {
+                              const active = reviewTags.includes(tag);
+                              return (
+                                <button
+                                  key={tag}
+                                  type="button"
+                                  onClick={() => {
+                                    setReviewTags((prev) =>
+                                      active ? prev.filter((t) => t !== tag) : [...prev, tag]
+                                    );
+                                  }}
+                                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer border ${
+                                    active
+                                      ? 'bg-[#168567] text-white border-[#168567] shadow-xs'
+                                      : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
+                                  }`}
+                                >
+                                  {tag}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Review Comments */}
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-[11px] font-mono uppercase tracking-wider text-slate-600 font-bold">
+                            Write Your Feedback:
+                          </label>
+                          <textarea
+                            rows={3}
+                            value={reviewComment}
+                            onChange={(e) => setReviewComment(e.target.value)}
+                            placeholder="Share details on how the technician handled the issue, promptness, or suggestions for facilities operations..."
+                            className="w-full p-3 rounded-xl bg-white border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#168567] focus:ring-1 focus:ring-[#168567]/20"
+                          />
+                        </div>
+
+                        {/* Submit Review Button */}
+                        <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                          {reviewSuccess ? (
+                            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1.5">
+                              <Check className="w-3.5 h-3.5" />
+                              <span>{reviewSuccess}</span>
+                            </span>
+                          ) : (
+                            <span className="text-[11px] text-slate-500">
+                              Admin &amp; dispatch team review student ratings daily.
+                            </span>
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={handleSubmitReview}
+                            disabled={isSubmittingReview || reviewRating < 1}
+                            className="px-5 py-2.5 rounded-xl bg-[#168567] hover:bg-[#116951] text-white text-xs font-bold flex items-center gap-2 transition-all shadow-xs cursor-pointer disabled:opacity-50"
+                          >
+                            <Star className="w-3.5 h-3.5 fill-white text-white" />
+                            <span>{isSubmittingReview ? 'Submitting Review...' : selectedTicket.review ? 'Update Review' : 'Submit Review to Admin'}</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

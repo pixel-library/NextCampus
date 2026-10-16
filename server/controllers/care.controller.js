@@ -133,4 +133,30 @@ export const handleGetStaffList = async (req, res, next) => {
   }
 };
 
+export const handleCreateComplaintReview = async (req, res, next) => {
+  try {
+    const { rating, comment, tags } = req.body;
+    if (!rating || Number(rating) < 1 || Number(rating) > 5) {
+      return sendResponse(res, 400, false, 'Valid rating between 1 and 5 stars is required');
+    }
+    const studentId = req.user ? (req.user.id || req.user._id) : null;
+    const reviewedBy = req.user ? req.user.name || 'Student' : 'Student';
+    const updated = await careService.addComplaintReview(
+      req.params.id,
+      rating,
+      comment || '',
+      tags || [],
+      reviewedBy,
+      studentId
+    );
+    if (!updated) {
+      return sendResponse(res, 404, false, 'Complaint ticket not found');
+    }
+    return sendResponse(res, 200, true, 'Complaint review recorded successfully', updated);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 

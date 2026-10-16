@@ -45,12 +45,19 @@ async def get_complaints(filter_params: Optional[Dict[str, Any]] = None, is_admi
     results = copy.deepcopy(IN_MEMORY_COMPLAINTS)
     if filter_params.get("studentId"):
         s_id = str(filter_params["studentId"])
-        results = [
-            c for c in results
-            if str(c.get("studentId")) == s_id
-            or str(c.get("student", {}).get("_id")) == s_id
-            or str(c.get("student", {}).get("id")) == s_id
-        ]
+        def matches_student(c):
+            st_id = c.get("studentId")
+            if isinstance(st_id, dict):
+                if str(st_id.get("_id") or st_id.get("id")) == s_id:
+                    return True
+            elif str(st_id) == s_id:
+                return True
+            st_obj = c.get("student")
+            if isinstance(st_obj, dict):
+                if str(st_obj.get("_id") or st_obj.get("id")) == s_id:
+                    return True
+            return False
+        results = [c for c in results if matches_student(c)]
 
     if filter_params.get("category") and filter_params["category"] != "all":
         results = [c for c in results if c.get("category") == filter_params["category"]]
@@ -101,6 +108,18 @@ async def create_complaint(complaint_data: Dict[str, Any]) -> Dict[str, Any]:
     if isinstance(attachments, str):
         attachments = [attachments]
 
+    student_raw_id = complaint_data.get("studentId") or "usr_student_01"
+    author_name = complaint_data.get("authorName") or "Student"
+    student_obj = {
+        "_id": str(student_raw_id),
+        "id": str(student_raw_id),
+        "name": author_name,
+        "email": complaint_data.get("email") or "student@nextcampus.edu",
+        "department": complaint_data.get("department") or "Department of Computer Science & Engineering",
+        "rollNumber": complaint_data.get("rollNumber") or "MUR2502101",
+        "phone": complaint_data.get("phone") or "+91 98765 43210",
+    }
+
     new_ticket = {
         **complaint_data,
         "_id": new_id,
@@ -109,10 +128,14 @@ async def create_complaint(complaint_data: Dict[str, Any]) -> Dict[str, Any]:
         "status": "open",
         "priority": complaint_data.get("priority") or "medium",
         "attachments": attachments,
+        "studentId": student_obj,
+        "student": student_obj,
+        "authorName": author_name,
+        "review": None,
         "updates": [
             {
                 "message": "Ticket lodged by student in NextCampus Care system.",
-                "updatedBy": complaint_data.get("authorName") or "Student",
+                "updatedBy": author_name,
                 "createdAt": now.isoformat(),
             }
         ],
@@ -130,6 +153,62 @@ async def create_complaint(complaint_data: Dict[str, Any]) -> Dict[str, Any]:
 
     IN_MEMORY_COMPLAINTS.insert(0, copy.deepcopy(new_ticket))
     return serialize_mongo(new_ticket)
+
+async def add_complaint_review(
+    complaint_id: str,
+    rating: int,
+    comment: str = "",
+    tags: Optional[List[str]] = None,
+    reviewed_by: str = "Student",
+    student_id: Optional[str] = None,
+) -> Optional[Dict[str, Any]]:
+    """Record student resolution review and rating for completed complaint."""
+    now = datetime.now(timezone.utc)
+    review_entry = {
+        "rating": rating,
+        "comment": comment or "",
+        "tags": tags or [],
+        "reviewedBy": reviewed_by or "Student",
+        "studentId": str(student_id) if student_id else None,
+        "createdAt": now.isoformat(),
+    }
+    update_msg = {
+        "message": f"Student verified resolution with {rating}-star rating: \"{comment[:80] + '...' if len(comment) > 80 else (comment or 'Satisfaction confirmed')}\"",
+        "updatedBy": reviewed_by or "Student Requester",
+        "createdAt": now.isoformat(),
+    }
+
+    db = get_database()
+    if is_db_connected() and db is not None:
+        try:
+            queries = [{"ticketId": complaint_id}, {"_id": complaint_id}, {"id": complaint_id}]
+            try:
+                queries.append({"_id": ObjectId(complaint_id)})
+            except Exception:
+                pass
+            await db.complaints.update_one(
+                {"$or": queries},
+                {
+                    "$set": {"review": review_entry, "updatedAt": now},
+                    "$push": {"updates": update_msg},
+                },
+            )
+            found = await db.complaints.find_one({"$or": queries})
+            if found:
+                return serialize_mongo(found)
+        except Exception:
+            pass
+
+    for idx, c in enumerate(IN_MEMORY_COMPLAINTS):
+        if c.get("ticketId") == complaint_id or str(c.get("_id")) == str(complaint_id) or str(c.get("id")) == str(complaint_id):
+            IN_MEMORY_COMPLAINTS[idx]["review"] = review_entry
+            if "updates" not in IN_MEMORY_COMPLAINTS[idx]:
+                IN_MEMORY_COMPLAINTS[idx]["updates"] = []
+            IN_MEMORY_COMPLAINTS[idx]["updates"].append(update_msg)
+            IN_MEMORY_COMPLAINTS[idx]["updatedAt"] = now
+            return serialize_mongo(copy.deepcopy(IN_MEMORY_COMPLAINTS[idx]))
+
+    return None
 
 async def update_complaint_status(
     complaint_id: str,

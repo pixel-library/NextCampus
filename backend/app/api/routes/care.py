@@ -11,6 +11,7 @@ from backend.app.core.config import settings
 from backend.app.schemas.care import (
     AssignStaffRequest,
     ComplaintCreate,
+    ComplaintReviewRequest,
     ComplaintUpdate,
     InternalNoteRequest,
     PublicUpdateRequest,
@@ -299,3 +300,33 @@ async def get_staff_list(current_user: Dict[str, Any] = Depends(get_current_user
         message="Available technicians and staff retrieved",
         data=staff,
     )
+
+@router.post("/complaints/{id}/review", status_code=status.HTTP_200_OK)
+async def review_complaint(
+    id: str,
+    body: ComplaintReviewRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+):
+    student_id = current_user.get("id") or current_user.get("_id")
+    reviewed_by = current_user.get("name") or "Student"
+    updated = await care_service.add_complaint_review(
+        id,
+        rating=body.rating,
+        comment=body.comment or "",
+        tags=body.tags or [],
+        reviewed_by=reviewed_by,
+        student_id=str(student_id) if student_id else None,
+    )
+    if not updated:
+        return send_response(
+            status_code=status.HTTP_404_NOT_FOUND,
+            success=False,
+            message="Complaint ticket not found",
+        )
+    return send_response(
+        status_code=status.HTTP_200_OK,
+        success=True,
+        message="Complaint review recorded successfully",
+        data=updated,
+    )
+

@@ -35,12 +35,20 @@ const complaintSchema = new mongoose.Schema(
     location: { type: String, required: true },
     buildingName: { type: String, default: '' },
     roomNumber: { type: String, default: '' },
-    studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    studentId: { type: mongoose.Schema.Types.Mixed, ref: 'User', required: true },
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     assignedToName: { type: String, default: '' },
     slaDue: { type: Date },
     slaHours: { type: Number, default: 24 },
     attachments: [{ type: String }],
+    review: {
+      rating: { type: Number, min: 1, max: 5 },
+      comment: { type: String, default: '' },
+      tags: [{ type: String }],
+      reviewedBy: { type: String, default: 'Student' },
+      studentId: { type: mongoose.Schema.Types.Mixed },
+      createdAt: { type: Date, default: Date.now },
+    },
     updates: [
       {
         message: { type: String, required: true },

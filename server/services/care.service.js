@@ -346,15 +346,31 @@ export const getComplaintById = async (id, isAdmin = false) => {
 export const createComplaint = async (complaintData) => {
   const count = IN_MEMORY_COMPLAINTS.length + 1045;
   const ticketId = `CMP-${count}`;
+  const authorName = complaintData.authorName || 'Student';
+  const studentRawId = complaintData.studentId || 'usr_student_01';
+  const studentObj = {
+    _id: studentRawId,
+    id: studentRawId,
+    name: authorName,
+    email: complaintData.email || 'student@nextcampus.edu',
+    department: complaintData.department || 'Department of Computer Science & Engineering',
+    rollNumber: complaintData.rollNumber || 'MUR2502101',
+    phone: complaintData.phone || '+91 98765 43210',
+  };
+
   const newTicket = {
     ...complaintData,
     ticketId,
     status: 'open',
     priority: complaintData.priority || 'medium',
+    studentId: studentObj,
+    student: studentObj,
+    authorName,
+    review: null,
     updates: [
       {
         message: 'Ticket lodged by student in NextCampus Care system.',
-        updatedBy: complaintData.authorName || 'Student',
+        updatedBy: authorName,
         createdAt: new Date(),
       },
     ],
@@ -513,6 +529,50 @@ export const addInternalNote = async (id, note, authorId, authorName) => {
 };
 
 
+export const addComplaintReview = async (id, rating, comment = '', tags = [], reviewedBy = 'Student', studentId = null) => {
+  const reviewEntry = {
+    rating: Number(rating),
+    comment: comment || '',
+    tags: Array.isArray(tags) ? tags : [],
+    reviewedBy: reviewedBy || 'Student',
+    studentId: studentId || undefined,
+    createdAt: new Date(),
+  };
+
+  const updateMessage = `Student verified resolution with ${rating}-star rating: "${comment.length > 70 ? comment.slice(0, 70) + '...' : (comment || 'Satisfaction confirmed')}"`;
+  const pushUpdate = {
+    message: updateMessage,
+    updatedBy: reviewedBy || 'Student Requester',
+    createdAt: new Date(),
+  };
+
+  if (isDbConnected()) {
+    try {
+      const updated = await Complaint.findByIdAndUpdate(
+        id,
+        {
+          $set: { review: reviewEntry, updatedAt: new Date() },
+          $push: { updates: pushUpdate },
+        },
+        { new: true }
+      );
+      if (updated) return updated;
+    } catch (err) {
+      console.warn('[NextCampus Care API] DB review update fallback:', err.message);
+    }
+  }
+
+  const item = IN_MEMORY_COMPLAINTS.find((c) => c._id === id || c.ticketId === id);
+  if (item) {
+    item.review = reviewEntry;
+    if (!item.updates) item.updates = [];
+    item.updates.push(pushUpdate);
+    item.updatedAt = new Date();
+    return item;
+  }
+  return null;
+};
+
 export const getAvailableStaff = async () => {
   try {
     const staffFromDb = await User.find({ role: { $in: ['staff', 'admin'] } }).select('name email role department');
@@ -530,4 +590,6 @@ export const getAvailableStaff = async () => {
   }
   return DEMO_STAFF;
 };
+
+
 

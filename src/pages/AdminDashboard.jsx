@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import {
@@ -18,6 +18,7 @@ import {
   UserX,
   UserCheck,
   DoorOpen,
+  LifeBuoy,
   Building,
   Plus,
   Trash2,
@@ -40,6 +41,7 @@ import { getOutpassTimeInfo } from '../utils/outpassHelpers';
 
 export function AdminDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const urlTab = searchParams.get('tab');
   
@@ -750,6 +752,35 @@ export function AdminDashboard() {
                   </button>
                 </div>
               </div>
+
+              {/* Module 5: Helpdesk & Grievance Triage */}
+              <div className="p-6 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col justify-between md:col-span-2">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[#FFF0F2] text-[#AC274F] flex items-center justify-center shrink-0">
+                      <LifeBuoy size={20} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-base font-extrabold text-[#202A27]">Helpdesk & Grievance Triage</h3>
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FFF0F2] text-[#AC274F] border border-[#F2BDCA]">
+                          CARE OPERATIONS
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#65736B] leading-relaxed mt-1">
+                        Monitor incoming student complaints, assign facilities engineering technicians, track resolution SLAs, broadcast progress updates, and inspect student CSAT reviews and sign-offs.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => navigate('/admin/complaints')}
+                    className="px-5 py-2.5 rounded-xl bg-[#AC274F] hover:bg-[#8e1d3e] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer"
+                  >
+                    <span>Open Complaints Admin</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* System Status & Infrastructure Strip */}
@@ -1328,15 +1359,15 @@ export function AdminDashboard() {
             </div>
 
             {/* Day Selector Tabs */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            <div className="flex items-center gap-2 overflow-x-auto p-1.5 rounded-2xl" style={{ background: '#FFFFFF', border: '1px solid #E4EAE5' }}>
               {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
                 <button
                   key={day}
                   onClick={() => setSelectedDay(day)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     selectedDay === day
-                      ? 'bg-[#142D28] text-white shadow-xs'
-                      : 'bg-white border border-[#E4EAE5] text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1]'
+                      ? 'bg-[#142D28] text-white shadow-sm'
+                      : 'text-[#65736B] hover:text-[#202A27] hover:bg-white'
                   }`}
                 >
                   {day}
@@ -1453,15 +1484,15 @@ export function AdminDashboard() {
         {activeTab === 'mess' && (
           <div className="space-y-6">
             {/* Day selector pills */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            <div className="flex items-center gap-2 overflow-x-auto p-1.5 rounded-2xl" style={{ background: '#FFFFFF', border: '1px solid #E4EAE5' }}>
               {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
                 <button
                   key={day}
                   onClick={() => setMessDay(day)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     messDay === day
-                      ? 'bg-[#142D28] text-white shadow-xs'
-                      : 'bg-white border border-[#E4EAE5] text-[#65736B] hover:text-[#202A27] hover:bg-[#F0F4F1]'
+                      ? 'bg-[#142D28] text-white shadow-sm'
+                      : 'text-[#65736B] hover:text-[#202A27] hover:bg-white'
                   }`}
                 >
                   {day}

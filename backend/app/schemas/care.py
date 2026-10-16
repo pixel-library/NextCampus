@@ -28,3 +28,9 @@ class PublicUpdateRequest(BaseModel):
 
 class InternalNoteRequest(BaseModel):
     note: str = Field(..., min_length=1)
+
+class ComplaintReviewRequest(BaseModel):
+    rating: int = Field(..., ge=1, le=5)
+    comment: Optional[str] = ""
+    tags: Optional[List[str]] = []
+

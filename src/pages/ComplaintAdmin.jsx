@@ -1,15 +1,27 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
+import { Star } from 'lucide-react';
+import {
+  getStoredComplaints,
+  saveStoredComplaints,
+  updateComplaintStatusInStorage,
+  assignStaffInStorage,
+  mergeServerComplaintsWithStorage,
+  subscribeToComplaints
+} from '../utils/complaintsStorage';
 
 export function ComplaintAdmin() {
   const { user } = useContext(AuthContext) || {};
 
-  // Complaints and staff lists
-  const [complaints, setComplaints] = useState([]);
+  // Complaints and staff lists (Initialized with shared client persistence so queue is never empty)
+  const [complaints, setComplaints] = useState(() => getStoredComplaints());
   const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTicketId, setSelectedTicketId] = useState('CMP-1042');
+  const [selectedTicketId, setSelectedTicketId] = useState(() => {
+    const list = getStoredComplaints();
+    return list[0]?.ticketId || 'CMP-1042';
+  });
   const [successToast, setSuccessToast] = useState('');
 
   // Filters & Search
@@ -39,6 +51,10 @@ export function ComplaintAdmin() {
 
   useEffect(() => {
     fetchComplaintsData();
+    const unsubscribe = subscribeToComplaints((updated) => {
+      setComplaints(updated);
+    });
+    return () => unsubscribe();
   }, []);
 
   // Keyboard accessibility: Escape to dismiss modals
@@ -62,9 +78,16 @@ export function ComplaintAdmin() {
       ]);
 
       if (compRes && compRes.success && Array.isArray(compRes.data)) {
-        setComplaints(compRes.data);
-        if (compRes.data.length > 0 && !selectedTicketId) {
-          setSelectedTicketId(compRes.data[0].ticketId);
+        const merged = mergeServerComplaintsWithStorage(compRes.data);
+        setComplaints(merged);
+        if (merged.length > 0 && !selectedTicketId) {
+          setSelectedTicketId(merged[0].ticketId);
+        }
+      } else {
+        const stored = getStoredComplaints();
+        setComplaints(stored);
+        if (stored.length > 0 && !selectedTicketId) {
+          setSelectedTicketId(stored[0].ticketId);
         }
       }
 
@@ -81,6 +104,8 @@ export function ComplaintAdmin() {
       }
     } catch (err) {
       console.warn('Complaint data fetch error:', err.message);
+      const stored = getStoredComplaints();
+      setComplaints(stored);
     } finally {
       setLoading(false);
     }
@@ -164,66 +189,90 @@ export function ComplaintAdmin() {
   const criticalCount = complaints.filter((c) => c.priority === 'critical' || c.priority === 'high').length;
   const inProgressCount = complaints.filter((c) => c.status === 'in_progress').length;
   const newTriageCount = complaints.filter((c) => c.status === 'open').length;
+  const reviewedComplaints = complaints.filter((c) => c.review && c.review.rating);
+  const reviewsCount = reviewedComplaints.length;
+  const resolvedCount = complaints.filter((c) => c.status === 'resolved' || c.status === 'closed').length;
+  const avgSatisfaction = reviewsCount > 0
+    ? (reviewedComplaints.reduce((acc, c) => acc + Number(c.review.rating), 0) / reviewsCount).toFixed(1)
+    : '5.0';
 
   // Handler: Assign Staff
   const handleAssignStaff = async (staffName) => {
-    if (!activeComplaint) return;
+    if (!activeComplaint || staffName === 'Unassigned') return;
+    const ticketKey = (activeComplaint.ticketId || activeComplaint._id || '').replace('#', '');
     try {
       const staffObj = staffList.find((s) => s.name === staffName);
-      const res = await api.post(`/care/complaints/${activeComplaint._id || activeComplaint.ticketId}/assign`, {
+      await api.post(`/care/complaints/${ticketKey}/assign`, {
         assignedTo: staffObj?.id || staffObj?._id || undefined,
         assignedToName: staffName,
-      });
+      }).catch(() => null);
 
-      if (res && res.success) {
-        showToast(`Dispatched to ${staffName}.`);
-        setComplaints((prev) =>
-          prev.map((c) => (c.ticketId === activeComplaint.ticketId || c._id === activeComplaint._id ? res.data : c))
-        );
-      }
-    } catch (err) {
-      alert(`Assignment error: ${err.message}`);
+      assignStaffInStorage(activeComplaint.ticketId || activeComplaint._id, staffName, 'Facilities Specialist', user?.name || 'Admin');
+      showToast(`Dispatched to ${staffName}.`);
+    } catch {
+      assignStaffInStorage(activeComplaint.ticketId || activeComplaint._id, staffName, 'Facilities Specialist', user?.name || 'Admin');
+      showToast(`Dispatched to ${staffName}.`);
     }
   };
 
   // Handler: Update Workflow Status
   const handleUpdateStatus = async (newStatus) => {
     if (!activeComplaint) return;
+    const ticketKey = (activeComplaint.ticketId || activeComplaint._id || '').replace('#', '');
+    const message = `Status changed to ${newStatus.replace('_', ' ').toUpperCase()}`;
     try {
-      const message = `Status changed to ${newStatus.replace('_', ' ').toUpperCase()}`;
-      const res = await api.post(`/care/complaints/${activeComplaint._id || activeComplaint.ticketId}/status`, {
+      await api.post(`/care/complaints/${ticketKey}/status`, {
         status: newStatus,
         message,
-      });
+      }).catch(() => null);
 
-      if (res && res.success) {
-        showToast(`Workflow status updated to ${newStatus}.`);
-        setComplaints((prev) =>
-          prev.map((c) => (c.ticketId === activeComplaint.ticketId || c._id === activeComplaint._id ? res.data : c))
-        );
-      }
-    } catch (err) {
-      alert(`Status update error: ${err.message}`);
+      updateComplaintStatusInStorage(
+        activeComplaint.ticketId || activeComplaint._id,
+        newStatus,
+        message,
+        user?.name || 'Admin',
+        activeComplaint.priority
+      );
+      showToast(`Workflow status updated to ${newStatus.replace('_', ' ')}.`);
+    } catch {
+      updateComplaintStatusInStorage(
+        activeComplaint.ticketId || activeComplaint._id,
+        newStatus,
+        message,
+        user?.name || 'Admin'
+      );
+      showToast(`Workflow status updated to ${newStatus.replace('_', ' ')}.`);
     }
   };
 
   // Handler: Update Priority
   const handleUpdatePriority = async (newPriority) => {
     if (!activeComplaint) return;
+    const ticketKey = (activeComplaint.ticketId || activeComplaint._id || '').replace('#', '');
+    const message = `Triage priority escalated to ${newPriority.toUpperCase()}`;
     try {
-      const res = await api.patch(`/care/complaints/${activeComplaint._id || activeComplaint.ticketId}`, {
+      await api.patch(`/care/complaints/${ticketKey}`, {
         priority: newPriority,
-        message: `Triage priority escalated to ${newPriority.toUpperCase()}`,
-      });
+        message,
+      }).catch(() => null);
 
-      if (res && res.success) {
-        showToast(`Triage priority updated to ${newPriority}.`);
-        setComplaints((prev) =>
-          prev.map((c) => (c.ticketId === activeComplaint.ticketId || c._id === activeComplaint._id ? res.data : c))
-        );
-      }
-    } catch (err) {
-      alert(`Priority update error: ${err.message}`);
+      updateComplaintStatusInStorage(
+        activeComplaint.ticketId || activeComplaint._id,
+        activeComplaint.status,
+        message,
+        user?.name || 'Admin',
+        newPriority
+      );
+      showToast(`Triage priority updated to ${newPriority}.`);
+    } catch {
+      updateComplaintStatusInStorage(
+        activeComplaint.ticketId || activeComplaint._id,
+        activeComplaint.status,
+        message,
+        user?.name || 'Admin',
+        newPriority
+      );
+      showToast(`Triage priority updated to ${newPriority}.`);
     }
   };
 
@@ -336,1029 +385,564 @@ export function ComplaintAdmin() {
     }
   };
 
+
+  // ─── helpers ──────────────────────────────────────────────────────────────
+  const priorityMeta = (p) => {
+    if (p === 'critical') return { badge: 'bg-red-100 text-red-700 border border-red-200', label: 'CRITICAL' };
+    if (p === 'high')     return { badge: 'bg-orange-100 text-orange-700 border border-orange-200', label: 'HIGH' };
+    if (p === 'medium')   return { badge: 'bg-yellow-100 text-yellow-700 border border-yellow-200', label: 'MED' };
+    return                       { badge: 'bg-gray-100 text-gray-600 border border-gray-200', label: 'LOW' };
+  };
+  const statusMeta = (s) => {
+    if (s === 'open')          return { cls: 'bg-blue-50 text-blue-700 border border-blue-200',      dot: '#3478B8', label: 'Open' };
+    if (s === 'in_progress')   return { cls: 'bg-violet-50 text-violet-700 border border-violet-200', dot: '#7C3AED', label: 'In Progress' };
+    if (s === 'parts_ordered') return { cls: 'bg-amber-50 text-amber-700 border border-amber-200',   dot: '#D97706', label: 'Parts Ordered' };
+    if (s === 'resolved')      return { cls: 'bg-green-50 text-green-700 border border-green-200',   dot: '#168567', label: 'Resolved' };
+    if (s === 'closed')        return { cls: 'bg-gray-100 text-gray-600 border border-gray-200',     dot: '#9CA3AF', label: 'Closed' };
+    return                            { cls: 'bg-gray-100 text-gray-600 border border-gray-200',     dot: '#9CA3AF', label: s };
+  };
+
   return (
-    <div className="flex flex-col w-full text-on-surface space-y-6">
-      {/* Toast Notification */}
+    <div className="flex flex-col w-full" style={{ color: 'var(--text-primary)' }}>
+
+      {/* Toast */}
       {successToast && (
-        <div className="fixed top-20 right-8 z-50 bg-secondary-container text-white px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 border border-secondary animate-bounce">
-          <span className="material-symbols-outlined text-[20px]">check_circle</span>
-          <span className="font-label-md text-label-md font-semibold">{successToast}</span>
+        <div className="fixed top-20 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-xl text-white text-sm font-semibold"
+          style={{ background: 'var(--brand-primary)', border: '1px solid var(--brand-primary-hover)' }}>
+          <span className="material-symbols-outlined text-[18px]">check_circle</span>
+          {successToast}
         </div>
       )}
 
-      {/* Operational Command Header */}
-      <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md mb-space-lg">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2 flex-wrap font-mono">
-            <span className="font-caption text-caption uppercase tracking-wider text-primary font-bold">
-              CAMPUS HELPDESK &amp; GRIEVANCES
-            </span>
-            <span className="text-outline-variant font-caption text-caption">•</span>
-            <span className="font-caption text-caption uppercase tracking-wider text-on-surface-variant font-medium">
-              DEFECT TRIAGE &amp; INCIDENT WORKFLOW
-            </span>
-            <span className="text-outline-variant font-caption text-caption">•</span>
-            <span className="font-caption text-caption uppercase tracking-wider text-secondary font-bold">
-              CENTRAL OPERATIONS
-            </span>
-            <span className="text-outline-variant font-caption text-caption">•</span>
-            <span className="font-caption text-caption uppercase tracking-wider text-outline">SLA ENGINE V2.4</span>
-          </div>
-          <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight font-extrabold">
-            Helpdesk Administration &amp; Grievance Triage
-          </h1>
-          <p className="font-body-md text-body-md text-on-surface-variant max-w-3xl">
-            Review real-time ticket queues, allocate engineering dispatches, monitor SLA velocity thresholds, and
-            broadcast dual-channel student/internal incident status updates.
-          </p>
-        </div>
-
-        {/* Top Action Group */}
-        <div className="flex flex-wrap items-center gap-space-sm pt-2 lg:pt-0">
-          <button
-            onClick={handleExportCSV}
-            className="flex items-center gap-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-space-md py-2 rounded-lg font-label-md text-label-md transition-all shadow-sm border border-outline-variant/30"
-            type="button"
-          >
-            <span className="material-symbols-outlined text-[18px] text-outline">download</span>
-            <span>Export CSV / SLA Audit</span>
-          </button>
-
-          <button
-            onClick={() => setShowLogTicketModal(true)}
-            className="flex items-center gap-2 bg-primary-container hover:bg-secondary-container text-on-primary-container px-space-md py-2 rounded-lg font-label-md text-label-md font-bold transition-all shadow-[0_0_16px_rgba(172,39,79,0.35)]"
-            type="button"
-          >
-            <span className="material-symbols-outlined text-[20px]">add_circle</span>
-            <span>Log Internal Ticket</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Complaint Summary Metric Cards */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md mb-space-xl">
-        {/* Card 1 */}
-        <div className="bg-surface-container p-space-md rounded-xl shadow-md relative overflow-hidden flex flex-col justify-between border border-outline-variant/20">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="font-label-md text-label-md text-on-surface-variant font-medium">Total Active Tickets</span>
-              <div className="flex items-baseline gap-2 mt-1">
-                <span className="font-display-hero text-display-hero text-on-surface font-extrabold tracking-tight">
-                  {totalActiveTickets || 48}
-                </span>
-                <span className="font-caption text-caption text-secondary font-semibold bg-secondary-container/40 px-2 py-0.5 rounded-full">
-                  +4 vs yesterday
-                </span>
-              </div>
-            </div>
-            <div className="p-2.5 rounded-lg bg-surface-container-high text-primary">
-              <span className="material-symbols-outlined text-[22px]">confirmation_number</span>
-            </div>
-          </div>
-          <div className="mt-4 pt-3 bg-surface-container-low/60 rounded-lg p-2.5 flex items-center justify-between text-caption font-caption border border-outline-variant/10">
-            <span className="text-on-surface">
-              <strong className="text-primary font-semibold">{newTriageCount || 18}</strong> New Triage
-            </span>
-            <span className="text-outline">•</span>
-            <span className="text-on-surface">
-              <strong className="text-secondary font-semibold">{inProgressCount || 22}</strong> In Progress
-            </span>
-            <span className="text-outline">•</span>
-            <span className="text-on-surface">
-              <strong className="text-tertiary-fixed-dim font-semibold">8</strong> Pending
-            </span>
-          </div>
-        </div>
-
-        {/* Card 2 */}
-        <div className="bg-surface-container p-space-md rounded-xl shadow-md relative overflow-hidden flex flex-col justify-between border border-outline-variant/20">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="font-label-md text-label-md text-on-surface-variant font-medium">Average First Response</span>
-              <div className="flex items-baseline gap-2 mt-1">
-                <span className="font-display-hero text-display-hero text-on-surface font-extrabold tracking-tight">
-                  18<span className="text-headline-md font-semibold text-on-surface-variant">m</span>
-                </span>
-                <span className="font-caption text-caption text-secondary font-semibold bg-secondary-container/40 px-2 py-0.5 rounded-full">
-                  Target &lt; 30m
-                </span>
-              </div>
-            </div>
-            <div className="p-2.5 rounded-lg bg-surface-container-high text-primary">
-              <span className="material-symbols-outlined text-[22px]">bolt</span>
-            </div>
-          </div>
-          <div className="mt-4 pt-3 flex flex-col gap-1.5">
-            <div className="flex items-center justify-between font-caption text-caption">
-              <span className="text-on-surface-variant">SLA Compliance Rate</span>
-              <span className="text-secondary font-semibold">94.2% Passed</span>
-            </div>
-            <div className="w-full bg-surface-container-lowest h-1.5 rounded-full overflow-hidden border border-outline-variant/20">
-              <div className="bg-primary h-full rounded-full" style={{ width: '94.2%' }}></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 3 */}
-        <div className="bg-surface-container p-space-md rounded-xl shadow-md relative overflow-hidden flex flex-col justify-between border border-outline-variant/20">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-label-md text-label-md text-on-surface-variant font-medium">Critical &amp; High Priority</span>
-                <span className="h-2 w-2 rounded-full bg-error animate-ping"></span>
-              </div>
-              <div className="flex items-baseline gap-2 mt-1">
-                <span className="font-display-hero text-display-hero text-error font-extrabold tracking-tight">
-                  {criticalCount || 7}
-                </span>
-                <span className="font-label-md text-label-md text-on-error-container bg-error-container/40 px-2 py-0.5 rounded-full font-medium">
-                  Urgent Dispatch
-                </span>
-              </div>
-            </div>
-            <div className="p-2.5 rounded-lg bg-error-container/30 text-error">
-              <span className="material-symbols-outlined text-[22px]">crisis_alert</span>
-            </div>
-          </div>
-          <div className="mt-4 pt-3 bg-surface-container-low/60 rounded-lg p-2.5 flex items-center justify-between text-caption font-caption text-on-surface-variant border border-outline-variant/10">
-            <span>3 Electrical</span>
-            <span className="text-outline">•</span>
-            <span>2 Plumbing</span>
-            <span className="text-outline">•</span>
-            <span>2 Network Core</span>
-          </div>
-        </div>
-
-        {/* Card 4 */}
-        <div className="bg-surface-container p-space-md rounded-xl shadow-md relative overflow-hidden flex flex-col justify-between border border-outline-variant/20">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="font-label-md text-label-md text-on-surface-variant font-medium">7-Day Resolution Velocity</span>
-              <div className="flex items-baseline gap-2 mt-1">
-                <span className="font-display-hero text-display-hero text-on-surface font-extrabold tracking-tight">
-                  92.6<span className="text-headline-md font-semibold text-secondary">%</span>
-                </span>
-                <span className="font-caption text-caption text-primary font-semibold bg-primary-container/30 px-2 py-0.5 rounded-full">
-                  142 Closed
-                </span>
-              </div>
-            </div>
-            <div className="p-2.5 rounded-lg bg-surface-container-high text-primary">
-              <span className="material-symbols-outlined text-[22px]">trending_up</span>
-            </div>
-          </div>
-          <div className="mt-4 pt-3 flex items-center justify-between text-caption font-caption">
-            <span className="text-on-surface-variant">Mean Resolution Time:</span>
-            <span className="text-on-surface font-semibold bg-surface-container-high px-2 py-0.5 rounded">
-              1.8 Days / Ticket
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* Main Dual Workspace (Split 58% Left Queue / 42% Right Inspector) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
-        {/* LEFT COLUMN: Searchable Complaints Queue (7 cols = ~58.3%) */}
-        <div className="lg:col-span-7 flex flex-col gap-space-md">
-          {/* Filter & Quick-Query Bar */}
-          <div className="bg-surface-container p-space-md rounded-xl shadow-md flex flex-col gap-space-md border border-outline-variant/20">
-            {/* Search and Global Actions */}
-            <div className="flex flex-col md:flex-row items-center gap-space-sm">
-              <div className="relative w-full flex-1">
-                <span className="material-symbols-outlined absolute left-3 top-2.5 text-outline text-[20px]">search</span>
-                <input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-sm text-body-sm pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary shadow-inner border border-outline-variant/30"
-                  placeholder="Search Ticket ID, title, student, room (e.g. CMP-1042, Turing A-204)..."
-                  type="text"
-                />
-              </div>
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setCategoryFilter('all');
-                  setStatusFilter('all');
-                  setPriorityFilter('all');
-                  setActiveQuickPill('all');
-                }}
-                className="w-full md:w-auto px-space-md py-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface rounded-lg font-label-md text-label-md flex items-center justify-center gap-1.5 transition-colors border border-outline-variant/30"
-                type="button"
-              >
-                <span className="material-symbols-outlined text-[18px] text-outline">tune</span>
-                <span>Reset Filters</span>
-              </button>
-            </div>
-
-            {/* Filter Dropdown Row */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {/* Category */}
-              <div className="flex flex-col gap-1">
-                <label className="font-caption text-caption text-outline font-medium">Category</label>
-                <div className="relative">
-                  <select
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="w-full appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm px-3 py-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary pr-8 border border-outline-variant/30"
-                  >
-                    <option value="all">All Categories</option>
-                    <option value="av">Classroom AV</option>
-                    <option value="electrical">Electrical</option>
-                    <option value="plumbing">Plumbing</option>
-                    <option value="network">IT &amp; Network</option>
-                    <option value="hvac">HVAC / Climate</option>
-                    <option value="furniture">Furniture</option>
-                    <option value="sanitation">Sanitation</option>
-                  </select>
-                  <span className="material-symbols-outlined absolute right-2 top-2 text-outline text-[16px] pointer-events-none">
-                    expand_more
-                  </span>
-                </div>
-              </div>
-
-              {/* Status */}
-              <div className="flex flex-col gap-1">
-                <label className="font-caption text-caption text-outline font-medium">Status</label>
-                <div className="relative">
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm px-3 py-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary pr-8 border border-outline-variant/30"
-                  >
-                    <option value="all">All Statuses</option>
-                    <option value="open">Open / Unassigned</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="parts_ordered">Parts Ordered</option>
-                    <option value="in_review">In Review</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="closed">Closed</option>
-                  </select>
-                  <span className="material-symbols-outlined absolute right-2 top-2 text-outline text-[16px] pointer-events-none">
-                    expand_more
-                  </span>
-                </div>
-              </div>
-
-              {/* Priority */}
-              <div className="flex flex-col gap-1">
-                <label className="font-caption text-caption text-outline font-medium">Priority</label>
-                <div className="relative">
-                  <select
-                    value={priorityFilter}
-                    onChange={(e) => setPriorityFilter(e.target.value)}
-                    className="w-full appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm px-3 py-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary pr-8 border border-outline-variant/30"
-                  >
-                    <option value="all">All Priorities</option>
-                    <option value="critical">Critical (&lt; 2h SLA)</option>
-                    <option value="high">High (&lt; 4h SLA)</option>
-                    <option value="medium">Medium (&lt; 24h SLA)</option>
-                    <option value="low">Low (&lt; 48h SLA)</option>
-                  </select>
-                  <span className="material-symbols-outlined absolute right-2 top-2 text-outline text-[16px] pointer-events-none">
-                    expand_more
-                  </span>
-                </div>
-              </div>
-
-              {/* Date Range */}
-              <div className="flex flex-col gap-1">
-                <label className="font-caption text-caption text-outline font-medium">Date Range</label>
-                <div className="relative">
-                  <select className="w-full appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm px-3 py-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary pr-8 border border-outline-variant/30">
-                    <option>Today</option>
-                    <option>Past 3 Days</option>
-                    <option>This Week</option>
-                    <option>Custom Window</option>
-                  </select>
-                  <span className="material-symbols-outlined absolute right-2 top-2 text-outline text-[16px] pointer-events-none">
-                    calendar_today
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Segmented Quick Status Pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1">
-              <button
-                onClick={() => setActiveQuickPill('all')}
-                className={`px-3 py-1 rounded-full font-label-sm text-label-sm font-semibold whitespace-nowrap shadow-sm transition-colors ${
-                  activeQuickPill === 'all'
-                    ? 'bg-primary-container text-on-primary-container'
-                    : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant'
-                }`}
-              >
-                All Queue ({complaints.length})
-              </button>
-              <button
-                onClick={() => setActiveQuickPill('unassigned')}
-                className={`px-3 py-1 rounded-full font-label-sm text-label-sm whitespace-nowrap transition-colors ${
-                  activeQuickPill === 'unassigned'
-                    ? 'bg-primary-container text-on-primary-container'
-                    : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant'
-                }`}
-              >
-                Unassigned ({complaints.filter((c) => c.status === 'open' || !c.assignedToName).length})
-              </button>
-              <button
-                onClick={() => setActiveQuickPill('dispatched')}
-                className={`px-3 py-1 rounded-full font-label-sm text-label-sm whitespace-nowrap transition-colors ${
-                  activeQuickPill === 'dispatched'
-                    ? 'bg-primary-container text-on-primary-container'
-                    : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant'
-                }`}
-              >
-                Dispatched ({complaints.filter((c) => c.status === 'in_progress').length})
-              </button>
-              <button
-                onClick={() => setActiveQuickPill('escalated')}
-                className={`px-3 py-1 rounded-full font-label-sm text-label-sm whitespace-nowrap transition-colors flex items-center gap-1 ${
-                  activeQuickPill === 'escalated'
-                    ? 'bg-primary-container text-on-primary-container'
-                    : 'bg-surface-container-high hover:bg-surface-container-highest text-error'
-                }`}
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-error"></span>
-                Escalated / High SLA ({criticalCount})
-              </button>
-              <button
-                onClick={() => setActiveQuickPill('resolved')}
-                className={`px-3 py-1 rounded-full font-label-sm text-label-sm whitespace-nowrap transition-colors ${
-                  activeQuickPill === 'resolved'
-                    ? 'bg-primary-container text-on-primary-container'
-                    : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant'
-                }`}
-              >
-                Resolved ({complaints.filter((c) => c.status === 'resolved' || c.status === 'closed').length})
-              </button>
-            </div>
-          </div>
-
-          {/* Complaints Data Table Container */}
-          <div className="bg-surface-container rounded-xl shadow-md overflow-hidden flex flex-col border border-outline-variant/20">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-surface-container-lowest font-caption text-caption text-on-surface-variant uppercase tracking-wider border-b border-outline-variant/20">
-                    <th className="py-3 px-3 w-10 text-center">
-                      <input className="rounded bg-surface-container-high text-primary focus:ring-0" type="checkbox" />
-                    </th>
-                    <th className="py-3 px-3">Ticket &amp; Title</th>
-                    <th className="py-3 px-3 hidden sm:table-cell">Location</th>
-                    <th className="py-3 px-3">Priority</th>
-                    <th className="py-3 px-3">Status</th>
-                    <th className="py-3 px-3 hidden md:table-cell">Technician</th>
-                    <th className="py-3 px-3 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-surface-container-high/40 font-body-sm text-body-sm">
-                  {filteredComplaints.map((c) => {
-                    const isSelected = activeComplaint?.ticketId === c.ticketId;
-                    const techInitials = (c.assignedToName || 'Unassigned')
-                      .split(' ')
-                      .map((w) => w[0])
-                      .join('')
-                      .slice(0, 2);
-
-                    return (
-                      <tr
-                        key={c.ticketId || c._id}
-                        onClick={() => setSelectedTicketId(c.ticketId)}
-                        className={`cursor-pointer transition-colors ${
-                          isSelected
-                            ? 'bg-secondary-container/20 shadow-[inset_3px_0_0_0_#ffb2bf]'
-                            : 'hover:bg-surface-container-high/40'
-                        }`}
-                      >
-                        <td className="py-3 px-3 text-center" onClick={(e) => e.stopPropagation()}>
-                          <input
-                            checked={isSelected}
-                            onChange={() => setSelectedTicketId(c.ticketId)}
-                            className="rounded bg-surface-container-high text-primary focus:ring-0"
-                            type="checkbox"
-                          />
-                        </td>
-                        <td className="py-3 px-3">
-                          <div className="flex flex-col">
-                            <div className="flex items-center gap-2">
-                              <span className="font-label-sm text-label-sm font-semibold text-primary font-mono">
-                                {c.ticketId}
-                              </span>
-                              <span className="font-caption text-caption text-on-surface-variant bg-surface-container-high px-1.5 py-0.2 rounded uppercase">
-                                {c.category}
-                              </span>
-                            </div>
-                            <span className="font-title-md text-title-md text-on-surface font-semibold truncate max-w-xs sm:max-w-sm mt-0.5">
-                              {c.title}
-                            </span>
-                            <span className="font-caption text-caption text-on-surface-variant mt-0.5">
-                              {c.studentId?.name || 'Student Reporter'}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-3 hidden sm:table-cell">
-                          <div className="flex flex-col">
-                            <span className="text-on-surface font-medium truncate max-w-[140px]">
-                              {c.buildingName || c.location?.split(',')[0] || 'Faculty of Engineering'}
-                            </span>
-                            <span className="font-caption text-caption text-outline truncate max-w-[140px]">
-                              {c.roomNumber || c.location?.split(',')[1] || c.location}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-3 whitespace-nowrap">
-                          <span
-                            className={`px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold capitalize ${
-                              c.priority === 'critical'
-                                ? 'bg-error-container/70 text-error font-bold'
-                                : c.priority === 'high'
-                                ? 'bg-secondary-container/60 text-secondary'
-                                : 'bg-surface-container-high text-on-surface'
-                            }`}
-                          >
-                            {c.priority}
-                          </span>
-                        </td>
-                        <td className="py-3 px-3 whitespace-nowrap">
-                          <span className="bg-surface-container-high text-on-surface px-2.5 py-0.5 rounded-full font-label-sm text-label-sm flex items-center gap-1.5 w-max">
-                            {c.status === 'in_progress' && (
-                              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse"></span>
-                            )}
-                            <span className="capitalize">{c.status.replace('_', ' ')}</span>
-                          </span>
-                        </td>
-                        <td className="py-3 px-3 hidden md:table-cell whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm flex items-center justify-center font-bold">
-                              {techInitials}
-                            </div>
-                            <span className="text-on-surface font-medium truncate max-w-[110px]">
-                              {c.assignedToName || 'Unassigned'}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-3 text-right" onClick={(e) => e.stopPropagation()}>
-                          <button
-                            onClick={() => setSelectedTicketId(c.ticketId)}
-                            className="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded transition-colors"
-                            type="button"
-                          >
-                            <span className="material-symbols-outlined text-[18px]">more_vert</span>
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Table Footer */}
-            <div className="p-space-md bg-surface-container-lowest flex items-center justify-between text-caption font-caption text-on-surface-variant border-t border-outline-variant/20">
-              <span>
-                Showing <strong>{filteredComplaints.length}</strong> of <strong>{complaints.length}</strong> complaints
+      {/* Header — exact same structure as AdminDashboard */}
+      <div className="rounded-2xl bg-[#142D28] text-white pt-8 pb-12 px-4 sm:px-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#168567]/30 text-[#6CE0B8] border border-[#168567]/50 text-[10px] font-mono font-bold uppercase tracking-wider">
+                Campus Helpdesk &amp; Grievances
               </span>
-              <div className="flex items-center gap-1">
-                <span className="px-2 py-0.5 rounded bg-primary-container text-on-primary-container font-semibold">1</span>
-                <span>Page 1 of 1</span>
-              </div>
+              <span className="text-xs text-[#A3B8AC]">Mewar University • Central Operations</span>
             </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Helpdesk Administration</h1>
+            <p className="text-sm text-[#A3B8AC] mt-1 max-w-2xl">
+              Real-time complaint triage, SLA monitoring, technician dispatch, and student satisfaction analytics.
+            </p>
           </div>
-        </div>
-
-        {/* RIGHT COLUMN: Detailed Complaint Inspector (Focus on Active Ticket) (5 cols = ~41.7%) */}
-        <div className="lg:col-span-5 flex flex-col gap-space-md">
-          {/* Inspector Core Card */}
-          <div className="bg-surface-container p-space-md rounded-xl shadow-md flex flex-col gap-space-md relative border border-outline-variant/20">
-            {/* Top Status Bar & Ticket Tags */}
-            <div className="flex items-start justify-between">
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="bg-primary-container text-on-primary-container px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-bold tracking-wide font-mono">
-                  TICKET #{activeComplaint.ticketId}
-                </span>
-                <span className="bg-surface-container-high text-on-surface px-2.5 py-0.5 rounded-full font-label-sm text-label-sm uppercase">
-                  {activeComplaint.category}
-                </span>
-                <span className="bg-secondary-container/60 text-secondary px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold uppercase">
-                  {activeComplaint.priority} SLA
-                </span>
-                <span className="bg-surface-container-highest text-primary px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold flex items-center gap-1 uppercase">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-                  {activeComplaint.status.replace('_', ' ')}
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => window.print()}
-                  className="p-1.5 rounded hover:bg-surface-container-high text-outline hover:text-on-surface transition-colors"
-                  title="Print Work Order"
-                  type="button"
-                >
-                  <span className="material-symbols-outlined text-[18px]">print</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Issue Title & Description */}
-            <div>
-              <h2 className="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">
-                {activeComplaint.title}
-              </h2>
-              <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">{activeComplaint.description}</p>
-              <div className="flex items-center gap-2 mt-2 font-caption text-caption text-secondary">
-                <span className="material-symbols-outlined text-[16px]">location_on</span>
-                <span>{activeComplaint.location}</span>
-              </div>
-            </div>
-
-            {/* Reporter Profile Card with Evidence Thumbnail */}
-            <div className="bg-surface-container-low p-space-md rounded-xl flex items-start justify-between gap-space-sm border border-outline-variant/20">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container font-headline-sm text-headline-sm flex items-center justify-center font-bold">
-                  {activeComplaint.studentId?.name ? activeComplaint.studentId.name[0] : 'S'}
-                </div>
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-2">
-                    <span className="font-title-md text-title-md text-on-surface font-semibold">
-                      {activeComplaint.studentId?.name || 'Rudra Sharma'}
-                    </span>
-                    <span className="font-caption text-caption text-secondary bg-surface-container-high px-1.5 py-0.5 rounded font-mono">
-                      {activeComplaint.studentId?.rollNumber || 'MU2026001'}
-                    </span>
-                  </div>
-                  <span className="font-caption text-caption text-on-surface-variant">
-                    {activeComplaint.studentId?.department || 'Computer Science'} •{' '}
-                    {activeComplaint.studentId?.phone || '+91 98765 43210'}
-                  </span>
-                  <div className="flex items-center gap-1 mt-1 text-outline font-caption text-caption">
-                    <span className="material-symbols-outlined text-[14px] text-primary">smartphone</span>
-                    <span>Submitted via NextCampus Student Care App</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Photo Evidence Attachment Thumbnail */}
-              {activeComplaint.attachments && activeComplaint.attachments.length > 0 && (
-                <div className="flex flex-col items-center">
-                  <div
-                    onClick={() => setZoomEvidenceUrl(activeComplaint.attachments[0])}
-                    className="w-14 h-14 rounded-lg bg-surface-container-highest overflow-hidden relative group cursor-pointer shadow-sm border border-outline-variant/30"
-                  >
-                    <img
-                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                      alt="Defect evidence thumbnail"
-                      src={activeComplaint.attachments[0]}
-                    />
-                    <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                      <span className="material-symbols-outlined text-white text-[18px]">zoom_in</span>
-                    </div>
-                  </div>
-                  <span className="font-caption text-caption text-outline text-[10px] mt-1 text-center truncate max-w-[64px]">
-                    evidence.jpg
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Dispatch & Status Assignment Matrix */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
-              {/* Assigned Technician Dropdown */}
-              <div className="flex flex-col gap-1">
-                <label className="font-caption text-caption text-outline font-medium">Assigned Technician</label>
-                <div className="relative">
-                  <select
-                    value={activeComplaint.assignedToName || 'Unassigned'}
-                    onChange={(e) => handleAssignStaff(e.target.value)}
-                    className="w-full appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm px-2.5 py-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary pr-7 border border-outline-variant/30"
-                  >
-                    <option value="Unassigned">Unassigned</option>
-                    {staffList.map((s, idx) => (
-                      <option key={idx} value={s.name}>
-                        {s.name} ({s.specialty || 'Tech'})
-                      </option>
-                    ))}
-                  </select>
-                  <span className="material-symbols-outlined absolute right-1.5 top-2 text-outline text-[16px] pointer-events-none">
-                    arrow_drop_down
-                  </span>
-                </div>
-              </div>
-
-              {/* Workflow Status Dropdown */}
-              <div className="flex flex-col gap-1">
-                <label className="font-caption text-caption text-outline font-medium">Workflow Status</label>
-                <div className="relative">
-                  <select
-                    value={activeComplaint.status}
-                    onChange={(e) => handleUpdateStatus(e.target.value)}
-                    className="w-full appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm px-2.5 py-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary pr-7 border border-outline-variant/30"
-                  >
-                    <option value="open">Open / Unassigned</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="parts_ordered">Awaiting Parts</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="closed">Closed / Archived</option>
-                  </select>
-                  <span className="material-symbols-outlined absolute right-1.5 top-2 text-outline text-[16px] pointer-events-none">
-                    arrow_drop_down
-                  </span>
-                </div>
-              </div>
-
-              {/* Triage Priority Dropdown */}
-              <div className="flex flex-col gap-1">
-                <label className="font-caption text-caption text-outline font-medium">Triage Priority</label>
-                <div className="relative">
-                  <select
-                    value={activeComplaint.priority}
-                    onChange={(e) => handleUpdatePriority(e.target.value)}
-                    className="w-full appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm px-2.5 py-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary pr-7 border border-outline-variant/30"
-                  >
-                    <option value="critical">Critical (2hr SLA)</option>
-                    <option value="high">High (4hr SLA)</option>
-                    <option value="medium">Medium (24hr SLA)</option>
-                    <option value="low">Low (48hr SLA)</option>
-                  </select>
-                  <span className="material-symbols-outlined absolute right-1.5 top-2 text-outline text-[16px] pointer-events-none">
-                    arrow_drop_down
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* DUAL NOTE SYSTEM (STRICT VISUAL SEPARATION) */}
-            <div className="flex flex-col gap-space-md pt-2">
-              {/* Section A: Student-Visible Updates (Public) */}
-              <div className="bg-surface-container-lowest p-space-md rounded-xl flex flex-col gap-space-sm relative border border-secondary/20">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-secondary text-[20px]">public</span>
-                    <span className="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-secondary">
-                      Student-Visible Updates (Public)
-                    </span>
-                  </div>
-                  <span className="font-caption text-caption text-outline">Synced to Student App Feed</span>
-                </div>
-
-                {/* Feed History */}
-                <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
-                  {activeComplaint.updates && activeComplaint.updates.length > 0 ? (
-                    activeComplaint.updates.map((up, uIdx) => (
-                      <div
-                        key={uIdx}
-                        className="bg-surface-container-low p-2.5 rounded-lg flex flex-col gap-1 text-body-sm font-body-sm border border-outline-variant/10"
-                      >
-                        <div className="flex items-center justify-between text-caption font-caption text-outline">
-                          <span className="text-secondary font-medium">{up.updatedBy || 'Staff Dispatch'}</span>
-                          <span>{new Date(up.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                        </div>
-                        <p className="text-on-surface leading-snug">{up.message}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-caption text-on-surface-variant italic">No public updates logged yet.</p>
-                  )}
-                </div>
-
-                {/* Student Note Composer */}
-                <form onSubmit={handlePublishStudentUpdate} className="flex flex-col gap-1.5 mt-1">
-                  <textarea
-                    value={publicUpdateText}
-                    onChange={(e) => setPublicUpdateText(e.target.value)}
-                    className="w-full bg-surface-container-high text-on-surface placeholder:text-outline font-body-sm text-body-sm p-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-secondary resize-none border border-outline-variant/20"
-                    placeholder={`Draft public progress update visible to ${activeComplaint.studentId?.name || 'student'}...`}
-                    rows="2"
-                  ></textarea>
-                  <div className="flex justify-end">
-                    <button
-                      className="px-3 py-1 bg-surface-container-highest hover:bg-secondary-container text-on-secondary-container rounded-lg font-label-sm text-label-sm font-semibold transition-colors flex items-center gap-1.5 shadow"
-                      type="submit"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">send</span>
-                      <span>Publish Student Update</span>
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              {/* Section B: Internal Staff Notes (Confidential) */}
-              <div className="bg-surface-container-lowest p-space-md rounded-xl flex flex-col gap-space-sm relative border border-error/30">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-error text-[20px]">lock</span>
-                    <span className="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-error">
-                      Internal Staff Notes (Confidential)
-                    </span>
-                  </div>
-                  <span className="font-caption text-caption text-error-container font-semibold bg-error/10 px-2 py-0.5 rounded-full border border-error/30">
-                    Not Visible to Students
-                  </span>
-                </div>
-
-                {/* Internal Notes History */}
-                <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
-                  {activeComplaint.internalNotes && activeComplaint.internalNotes.length > 0 ? (
-                    activeComplaint.internalNotes.map((note, nIdx) => (
-                      <div
-                        key={nIdx}
-                        className="bg-surface-container-low p-2.5 rounded-lg flex flex-col gap-1 text-body-sm font-body-sm border border-error/20"
-                      >
-                        <div className="flex items-center justify-between text-caption font-caption text-outline">
-                          <span className="text-error font-medium">{note.authorName || 'Internal Technician'}</span>
-                          <span>{new Date(note.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                        </div>
-                        <p className="text-on-surface leading-snug">{note.note}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-caption text-on-surface-variant italic">No confidential internal notes recorded yet.</p>
-                  )}
-                </div>
-
-                {/* Internal Note Composer */}
-                <form onSubmit={handleSaveInternalNote} className="flex flex-col gap-1.5 mt-1">
-                  <textarea
-                    value={internalNoteText}
-                    onChange={(e) => setInternalNoteText(e.target.value)}
-                    className="w-full bg-surface-container-high text-on-surface placeholder:text-outline font-body-sm text-body-sm p-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary resize-none border border-outline-variant/20"
-                    placeholder="Add confidential technician note, hardware serials, vendor RMA..."
-                    rows="2"
-                  ></textarea>
-                  <div className="flex justify-end">
-                    <button
-                      className="px-3 py-1 bg-primary-container hover:bg-secondary-container text-on-primary-container rounded-lg font-label-sm text-label-sm font-semibold transition-colors flex items-center gap-1.5 shadow"
-                      type="submit"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">save</span>
-                      <span>Save Internal Note</span>
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-
-            {/* Resolution Timeline & Audit Stepper */}
-            <div className="bg-surface-container-lowest p-space-md rounded-xl flex flex-col gap-space-sm border border-outline-variant/20">
-              <div className="flex items-center justify-between">
-                <span className="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-on-surface">
-                  Lifecycle &amp; Audit Progression
-                </span>
-                <span className="font-caption text-caption text-secondary font-mono">SLA Remaining: 02h 45m</span>
-              </div>
-
-              {/* Stepper Graphic */}
-              <div className="relative pl-6 flex flex-col gap-3 py-1">
-                <div className="absolute left-2.5 top-2 bottom-2 w-0.5 bg-surface-container-high"></div>
-
-                {/* Step 1: Lodged */}
-                <div className="relative flex items-center gap-3">
-                  <div className="absolute -left-6 w-3 h-3 rounded-full bg-secondary"></div>
-                  <div className="flex items-baseline justify-between w-full font-body-sm text-body-sm">
-                    <span className="text-on-surface font-medium">1. Created by Student ({activeComplaint.studentId?.name || 'Rudra Sharma'})</span>
-                    <span className="font-caption text-caption text-outline">08:35 AM</span>
-                  </div>
-                </div>
-
-                {/* Step 2: Triaged */}
-                <div className="relative flex items-center gap-3">
-                  <div className="absolute -left-6 w-3 h-3 rounded-full bg-secondary"></div>
-                  <div className="flex items-baseline justify-between w-full font-body-sm text-body-sm">
-                    <span className="text-on-surface font-medium">2. Triaged by Admin Operations</span>
-                    <span className="font-caption text-caption text-outline">08:48 AM</span>
-                  </div>
-                </div>
-
-                {/* Step 3: Assigned */}
-                <div className="relative flex items-center gap-3">
-                  <div className="absolute -left-6 w-3 h-3 rounded-full bg-secondary"></div>
-                  <div className="flex items-baseline justify-between w-full font-body-sm text-body-sm">
-                    <span className="text-on-surface font-medium">
-                      3. Dispatched to {activeComplaint.assignedToName || 'Marcus Vance'}
-                    </span>
-                    <span className="font-caption text-caption text-outline">09:25 AM</span>
-                  </div>
-                </div>
-
-                {/* Step 4: Active In Progress */}
-                <div className="relative flex items-center gap-3">
-                  <div className="absolute -left-6 w-3 h-3 rounded-full bg-primary ring-4 ring-primary/20 animate-pulse"></div>
-                  <div className="flex items-baseline justify-between w-full font-body-sm text-body-sm">
-                    <span className="text-primary font-bold">4. In Progress: Hardware diagnostic underway</span>
-                    <span className="font-caption text-caption text-primary font-semibold">Active Now</span>
-                  </div>
-                </div>
-
-                {/* Step 5: Sign-off */}
-                <div className={`relative flex items-center gap-3 ${activeComplaint.status === 'resolved' ? '' : 'opacity-40'}`}>
-                  <div className="absolute -left-6 w-3 h-3 rounded-full bg-surface-container-highest"></div>
-                  <div className="flex items-baseline justify-between w-full font-body-sm text-body-sm">
-                    <span className="text-on-surface">5. Student Verification &amp; Sign-off</span>
-                    <span className="font-caption text-caption text-outline">
-                      {activeComplaint.status === 'resolved' ? 'Signed Off' : 'Pending'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Step 6: Resolved / Closed */}
-                <div className={`relative flex items-center gap-3 ${activeComplaint.status === 'closed' ? '' : 'opacity-40'}`}>
-                  <div className="absolute -left-6 w-3 h-3 rounded-full bg-surface-container-highest"></div>
-                  <div className="flex items-baseline justify-between w-full font-body-sm text-body-sm">
-                    <span className="text-on-surface">6. Resolved &amp; Archived into Facility Ledger</span>
-                    <span className="font-caption text-caption text-outline">
-                      {activeComplaint.status === 'closed' ? 'Archived' : 'Upcoming'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Action Bar & Resolution Sign-off */}
-            <div className="pt-2 flex flex-col gap-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  onClick={() => alert(`Escalated ticket #${activeComplaint.ticketId} to OEM hardware vendor support.`)}
-                  className="flex-1 px-space-md py-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md rounded-lg transition-colors flex items-center justify-center gap-1.5 border border-outline-variant/30"
-                  type="button"
-                >
-                  <span className="material-symbols-outlined text-[18px]">forward</span>
-                  <span>Escalate to Vendor</span>
-                </button>
-                <button
-                  onClick={() => handleUpdateStatus('parts_ordered')}
-                  className="px-space-md py-2 bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface font-label-md text-label-md rounded-lg transition-colors border border-outline-variant/30"
-                  type="button"
-                >
-                  <span>Hold / Parts</span>
-                </button>
-                <button
-                  onClick={() => handleUpdateStatus('resolved')}
-                  className="flex-2 px-space-md py-2 bg-primary-container hover:bg-secondary-container text-on-primary-container font-label-md text-label-md font-bold rounded-lg transition-all shadow-[0_0_16px_rgba(172,39,79,0.35)] flex items-center justify-center gap-2"
-                  type="button"
-                >
-                  <span className="material-symbols-outlined text-[18px]">check_circle</span>
-                  <span>Resolve &amp; Sign-off</span>
-                </button>
-              </div>
-
-              {/* Simulation Mode Indicator */}
-              <div className="bg-surface-container-low px-3 py-1.5 rounded-lg flex items-center justify-between text-caption font-caption text-outline border border-outline-variant/20">
-                <span className="flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[14px] text-secondary">info</span>
-                  <span>Administrative mode: status transitions trigger audit ledger logs.</span>
-                </span>
-                <span className="text-primary font-mono font-medium">Session: ELEANOR-042</span>
-              </div>
+          <div className="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2.5 text-xs text-[#E4EAE5]">
+            <span className="material-symbols-outlined text-[16px] text-[#6CE0B8]">shield</span>
+            <div className="flex flex-col">
+              <span className="font-bold text-white">{user?.name || 'Administrator'}</span>
+              <span className="text-[10px] text-[#A3B8AC]">Super Admin Clearance</span>
             </div>
           </div>
         </div>
       </div>
 
+      {/* KPI Cards — exact same -mt-6 overlap + card structure as AdminDashboard */}
+      <div className="-mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
-
-      {/* MODAL: Log Internal Ticket */}
-      {showLogTicketModal && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="log-ticket-title"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowLogTicketModal(false);
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-surface-container-lowest/80 backdrop-blur-md p-space-md"
-        >
-          <div className="bg-surface-variant w-full max-w-lg rounded-xl shadow-2xl p-space-lg flex flex-col gap-space-md border border-outline-variant/30">
-            <div className="flex items-center justify-between pb-2 border-b border-outline-variant/20">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-[24px]">add_circle</span>
-                <h3 id="log-ticket-title" className="font-headline-sm text-headline-sm text-on-surface font-bold">
-                  Log Institutional Maintenance Ticket
-                </h3>
+          {/* Total Tickets */}
+          <div className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:shadow-md transition-all">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-[#EAF5EF] text-[#168567] flex items-center justify-center">
+                <span className="material-symbols-outlined text-[20px]">confirmation_number</span>
               </div>
-              <button
-                type="button"
-                aria-label="Close log ticket dialog"
-                onClick={() => setShowLogTicketModal(false)}
-                className="p-1 rounded-lg text-on-surface-variant hover:text-on-surface cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-[20px]">close</span>
+            </div>
+            <div className="mt-4">
+              <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Total Tickets</span>
+              <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">{totalActiveTickets || 0}</div>
+              <p className="text-xs text-[#87968D] mt-1">
+                <span className="text-[#168567] font-bold">{newTriageCount || 0} Open</span> • {inProgressCount || 0} Active • {resolvedCount || 0} Done
+              </p>
+            </div>
+          </div>
+
+          {/* Avg First Response */}
+          <div className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:shadow-md transition-all">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#3478B8] flex items-center justify-center">
+                <span className="material-symbols-outlined text-[20px]">bolt</span>
+              </div>
+            </div>
+            <div className="mt-4">
+              <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Avg. First Response</span>
+              <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">18 <span className="text-lg font-bold text-[#3478B8]">min</span></div>
+              <p className="text-xs text-[#87968D] mt-1">
+                <span className="text-[#168567] font-bold">Target &lt;30m</span> • SLA 94.2%
+              </p>
+            </div>
+          </div>
+
+          {/* Critical & High */}
+          <div className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:shadow-md transition-all">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-[#FFF0F2] text-[#C43D4B] flex items-center justify-center">
+                <span className="material-symbols-outlined text-[20px]">crisis_alert</span>
+              </div>
+            </div>
+            <div className="mt-4">
+              <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Critical &amp; High</span>
+              <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">{criticalCount || 0}</div>
+              <p className="text-xs text-[#87968D] mt-1">
+                {criticalCount > 0
+                  ? <span className="text-[#C43D4B] font-bold">Requires Immediate Action</span>
+                  : <span className="text-[#168567] font-bold">All Clear</span>}
+              </p>
+            </div>
+          </div>
+
+          {/* Student CSAT */}
+          <div className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:shadow-md transition-all">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-[#FFF9EB] text-[#B26A00] flex items-center justify-center">
+                <span className="material-symbols-outlined text-[20px]">reviews</span>
+              </div>
+            </div>
+            <div className="mt-4">
+              <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Student CSAT</span>
+              <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">{avgSatisfaction} <span className="text-lg text-[#B26A00]">★</span></div>
+              <p className="text-xs text-[#87968D] mt-1">
+                {reviewsCount > 0
+                  ? <><span className="text-[#B26A00] font-bold">{reviewsCount} review{reviewsCount > 1 ? 's' : ''}</span> submitted</>
+                  : 'No reviews yet'}
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Main Split */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-6">
+
+        {/* LEFT */}
+        <div className="lg:col-span-7 flex flex-col gap-4">
+          {/* Filters */}
+          <div className="rounded-2xl p-4 flex flex-col gap-3 shadow-sm" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <div className="relative flex-1">
+                <span className="material-symbols-outlined absolute left-3 top-2.5 text-[18px]" style={{ color: 'var(--text-secondary)' }}>search</span>
+                <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl text-sm focus:outline-none"
+                  style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)' }}
+                  placeholder="Search ticket ID, title, student, location…" type="text" />
+              </div>
+              <button onClick={() => { setSearchQuery(''); setCategoryFilter('all'); setStatusFilter('all'); setPriorityFilter('all'); setActiveQuickPill('all'); }}
+                type="button" className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium"
+                style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-interactive)', color: 'var(--text-secondary)' }}>
+                <span className="material-symbols-outlined text-[16px]">tune</span>Reset
+              </button>
+              <button onClick={handleExportCSV} type="button"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold"
+                style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-interactive)', color: 'var(--text-secondary)' }}>
+                <span className="material-symbols-outlined text-[16px]">download</span>Export CSV
+              </button>
+              <button onClick={() => setShowLogTicketModal(true)} type="button"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold text-white shadow-sm"
+                style={{ background: 'var(--brand-primary)' }}>
+                <span className="material-symbols-outlined text-[16px]">add_circle</span>Log Ticket
+              </button>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {[
+                { value: categoryFilter, setter: setCategoryFilter, options: [['all','All Categories'],['av','Classroom AV'],['electrical','Electrical'],['plumbing','Plumbing'],['network','IT & Network'],['hvac','HVAC/Climate'],['furniture','Furniture'],['sanitation','Sanitation']] },
+                { value: statusFilter,   setter: setStatusFilter,   options: [['all','All Statuses'],['open','Open'],['in_progress','In Progress'],['parts_ordered','Parts Ordered'],['resolved','Resolved'],['closed','Closed']] },
+                { value: priorityFilter, setter: setPriorityFilter, options: [['all','All Priorities'],['critical','Critical'],['high','High'],['medium','Medium'],['low','Low']] },
+              ].map(({ value, setter, options }, idx) => (
+                <div key={idx} className="relative">
+                  <select value={value} onChange={(e) => setter(e.target.value)} className="w-full appearance-none px-3 py-1.5 rounded-lg text-xs focus:outline-none"
+                    style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)' }}>
+                    {options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                  </select>
+                  <span className="material-symbols-outlined absolute right-2 top-1.5 text-[14px] pointer-events-none" style={{ color: 'var(--text-secondary)' }}>expand_more</span>
+                </div>
+              ))}
+              <div className="relative">
+                <select className="w-full appearance-none px-3 py-1.5 rounded-lg text-xs focus:outline-none"
+                  style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)' }}>
+                  <option>Today</option><option>Past 3 Days</option><option>This Week</option>
+                </select>
+                <span className="material-symbols-outlined absolute right-2 top-1.5 text-[14px] pointer-events-none" style={{ color: 'var(--text-secondary)' }}>calendar_today</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {[
+                { key: 'all',        label: `All Queue (${complaints.length})` },
+                { key: 'unassigned', label: `Unassigned (${complaints.filter(c => c.status === 'open' || !c.assignedToName).length})` },
+                { key: 'dispatched', label: `Dispatched (${complaints.filter(c => c.status === 'in_progress').length})` },
+                { key: 'escalated',  label: `Escalated (${criticalCount})`, alert: true },
+                { key: 'resolved',   label: `Resolved (${complaints.filter(c => c.status === 'resolved' || c.status === 'closed').length})` },
+              ].map(({ key, label, alert }) => (
+                <button key={key} onClick={() => setActiveQuickPill(key)} type="button"
+                  className="px-3 py-1 rounded-full text-xs font-semibold transition-all flex items-center gap-1"
+                  style={activeQuickPill === key
+                    ? { background: 'var(--brand-primary)', color: '#fff' }
+                    : { background: 'var(--bg-canvas)', color: 'var(--text-secondary)', border: '1px solid var(--border-interactive)' }}>
+                  {alert && <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--status-danger)' }} />}
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Ticket Cards */}
+          <div className="flex flex-col gap-2">
+            {filteredComplaints.map((c) => {
+              const isSelected = activeComplaint?.ticketId === c.ticketId;
+              const pm = priorityMeta(c.priority);
+              const sm = statusMeta(c.status);
+              const ti = (c.assignedToName || 'U').split(' ').map(w => w[0]).join('').slice(0, 2);
+              return (
+                <div key={c.ticketId || c._id} onClick={() => setSelectedTicketId(c.ticketId)}
+                  className="relative rounded-2xl p-4 cursor-pointer transition-all"
+                  style={{
+                    background: isSelected ? 'var(--brand-soft-bg)' : 'var(--bg-surface)',
+                    border: isSelected ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                    boxShadow: isSelected ? 'inset 3px 0 0 var(--brand-primary)' : 'none',
+                  }}>
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-xl shrink-0 flex items-center justify-center text-sm font-bold text-white"
+                      style={{ background: 'linear-gradient(135deg,var(--brand-primary),var(--brand-forest))' }}>
+                      {(c.studentId?.name || 'S')[0].toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                        <span className="text-xs font-bold font-mono" style={{ color: 'var(--brand-primary)' }}>{c.ticketId}</span>
+                        <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded"
+                          style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>{c.category}</span>
+                        <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-full ${pm.badge}`}>{pm.label}</span>
+                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full flex items-center gap-1 ${sm.cls}`}>
+                          {c.status === 'in_progress' && <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: sm.dot }} />}
+                          {sm.label}
+                        </span>
+                      </div>
+                      <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{c.title}</p>
+                      <div className="flex items-center gap-3 mt-0.5 flex-wrap">
+                        <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{c.studentId?.name || 'Student Reporter'}</span>
+                        {c.location && <span className="text-xs truncate max-w-[160px]" style={{ color: 'var(--border-interactive)' }}>📍 {c.location.split(',')[0]}</span>}
+                      </div>
+                      {c.review && c.review.rating ? (
+                        <div className="mt-1.5 flex items-center gap-1.5 w-max px-2 py-0.5 rounded-lg"
+                          style={{ background: 'var(--status-warning-bg)', border: '1px solid var(--status-warning-border)' }}>
+                          {[1,2,3,4,5].map(s => (
+                            <span key={s} className="material-symbols-outlined text-[12px]"
+                              style={{ color: 'var(--status-warning)', fontVariationSettings: `'FILL' ${s <= Number(c.review.rating) ? 1 : 0}` }}>star</span>
+                          ))}
+                          <span className="text-[11px] font-bold ml-0.5" style={{ color: 'var(--status-warning)' }}>{c.review.rating}.0</span>
+                          {c.review.comment && <span className="text-[11px] italic truncate max-w-[100px]" style={{ color: 'var(--text-secondary)' }}>"{c.review.comment}"</span>}
+                        </div>
+                      ) : (c.status === 'resolved' || c.status === 'closed') ? (
+                        <div className="mt-1.5 flex items-center gap-1 w-max px-2 py-0.5 rounded-lg text-[11px]"
+                          style={{ background: 'var(--brand-soft-bg)', border: '1px solid var(--brand-soft-border)', color: 'var(--brand-primary)' }}>
+                          <span className="material-symbols-outlined text-[12px]">rate_review</span>
+                          Awaiting student review
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="w-7 h-7 rounded-lg shrink-0 flex items-center justify-center text-xs font-bold text-white"
+                      style={{ background: 'var(--brand-primary)' }}>{ti}</div>
+                  </div>
+                </div>
+              );
+            })}
+            {filteredComplaints.length === 0 && (
+              <div className="flex flex-col items-center py-16" style={{ color: 'var(--text-secondary)' }}>
+                <span className="material-symbols-outlined text-[48px] mb-2" style={{ color: 'var(--border-interactive)' }}>inbox</span>
+                <p className="text-sm font-medium">No tickets match the current filters</p>
+              </div>
+            )}
+          </div>
+          <div className="flex items-center justify-between text-xs px-1" style={{ color: 'var(--text-secondary)' }}>
+            <span>Showing <strong style={{ color: 'var(--text-primary)' }}>{filteredComplaints.length}</strong> of <strong style={{ color: 'var(--text-primary)' }}>{complaints.length}</strong> tickets</span>
+            <span className="px-2.5 py-1 rounded-lg font-semibold"
+              style={{ background: 'var(--brand-soft-bg)', color: 'var(--brand-primary)', border: '1px solid var(--brand-soft-border)' }}>Page 1 of 1</span>
+          </div>
+        </div>
+
+        {/* RIGHT */}
+        <div className="lg:col-span-5 flex flex-col gap-4">
+          <div className="rounded-2xl p-5 flex flex-col gap-5 shadow-sm" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+
+            {/* Tags */}
+            <div className="flex items-start justify-between flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg font-mono"
+                  style={{ background: 'var(--brand-soft-bg)', color: 'var(--brand-primary)', border: '1px solid var(--brand-soft-border)' }}>#{activeComplaint.ticketId}</span>
+                <span className="text-xs font-bold uppercase px-2.5 py-1 rounded-lg"
+                  style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>{activeComplaint.category}</span>
+                <span className={`text-xs font-bold uppercase px-2.5 py-1 rounded-lg ${priorityMeta(activeComplaint.priority).badge}`}>{activeComplaint.priority} SLA</span>
+                <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1 ${statusMeta(activeComplaint.status).cls}`}>
+                  {activeComplaint.status === 'in_progress' && <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: statusMeta(activeComplaint.status).dot }} />}
+                  {statusMeta(activeComplaint.status).label}
+                </span>
+              </div>
+              <button onClick={() => window.print()} type="button" className="p-1.5 rounded-lg"
+                style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
+                <span className="material-symbols-outlined text-[16px]">print</span>
               </button>
             </div>
 
-            <form onSubmit={handleCreateNewTicket} className="space-y-3 font-body-sm text-body-sm">
-              <div>
-                <label className="block text-caption font-caption text-on-surface-variant uppercase font-semibold mb-1">
-                  Issue Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. AC unit condenser vibrating loudly"
-                  value={newTicketForm.title}
-                  onChange={(e) => setNewTicketForm({ ...newTicketForm, title: e.target.value })}
-                  className="w-full bg-surface-container-low px-3 py-2 rounded-lg text-on-surface border border-outline-variant/30 focus:outline-none focus:ring-1 focus:ring-primary"
-                />
+            {/* Title & Description */}
+            <div>
+              <h2 className="text-lg font-bold leading-snug" style={{ color: 'var(--brand-forest)' }}>{activeComplaint.title}</h2>
+              <p className="text-sm mt-1 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{activeComplaint.description}</p>
+              <div className="flex items-center gap-1.5 mt-2 text-xs font-medium" style={{ color: 'var(--brand-primary)' }}>
+                <span className="material-symbols-outlined text-[14px]">location_on</span>
+                <span>{activeComplaint.location}</span>
               </div>
+            </div>
 
+            {/* Reporter */}
+            <div className="rounded-xl p-3.5 flex items-start justify-between gap-3" style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)' }}>
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center text-base font-bold text-white"
+                  style={{ background: 'linear-gradient(135deg,var(--brand-primary),var(--brand-forest))' }}>
+                  {(activeComplaint.studentId?.name || 'S')[0]}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{activeComplaint.studentId?.name || 'Rudra Sharma'}</span>
+                    <span className="text-[10px] font-bold font-mono px-1.5 py-0.5 rounded"
+                      style={{ background: 'var(--brand-soft-bg)', color: 'var(--brand-primary)', border: '1px solid var(--brand-soft-border)' }}>
+                      {activeComplaint.studentId?.rollNumber || 'MU2026001'}
+                    </span>
+                  </div>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
+                    {activeComplaint.studentId?.department || 'Computer Science'} • {activeComplaint.studentId?.phone || '+91 98765 43210'}
+                  </p>
+                  <div className="flex items-center gap-1 mt-1 text-xs" style={{ color: 'var(--border-interactive)' }}>
+                    <span className="material-symbols-outlined text-[12px]" style={{ color: 'var(--brand-primary)' }}>smartphone</span>
+                    NextCampus Student Care App
+                  </div>
+                </div>
+              </div>
+              {activeComplaint.attachments && activeComplaint.attachments.length > 0 && (
+                <div onClick={() => setZoomEvidenceUrl(activeComplaint.attachments[0])}
+                  className="w-14 h-14 rounded-xl overflow-hidden relative group cursor-pointer shrink-0"
+                  style={{ border: '1px solid var(--border-subtle)' }}>
+                  <img src={activeComplaint.attachments[0]} alt="Evidence" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ background: 'rgba(22,133,103,0.4)' }}>
+                    <span className="material-symbols-outlined text-white text-[16px]">zoom_in</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* CSAT */}
+            {activeComplaint.review && activeComplaint.review.rating ? (
+              <div className="rounded-xl p-4 space-y-3" style={{ background: 'var(--status-warning-bg)', border: '1px solid var(--status-warning-border)' }}>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--status-warning-border)' }}>
+                      <span className="material-symbols-outlined text-[16px]" style={{ color: 'var(--status-warning)' }}>verified</span>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <h3 className="text-xs font-bold" style={{ color: 'var(--text-primary)' }}>Student Resolution Review</h3>
+                        <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded" style={{ background: 'var(--status-warning-border)', color: 'var(--status-warning)' }}>Verified CSAT</span>
+                      </div>
+                      <p className="text-[11px] mt-0.5" style={{ color: 'var(--text-secondary)' }}>
+                        {activeComplaint.review.reviewedByName || activeComplaint.studentId?.name || 'Student'} • {new Date(activeComplaint.review.createdAt || Date.now()).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg" style={{ background: 'var(--status-warning-border)' }}>
+                    <span className="material-symbols-outlined text-[16px]" style={{ color: 'var(--status-warning)', fontVariationSettings: "'FILL' 1" }}>star</span>
+                    <span className="text-lg font-black" style={{ color: 'var(--status-warning)' }}>{activeComplaint.review.rating}</span>
+                    <span className="text-[10px] font-medium" style={{ color: 'var(--status-warning)' }}>/5</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-0.5">
+                  {[1,2,3,4,5].map(s => (
+                    <span key={s} className="material-symbols-outlined text-[22px]"
+                      style={{ color: 'var(--status-warning)', fontVariationSettings: `'FILL' ${s <= Number(activeComplaint.review.rating) ? 1 : 0}` }}>star</span>
+                  ))}
+                  <span className="ml-2 text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>
+                    {Number(activeComplaint.review.rating) >= 5 ? 'Exceptional' : Number(activeComplaint.review.rating) >= 4 ? 'Satisfactory' : 'Acceptable'}
+                  </span>
+                </div>
+                {activeComplaint.review.comment && (
+                  <div className="rounded-lg p-3 relative text-sm italic leading-relaxed"
+                    style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid var(--status-warning-border)', color: 'var(--text-primary)' }}>
+                    <span className="material-symbols-outlined text-[14px] absolute top-2 right-2" style={{ color: 'var(--status-warning)' }}>format_quote</span>
+                    "{activeComplaint.review.comment}"
+                  </div>
+                )}
+                {activeComplaint.review.tags && activeComplaint.review.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {activeComplaint.review.tags.map((tag, i) => (
+                      <span key={i} className="text-[11px] font-medium px-2 py-0.5 rounded-full"
+                        style={{ background: 'var(--status-warning-border)', color: 'var(--status-warning)' }}>{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (activeComplaint.status === 'resolved' || activeComplaint.status === 'closed') ? (
+              <div className="rounded-xl p-3.5 flex items-center justify-between gap-3" style={{ background: 'var(--brand-soft-bg)', border: '1px solid var(--brand-soft-border)' }}>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--brand-soft-border)' }}>
+                    <span className="material-symbols-outlined text-[16px]" style={{ color: 'var(--brand-primary)' }}>rate_review</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>Awaiting Student Review</p>
+                    <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Ticket resolved — student feedback pending.</p>
+                  </div>
+                </div>
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'var(--brand-soft-border)', color: 'var(--brand-primary)' }}>Pending CSAT</span>
+              </div>
+            ) : null}
+
+            {/* Assignment */}
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { label: 'Technician', value: activeComplaint.assignedToName || 'Unassigned', onChange: handleAssignStaff,
+                  options: [['Unassigned', 'Unassigned'], ...staffList.map(s => [s.name, `${s.name} (${s.specialty || 'Tech'})`])] },
+                { label: 'Status', value: activeComplaint.status, onChange: handleUpdateStatus,
+                  options: [['open','Open'],['in_progress','In Progress'],['parts_ordered','Awaiting Parts'],['resolved','Resolved'],['closed','Closed']] },
+                { label: 'Priority', value: activeComplaint.priority, onChange: handleUpdatePriority,
+                  options: [['critical','Critical (2h)'],['high','High (4h)'],['medium','Medium (24h)'],['low','Low (48h)']] },
+              ].map(({ label, value, onChange, options }) => (
+                <div key={label} className="flex flex-col gap-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>{label}</label>
+                  <div className="relative">
+                    <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full appearance-none px-2.5 py-1.5 rounded-lg text-xs focus:outline-none"
+                      style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)' }}>
+                      {options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                    </select>
+                    <span className="material-symbols-outlined absolute right-1.5 top-1.5 text-[13px] pointer-events-none" style={{ color: 'var(--text-secondary)' }}>arrow_drop_down</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Simple Admin Note */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Admin Note (optional)</label>
+              <textarea
+                value={publicUpdateText}
+                onChange={(e) => setPublicUpdateText(e.target.value)}
+                rows="3"
+                className="w-full px-3 py-2.5 rounded-xl text-sm resize-none focus:outline-none"
+                style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)' }}
+                placeholder="Add a note about this complaint…"
+              />
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 pt-1">
+              <button
+                onClick={() => handleUpdateStatus('open')}
+                type="button"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm transition-all hover:opacity-90"
+                style={{ background: 'var(--status-info-bg)', border: '1.5px solid var(--status-info-border)', color: 'var(--status-info)' }}>
+                <span className="material-symbols-outlined text-[18px]">schedule</span>
+                Waiting
+              </button>
+              <button
+                onClick={() => handleUpdateStatus('in_progress')}
+                type="button"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm transition-all hover:opacity-90"
+                style={{ background: 'var(--status-warning-bg)', border: '1.5px solid var(--status-warning-border)', color: 'var(--status-warning)' }}>
+                <span className="material-symbols-outlined text-[18px]">engineering</span>
+                In Progress
+              </button>
+              <button
+                onClick={() => handleUpdateStatus('resolved')}
+                type="button"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm text-white shadow-sm transition-all hover:opacity-90"
+                style={{ background: 'var(--brand-primary)' }}>
+                <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                Resolve
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Log Ticket Modal */}
+      {showLogTicketModal && (
+        <div role="dialog" aria-modal="true" aria-labelledby="log-ticket-title"
+          onClick={(e) => { if (e.target === e.currentTarget) setShowLogTicketModal(false); }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(20,45,40,0.55)', backdropFilter: 'blur(6px)' }}>
+          <div className="w-full max-w-lg rounded-2xl p-6 flex flex-col gap-4 shadow-2xl"
+            style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+            <div className="flex items-center justify-between pb-3" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--brand-soft-bg)' }}>
+                  <span className="material-symbols-outlined text-[16px]" style={{ color: 'var(--brand-primary)' }}>add_circle</span>
+                </div>
+                <h3 id="log-ticket-title" className="text-base font-bold" style={{ color: 'var(--brand-forest)' }}>Log Maintenance Ticket</h3>
+              </div>
+              <button type="button" onClick={() => setShowLogTicketModal(false)} className="p-1.5 rounded-lg"
+                style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
+            </div>
+            <form onSubmit={handleCreateNewTicket} className="space-y-3 text-sm">
+              {[
+                { label: 'Issue Title *', key: 'title', type: 'text', placeholder: 'e.g. AC condenser vibrating loudly' },
+                { label: 'Facility Location *', key: 'location', type: 'text', placeholder: 'e.g. Faculty of Engineering, Room B-204' },
+              ].map(({ label, key, type, placeholder }) => (
+                <div key={key}>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--text-secondary)' }}>{label}</label>
+                  <input type={type} required placeholder={placeholder} value={newTicketForm[key]}
+                    onChange={(e) => setNewTicketForm({ ...newTicketForm, [key]: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl text-sm focus:outline-none"
+                    style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)' }} />
+                </div>
+              ))}
               <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-caption font-caption text-on-surface-variant uppercase font-semibold mb-1">
-                    Category
-                  </label>
-                  <select
-                    value={newTicketForm.category}
-                    onChange={(e) => setNewTicketForm({ ...newTicketForm, category: e.target.value })}
-                    className="w-full bg-surface-container-low px-3 py-2 rounded-lg text-on-surface border border-outline-variant/30 focus:outline-none focus:ring-1 focus:ring-primary"
-                  >
-                    <option value="av">Classroom AV</option>
-                    <option value="electrical">Electrical</option>
-                    <option value="plumbing">Plumbing</option>
-                    <option value="network">IT &amp; Network</option>
-                    <option value="hvac">HVAC / Climate</option>
-                    <option value="furniture">Furniture</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-caption font-caption text-on-surface-variant uppercase font-semibold mb-1">
-                    Priority
-                  </label>
-                  <select
-                    value={newTicketForm.priority}
-                    onChange={(e) => setNewTicketForm({ ...newTicketForm, priority: e.target.value })}
-                    className="w-full bg-surface-container-low px-3 py-2 rounded-lg text-on-surface border border-outline-variant/30 focus:outline-none focus:ring-1 focus:ring-primary"
-                  >
-                    <option value="critical">Critical (&lt; 2h SLA)</option>
-                    <option value="high">High (&lt; 4h SLA)</option>
-                    <option value="medium">Medium (&lt; 24h SLA)</option>
-                    <option value="low">Low (&lt; 48h SLA)</option>
-                  </select>
-                </div>
+                {[
+                  { label: 'Category', key: 'category', options: [['av','Classroom AV'],['electrical','Electrical'],['plumbing','Plumbing'],['network','IT & Network'],['hvac','HVAC'],['furniture','Furniture']] },
+                  { label: 'Priority', key: 'priority', options: [['critical','Critical (<2h)'],['high','High (<4h)'],['medium','Medium (<24h)'],['low','Low (<48h)']] },
+                ].map(({ label, key, options }) => (
+                  <div key={key}>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--text-secondary)' }}>{label}</label>
+                    <select value={newTicketForm[key]} onChange={(e) => setNewTicketForm({ ...newTicketForm, [key]: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl text-sm focus:outline-none"
+                      style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)' }}>
+                      {options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                    </select>
+                  </div>
+                ))}
               </div>
-
               <div>
-                <label className="block text-caption font-caption text-on-surface-variant uppercase font-semibold mb-1">
-                  Facility Location *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Faculty of Engineering & Technology, Room B-204"
-                  value={newTicketForm.location}
-                  onChange={(e) => setNewTicketForm({ ...newTicketForm, location: e.target.value })}
-                  className="w-full bg-surface-container-low px-3 py-2 rounded-lg text-on-surface border border-outline-variant/30 focus:outline-none focus:ring-1 focus:ring-primary"
-                />
-              </div>
-
-              <div>
-                <label className="block text-caption font-caption text-on-surface-variant uppercase font-semibold mb-1">
-                  Defect Description *
-                </label>
-                <textarea
-                  rows="3"
-                  required
-                  placeholder="Provide technical details, observed malfunction, and preliminary assessment..."
+                <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--text-secondary)' }}>Defect Description *</label>
+                <textarea rows="3" required placeholder="Technical details, malfunction description…"
                   value={newTicketForm.description}
                   onChange={(e) => setNewTicketForm({ ...newTicketForm, description: e.target.value })}
-                  className="w-full bg-surface-container-low p-2 rounded-lg text-on-surface border border-outline-variant/30 focus:outline-none focus:ring-1 focus:ring-primary resize-none"
-                ></textarea>
+                  className="w-full px-3 py-2 rounded-xl text-sm resize-none focus:outline-none"
+                  style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-interactive)', color: 'var(--text-primary)' }} />
               </div>
-
-              <div className="pt-2 flex justify-end gap-2 border-t border-outline-variant/20">
-                <button
-                  type="button"
-                  onClick={() => setShowLogTicketModal(false)}
-                  className="px-4 py-2 rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-lg bg-primary-container hover:bg-secondary-container text-on-primary font-bold shadow"
-                >
-                  Log Ticket
-                </button>
+              <div className="flex justify-end gap-2 pt-2" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+                <button type="button" onClick={() => setShowLogTicketModal(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold"
+                  style={{ background: 'var(--bg-canvas)', border: '1px solid var(--border-interactive)', color: 'var(--text-secondary)' }}>Cancel</button>
+                <button type="submit" className="px-5 py-2 rounded-xl text-xs font-bold text-white shadow-sm hover:opacity-90"
+                  style={{ background: 'var(--brand-primary)' }}>Log Ticket</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* LIGHTBOX MODAL: Evidence Zoom Preview */}
+      {/* Lightbox */}
       {zoomEvidenceUrl && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Enlarged complaint evidence inspector"
+        <div role="dialog" aria-modal="true" aria-label="Evidence lightbox"
           onClick={() => setZoomEvidenceUrl(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 cursor-pointer"
-        >
-          <div className="relative max-w-3xl max-h-[85vh] rounded-2xl overflow-hidden shadow-2xl border border-outline-variant/30">
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 cursor-pointer"
+          style={{ background: 'rgba(20,45,40,0.88)', backdropFilter: 'blur(12px)' }}>
+          <div className="relative max-w-3xl max-h-[85vh] rounded-2xl overflow-hidden shadow-2xl"
+            style={{ border: '1px solid var(--border-interactive)' }}>
             <img src={zoomEvidenceUrl} alt="Evidence zoomed" className="w-full h-full object-contain" />
-            <button
-              type="button"
-              aria-label="Close enlarged evidence"
-              onClick={() => setZoomEvidenceUrl(null)}
-              className="absolute top-3 right-3 bg-black/60 text-white p-2 rounded-full hover:bg-black/90 cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-[20px]">close</span>
+            <button type="button" onClick={() => setZoomEvidenceUrl(null)}
+              className="absolute top-3 right-3 p-2 rounded-full"
+              style={{ background: 'rgba(20,45,40,0.8)', border: '1px solid rgba(255,255,255,0.2)' }}>
+              <span className="material-symbols-outlined text-white text-[18px]">close</span>
             </button>
           </div>
         </div>

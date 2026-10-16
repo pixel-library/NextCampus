@@ -116,7 +116,7 @@ export const AuthProvider = ({ children }) => {
 
       if ((isDemoRakesh && isRakeshPass) || (isDemoAdmin && isAdminPass)) {
         const demoUser = isDemoRakesh ? DEMO_USERS['rakesh@nextcampus.edu'] : DEMO_USERS['admin@nextcampus.edu'];
-        const mockToken = `demo_token_${Date.now()}`;
+        const mockToken = `demo_token_${demoUser.role}_${Date.now()}`;
         localStorage.setItem('nextcampus_token', mockToken);
         localStorage.setItem('nextcampus_demo_role', demoUser.role);
         setUser(demoUser);
