@@ -237,6 +237,14 @@ export function CampusManagement() {
 
         <div className="flex flex-wrap items-center gap-2.5 shrink-0">
           <button
+            onClick={() => navigate('/campus-map?admin=true')}
+            className="px-3.5 py-2 rounded-xl bg-[#168567] hover:bg-[#126b53] text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+          >
+            <Compass className="w-3.5 h-3.5 text-white" />
+            <span>Open Map &amp; Photo Editor</span>
+          </button>
+
+          <button
             onClick={handleExportCSV}
             className="px-3 py-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
           >

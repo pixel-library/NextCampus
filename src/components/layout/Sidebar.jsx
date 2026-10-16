@@ -51,6 +51,7 @@ export const Sidebar = ({ onClose, isCollapsed = false, onToggleCollapse }) => {
             { label: 'Student Directory', path: '/admin?tab=students', icon: Users },
             { label: 'Timetable Studio', path: '/admin?tab=timetable', icon: Calendar },
             { label: 'Mess Menu Control', path: '/admin?tab=mess', icon: Utensils },
+            { label: 'Campus Map & Editor', path: '/campus-map?admin=true', icon: MapPin, badge: 'MAP' },
             { label: 'Campus Facilities', path: '/admin/campus-management', icon: Sliders },
           ],
         },

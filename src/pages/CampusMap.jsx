@@ -28,6 +28,9 @@ import {
   Move,
   ShieldCheck,
   Check,
+  Camera,
+  Upload,
+  Image as ImageIcon,
   Play,
   Pause,
   Maximize2,
@@ -1230,14 +1233,42 @@ export const INDOOR_BLUEPRINTS = {
 
 export const CampusMap = () => {
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin' || user?.role === 'care_admin';
+  const isUserAdmin = user?.role === 'admin' || user?.role === 'care_admin' || user?.role === 'staff';
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const initialBldg = searchParams.get('bldg') || 'eng';
 
-  // Spatial data state
-  const [buildings, setBuildings] = useState(INITIAL_BUILDINGS);
+  // Admin Map Editor states
+  const [adminMapMode, setAdminMapMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return (
+        localStorage.getItem('nextcampus_map_admin') === 'true' ||
+        searchParams.get('admin') === 'true' ||
+        searchParams.get('admin') === '1'
+      );
+    }
+    return false;
+  });
+  const isAdmin = isUserAdmin || adminMapMode;
+
+  // Spatial data state with localStorage persistence
+  const [buildings, setBuildings] = useState(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('nextcampus_custom_buildings');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            return { ...INITIAL_BUILDINGS, ...parsed };
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load custom buildings from localStorage', e);
+    }
+    return INITIAL_BUILDINGS;
+  });
   const [selectedBldg, setSelectedBldg] = useState(initialBldg);
   const [selectedFloor, setSelectedFloor] = useState('Level 2');
   const [selectedRoomId, setSelectedRoomId] = useState('B-204');
@@ -1285,9 +1316,10 @@ export const CampusMap = () => {
   const hasCenteredInitiallyRef = useRef(false);
 
   // Admin Map Editor states
-  const [adminMapMode, setAdminMapMode] = useState(isAdmin);
   const [isClickToPlace, setIsClickToPlace] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [editModalTab, setEditModalTab] = useState('photo'); // 'photo' | 'info' | 'metrics' | 'space'
+  const fileInputRef = useRef(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [adminToast, setAdminToast] = useState('');
   const [isSavingGis, setIsSavingGis] = useState(false);
@@ -1301,6 +1333,28 @@ export const CampusMap = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Sync custom overrides to runtime CAMPUS_GIS_LOCATIONS
+  useEffect(() => {
+    try {
+      Object.entries(buildings).forEach(([key, bldg]) => {
+        if (CAMPUS_GIS_LOCATIONS[key]) {
+          if (bldg.name) CAMPUS_GIS_LOCATIONS[key].name = bldg.name;
+          if (bldg.shortName) CAMPUS_GIS_LOCATIONS[key].shortName = bldg.shortName;
+          if (bldg.code) CAMPUS_GIS_LOCATIONS[key].code = bldg.code;
+          if (bldg.dept) CAMPUS_GIS_LOCATIONS[key].dept = bldg.dept;
+          if (bldg.description) CAMPUS_GIS_LOCATIONS[key].description = bldg.description;
+          if (bldg.category) CAMPUS_GIS_LOCATIONS[key].category = bldg.category;
+          if (bldg.lat && bldg.lng) {
+            CAMPUS_GIS_LOCATIONS[key].lat = Number(bldg.lat);
+            CAMPUS_GIS_LOCATIONS[key].lng = Number(bldg.lng);
+          }
+        }
+      });
+    } catch (err) {
+      console.error('Failed to sync to CAMPUS_GIS_LOCATIONS', err);
+    }
+  }, [buildings]);
 
   const handleOpenNavPanel = () => {
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
@@ -1316,21 +1370,59 @@ export const CampusMap = () => {
     setDrawerOpen(true);
   };
 
+  // Preset stock photos for rapid selection
+  const PRESET_FACILITY_PHOTOS = [
+    {
+      name: 'Engineering & Computing Lab',
+      url: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1000&q=80',
+    },
+    {
+      name: 'Main Academic Quad & Arch',
+      url: 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=1000&q=80',
+    },
+    {
+      name: 'Central Library & Reading Hall',
+      url: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1000&q=80',
+    },
+    {
+      name: 'Student Residence Wing',
+      url: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=1000&q=80',
+    },
+    {
+      name: 'Sports Complex & Arena',
+      url: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=80',
+    },
+    {
+      name: 'Cafeteria & Dining Pavilion',
+      url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80',
+    },
+  ];
+
   // Edit building form state
   const [editFormData, setEditFormData] = useState({
+    id: 'eng',
     name: '',
+    shortName: '',
     code: '',
     category: 'academic',
+    status: 'open',
     dept: '',
     description: '',
+    image: '',
     x: 700,
     y: 300,
     width: 220,
     height: 140,
     hours: '',
     occupancy: '',
+    seats: '',
+    temp: '',
+    air: '',
+    accessibility: '',
     targetRoom: '',
     targetDesc: '',
+    lat: 25.03254,
+    lng: 74.63462,
   });
 
   // Add building form state
@@ -1366,6 +1458,60 @@ export const CampusMap = () => {
   };
 
   const currentBldg = buildings[selectedBldg] || buildings.eng || Object.values(buildings)[0];
+
+  const handleOpenEditModal = (bldgKey = selectedBldg) => {
+    const bldg = buildings[bldgKey] || currentBldg;
+    const gisLoc = CAMPUS_GIS_LOCATIONS[bldgKey] || {};
+    setEditFormData({
+      id: bldgKey,
+      name: bldg.name || '',
+      shortName: bldg.shortName || bldg.name || '',
+      code: bldg.code || '',
+      dept: bldg.dept || '',
+      category: bldg.category || 'academic',
+      status: bldg.status || 'open',
+      hours: bldg.hours || '08:00 AM – 08:00 PM',
+      description: bldg.description || '',
+      image: bldg.image || 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1000&q=80',
+      occupancy: bldg.occupancy || '74%',
+      seats: bldg.seats || '420 / 550 Seats',
+      temp: bldg.temp || '21.5°C',
+      air: bldg.air || '410 ppm CO₂',
+      accessibility: bldg.accessibility || 'Pass • Full Access',
+      targetRoom: bldg.targetRoom || 'B-204: Multi-Media Lecture Theatre & AI Hub',
+      targetDesc: bldg.targetDesc || 'Lecture Theatres • Capacity: 60 (18 Current)',
+      lat: bldg.lat || gisLoc.lat || 25.03254,
+      lng: bldg.lng || gisLoc.lng || 74.63462,
+      x: bldg.x || 700,
+      y: bldg.y || 300,
+      width: bldg.width || 220,
+      height: bldg.height || 140,
+    });
+    setEditModalTab('photo');
+    setShowEditModal(true);
+  };
+
+  const handleImageFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      triggerToast('Please select a valid image file (PNG, JPG, WebP).');
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      triggerToast('Image is too large (max 8MB). Please choose a smaller photo.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const result = ev.target?.result;
+      if (result) {
+        setEditFormData((prev) => ({ ...prev, image: result }));
+        triggerToast('Facility image uploaded successfully! Click "Save Changes" to apply.');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSelectBuilding = (id, openDetails = false) => {
     if (!id) {
@@ -1711,20 +1857,89 @@ export const CampusMap = () => {
     triggerToast(`Moved ${bldg.name} to (X: ${newX}, Y: ${newY})`);
   };
 
-  // Save building edits
+  // Save building edits with persistence
   const handleSaveBuildingEdits = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setIsSavingGis(true);
-    setBuildings((prev) => ({
-      ...prev,
-      [selectedBldg]: {
-        ...prev[selectedBldg],
-        ...editFormData,
-      },
-    }));
+
+    const bldgKey = editFormData.id || selectedBldg;
+    const updatedBuilding = {
+      ...(buildings[bldgKey] || {}),
+      ...editFormData,
+    };
+
+    const nextBuildings = {
+      ...buildings,
+      [bldgKey]: updatedBuilding,
+    };
+    setBuildings(nextBuildings);
+
+    try {
+      const savedRaw = localStorage.getItem('nextcampus_custom_buildings');
+      const savedObj = savedRaw ? JSON.parse(savedRaw) : {};
+      savedObj[bldgKey] = updatedBuilding;
+      localStorage.setItem('nextcampus_custom_buildings', JSON.stringify(savedObj));
+    } catch (err) {
+      console.error('Failed to save building edits to localStorage', err);
+    }
+
+    // Sync to in-memory CAMPUS_GIS_LOCATIONS immediately
+    if (CAMPUS_GIS_LOCATIONS[bldgKey]) {
+      if (updatedBuilding.name) CAMPUS_GIS_LOCATIONS[bldgKey].name = updatedBuilding.name;
+      if (updatedBuilding.shortName) CAMPUS_GIS_LOCATIONS[bldgKey].shortName = updatedBuilding.shortName;
+      if (updatedBuilding.code) CAMPUS_GIS_LOCATIONS[bldgKey].code = updatedBuilding.code;
+      if (updatedBuilding.dept) CAMPUS_GIS_LOCATIONS[bldgKey].dept = updatedBuilding.dept;
+      if (updatedBuilding.description) CAMPUS_GIS_LOCATIONS[bldgKey].description = updatedBuilding.description;
+      if (updatedBuilding.category) CAMPUS_GIS_LOCATIONS[bldgKey].category = updatedBuilding.category;
+      if (updatedBuilding.lat && updatedBuilding.lng) {
+        CAMPUS_GIS_LOCATIONS[bldgKey].lat = Number(updatedBuilding.lat);
+        CAMPUS_GIS_LOCATIONS[bldgKey].lng = Number(updatedBuilding.lng);
+      }
+    }
+
     setShowEditModal(false);
     setIsSavingGis(false);
-    triggerToast(`Updated ${editFormData.name} successfully.`);
+    triggerToast(`Updated "${updatedBuilding.name}" details and photo successfully.`);
+  };
+
+  // Reset building back to factory defaults
+  const handleResetBuildingToDefault = () => {
+    const bldgKey = editFormData.id || selectedBldg;
+    const defaultData = INITIAL_BUILDINGS[bldgKey];
+    if (!defaultData) {
+      triggerToast('No factory default preset found for this facility.');
+      return;
+    }
+    if (!window.confirm(`Reset "${defaultData.name}" back to original university defaults?`)) {
+      return;
+    }
+
+    const nextBuildings = {
+      ...buildings,
+      [bldgKey]: { ...defaultData },
+    };
+    setBuildings(nextBuildings);
+    setEditFormData({ ...defaultData });
+
+    try {
+      const savedRaw = localStorage.getItem('nextcampus_custom_buildings');
+      if (savedRaw) {
+        const savedObj = JSON.parse(savedRaw);
+        delete savedObj[bldgKey];
+        localStorage.setItem('nextcampus_custom_buildings', JSON.stringify(savedObj));
+      }
+    } catch (err) {}
+
+    if (CAMPUS_GIS_LOCATIONS[bldgKey]) {
+      CAMPUS_GIS_LOCATIONS[bldgKey].name = defaultData.name;
+      CAMPUS_GIS_LOCATIONS[bldgKey].shortName = defaultData.shortName;
+      CAMPUS_GIS_LOCATIONS[bldgKey].code = defaultData.code;
+      CAMPUS_GIS_LOCATIONS[bldgKey].dept = defaultData.dept;
+      CAMPUS_GIS_LOCATIONS[bldgKey].description = defaultData.description;
+    }
+
+    setShowEditModal(false);
+    triggerToast(`Reset "${defaultData.name}" to university defaults.`);
   };
 
   // Delete building
@@ -1733,6 +1948,14 @@ export const CampusMap = () => {
     const updated = { ...buildings };
     delete updated[selectedBldg];
     setBuildings(updated);
+    try {
+      const savedRaw = localStorage.getItem('nextcampus_custom_buildings');
+      if (savedRaw) {
+        const savedObj = JSON.parse(savedRaw);
+        delete savedObj[selectedBldg];
+        localStorage.setItem('nextcampus_custom_buildings', JSON.stringify(savedObj));
+      }
+    } catch (err) {}
     setShowEditModal(false);
     const nextKey = Object.keys(updated)[0] || 'eng';
     setSelectedBldg(nextKey);
@@ -2018,28 +2241,35 @@ export const CampusMap = () => {
               <span>Recenter</span>
             </button>
 
-            {isAdmin && (
-              <button
-                onClick={() => setAdminMapMode(!adminMapMode)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '8px',
-                  border: '1px solid var(--brand-primary)',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  backgroundColor: adminMapMode ? 'var(--brand-primary)' : '#FFFFFF',
-                  color: adminMapMode ? '#FFFFFF' : 'var(--brand-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                <ShieldCheck size={14} />
-                <span>{adminMapMode ? 'Admin Mode' : 'Admin Tools'}</span>
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                const next = !adminMapMode;
+                setAdminMapMode(next);
+                try {
+                  localStorage.setItem('nextcampus_map_admin', String(next));
+                } catch (e) {}
+                triggerToast(next ? 'Admin Mode Activated: You can now edit facility details & photos.' : 'Admin Mode Deactivated');
+              }}
+              title={adminMapMode ? 'Admin Mode Active: Edit facility details & photos' : 'Click to enable Admin Mode to edit facilities & photos'}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '8px',
+                border: '1px solid var(--brand-primary)',
+                fontSize: '11px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                backgroundColor: adminMapMode ? 'var(--brand-primary)' : '#FFFFFF',
+                color: adminMapMode ? '#FFFFFF' : 'var(--brand-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <ShieldCheck size={14} />
+              <span>{adminMapMode ? 'Admin Mode (Active)' : 'Admin Mode'}</span>
+            </button>
           </div>
         </div>
 
@@ -2067,20 +2297,25 @@ export const CampusMap = () => {
                 <RefreshCw size={14} />
               </button>
 
-              {isAdmin && (
-                <button
-                  type="button"
-                  onClick={() => setAdminMapMode(!adminMapMode)}
-                  title="Toggle Admin Tools"
-                  className={`p-1.5 rounded-lg border text-xs font-bold ${
-                    adminMapMode
-                      ? 'bg-[var(--brand-primary)] text-white border-[var(--brand-primary)]'
-                      : 'bg-white text-[var(--brand-primary)] border-[var(--brand-primary)]'
-                  }`}
-                >
-                  <ShieldCheck size={14} />
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => {
+                  const next = !adminMapMode;
+                  setAdminMapMode(next);
+                  try {
+                    localStorage.setItem('nextcampus_map_admin', String(next));
+                  } catch (e) {}
+                  triggerToast(next ? 'Admin Mode Activated: You can now edit facility details & photos.' : 'Admin Mode Deactivated');
+                }}
+                title={adminMapMode ? 'Admin Mode Active' : 'Toggle Admin Mode'}
+                className={`p-1.5 rounded-lg border text-xs font-bold transition-colors ${
+                  adminMapMode
+                    ? 'bg-[var(--brand-primary)] text-white border-[var(--brand-primary)]'
+                    : 'bg-white text-[var(--brand-primary)] border-[var(--brand-primary)]'
+                }`}
+              >
+                <ShieldCheck size={14} />
+              </button>
             </div>
           </div>
 
@@ -3899,9 +4134,40 @@ export const CampusMap = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   transition: 'all 0.15s ease',
+                  zIndex: 3,
                 }}
               >
                 <X size={15} />
+              </button>
+
+              {/* Admin Edit Facility & Photo Button on Image */}
+              <button
+                type="button"
+                onClick={() => handleOpenEditModal(currentBldg.id)}
+                title="Admin: Edit facility details & photo"
+                style={{
+                  position: 'absolute',
+                  top: '10px',
+                  left: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  backdropFilter: 'blur(6px)',
+                  color: 'var(--brand-forest)',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  padding: '5px 10px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                  transition: 'all 0.15s ease',
+                  zIndex: 2,
+                }}
+              >
+                <Camera size={13} style={{ color: 'var(--brand-primary)' }} />
+                <span>Edit Photo & Info</span>
               </button>
 
               <div style={{ position: 'absolute', bottom: '10px', left: '14px', display: 'flex', gap: '6px' }}>
@@ -3936,22 +4202,33 @@ export const CampusMap = () => {
             {/* Body */}
             <div style={{ flex: 1, padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                  <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     {currentBldg.dept}
                   </span>
-                  {isAdmin && (
-                    <button
-                      onClick={() => {
-                        setEditFormData(currentBldg);
-                        setShowEditModal(true);
-                      }}
-                      style={{ background: 'none', border: 'none', color: 'var(--brand-primary)', cursor: 'pointer', fontSize: '11px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '3px' }}
-                    >
-                      <Edit3 size={12} />
-                      <span>Edit</span>
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleOpenEditModal(currentBldg.id)}
+                    title="Edit Facility Details"
+                    style={{
+                      background: 'var(--brand-soft-bg)',
+                      border: '1px solid var(--brand-soft-border)',
+                      color: 'var(--brand-primary)',
+                      cursor: 'pointer',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      padding: '3px 8px',
+                      borderRadius: '6px',
+                      flexShrink: 0,
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <Edit3 size={12} />
+                    <span>Edit Details</span>
+                  </button>
                 </div>
                 <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', margin: '4px 0 6px 0', fontFamily: 'var(--font-heading)' }}>
                   {currentBldg.name}
@@ -4108,37 +4385,614 @@ export const CampusMap = () => {
                 </div>
               </div>
 
+              {/* Admin Actions in Drawer */}
+              <div style={{ marginTop: 'auto', paddingTop: '10px', borderTop: '1px solid var(--border-subtle)', display: 'flex', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => handleOpenEditModal(currentBldg.id)}
+                  style={{
+                    flex: 1,
+                    padding: '8px 12px',
+                    backgroundColor: 'var(--brand-soft-bg)',
+                    border: '1px solid var(--brand-soft-border)',
+                    borderRadius: '8px',
+                    color: 'var(--brand-primary)',
+                    fontSize: '11.5px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <Edit3 size={13} />
+                  <span>Admin: Edit Facility Details & Photo</span>
+                </button>
+              </div>
+
             </div>
           </aside>
         )}
       </div>
 
-      {/* ADMIN EDIT MODAL */}
+      {/* ADMIN EDIT FACILITY MODAL */}
       {showEditModal && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(20,45,40,0.5)', backdropFilter: 'blur(4px)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div style={{ width: '100%', maxWidth: '500px', backgroundColor: '#FFFFFF', borderRadius: '16px', overflow: 'hidden', boxShadow: 'var(--shadow-xl)', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>Edit Facility: {editFormData.name}</h3>
-              <button onClick={() => setShowEditModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X size={16} /></button>
-            </div>
-            <form onSubmit={handleSaveBuildingEdits} style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div>
-                <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Facility Name</label>
-                <input
-                  type="text"
-                  required
-                  value={editFormData.name}
-                  onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                  style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
-                />
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(20,45,40,0.6)',
+            backdropFilter: 'blur(6px)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+            overflowY: 'auto',
+          }}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '680px',
+              backgroundColor: '#FFFFFF',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              border: '1px solid var(--border-subtle)',
+              display: 'flex',
+              flexDirection: 'column',
+              maxHeight: '90vh',
+            }}
+          >
+            {/* Modal Header */}
+            <div
+              style={{
+                padding: '16px 20px',
+                borderBottom: '1px solid var(--border-subtle)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                backgroundColor: 'var(--bg-surface-subtle)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div
+                  style={{
+                    width: '34px',
+                    height: '34px',
+                    borderRadius: '10px',
+                    backgroundColor: 'var(--brand-soft-bg)',
+                    border: '1px solid var(--brand-soft-border)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--brand-primary)',
+                  }}
+                >
+                  <Edit3 size={18} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
+                    Edit Facility: {editFormData.name || 'Building'}
+                  </h3>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                    <span>Code: {editFormData.code || 'N/A'}</span>
+                    <span>•</span>
+                    <span>ID: {editFormData.id}</span>
+                  </div>
+                </div>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
-                <button type="button" onClick={handleDeleteBuilding} style={{ color: 'var(--status-danger)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}>
-                  Delete Facility
-                </button>
+              <button
+                type="button"
+                onClick={() => setShowEditModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  padding: '6px',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                title="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Quick Live Preview Banner */}
+            <div style={{ padding: '12px 20px', backgroundColor: '#F8FAF9', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div style={{ width: '84px', height: '56px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0, position: 'relative', border: '1px solid var(--border-subtle)' }}>
+                <img
+                  src={editFormData.image || 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=500&q=80'}
+                  alt="Live Preview"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                <div style={{ position: 'absolute', bottom: '2px', left: '2px', fontSize: '8px', fontWeight: 800, backgroundColor: 'var(--brand-primary)', color: '#fff', padding: '1px 4px', borderRadius: '3px' }}>
+                  {editFormData.code || 'B-01'}
+                </div>
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '9px', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {editFormData.dept || 'DEPARTMENT'}
+                </div>
+                <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {editFormData.name}
+                </div>
+                <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', display: 'flex', gap: '8px', marginTop: '2px', flexWrap: 'wrap' }}>
+                  <span>🕒 {editFormData.hours || 'Hours'}</span>
+                  <span>👥 {editFormData.occupancy || 'Occupancy'}</span>
+                  <span>🌡️ {editFormData.temp || 'Temp'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div style={{ display: 'flex', borderBottom: '1px solid var(--border-subtle)', padding: '0 20px', backgroundColor: '#FFFFFF', overflowX: 'auto' }}>
+              {[
+                { id: 'photo', label: 'Photo & Media', icon: Camera },
+                { id: 'info', label: 'Facility Info', icon: Building },
+                { id: 'metrics', label: 'Live Telemetry', icon: Activity },
+                { id: 'space', label: 'Space & GPS', icon: MapPin },
+              ].map((tab) => {
+                const TabIcon = tab.icon;
+                const active = editModalTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setEditModalTab(tab.id)}
+                    style={{
+                      padding: '10px 14px',
+                      background: 'none',
+                      border: 'none',
+                      borderBottom: active ? '2px solid var(--brand-primary)' : '2px solid transparent',
+                      color: active ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                      fontWeight: active ? 700 : 500,
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.15s ease',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    <TabIcon size={14} />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Modal Body / Tab Contents */}
+            <form onSubmit={handleSaveBuildingEdits} style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+              <div style={{ padding: '20px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+                {/* TAB 1: PHOTO & MEDIA */}
+                {editModalTab === 'photo' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {/* Live Image Box */}
+                    <div style={{ position: 'relative', width: '100%', height: '180px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
+                      <img
+                        src={editFormData.image || 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1000&q=80'}
+                        alt="Facility Preview"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(20, 45, 40, 0.8) 0%, transparent 60%)' }} />
+                      <div style={{ position: 'absolute', bottom: '12px', left: '14px', display: 'flex', gap: '6px' }}>
+                        <span style={{ fontSize: '10px', fontWeight: 700, backgroundColor: '#FFFFFF', color: 'var(--brand-forest)', padding: '3px 8px', borderRadius: '4px' }}>
+                          {editFormData.hours || '08:00 AM – 08:00 PM'}
+                        </span>
+                        <span style={{ fontSize: '10px', fontWeight: 700, backgroundColor: 'var(--brand-primary)', color: '#FFFFFF', padding: '3px 8px', borderRadius: '4px' }}>
+                          {editFormData.code || 'ENG-02'}
+                        </span>
+                      </div>
+                      <div style={{ position: 'absolute', top: '10px', right: '12px', backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '10px', fontWeight: 600, padding: '3px 8px', borderRadius: '6px' }}>
+                        Live Map Display Preview
+                      </div>
+                    </div>
+
+                    {/* File Upload Button */}
+                    <div style={{ backgroundColor: 'var(--bg-surface-subtle)', padding: '14px', borderRadius: '12px', border: '1px dashed var(--brand-primary)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' }}>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept="image/*"
+                        onChange={handleImageFileChange}
+                        style={{ display: 'none' }}
+                      />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          style={{
+                            padding: '8px 16px',
+                            backgroundColor: 'var(--brand-primary)',
+                            color: '#FFFFFF',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            boxShadow: 'var(--shadow-brand-glow)',
+                          }}
+                        >
+                          <Upload size={14} />
+                          <span>Upload Photo from Computer</span>
+                        </button>
+                      </div>
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        Select any PNG, JPG, or WebP photo directly from your machine. Live preview updates immediately.
+                      </span>
+                    </div>
+
+                    {/* Direct Image URL Input */}
+                    <div>
+                      <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>
+                        Or Enter Direct Image URL / CDN Link
+                      </label>
+                      <input
+                        type="text"
+                        value={editFormData.image || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, image: e.target.value })}
+                        placeholder="https://images.unsplash.com/photo-..."
+                        style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '12.5px' }}
+                      />
+                    </div>
+
+                    {/* Quick Preset Photos */}
+                    <div>
+                      <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
+                        Quick Campus Stock Photos
+                      </label>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '8px' }}>
+                        {PRESET_FACILITY_PHOTOS.map((preset, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => {
+                              setEditFormData((prev) => ({ ...prev, image: preset.url }));
+                              triggerToast(`Selected "${preset.name}" image.`);
+                            }}
+                            style={{
+                              padding: '6px 10px',
+                              borderRadius: '8px',
+                              border: editFormData.image === preset.url ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                              backgroundColor: editFormData.image === preset.url ? 'var(--brand-soft-bg)' : '#FFFFFF',
+                              color: 'var(--text-primary)',
+                              fontSize: '11px',
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            <ImageIcon size={12} style={{ color: 'var(--brand-primary)', flexShrink: 0 }} />
+                            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{preset.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 2: FACILITY INFORMATION */}
+                {editModalTab === 'info' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Facility Full Name</label>
+                        <input
+                          type="text"
+                          required
+                          value={editFormData.name || ''}
+                          onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                          placeholder="Engineering Block"
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Short Name</label>
+                        <input
+                          type="text"
+                          value={editFormData.shortName || ''}
+                          onChange={(e) => setEditFormData({ ...editFormData, shortName: e.target.value })}
+                          placeholder="Engg Block"
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Building Code</label>
+                        <input
+                          type="text"
+                          value={editFormData.code || ''}
+                          onChange={(e) => setEditFormData({ ...editFormData, code: e.target.value })}
+                          placeholder="ENG-02"
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Operating Hours</label>
+                        <input
+                          type="text"
+                          value={editFormData.hours || ''}
+                          onChange={(e) => setEditFormData({ ...editFormData, hours: e.target.value })}
+                          placeholder="08:00 AM – 08:00 PM"
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Department / Faculty Subtitle</label>
+                      <input
+                        type="text"
+                        value={editFormData.dept || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, dept: e.target.value })}
+                        placeholder="DEPARTMENT OF COMPUTER SCIENCE & ENGINEERING, AI LABS & CORE TECH"
+                        style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                      />
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Category</label>
+                        <select
+                          value={editFormData.category || 'academic'}
+                          onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px', backgroundColor: '#FFFFFF' }}
+                        >
+                          <option value="academic">Academic Building</option>
+                          <option value="hostel">Hostel Residence</option>
+                          <option value="sports">Sports & Athletics</option>
+                          <option value="dining">Dining & Mess</option>
+                          <option value="administrative">Administrative</option>
+                          <option value="facility">Campus Gate / Facility</option>
+                          <option value="amenity">Park / Amenity</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Operational Status</label>
+                        <select
+                          value={editFormData.status || 'open'}
+                          onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px', backgroundColor: '#FFFFFF' }}
+                        >
+                          <option value="open">Open / Operational</option>
+                          <option value="restricted">Restricted Access</option>
+                          <option value="maintenance">Under Maintenance</option>
+                          <option value="closed">Closed</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Facility Description</label>
+                      <textarea
+                        rows={3}
+                        value={editFormData.description || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                        placeholder="High-performance research computing labs, Artificial Intelligence & ML center, IoT workstations, and smart classrooms."
+                        style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '12.5px', lineHeight: 1.5, resize: 'vertical' }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 3: LIVE TELEMETRY & METRICS */}
+                {editModalTab === 'metrics' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)', backgroundColor: 'var(--bg-surface-subtle)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                      These values populate the 3 live cards shown in the right details drawer (Occupancy, HVAC Temp, and Ramp ADA).
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Occupancy Percentage</label>
+                        <input
+                          type="text"
+                          value={editFormData.occupancy || ''}
+                          onChange={(e) => setEditFormData({ ...editFormData, occupancy: e.target.value })}
+                          placeholder="74%"
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Seats / Capacity Subtitle</label>
+                        <input
+                          type="text"
+                          value={editFormData.seats || ''}
+                          onChange={(e) => setEditFormData({ ...editFormData, seats: e.target.value })}
+                          placeholder="420 / 550 Seats"
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>HVAC Temperature</label>
+                        <input
+                          type="text"
+                          value={editFormData.temp || ''}
+                          onChange={(e) => setEditFormData({ ...editFormData, temp: e.target.value })}
+                          placeholder="21.5°C"
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Air Quality / CO₂ Subtitle</label>
+                        <input
+                          type="text"
+                          value={editFormData.air || ''}
+                          onChange={(e) => setEditFormData({ ...editFormData, air: e.target.value })}
+                          placeholder="410 ppm CO₂"
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Ramp ADA Accessibility</label>
+                      <input
+                        type="text"
+                        value={editFormData.accessibility || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, accessibility: e.target.value })}
+                        placeholder="Pass • Full Access"
+                        style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 4: SPACE & GPS LOCATION */}
+                {editModalTab === 'space' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)', backgroundColor: 'var(--bg-surface-subtle)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                      Configure the primary destination room and geographic latitude/longitude coordinates on the Mewar University campus map.
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Primary Facility Node / Room Title</label>
+                      <input
+                        type="text"
+                        value={editFormData.targetRoom || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, targetRoom: e.target.value })}
+                        placeholder="B-204: Multi-Media Lecture Theatre & AI Hub"
+                        style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Room Category & Capacity Specs</label>
+                      <input
+                        type="text"
+                        value={editFormData.targetDesc || ''}
+                        onChange={(e) => setEditFormData({ ...editFormData, targetDesc: e.target.value })}
+                        placeholder="Lecture Theatres • Capacity: 60 (18 Current)"
+                        style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                      />
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>GPS Latitude</label>
+                        <input
+                          type="number"
+                          step="0.000001"
+                          value={editFormData.lat || ''}
+                          onChange={(e) => setEditFormData({ ...editFormData, lat: parseFloat(e.target.value) || e.target.value })}
+                          placeholder="25.032540"
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>GPS Longitude</label>
+                        <input
+                          type="number"
+                          step="0.000001"
+                          value={editFormData.lng || ''}
+                          onChange={(e) => setEditFormData({ ...editFormData, lng: parseFloat(e.target.value) || e.target.value })}
+                          placeholder="74.634620"
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--border-interactive)', marginTop: '4px', fontSize: '13px' }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              </div>
+
+              {/* Modal Footer */}
+              <div
+                style={{
+                  padding: '16px 20px',
+                  borderTop: '1px solid var(--border-subtle)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  backgroundColor: 'var(--bg-surface-subtle)',
+                }}
+              >
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <Button variant="ghost" size="sm" type="button" onClick={() => setShowEditModal(false)}>Cancel</Button>
-                  <Button variant="primary" size="sm" type="submit">Save Changes</Button>
+                  <button
+                    type="button"
+                    onClick={handleResetBuildingToDefault}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      color: 'var(--text-secondary)',
+                      background: 'none',
+                      border: '1px solid var(--border-subtle)',
+                      padding: '6px 10px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '11.5px',
+                      fontWeight: 600,
+                    }}
+                    title="Revert back to default university values"
+                  >
+                    <RotateCcw size={12} />
+                    <span>Reset Defaults</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDeleteBuilding}
+                    style={{
+                      color: 'var(--status-danger)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                      fontSize: '11.5px',
+                      padding: '6px 8px',
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <Button variant="ghost" size="sm" type="button" onClick={() => setShowEditModal(false)}>
+                    Cancel
+                  </Button>
+                  <button
+                    type="submit"
+                    disabled={isSavingGis}
+                    style={{
+                      padding: '8px 18px',
+                      backgroundColor: 'var(--brand-primary)',
+                      color: '#FFFFFF',
+                      borderRadius: '8px',
+                      border: 'none',
+                      fontSize: '12.5px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      boxShadow: 'var(--shadow-brand-glow)',
+                    }}
+                  >
+                    <Check size={14} />
+                    <span>{isSavingGis ? 'Saving...' : 'Save Changes'}</span>
+                  </button>
                 </div>
               </div>
             </form>

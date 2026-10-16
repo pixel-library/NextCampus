@@ -519,6 +519,15 @@ export function AdminDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/campus-map?admin=true')}
+              className="px-4 py-2 rounded-xl bg-[#168567] hover:bg-[#126b53] text-white text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer border border-[#6CE0B8]/40"
+              title="Launch Campus Map & Facility Details Editor"
+            >
+              <MapPin size={15} />
+              <span>Campus Map &amp; Facility Editor</span>
+            </button>
+
             <div className="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs flex items-center gap-2.5 text-xs text-[#E4EAE5]">
               <Shield size={16} className="text-[#6CE0B8]" />
               <div className="flex flex-col">
@@ -538,7 +547,7 @@ export function AdminDashboard() {
         {activeTab === 'overview' && (
           <div className="space-y-6">
             {/* Quick Metrics KPI Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
               <div
                 onClick={() => setActiveTab('announcements')}
                 className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:border-[#168567]/50 hover:shadow-md transition-all cursor-pointer group"
@@ -637,10 +646,66 @@ export function AdminDashboard() {
                   </p>
                 </div>
               </div>
+
+              <div
+                onClick={() => navigate('/campus-map?admin=true')}
+                className="p-5 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs hover:border-[#168567]/50 hover:shadow-md transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-[#EAF5EF] text-[#168567] flex items-center justify-center font-bold">
+                    <MapPin size={20} />
+                  </div>
+                  <ArrowRight size={16} className="text-[#168567] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </div>
+                <div className="mt-4">
+                  <span className="text-[11px] font-bold text-[#65736B] uppercase tracking-wider">Campus Map &amp; GIS</span>
+                  <div className="text-3xl font-extrabold text-[#202A27] mt-0.5">26 Places</div>
+                  <p className="text-xs text-[#87968D] mt-1">
+                    <span className="text-[#168567] font-bold">Edit Details &amp; Photos</span>
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Quick Action Navigation Panels */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Module 0: Campus Map & Facility Details Editor */}
+              <div className="p-6 rounded-2xl bg-white border-2 border-[#168567]/30 shadow-xs flex flex-col justify-between md:col-span-2 bg-gradient-to-br from-white via-white to-[#EAF5EF]/40">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-10 h-10 rounded-xl bg-[#168567] text-white flex items-center justify-center shadow-xs">
+                        <MapPin size={20} />
+                      </div>
+                      <div>
+                        <h3 className="text-base font-extrabold text-[#202A27]">Campus Map &amp; Facility Details Editor</h3>
+                        <p className="text-[11px] text-[#65736B]">Interactive GIS 2D &amp; 3D Campus Infrastructure Management</p>
+                      </div>
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-[10px] font-extrabold bg-[#EAF5EF] text-[#168567] border border-[#B7DEC9] tracking-wider uppercase">
+                      MAP &amp; PHOTO EDITOR
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#65736B] leading-relaxed max-w-3xl">
+                    Update facility display details on the live map including building names, operating hours, department titles, live occupancy and HVAC telemetry, featured space rooms, and upload high-resolution campus building photographs directly from your computer.
+                  </p>
+                  <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-semibold text-[#404D46]">
+                    <span className="flex items-center gap-1.5"><CheckCircle2 size={13} className="text-[#168567]" /> 26 Mewar University Landmarks</span>
+                    <span className="flex items-center gap-1.5"><CheckCircle2 size={13} className="text-[#168567]" /> Upload &amp; Replace Facility Images</span>
+                    <span className="flex items-center gap-1.5"><CheckCircle2 size={13} className="text-[#168567]" /> Live Telemetry &amp; GPS Coordinates</span>
+                  </div>
+                </div>
+                <div className="mt-5 pt-4 border-t border-[#E4EAE5] flex items-center justify-between flex-wrap gap-3">
+                  <span className="text-[11px] text-[#87968D]">Saved changes persist locally and update 2D &amp; 3D view engines immediately.</span>
+                  <button
+                    onClick={() => navigate('/campus-map?admin=true')}
+                    className="px-5 py-2.5 rounded-xl bg-[#168567] hover:bg-[#126b53] text-white text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                  >
+                    <span>Launch Campus Map Editor</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              </div>
               {/* Module 1: Student Registry */}
               <div className="p-6 rounded-2xl bg-white border border-[#E4EAE5] shadow-xs flex flex-col justify-between">
                 <div>

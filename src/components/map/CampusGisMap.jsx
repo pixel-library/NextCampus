@@ -14,8 +14,6 @@ import {
   Maximize2,
   Minimize2,
   Target,
-  Locate,
-  Info,
   Shield,
   Check,
   X,
@@ -2800,51 +2798,6 @@ export const CampusGisMap = ({
         className="absolute bottom-3 right-3 md:bottom-6 md:right-4 flex flex-col gap-2 items-center"
         style={{ zIndex: 450 }}
       >
-        <button
-          type="button"
-          onClick={() => setShowLegend(!showLegend)}
-          title="Toggle Campus Legend"
-          aria-label="Toggle Campus Legend"
-          style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '11px',
-            backgroundColor: showLegend ? 'var(--brand-primary)' : 'rgba(255, 255, 255, 0.96)',
-            color: showLegend ? '#FFFFFF' : 'var(--text-secondary)',
-            border: '1px solid var(--border-subtle)',
-            boxShadow: 'var(--shadow-md)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.15s ease',
-          }}
-        >
-          <Info size={17} />
-        </button>
-
-        <button
-          type="button"
-          onClick={handleCenterOnUser}
-          title={isLiveGpsActive ? (isFollowActive ? 'Lock to My Location (Active)' : 'Center on My Location') : 'Enable Live GPS & Center'}
-          aria-label="Center on My Location"
-          style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '11px',
-            backgroundColor: isLiveGpsActive ? 'var(--brand-primary)' : 'rgba(255, 255, 255, 0.96)',
-            color: isLiveGpsActive ? '#FFFFFF' : 'var(--brand-primary)',
-            border: isLiveGpsActive ? '1px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
-            boxShadow: 'var(--shadow-md)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.15s ease',
-          }}
-        >
-          <Locate size={18} />
-        </button>
 
         <button
           type="button"
