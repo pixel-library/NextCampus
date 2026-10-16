@@ -785,11 +785,13 @@ export function CareComplaints() {
   }, [complaints, statusFilter, categoryFilter, searchQuery]);
 
   return (
-    <div className="flex flex-col w-full text-slate-900 min-h-screen pb-16 font-sans">
+    <div className="min-h-screen bg-[#F6F8F6] text-slate-900 pb-16 font-sans">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
       {/* =========================================================================
           TOP BREADCRUMB & CONTEXT STRIP
           ========================================================================= */}
-      <div className="flex flex-col gap-3 pb-6 border-b border-slate-200 mb-6">
+      {/* Breadcrumb & Top Strip */}
+      <div className="flex flex-col gap-4 pb-8 border-b border-slate-200 mb-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-slate-500">
             <span className="px-2.5 py-0.5 rounded-full bg-[#EAF5EF] text-[#168567] border border-[#168567]/20 font-semibold flex items-center gap-1.5">
@@ -854,21 +856,21 @@ export function CareComplaints() {
 
           {/* Dynamic, Verified Metrics Strip */}
           <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
-            <div className="px-3 py-2 rounded-xl bg-white border border-slate-200 shadow-xs flex flex-col min-w-[90px]">
+            <div className="px-4 py-3 rounded-xl bg-white border border-slate-200 shadow-xs flex flex-col min-w-[100px]">
               <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold">Total Logged</span>
               <span className="text-lg font-black text-slate-900">{verifiedMetrics.total}</span>
             </div>
-            <div className="px-3 py-2 rounded-xl bg-white border border-amber-200 shadow-xs flex flex-col min-w-[90px]">
+            <div className="px-4 py-3 rounded-xl bg-white border border-amber-200 shadow-xs flex flex-col min-w-[100px]">
               <span className="text-[10px] font-mono uppercase tracking-wider text-amber-700 font-semibold">In Dispatch</span>
               <span className="text-lg font-black text-amber-700">{verifiedMetrics.inProgress}</span>
             </div>
-            <div className="px-3 py-2 rounded-xl bg-white border border-blue-200 shadow-xs flex flex-col min-w-[90px]">
+            <div className="px-4 py-3 rounded-xl bg-white border border-blue-200 shadow-xs flex flex-col min-w-[100px]">
               <span className="text-[10px] font-mono uppercase tracking-wider text-blue-700 font-semibold">Awaiting Triage</span>
               <span className="text-lg font-black text-blue-700">
                 {verifiedMetrics.active - verifiedMetrics.inProgress}
               </span>
             </div>
-            <div className="px-3 py-2 rounded-xl bg-white border border-emerald-200 shadow-xs flex flex-col min-w-[90px]">
+            <div className="px-4 py-3 rounded-xl bg-white border border-emerald-200 shadow-xs flex flex-col min-w-[100px]">
               <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700 font-semibold">Resolved</span>
               <span className="text-lg font-black text-emerald-700">{verifiedMetrics.resolved}</span>
             </div>
@@ -879,7 +881,7 @@ export function CareComplaints() {
       {/* =========================================================================
           REFINED EMERGENCY DISPATCH STRIP
           ========================================================================= */}
-      <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-900 text-white mb-6 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm border border-slate-800">
+      <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 text-white mb-8 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm border border-slate-800">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-rose-600/20 text-rose-400 border border-rose-500/30 flex items-center justify-center shrink-0">
             <PhoneCall className="w-4 h-4" />
@@ -931,7 +933,7 @@ export function CareComplaints() {
       {/* =========================================================================
           VIEW SWITCHER TABS (TRACKER vs NEW TICKET)
           ========================================================================= */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 border-b border-slate-200 pb-3 mb-6">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 border-b border-slate-200 pb-4 mb-8">
         <button
           onClick={() => setActiveViewMode('tracker')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
@@ -1783,63 +1785,9 @@ export function CareComplaints() {
                   </div>
                 )}
 
-                {/* Real-Time Dispatch Audit Log */}
-                <div className="flex flex-col gap-2.5 pt-2 border-t border-slate-100">
-                  <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
-                    Real-Time Dispatch Audit Log
-                  </span>
 
-                  <div className="flex flex-col gap-2.5 relative pl-4 border-l-2 border-[#168567]/30 ml-1.5">
-                    {(selectedTicket.updates || []).map((upd, idx) => (
-                      <div key={idx} className="flex flex-col gap-0.5">
-                        <div className="flex items-baseline justify-between text-xs">
-                          <span className="font-bold text-slate-900 flex items-center gap-1.5">
-                            <span>{upd.updatedBy}</span>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-normal">
-                              {upd.role || 'Staff'}
-                            </span>
-                          </span>
-                          <span className="text-[11px] font-mono text-slate-400">{upd.createdAt}</span>
-                        </div>
-                        <p className="text-xs text-slate-600">{upd.message}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Direct Message Dispatcher Input Strip */}
-                <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
-                      Send Direct Note to Field Specialist
-                    </span>
-                    {replyFeedback && (
-                      <span className="text-[11px] text-[#168567] font-semibold animate-pulse">
-                        {replyFeedback}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
-                      placeholder="e.g. Professor shifted lecture to Room B-205, please meet there..."
-                      className="flex-1 h-10 px-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#168567] focus:ring-1 focus:ring-[#168567]/20"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleSendReply();
-                      }}
-                    />
-                    <button
-                      onClick={handleSendReply}
-                      disabled={isSendingReply || !replyText.trim()}
-                      className="h-10 px-4 rounded-xl bg-[#168567] hover:bg-[#116951] text-white text-xs font-bold flex items-center gap-1.5 transition-all disabled:opacity-40 cursor-pointer"
-                    >
-                      <Send className="w-3.5 h-3.5" />
-                      <span>{isSendingReply ? 'Sending...' : 'Send'}</span>
-                    </button>
-                  </div>
-                </div>
+
 
                 {/* Resolution Sign-Off Button (If not yet resolved) */}
                 {selectedTicket.status !== 'resolved' && selectedTicket.status !== 'closed' && (
@@ -2019,42 +1967,7 @@ export function CareComplaints() {
                           </div>
                         </div>
 
-                        {/* Quick Tag Pills */}
-                        <div className="flex flex-col gap-1.5">
-                          <label className="text-[11px] font-mono uppercase tracking-wider text-slate-600 font-bold">
-                            Select Service Highlights:
-                          </label>
-                          <div className="flex flex-wrap gap-1.5">
-                            {[
-                              '⚡ Fast Resolution',
-                              '🛠️ Skillful Technician',
-                              '💬 Great Communication',
-                              '🧹 Clean Work Area',
-                              '✅ Issue Fully Fixed',
-                              '⏱️ On-Time Arrival'
-                            ].map((tag) => {
-                              const active = reviewTags.includes(tag);
-                              return (
-                                <button
-                                  key={tag}
-                                  type="button"
-                                  onClick={() => {
-                                    setReviewTags((prev) =>
-                                      active ? prev.filter((t) => t !== tag) : [...prev, tag]
-                                    );
-                                  }}
-                                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer border ${
-                                    active
-                                      ? 'bg-[#168567] text-white border-[#168567] shadow-xs'
-                                      : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
-                                  }`}
-                                >
-                                  {tag}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
+
 
                         {/* Review Comments */}
                         <div className="flex flex-col gap-1.5">
@@ -2161,6 +2074,7 @@ export function CareComplaints() {
           </div>
         </div>
       )}
+      </div>{/* end max-w-7xl */}
     </div>
   );
 }
