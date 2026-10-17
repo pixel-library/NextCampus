@@ -966,6 +966,35 @@ CAMPUS_GIS_LOCATIONS.farm = CAMPUS_GIS_LOCATIONS.agriculture;
 CAMPUS_GIS_LOCATIONS.agriculture_field = CAMPUS_GIS_LOCATIONS.agriculture;
 CAMPUS_GIS_LOCATIONS.campus_park = CAMPUS_GIS_LOCATIONS.park;
 
+// Map official Ground-Truth Numbered Graph Nodes (0-34) to Locations
+CAMPUS_GIS_LOCATIONS.gate.graphNode = 'node_18';
+CAMPUS_GIS_LOCATIONS.parking.graphNode = 'node_34';
+CAMPUS_GIS_LOCATIONS.gate2.graphNode = 'node_23';
+CAMPUS_GIS_LOCATIONS.main.graphNode = 'node_21';
+CAMPUS_GIS_LOCATIONS.temple.graphNode = 'node_5';
+CAMPUS_GIS_LOCATIONS.eng.graphNode = 'node_6';
+CAMPUS_GIS_LOCATIONS.teacher.graphNode = 'node_10';
+CAMPUS_GIS_LOCATIONS.badal.graphNode = 'node_10';
+CAMPUS_GIS_LOCATIONS.mess.graphNode = 'node_8';
+CAMPUS_GIS_LOCATIONS.law.graphNode = 'node_12';
+CAMPUS_GIS_LOCATIONS.football.graphNode = 'node_8';
+CAMPUS_GIS_LOCATIONS.basketball.graphNode = 'node_14';
+CAMPUS_GIS_LOCATIONS.cricket.graphNode = 'node_17';
+CAMPUS_GIS_LOCATIONS.gym.graphNode = 'node_16';
+CAMPUS_GIS_LOCATIONS.volleyball.graphNode = 'node_15';
+CAMPUS_GIS_LOCATIONS.agriculture.graphNode = 'node_17';
+CAMPUS_GIS_LOCATIONS.kumbha.graphNode = 'node_1';
+CAMPUS_GIS_LOCATIONS.pratap.graphNode = 'node_0';
+CAMPUS_GIS_LOCATIONS.park.graphNode = 'node_5';
+CAMPUS_GIS_LOCATIONS.guest_house.graphNode = 'node_23';
+CAMPUS_GIS_LOCATIONS.mira.graphNode = 'node_27';
+CAMPUS_GIS_LOCATIONS.panna.graphNode = 'node_26';
+CAMPUS_GIS_LOCATIONS.padmani.graphNode = 'node_29';
+CAMPUS_GIS_LOCATIONS.hospital.graphNode = 'node_30';
+CAMPUS_GIS_LOCATIONS.gora.graphNode = 'node_30';
+CAMPUS_GIS_LOCATIONS.sanaga.graphNode = 'node_33';
+CAMPUS_GIS_LOCATIONS.bhamasha.graphNode = 'node_2';
+
 // Ray-casting point-in-polygon algorithm to detect clicks anywhere on building footprints
 export function isPointInPolygon(point, vs) {
   if (!vs || !vs.length) return false;
@@ -1010,184 +1039,149 @@ export function calculateBearing(startLat, startLng, destLat, destLng) {
   return Math.round((brng + 360) % 360);
 }
 
-// Authentic Mewar University Campus Road Graph Topology
+// Authentic Mewar University Campus Road Graph Topology (Ground-Truth Numbered Nodes 0-34)
 export const MEWAR_CAMPUS_GRAPH = {
   nodes: {
-    r_0: [25.031923, 74.635568],
-    r_1: [25.032583, 74.635492],
-    r_2: [25.032995, 74.635417],
-    r_3: [25.033367, 74.635341],
-    r_4: [25.03371, 74.635219],
-    r_5: [25.033958, 74.635037],
-    r_6: [25.034398, 74.635022],
-    r_7: [25.034645, 74.635151],
-    r_8: [25.032817, 74.635477],
-    r_9: [25.032776, 74.635674],
-    r_10: [25.032549, 74.635781],
-    r_11: [25.032226, 74.635811],
-    r_12: [25.032074, 74.635705],
-    r_13: [25.032061, 74.635568],
-    r_14: [25.031951, 74.635872],
-    r_15: [25.032013, 74.636099],
-    r_16: [25.032074, 74.636327],
-    r_17: [25.032143, 74.636623],
-    r_18: [25.032226, 74.636767],
-    r_19: [25.032583, 74.636486],
-    r_20: [25.032858, 74.636388],
-    r_21: [25.03327, 74.636236],
-    r_22: [25.033587, 74.63613],
-    r_23: [25.033532, 74.635796],
-    r_24: [25.033463, 74.635492],
-    r_25: [25.033875, 74.63531],
-    r_26: [25.034247, 74.635219],
-    r_27: [25.03426, 74.635606],
-    r_28: [25.034247, 74.635948],
-    r_29: [25.03426, 74.636213],
-    r_30: [25.033992, 74.636061],
-    r_31: [25.034776, 74.635492],
-    r_32: [25.034769, 74.636008],
-    r_33: [25.034631, 74.636137],
-    r_34: [25.033807, 74.634992],
-    r_35: [25.034192, 74.634794],
-    r_36: [25.03371, 74.636615],
-    r_37: [25.034123, 74.636539],
-    r_38: [25.031772, 74.635629],
-    r_39: [25.031456, 74.635705],
-    r_40: [25.031085, 74.635857],
-    r_41: [25.030975, 74.635986],
-    r_42: [25.03103, 74.636289],
-    r_43: [25.031085, 74.636592],
-    r_44: [25.031153, 74.636888],
-    r_45: [25.030892, 74.636979],
-    r_46: [25.031827, 74.636691],
-    r_47: [25.031456, 74.636812],
-    r_48: [25.032061, 74.636888],
-    r_49: [25.031744, 74.63701],
-    r_50: [25.031731, 74.637146],
-    r_51: [25.031511, 74.637116],
-    r_52: [25.031511, 74.636888],
-    r_53: [25.031744, 74.636888],
-    r_54: [25.030521, 74.637146],
-    r_55: [25.029902, 74.637389],
-    r_56: [25.029614, 74.637526],
-    n_gate1: [25.032009, 74.635250],
-    n_gate2: [25.033475, 74.634605],
-    n_parking: [25.031181, 74.635785],
-    n_main: [25.032755, 74.635872],
+    // Official User Satellite Numbered Nodes (0 to 34)
+    node_0: [25.03350, 74.63605], // Pratap Hostel
+    node_1: [25.03385, 74.63600], // Kumbha Hostel
+    node_2: [25.03410, 74.63582], // Bhamasha Hostel / approach to Kumbha
+    node_3: [25.03358, 74.63580], // Junction in front of Pratap
+    node_4: [25.03385, 74.63570], // East Quad fork
+    node_5: [25.03365, 74.63542], // Central Spine Junction
+    node_6: [25.03290, 74.63625], // Engineering Block north entrance
+    node_7: [25.03250, 74.63638], // Path between Eng and Mess
+    node_8: [25.03218, 74.63648], // Mess / Food Court / Football North
+    node_9: [25.03200, 74.63655], // Path south of Mess towards Law
+    node_10: [25.03260, 74.63675], // East walkway / Faculty
+    node_11: [25.03175, 74.63670], // Football East / Law approach
+    node_12: [25.03185, 74.63705], // Law Building
+    node_13: [25.03130, 74.63678], // South sports junction
+    node_14: [25.03134, 74.63724], // Basketball Ground
+    node_15: [25.03100, 74.63725], // Volleyball Ground
+    node_16: [25.03065, 74.63705], // Gym / Indoor Sheds
+    node_17: [25.03015, 74.63715], // Cricket / Agriculture
+    node_18: [25.03200, 74.63525], // Main Campus Gate 1 (NH-48)
+    node_19: [25.03250, 74.63518], // West Road North of Gate 1
+    node_20: [25.03280, 74.63510], // West Road near Main Building
+    node_21: [25.03298, 74.63535], // Main Academic & Admin Building West Portico
+    node_22: [25.03335, 74.63495], // West Road North of Main Building
+    node_23: [25.03370, 74.63475], // Gate 2 / Guest House
+    node_24: [25.03395, 74.63495], // West-to-Central Connector Turn
+    node_25: [25.03415, 74.63490], // Girls Hostel Courtyard Hub
+    node_26: [25.03426, 74.63450], // Panna Girls Hostel
+    node_27: [25.03408, 74.63455], // Mira Girls Hostel
+    node_28: [25.03445, 74.63460], // Path to Padmani Hostel
+    node_29: [25.03455, 74.63435], // Padmani Girls Hostel
+    node_30: [25.03430, 74.63515], // Gola / Hospital & Botanical Park North
+    node_31: [25.03435, 74.63535], // Sanga South Approach Junction
+    node_32: [25.03460, 74.63555], // Sanga Avenue
+    node_33: [25.03468, 74.63575], // Maharana Sanga Hostel
+    node_34: [25.03118, 74.63552], // Parking
+    // Backwards-compatible named keys mapped to matching nodes
+    n_gate1: [25.03200, 74.63525],
+    n_gate2: [25.03370, 74.63475],
+    n_parking: [25.03118, 74.63552],
+    n_main: [25.03298, 74.63535],
     n_temple: [25.033669, 74.635822],
-    n_eng: [25.032631, 74.636545],
-    n_teacher: [25.032655, 74.636881],
+    n_eng: [25.03290, 74.63625],
+    n_teacher: [25.03260, 74.63675],
     n_badal: [25.032382, 74.63701],
-    n_mess: [25.032203, 74.636307],
-    n_law: [25.032106, 74.636843],
+    n_mess: [25.03218, 74.63648],
+    n_law: [25.03185, 74.63705],
     n_football: [25.031526, 74.636104],
-    n_basketball: [25.031342, 74.637242],
-    n_cricket: [25.030293, 74.636703],
-    n_gym: [25.030837, 74.637275],
-    n_volleyball: [25.030757, 74.637623],
-    n_agriculture: [25.030157, 74.637547],
-    n_kumbha: [25.033814, 74.63604],
-    n_pratap: [25.033592, 74.636105],
-    n_park: [25.033968, 74.635239],
-    n_guest_house: [25.033780, 74.634550],
-    n_mira: [25.034085, 74.634523],
-    n_panna: [25.034260, 74.634450],
-    n_padmani: [25.034500, 74.634280],
-    n_hospital: [25.0346, 74.63484],
-    n_gora: [25.034447, 74.635065],
-    n_sanaga: [25.034645, 74.635783],
-    n_bhamasha: [25.034287, 74.635706],
+    n_basketball: [25.03134, 74.63724],
+    n_cricket: [25.03015, 74.63715],
+    n_gym: [25.03065, 74.63705],
+    n_volleyball: [25.03100, 74.63725],
+    n_agriculture: [25.03015, 74.63715],
+    n_kumbha: [25.03385, 74.63600],
+    n_pratap: [25.03350, 74.63605],
+    n_park: [25.03365, 74.63542],
+    n_guest_house: [25.03370, 74.63475],
+    n_mira: [25.03408, 74.63455],
+    n_panna: [25.03426, 74.63450],
+    n_padmani: [25.03455, 74.63435],
+    n_hospital: [25.03430, 74.63515],
+    n_gora: [25.03430, 74.63515],
+    n_sanaga: [25.03468, 74.63575],
+    n_bhamasha: [25.03410, 74.63582],
   },
   edges: [
-    ["r_0", "r_1"],
-    ["r_1", "r_2"],
-    ["r_2", "r_3"],
-    ["r_3", "r_4"],
-    ["r_4", "r_5"],
-    ["r_5", "r_6"],
-    ["r_6", "r_7"],
-    ["r_8", "r_9"],
-    ["r_9", "r_10"],
-    ["r_10", "r_11"],
-    ["r_11", "r_12"],
-    ["r_12", "r_13"],
-    ["r_0", "r_13"],
-    ["r_0", "r_14"],
-    ["r_14", "r_15"],
-    ["r_15", "r_16"],
-    ["r_16", "r_17"],
-    ["r_17", "r_18"],
-    ["r_17", "r_19"],
-    ["r_19", "r_20"],
-    ["r_20", "r_21"],
-    ["r_21", "r_22"],
-    ["r_22", "r_23"],
-    ["r_23", "r_24"],
-    ["r_3", "r_24"],
-    ["r_3", "r_25"],
-    ["r_25", "r_26"],
-    ["r_26", "r_27"],
-    ["r_27", "r_28"],
-    ["r_28", "r_29"],
-    ["r_28", "r_30"],
-    ["r_22", "r_30"],
-    ["r_7", "r_31"],
-    ["r_31", "r_32"],
-    ["r_32", "r_33"],
-    ["r_29", "r_33"],
-    ["r_25", "r_34"],
-    ["r_26", "r_35"],
-    ["r_22", "r_36"],
-    ["r_29", "r_37"],
-    ["r_0", "r_38"],
-    ["r_38", "r_39"],
-    ["r_39", "r_40"],
-    ["r_40", "r_41"],
-    ["r_41", "r_42"],
-    ["r_42", "r_43"],
-    ["r_43", "r_44"],
-    ["r_44", "r_45"],
-    ["r_17", "r_46"],
-    ["r_46", "r_47"],
-    ["r_44", "r_47"],
-    ["r_18", "r_48"],
-    ["r_48", "r_49"],
-    ["r_49", "r_50"],
-    ["r_50", "r_51"],
-    ["r_51", "r_52"],
-    ["r_52", "r_53"],
-    ["r_45", "r_54"],
-    ["r_54", "r_55"],
-    ["r_55", "r_56"],
-    ["r_1", "r_8"],
-    ["r_48", "r_53"],
-    ["n_gate1", "r_13"],
-    ["n_gate2", "r_34"],
-    ["n_parking", "r_40"],
-    ["n_main", "r_9"],
-    ["n_temple", "r_23"],
-    ["n_eng", "r_19"],
-    ["n_teacher", "r_19"],
-    ["n_badal", "r_18"],
-    ["n_mess", "r_16"],
-    ["n_law", "r_48"],
-    ["n_football", "r_39"],
-    ["n_basketball", "r_51"],
-    ["n_cricket", "r_54"],
-    ["n_gym", "r_45"],
-    ["n_volleyball", "r_54"],
-    ["n_agriculture", "r_55"],
-    ["n_kumbha", "r_30"],
-    ["n_pratap", "r_22"],
-    ["n_park", "r_25"],
-    ["n_guest_house", "r_34"],
-    ["n_mira", "r_35"],
-    ["n_panna", "r_35"],
-    ["n_padmani", "r_35"],
-    ["n_hospital", "r_6"],
-    ["n_gora", "r_6"],
-    ["n_sanaga", "r_32"],
-    ["n_bhamasha", "r_27"],
+    // Kumbha & Boys Hostel Cluster
+    ['node_0', 'node_3'],
+    ['node_3', 'node_4'],
+    ['node_4', 'node_2'],
+    ['node_2', 'node_1'],
+    ['node_4', 'node_5'],
+
+    // Engineering & Academic/Sports Spine
+    ['node_3', 'node_6'],
+    ['node_6', 'node_7'],
+    ['node_7', 'node_8'],
+    ['node_8', 'node_9'],
+    ['node_9', 'node_11'],
+    ['node_11', 'node_12'],
+    ['node_11', 'node_13'],
+    ['node_13', 'node_14'],
+    ['node_13', 'node_15'],
+    ['node_15', 'node_16'],
+    ['node_16', 'node_17'],
+    ['node_6', 'node_10'],
+
+    // Sanga & North Corridor
+    ['node_33', 'node_32'],
+    ['node_32', 'node_31'],
+    ['node_31', 'node_5'],
+    ['node_31', 'node_30'],
+    ['node_30', 'node_25'],
+
+    // Girls Hostel Cluster
+    ['node_27', 'node_25'],
+    ['node_26', 'node_25'],
+    ['node_25', 'node_28'],
+    ['node_28', 'node_29'],
+    ['node_25', 'node_24'],
+
+    // West Road & Central Spine Connection
+    ['node_24', 'node_5'],
+    ['node_24', 'node_23'],
+    ['node_23', 'node_22'],
+    ['node_22', 'node_21'],
+    ['node_21', 'node_20'],
+    ['node_20', 'node_19'],
+    ['node_19', 'node_18'],
+    ['node_18', 'node_34'],
+    ['node_34', 'node_13'],
+
+    // Named node bridges for compatibility
+    ['n_gate1', 'node_18'],
+    ['n_gate2', 'node_23'],
+    ['n_parking', 'node_34'],
+    ['n_main', 'node_21'],
+    ['n_temple', 'node_5'],
+    ['n_eng', 'node_6'],
+    ['n_teacher', 'node_10'],
+    ['n_badal', 'node_10'],
+    ['n_mess', 'node_8'],
+    ['n_law', 'node_12'],
+    ['n_football', 'node_8'],
+    ['n_basketball', 'node_14'],
+    ['n_cricket', 'node_17'],
+    ['n_gym', 'node_16'],
+    ['n_volleyball', 'node_15'],
+    ['n_agriculture', 'node_17'],
+    ['n_kumbha', 'node_1'],
+    ['n_pratap', 'node_0'],
+    ['n_park', 'node_5'],
+    ['n_guest_house', 'node_23'],
+    ['n_mira', 'node_27'],
+    ['n_panna', 'node_26'],
+    ['n_padmani', 'node_29'],
+    ['n_hospital', 'node_30'],
+    ['n_gora', 'node_30'],
+    ['n_sanaga', 'node_33'],
+    ['n_bhamasha', 'node_2'],
   ],
 };
 
@@ -1206,16 +1200,30 @@ MEWAR_CAMPUS_GRAPH.edges.forEach(([u, v]) => {
   }
 });
 
-// Find closest graph waypoint to given coordinates
-export function findNearestGraphNode(coords) {
+// Find closest graph waypoint to given coordinates or location
+export function findNearestGraphNode(coords, locationObj = null) {
+  if (locationObj?.graphNode && MEWAR_CAMPUS_GRAPH.nodes[locationObj.graphNode]) {
+    return locationObj.graphNode;
+  }
+  if (typeof coords === 'string' && MEWAR_CAMPUS_GRAPH.nodes[coords]) {
+    return coords;
+  }
+  if (coords?.graphNode && MEWAR_CAMPUS_GRAPH.nodes[coords.graphNode]) {
+    return coords.graphNode;
+  }
+
   const lat = Array.isArray(coords) ? coords[0] : coords?.lat;
   const lng = Array.isArray(coords) ? coords[1] : coords?.lng;
-  if (lat == null || lng == null) return 'n_gate1';
+  if (lat == null || lng == null) return 'node_18';
 
-  let bestNode = 'n_gate1';
+  let bestNode = 'node_18';
   let minD = Infinity;
 
-  Object.entries(MEWAR_CAMPUS_GRAPH.nodes).forEach(([key, nCoords]) => {
+  // Search official numbered nodes first for pristine pathway routing
+  const candidateEntries = Object.entries(MEWAR_CAMPUS_GRAPH.nodes).filter(([key]) => key.startsWith('node_'));
+  const entriesToSearch = candidateEntries.length > 0 ? candidateEntries : Object.entries(MEWAR_CAMPUS_GRAPH.nodes);
+
+  entriesToSearch.forEach(([key, nCoords]) => {
     const d = calculateDistanceMeters(lat, lng, nCoords[0], nCoords[1]);
     if (d < minD) {
       minD = d;
